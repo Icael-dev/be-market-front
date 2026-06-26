@@ -20,34 +20,30 @@ import { updateProfile } from '../services/profile';
 
 export function ProfilePage() {
   const { user, profile, refreshProfile } = useAuth();
+
   const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(false);
   const [recentOrders, setRecentOrders] = useState<Order[]>([]);
+
   const [formData, setFormData] = useState({
     full_name: '',
     phone: ''
   });
 
   useEffect(() => {
-    if (profile) {
-      setFormData({
-        full_name: profile.full_name || '',
-        phone: profile.phone || ''
+    if (!profile) return;
+
+    setFormData({
+      full_name: profile.full_name || '',
+      phone: profile.phone || ''
+    });
+
+    fetchRecentOrders(3)
+      .then(setRecentOrders)
+      .catch(error => {
+        console.error('Error fetching recent orders:', error);
       });
-    }
-    fetchRecentOrders();
   }, [profile]);
-
-  const fetchRecentOrders = async () => {
-    if (!user) return;
-
-    try {
-      const data = await fetchRecentOrders(3);
-      setRecentOrders(data);
-    } catch (error) {
-      console.error('Error fetching recent orders:', error);
-    }
-  };
 
   const handleSave = async () => {
     if (!user) return;

@@ -8,7 +8,8 @@ import { format } from 'date-fns';
 import { Link, useParams } from 'react-router-dom';
 
 export function SupportPage() {
-  const { user } = useAuth();
+  const { user: authUser } = useAuth();
+
   const [tickets, setTickets] = useState<SupportTicket[]>([]);
   const [showForm, setShowForm] = useState(false);
   const [subject, setSubject] = useState('');
@@ -16,8 +17,9 @@ export function SupportPage() {
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
-    if (user) fetchTickets();
-  }, [user]);
+    if (authUser) fetchTickets();
+  }, [authUser]);
+
 
   const fetchTickets = async () => {
     try {
@@ -60,7 +62,8 @@ export function SupportPage() {
     closed: 'Ferme'
   };
 
-  if (!user) {
+  if (!authUser) {
+
     return (
       <div className="min-h-screen bg-gray-50 py-20">
         <div className="max-w-4xl mx-auto px-4 text-center">
@@ -132,7 +135,9 @@ export function SupportPage() {
 }
 
 export function TicketDetailPage() {
-  const { user } = useAuth();
+  // auth not required for ticket detail (messages are loaded server-side)
+
+
   const { id } = useParams();
   const [ticket, setTicket] = useState<SupportTicket | null>(null);
   const [messages, setMessages] = useState<SupportMessage[]>([]);
@@ -140,7 +145,9 @@ export function TicketDetailPage() {
   const [newMessage, setNewMessage] = useState('');
   const [sending, setSending] = useState(false);
 
-  useEffect(() => { if (id) fetchTicket(); }, [id]);
+  useEffect(() => {
+    if (id) fetchTicket();
+  }, [id]);
 
   const fetchTicket = async () => {
     try {

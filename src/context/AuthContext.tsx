@@ -15,6 +15,9 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+
+
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
@@ -25,7 +28,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const { user: currentUser, profile: currentProfile } = await getCurrentUser();
       setUser(currentUser);
       setProfile(currentProfile);
-    } catch (error) {
+    } catch {
       setUser(null);
       setProfile(null);
     } finally {
@@ -37,13 +40,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     fetchUser();
   }, []);
 
+type ServiceError = { error?: string };
+
+
+
+
   const signIn = async (email: string, password: string) => {
     try {
       await login({ email, password });
       await fetchUser();
       return { error: null };
-    } catch (err: any) {
-      return { error: err?.error ? new Error(err.error) : new Error('Erreur de connexion') };
+    } catch (err: unknown) {
+      const e = err as ServiceError;
+      return { error: e?.error ? new Error(e.error) : new Error('Erreur de connexion') };
     }
   };
 
@@ -52,8 +61,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       await register({ email, password, full_name: fullName });
       await fetchUser();
       return { error: null };
-    } catch (err: any) {
-      return { error: err?.error ? new Error(err.error) : new Error('Erreur d\'inscription') };
+    } catch (err: unknown) {
+      const e = err as ServiceError;
+      return { error: e?.error ? new Error(e.error) : new Error('Erreur d\'inscription') };
     }
   };
 

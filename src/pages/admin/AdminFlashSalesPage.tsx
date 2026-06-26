@@ -153,7 +153,8 @@ export function AdminFlashSalesPage() {
                 return (
                   <motion.tr key={sale.id} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: index * 0.02 }} className="hover:bg-gray-50">
                     <td className="px-6 py-4">
-                      <span className="font-medium text-gray-900">{(sale as any).product?.name || product?.name || 'Produit'}</span>
+                      <span className="font-medium text-gray-900">{sale.product?.name || product?.name || 'Produit'}</span>
+
                     </td>
                     <td className="px-6 py-4">
                       <span className="text-orange-600 font-bold">-{sale.discount_percentage}%</span>

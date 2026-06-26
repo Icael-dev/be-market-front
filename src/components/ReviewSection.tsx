@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
-import { fetchReviews, submitReview } from '../services/content';
+import { fetchReviews as fetchReviewsService, submitReview } from '../services/content';
 import type { Review } from '../types';
 
 import { Star, MessageSquare, Send, User } from 'lucide-react';
@@ -17,18 +17,20 @@ export function ReviewSection({ productId }: ReviewSectionProps) {
   const [submitting, setSubmitting] = useState(false);
   const [formData, setFormData] = useState({ rating: 5, title: '', comment: '' });
 
-  useEffect(() => {
-    fetchReviews();
-  }, [productId]);
-
   const fetchReviews = async () => {
     try {
-      const data = await fetchReviews(productId);
+      const data = await fetchReviewsService(productId);
       setReviews(data);
     } catch (error) {
       console.error('Failed to load reviews:', error);
     }
   };
+
+  useEffect(() => {
+    fetchReviews();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [productId]);
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
