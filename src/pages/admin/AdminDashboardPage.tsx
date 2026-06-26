@@ -11,6 +11,7 @@ import {
   TrendingUp,
   TrendingDown
 } from 'lucide-react';
+import type { Order } from '../../types';
 
 interface Stat {
   label: string;
@@ -24,8 +25,9 @@ interface Stat {
 export function AdminDashboardPage() {
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState<Stat[]>([]);
-  const [recentOrders, setRecentOrders] = useState<any[]>([]);
-  const [topProducts, setTopProducts] = useState<any[]>([]);
+  const [recentOrders, setRecentOrders] = useState<Order[]>([]);
+  const [topProducts, setTopProducts] = useState<Array<{ name: string; count: number }>>([]);
+
 
   useEffect(() => {
     fetchDashboardData();
@@ -38,11 +40,11 @@ export function AdminDashboardPage() {
         fetchAdminOrders()
       ]);
 
-      const stats = statsRes as any;
-      const totalRevenue = (stats as any).total_revenue || 0;
-      const totalOrders = (stats as any).total_orders || 0;
-      const totalProducts = (stats as any).total_products || 0;
-      const totalCustomers = (stats as any).total_customers || 0;
+      const stats = statsRes;
+      const totalRevenue = stats.total_revenue || 0;
+      const totalOrders = stats.total_orders || 0;
+      const totalProducts = stats.total_products || 0;
+      const totalCustomers = stats.total_customers || 0;
 
       setStats([
         {
@@ -78,16 +80,20 @@ export function AdminDashboardPage() {
       ]);
 
       if (ordersRes) {
-        setRecentOrders(ordersRes.slice(0, 10));
+        setRecentOrders((ordersRes as Order[]).slice(0, 10));
       }
 
+
       const productSales: Record<string, { name: string; count: number }> = {};
-      ordersRes?.forEach((order: any) => {
-        order.items?.forEach((item: any) => {
-          if (!productSales[item.product_name]) {
-            productSales[item.product_name] = { name: item.product_name, count: 0 };
+
+      // Compute top products from the orders payload (client-side fallback).
+      ordersRes?.forEach((order: Order & { items?: Array<{ product_name: string; quantity: number }> }) => {
+        order.items?.forEach((item) => {
+          const key = item.product_name;
+          if (!productSales[key]) {
+            productSales[key] = { name: item.product_name, count: 0 };
           }
-          productSales[item.product_name].count += item.quantity;
+          productSales[key].count += item.quantity;
         });
       });
 
@@ -179,7 +185,7 @@ export function AdminDashboardPage() {
             </div>
 
             <div className="space-y-4">
-              {recentOrders.slice(0, 5).map((order: any) => (
+              {recentOrders.slice(0, 5).map((order) => (
                 <div key={order.id} className="flex items-center justify-between py-3 border-b border-gray-100 last:border-0">
                   <div>
                     <p className="font-medium text-gray-900 text-sm">{order.order_number}</p>
@@ -209,7 +215,7 @@ export function AdminDashboardPage() {
             </div>
 
             <div className="space-y-4">
-              {topProducts.map((product: any, index: number) => (
+              {topProducts.map((product, index) => (
                 <div key={product.name} className="flex items-center justify-between py-3 border-b border-gray-100 last:border-0">
                   <div className="flex items-center gap-3">
                     <div className="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-sm font-bold">
