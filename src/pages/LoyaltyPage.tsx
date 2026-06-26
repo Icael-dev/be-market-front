@@ -1,0 +1,169 @@
+import { useEffect, useState } from 'react';
+import { motion } from 'framer-motion';
+import { supabase } from '../lib/supabase';
+import { useAuth } from '../context/AuthContext';
+import { Gift, Star, TrendingUp, History, Loader2 } from 'lucide-react';
+import type { LoyaltyPoints, LoyaltyTransaction } from '../types';
+import { format } from 'date-fns';
+
+export function LoyaltyPage() {
+  const { user } = useAuth();
+  const [loyalty, setLoyalty] = useState<LoyaltyPoints | null>(null);
+  const [transactions, setTransactions] = useState<LoyaltyTransaction[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (user) fetchLoyalty();
+  }, [user]);
+
+  const fetchLoyalty = async () => {
+    const [loyaltyRes, transRes] = await Promise.all([
+      supabase.from('loyalty_points').select('*').eq('user_id', user!.id).single(),
+      supabase.from('loyalty_transactions').select('*').eq('user_id', user!.id).order('created_at', { ascending: false })
+    ]);
+
+    if (loyaltyRes.data) setLoyalty(loyaltyRes.data as LoyaltyPoints);
+    if (transRes.data) setTransactions(transRes.data as LoyaltyTransaction[]);
+    setLoading(false);
+  };
+
+  const pointsValue = (loyalty?.points || 0) * 50; // 1 point = 50 FCFA
+
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-gray-50 py-20">
+        <div className="max-w-7xl mx-auto px-4 text-center">
+          <Gift className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+          <p className="text-gray-500">Connectez-vous pour voir vos points fidelite</p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-50 py-12">
+      <div className="max-w-4xl mx-auto px-4">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-8"
+        >
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">Programme Fidelite</h1>
+          <p className="text-gray-500">Gagnez des points a chaque achat et obtenez des reductions</p>
+        </motion.div>
+
+        {loading ? (
+          <div className="flex justify-center py-12">
+            <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+          </div>
+        ) : (
+          <>
+            <div className="grid md:grid-cols-3 gap-6 mb-8">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="bg-gradient-to-br from-blue-600 to-cyan-500 rounded-2xl p-6 text-white"
+              >
+                <div className="flex items-center gap-3 mb-4">
+                  <Star className="w-8 h-8" />
+                  <span className="font-medium">Points disponibles</span>
+                </div>
+                <p className="text-4xl font-bold">{loyalty?.points || 0}</p>
+                <p className="text-blue-100 mt-2">= {pointsValue.toLocaleString()} FCFA de reduction</p>
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1 }}
+                className="bg-white rounded-2xl border border-gray-200 p-6"
+              >
+                <div className="flex items-center gap-3 mb-4">
+                  <TrendingUp className="w-8 h-8 text-green-600" />
+                  <span className="font-medium text-gray-700">Points gagnes</span>
+                </div>
+                <p className="text-4xl font-bold text-gray-900">{loyalty?.total_earned || 0}</p>
+                <p className="text-gray-500 mt-2">Total accumules</p>
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2 }}
+                className="bg-white rounded-2xl border border-gray-200 p-6"
+              >
+                <div className="flex items-center gap-3 mb-4">
+                  <Gift className="w-8 h-8 text-orange-500" />
+                  <span className="font-medium text-gray-700">Points utilises</span>
+                </div>
+                <p className="text-4xl font-bold text-gray-900">{loyalty?.total_redeemed || 0}</p>
+                <p className="text-gray-500 mt-2">En reductions</p>
+              </motion.div>
+            </div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+              className="bg-white rounded-2xl border border-gray-200 p-6"
+            >
+              <div className="flex items-center gap-2 mb-6">
+                <History className="w-5 h-5 text-gray-600" />
+                <h2 className="text-lg font-bold text-gray-900">Historique</h2>
+              </div>
+
+              {transactions.length === 0 ? (
+                <p className="text-gray-500 text-center py-8">Aucune transaction</p>
+              ) : (
+                <div className="space-y-3">
+                  {transactions.map((trans, index) => (
+                    <motion.div
+                      key={trans.id}
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: index * 0.05 }}
+                      className="flex items-center justify-between py-3 border-b border-gray-100 last:border-0"
+                    >
+                      <div>
+                        <p className="font-medium text-gray-900">
+                          {trans.type === 'earned' ? 'Points gagnes' : trans.type === 'redeemed' ? 'Points utilises' : 'Points expires'}
+                        </p>
+                        <p className="text-sm text-gray-500">{format(new Date(trans.created_at), 'dd MMM yyyy HH:mm')}</p>
+                      </div>
+                      <span className={`font-bold ${trans.type === 'earned' ? 'text-green-600' : 'text-red-500'}`}>
+                        {trans.type === 'earned' ? '+' : '-'}{Math.abs(trans.points)}
+                      </span>
+                    </motion.div>
+                  ))}
+                </div>
+              )}
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4 }}
+              className="mt-8 bg-blue-50 rounded-2xl p-6"
+            >
+              <h3 className="font-bold text-gray-900 mb-4">Comment ca marche ?</h3>
+              <ul className="space-y-2 text-gray-600">
+                <li className="flex items-start gap-2">
+                  <Star className="w-4 h-4 text-blue-600 mt-0.5" />
+                  Gagnez 1 point pour chaque 1000 FCFA d'achat
+                </li>
+                <li className="flex items-start gap-2">
+                  <Gift className="w-4 h-4 text-blue-600 mt-0.5" />
+                  1 point = 50 FCFA de reduction
+                </li>
+                <li className="flex items-start gap-2">
+                  <TrendingUp className="w-4 h-4 text-blue-600 mt-0.5" />
+                  Utilisez vos points a tout moment lors du checkout
+                </li>
+              </ul>
+            </motion.div>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}

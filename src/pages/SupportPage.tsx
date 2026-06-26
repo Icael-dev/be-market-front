@@ -1,0 +1,212 @@
+import { useEffect, useState } from 'react';
+import { motion } from 'framer-motion';
+import { supabase } from '../lib/supabase';
+import { useAuth } from '../context/AuthContext';
+import type { SupportTicket, SupportMessage } from '../types';
+import { MessageSquare, Send, Clock, Loader2, Plus, ArrowLeft } from 'lucide-react';
+import { format } from 'date-fns';
+import { Link, useParams } from 'react-router-dom';
+
+export function SupportPage() {
+  const { user } = useAuth();
+  const [tickets, setTickets] = useState<SupportTicket[]>([]);
+  const [showForm, setShowForm] = useState(false);
+  const [subject, setSubject] = useState('');
+  const [message, setMessage] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+
+  useEffect(() => {
+    if (user) fetchTickets();
+  }, [user]);
+
+  const fetchTickets = async () => {
+    const { data } = await supabase
+      .from('support_tickets')
+      .select('*')
+      .eq('user_id', user?.id)
+      .order('created_at', { ascending: false });
+    if (data) setTickets(data as SupportTicket[]);
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!subject || !message) return;
+    setSubmitting(true);
+
+    const { data: ticket } = await supabase
+      .from('support_tickets')
+      .insert({ user_id: user!.id, subject })
+      .select()
+      .single();
+
+    if (ticket) {
+      await supabase.from('support_messages').insert({
+        ticket_id: ticket.id,
+        user_id: user!.id,
+        message,
+        is_from_admin: false
+      });
+      await fetchTickets();
+      setShowForm(false);
+      setSubject('');
+      setMessage('');
+    }
+    setSubmitting(false);
+  };
+
+  const statusColors: Record<string, string> = {
+    open: 'bg-yellow-100 text-yellow-700',
+    in_progress: 'bg-blue-100 text-blue-700',
+    resolved: 'bg-green-100 text-green-700',
+    closed: 'bg-gray-100 text-gray-700'
+  };
+
+  const statusLabels: Record<string, string> = {
+    open: 'Ouvert',
+    in_progress: 'En cours',
+    resolved: 'Resolu',
+    closed: 'Ferme'
+  };
+
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-gray-50 py-20">
+        <div className="max-w-4xl mx-auto px-4 text-center">
+          <MessageSquare className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">Support client</h1>
+          <p className="text-gray-500 mb-6">Connectez-vous pour acceder au support</p>
+          <Link to="/login" className="text-blue-600 font-medium hover:underline">Se connecter</Link>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-50 py-8">
+      <div className="max-w-4xl mx-auto px-4">
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="flex items-center justify-between mb-8">
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900">Mes demandes</h1>
+            <p className="text-gray-500 mt-1">{tickets.length} ticket{tickets.length > 1 ? 's' : ''}</p>
+          </div>
+          <button onClick={() => setShowForm(true)} className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2.5 rounded-xl font-medium hover:bg-blue-700">
+            <Plus className="w-5 h-5" />
+            Nouvelle demande
+          </button>
+        </motion.div>
+
+        {showForm && (
+          <motion.form initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} onSubmit={handleSubmit} className="bg-white rounded-2xl border border-gray-200 p-6 mb-6">
+            <h2 className="text-lg font-bold text-gray-900 mb-4">Nouvelle demande</h2>
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700 mb-2">Sujet</label>
+              <input type="text" value={subject} onChange={e => setSubject(e.target.value)} className="w-full px-4 py-3 border border-gray-200 rounded-xl" placeholder="Ex: Probleme avec ma commande" />
+            </div>
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700 mb-2">Message</label>
+              <textarea value={message} onChange={e => setMessage(e.target.value)} rows={5} className="w-full px-4 py-3 border border-gray-200 rounded-xl" placeholder="Decrivez votre probleme..." />
+            </div>
+            <div className="flex gap-3">
+              <button type="submit" disabled={submitting} className="flex items-center gap-2 bg-blue-600 text-white px-6 py-2.5 rounded-xl font-medium disabled:opacity-50">
+                {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
+                Envoyer
+              </button>
+              <button type="button" onClick={() => setShowForm(false)} className="px-6 py-2.5 border border-gray-200 rounded-xl font-medium">Annuler</button>
+            </div>
+          </motion.form>
+        )}
+
+        <div className="space-y-4">
+          {tickets.map((ticket, index) => (
+            <motion.div key={ticket.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: index * 0.05 }} className="bg-white rounded-xl border border-gray-200 p-4">
+              <Link to={`/support/${ticket.id}`}>
+                <div className="flex items-start justify-between gap-4">
+                  <div className="flex-1">
+                    <h3 className="font-medium text-gray-900">{ticket.subject}</h3>
+                    <p className="text-sm text-gray-500 mt-1 flex items-center gap-2">
+                      <Clock className="w-4 h-4" />
+                      {format(new Date(ticket.created_at), 'dd MMM yyyy a HH:mm')}
+                    </p>
+                  </div>
+                  <span className={`px-3 py-1 rounded-full text-xs font-medium ${statusColors[ticket.status]}`}>{statusLabels[ticket.status]}</span>
+                </div>
+              </Link>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export function TicketDetailPage() {
+  const { user } = useAuth();
+  const { id } = useParams();
+  const [ticket, setTicket] = useState<SupportTicket | null>(null);
+  const [messages, setMessages] = useState<SupportMessage[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [newMessage, setNewMessage] = useState('');
+  const [sending, setSending] = useState(false);
+
+  useEffect(() => { if (id) fetchTicket(); }, [id]);
+
+  const fetchTicket = async () => {
+    const { data: ticketData } = await supabase.from('support_tickets').select('*').eq('id', id).single();
+    if (ticketData) {
+      setTicket(ticketData as SupportTicket);
+      const { data: messagesData } = await supabase.from('support_messages').select('*').eq('ticket_id', id).order('created_at');
+      if (messagesData) setMessages(messagesData as SupportMessage[]);
+    }
+    setLoading(false);
+  };
+
+  const handleSend = async () => {
+    if (!newMessage || !ticket) return;
+    setSending(true);
+    await supabase.from('support_messages').insert({ ticket_id: ticket.id, user_id: user!.id, message: newMessage, is_from_admin: false });
+    await fetchTicket();
+    setNewMessage('');
+    setSending(false);
+  };
+
+  if (loading) return <div className="min-h-screen flex items-center justify-center"><Loader2 className="w-8 h-8 animate-spin text-blue-600" /></div>;
+
+  if (!ticket) return (
+    <div className="min-h-screen bg-gray-50 py-20">
+      <div className="max-w-4xl mx-auto px-4 text-center">
+        <p className="text-gray-500 mb-4">Ticket non trouve</p>
+        <Link to="/support" className="text-blue-600 font-medium hover:underline">Retour</Link>
+      </div>
+    </div>
+  );
+
+  return (
+    <div className="min-h-screen bg-gray-50 py-8">
+      <div className="max-w-4xl mx-auto px-4">
+        <Link to="/support" className="text-blue-600 font-medium hover:underline mb-6 inline-block flex items-center gap-1"><ArrowLeft className="w-4 h-4" /> Retour</Link>
+        <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
+          <div className="p-6 border-b border-gray-200">
+            <h1 className="text-xl font-bold text-gray-900">{ticket.subject}</h1>
+            <p className="text-sm text-gray-500 mt-1">Ticket #{ticket.id.slice(0, 8)} - {format(new Date(ticket.created_at), 'dd MMM yyyy')}</p>
+          </div>
+          <div className="p-6 space-y-4 max-h-96 overflow-y-auto">
+            {messages.map(msg => (
+              <div key={msg.id} className={`flex ${msg.is_from_admin ? 'justify-start' : 'justify-end'}`}>
+                <div className={`max-w-[80%] p-4 rounded-xl ${msg.is_from_admin ? 'bg-gray-100' : 'bg-blue-600 text-white'}`}>
+                  <p className="text-sm whitespace-pre-wrap">{msg.message}</p>
+                  <p className={`text-xs mt-2 ${msg.is_from_admin ? 'text-gray-500' : 'text-blue-200'}`}>{format(new Date(msg.created_at), 'HH:mm')}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="p-4 border-t border-gray-200">
+            <div className="flex gap-3">
+              <input type="text" value={newMessage} onChange={e => setNewMessage(e.target.value)} placeholder="Repondre..." className="flex-1 px-4 py-3 border border-gray-200 rounded-xl" onKeyPress={e => e.key === 'Enter' && handleSend()} />
+              <button onClick={handleSend} disabled={sending || !newMessage} className="p-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 disabled:opacity-50"><Send className="w-5 h-5" /></button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

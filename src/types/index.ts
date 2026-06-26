@@ -1,0 +1,297 @@
+export interface Category {
+  id: string;
+  name: string;
+  slug: string;
+  description: string | null;
+  image_url: string | null;
+  created_at: string;
+}
+
+export interface Product {
+  id: string;
+  name: string;
+  slug: string;
+  sku: string | null;
+  description: string | null;
+  price: number;
+  compare_price: number | null;
+  stock: number;
+  category_id: string | null;
+  images: string[];
+  specs: Record<string, string>;
+  is_featured: boolean;
+  is_active: boolean;
+  weight: number | null;
+  created_at: string;
+  updated_at: string;
+  category?: Category;
+}
+
+export interface Profile {
+  id: string;
+  user_id: string;
+  email: string | null;
+  full_name: string | null;
+  phone: string | null;
+  avatar_url: string | null;
+  is_admin: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface Address {
+  id: string;
+  user_id: string;
+  label: string | null;
+  full_name: string;
+  phone: string;
+  address_line1: string;
+  address_line2: string | null;
+  city: string;
+  region: string | null;
+  country: string;
+  is_default: boolean;
+  created_at: string;
+}
+
+export interface CartItem {
+  id: string;
+  cart_id: string;
+  product_id: string;
+  quantity: number;
+  product?: Product;
+}
+
+export interface Cart {
+  id: string;
+  user_id: string | null;
+  session_id: string | null;
+  items: CartItem[];
+  created_at: string;
+  updated_at: string;
+}
+
+export interface Order {
+  id: string;
+  order_number: string;
+  user_id: string | null;
+  status: OrderStatus;
+  payment_status: PaymentStatus;
+  payment_method: PaymentMethod | null;
+  subtotal: number;
+  shipping_fee: number;
+  tax: number;
+  total: number;
+  shipping_address: ShippingAddress;
+  billing_address: ShippingAddress | null;
+  notes: string | null;
+  created_at: string;
+  updated_at: string;
+  items?: OrderItem[];
+}
+
+export interface OrderItem {
+  id: string;
+  order_id: string;
+  product_id: string | null;
+  product_name: string;
+  product_sku: string | null;
+  price: number;
+  quantity: number;
+  total: number;
+}
+
+export interface Payment {
+  id: string;
+  order_id: string;
+  payment_method: PaymentMethod;
+  amount: number;
+  status: PaymentStatus;
+  reference: string | null;
+  phone_number: string | null;
+  provider_response: Record<string, unknown> | null;
+  paid_at: string | null;
+  created_at: string;
+}
+
+export interface Review {
+  id: string;
+  product_id: string;
+  user_id: string;
+  rating: number;
+  title: string | null;
+  comment: string | null;
+  is_verified_purchase: boolean;
+  created_at: string;
+  profile?: Profile;
+}
+
+export interface WishlistItem {
+  id: string;
+  user_id: string;
+  product_id: string;
+  created_at: string;
+  product?: Product;
+}
+
+export interface Banner {
+  id: string;
+  title: string;
+  subtitle: string | null;
+  image_url: string;
+  link_url: string | null;
+  button_text: string | null;
+  position: string;
+  is_active: boolean;
+  sort_order: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface BlogPost {
+  id: string;
+  title: string;
+  slug: string;
+  content: string;
+  excerpt: string | null;
+  image_url: string | null;
+  author_id: string | null;
+  is_published: boolean;
+  published_at: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface Settings {
+  shipping_fee: number;
+  free_shipping_threshold: number;
+  tax_rate: number;
+  currency: string;
+  store_name: string;
+  store_email: string;
+  store_phone: string;
+}
+
+export interface Coupon {
+  id: string;
+  code: string;
+  discount_type: 'percentage' | 'fixed';
+  discount_value: number;
+  min_order_amount: number;
+  max_uses: number | null;
+  uses_count: number;
+  starts_at: string;
+  expires_at: string | null;
+  is_active: boolean;
+  created_at: string;
+}
+
+export interface NewsletterSubscriber {
+  id: string;
+  email: string;
+  is_active: boolean;
+  subscribed_at: string;
+  unsubscribed_at: string | null;
+}
+
+export interface StockNotification {
+  id: string;
+  user_id: string | null;
+  product_id: string;
+  email: string;
+  is_notified: boolean;
+  created_at: string;
+  product?: Product;
+}
+
+export interface SupportTicket {
+  id: string;
+  user_id: string | null;
+  subject: string;
+  status: 'open' | 'in_progress' | 'resolved' | 'closed';
+  priority: 'low' | 'normal' | 'high' | 'urgent';
+  created_at: string;
+  updated_at: string;
+  messages?: SupportMessage[];
+  profile?: Profile;
+}
+
+export interface SupportMessage {
+  id: string;
+  ticket_id: string;
+  user_id: string | null;
+  message: string;
+  is_from_admin: boolean;
+  created_at: string;
+  profile?: Profile;
+}
+
+export interface FAQ {
+  id: string;
+  question: string;
+  answer: string;
+  category: string;
+  sort_order: number;
+  is_active: boolean;
+  created_at: string;
+}
+
+export interface LegalPage {
+  id: string;
+  slug: string;
+  title: string;
+  content: string;
+  updated_at: string;
+}
+
+export interface FlashSale {
+  id: string;
+  product_id: string;
+  discount_percentage: number;
+  starts_at: string;
+  ends_at: string;
+  is_active: boolean;
+  product?: Product;
+}
+
+export interface LoyaltyPoints {
+  id: string;
+  user_id: string;
+  points: number;
+  total_earned: number;
+  total_redeemed: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface LoyaltyTransaction {
+  id: string;
+  user_id: string;
+  type: 'earned' | 'redeemed' | 'expired';
+  points: number;
+  description: string | null;
+  created_at: string;
+}
+
+export interface ShippingAddress {
+  full_name: string;
+  phone: string;
+  address_line1: string;
+  address_line2?: string;
+  city: string;
+  region?: string;
+  country: string;
+}
+
+export type OrderStatus = 'pending' | 'confirmed' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
+export type PaymentStatus = 'pending' | 'processing' | 'paid' | 'failed' | 'refunded';
+export type PaymentMethod = 'tmoney' | 'flooz' | 'cash_on_delivery';
+
+export interface FilterOptions {
+  category?: string;
+  minPrice?: number;
+  maxPrice?: number;
+  search?: string;
+  brand?: string;
+  sort?: 'price_asc' | 'price_desc' | 'newest' | 'name_asc' | 'name_desc';
+}
