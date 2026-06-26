@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { supabase } from '../lib/supabase';
+import { fetchBlogPosts, fetchBlogPostBySlug } from '../services/content';
 import type { BlogPost } from '../types';
 import { Calendar, ArrowLeft, Clock } from 'lucide-react';
 import { format } from 'date-fns';
@@ -15,16 +15,14 @@ export function BlogPage() {
   }, []);
 
   const fetchPosts = async () => {
-    const { data } = await supabase
-      .from('blog_posts')
-      .select('*')
-      .eq('is_published', true)
-      .order('published_at', { ascending: false });
-
-    if (data) {
-      setPosts(data as BlogPost[]);
+    try {
+      const data = await fetchBlogPosts();
+      setPosts(data);
+    } catch (error) {
+      console.error('Failed to load blog posts:', error);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   return (
@@ -137,17 +135,16 @@ export function BlogPostPage() {
   }, [slug]);
 
   const fetchPost = async () => {
-    const { data } = await supabase
-      .from('blog_posts')
-      .select('*')
-      .eq('slug', slug)
-      .eq('is_published', true)
-      .single();
+    if (!slug) return;
 
-    if (data) {
-      setPost(data as BlogPost);
+    try {
+      const data = await fetchBlogPostBySlug(slug);
+      setPost(data);
+    } catch (error) {
+      console.error('Failed to load blog post:', error);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   if (loading) {

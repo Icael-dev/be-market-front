@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { supabase } from '../lib/supabase';
+import { subscribeNewsletter } from '../services/content';
 import { Mail, CheckCircle, Loader2 } from 'lucide-react';
 
 export function NewsletterSignup() {
@@ -12,9 +12,15 @@ export function NewsletterSignup() {
     e.preventDefault();
     if (!email) return;
     setLoading(true);
-    const { error } = await supabase.from('newsletter_subscribers').insert({ email });
-    if (!error) { setSuccess(true); setEmail(''); }
-    setLoading(false);
+    try {
+      await subscribeNewsletter(email);
+      setSuccess(true);
+      setEmail('');
+    } catch (error) {
+      console.error('Error subscribing to newsletter:', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   if (success) return <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex items-center gap-2 text-green-600"><CheckCircle className="w-5 h-5" /><span>Merci !</span></motion.div>;

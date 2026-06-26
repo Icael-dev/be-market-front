@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { supabase } from '../lib/supabase';
 import { useAuth } from '../context/AuthContext';
 import type { Address } from '../types';
 import { MapPin, Plus, Edit2, Trash2, Check } from 'lucide-react';
+import { fetchAddresses, createAddress, updateAddress, deleteAddress } from '../services/address';
 
 export function AddressesPage() {
   const { user } = useAuth();
@@ -24,66 +24,61 @@ export function AddressesPage() {
   });
 
   useEffect(() => {
-    fetchAddresses();
+    loadAddresses();
   }, [user]);
 
-  const fetchAddresses = async () => {
+  const loadAddresses = async () => {
     if (!user) return;
 
-    const { data } = await supabase
-      .from('addresses')
-      .select('*')
-      .eq('user_id', user.id)
-      .order('is_default', { ascending: false });
-
-    if (data) {
-      setAddresses(data as Address[]);
+    try {
+      const data = await fetchAddresses();
+      setAddresses(data);
+    } catch (error) {
+      console.error('Failed to load addresses:', error);
     }
   };
 
   const handleAddAddress = async () => {
     if (!user) return;
 
-    const { error } = await supabase
-      .from('addresses')
-      .insert({
+    try {
+      await createAddress({
         user_id: user.id,
         ...formData,
         is_default: addresses.length === 0 || formData.is_default
       });
-
-    if (!error) {
-      await fetchAddresses();
+      await loadAddresses();
       setShowAddForm(false);
       resetForm();
+    } catch (error) {
+      console.error('Failed to add address:', error);
     }
   };
 
   const handleUpdateAddress = async (addressId: string) => {
     if (!user) return;
 
-    const { error } = await supabase
-      .from('addresses')
-      .update(formData)
-      .eq('id', addressId);
-
-    if (!error) {
-      await fetchAddresses();
+    try {
+      await updateAddress(addressId, {
+        ...formData,
+        user_id: user.id
+      });
+      await loadAddresses();
       setEditingId(null);
       resetForm();
+    } catch (error) {
+      console.error('Failed to update address:', error);
     }
   };
 
   const handleDeleteAddress = async (addressId: string) => {
     if (!window.confirm('Supprimer cette adresse ?')) return;
 
-    const { error } = await supabase
-      .from('addresses')
-      .delete()
-      .eq('id', addressId);
-
-    if (!error) {
+    try {
+      await deleteAddress(addressId);
       setAddresses(prev => prev.filter(a => a.id !== addressId));
+    } catch (error) {
+      console.error('Failed to delete address:', error);
     }
   };
 

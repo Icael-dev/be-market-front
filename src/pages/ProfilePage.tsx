@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { supabase } from '../lib/supabase';
 import { useAuth } from '../context/AuthContext';
 import { formatPrice, getStatusColor, getStatusLabel } from '../lib/utils';
 import type { Order } from '../types';
@@ -16,6 +15,8 @@ import {
   ShoppingBag
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { fetchRecentOrders } from '../services/orders';
+import { updateProfile } from '../services/profile';
 
 export function ProfilePage() {
   const { user, profile, refreshProfile } = useAuth();
@@ -40,15 +41,11 @@ export function ProfilePage() {
   const fetchRecentOrders = async () => {
     if (!user) return;
 
-    const { data } = await supabase
-      .from('orders')
-      .select('*')
-      .eq('user_id', user.id)
-      .order('created_at', { ascending: false })
-      .limit(3);
-
-    if (data) {
-      setRecentOrders(data as Order[]);
+    try {
+      const data = await fetchRecentOrders(3);
+      setRecentOrders(data);
+    } catch (error) {
+      console.error('Error fetching recent orders:', error);
     }
   };
 
@@ -57,18 +54,12 @@ export function ProfilePage() {
 
     setLoading(true);
     try {
-      const { error } = await supabase
-        .from('profiles')
-        .update({
-          full_name: formData.full_name,
-          phone: formData.phone
-        })
-        .eq('user_id', user.id);
-
-      if (!error) {
-        await refreshProfile();
-        setIsEditing(false);
-      }
+      await updateProfile({
+        full_name: formData.full_name,
+        phone: formData.phone
+      });
+      await refreshProfile();
+      setIsEditing(false);
     } catch (error) {
       console.error('Error updating profile:', error);
     } finally {

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { supabase } from '../lib/supabase';
+import { fetchCategories, fetchFeaturedProducts } from '../services/products';
 import type { Product, Category } from '../types';
 import { ProductCard } from '../components/ProductCard';
 import { ProductsGridSkeleton } from '../components/LoadingSpinner';
@@ -30,24 +30,13 @@ export function HomePage() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const [productsRes, categoriesRes] = await Promise.all([
-          supabase
-            .from('products')
-            .select('*')
-            .eq('is_featured', true)
-            .eq('is_active', true)
-            .order('created_at', { ascending: false })
-            .limit(8),
-          supabase.from('categories').select('*').order('name')
+        const [products, categories] = await Promise.all([
+          fetchFeaturedProducts(8),
+          fetchCategories()
         ]);
 
-        if (productsRes.data) {
-          setFeaturedProducts(productsRes.data as Product[]);
-        }
-
-        if (categoriesRes.data) {
-          setCategories(categoriesRes.data as Category[]);
-        }
+        setFeaturedProducts(products);
+        setCategories(categories);
       } catch (error) {
         console.error('Error fetching data:', error);
       } finally {

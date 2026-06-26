@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { supabase } from '../lib/supabase';
+import { fetchProductBySlug, fetchRelatedProducts } from '../services/products';
 import type { Product } from '../types';
 import { useCart } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
@@ -39,30 +39,12 @@ export function ProductDetailPage() {
 
       setLoading(true);
       try {
-        const { data, error } = await supabase
-          .from('products')
-          .select('*')
-          .eq('slug', slug)
-          .maybeSingle();
-
-        if (error || !data) {
-          navigate('/products');
-          return;
-        }
-
-        setProduct(data as Product);
+        const data = await fetchProductBySlug(slug);
+        setProduct(data);
 
         if (data.category_id) {
-          const { data: related } = await supabase
-            .from('products')
-            .select('*')
-            .eq('category_id', data.category_id)
-            .neq('id', data.id)
-            .eq('is_active', true)
-            .limit(4);
-          if (related) {
-            setRelatedProducts(related as Product[]);
-          }
+          const related = await fetchRelatedProducts(data.category_id, data.id, 4);
+          setRelatedProducts(related);
         }
       } catch (error) {
         console.error('Error fetching product:', error);

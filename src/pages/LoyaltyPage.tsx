@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { supabase } from '../lib/supabase';
 import { useAuth } from '../context/AuthContext';
+import { fetchLoyaltyPoints, fetchLoyaltyTransactions } from '../services/content';
 import { Gift, Star, TrendingUp, History, Loader2 } from 'lucide-react';
 import type { LoyaltyPoints, LoyaltyTransaction } from '../types';
 import { format } from 'date-fns';
@@ -17,14 +17,19 @@ export function LoyaltyPage() {
   }, [user]);
 
   const fetchLoyalty = async () => {
-    const [loyaltyRes, transRes] = await Promise.all([
-      supabase.from('loyalty_points').select('*').eq('user_id', user!.id).single(),
-      supabase.from('loyalty_transactions').select('*').eq('user_id', user!.id).order('created_at', { ascending: false })
-    ]);
+    try {
+      const [loyaltyData, transactionsData] = await Promise.all([
+        fetchLoyaltyPoints(),
+        fetchLoyaltyTransactions()
+      ]);
 
-    if (loyaltyRes.data) setLoyalty(loyaltyRes.data as LoyaltyPoints);
-    if (transRes.data) setTransactions(transRes.data as LoyaltyTransaction[]);
-    setLoading(false);
+      setLoyalty(loyaltyData);
+      setTransactions(transactionsData);
+    } catch (error) {
+      console.error('Failed to load loyalty data:', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const pointsValue = (loyalty?.points || 0) * 50; // 1 point = 50 FCFA

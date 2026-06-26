@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { supabase } from '../lib/supabase';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import { formatPrice, cn } from '../lib/utils';
@@ -15,6 +14,8 @@ import {
   ArrowLeft
 } from 'lucide-react';
 import { LoadingSpinner } from '../components/LoadingSpinner';
+import { fetchAddresses, createAddress } from '../services/address';
+import { placeOrder } from '../services/orders';
 
 type Step = 'shipping' | 'payment' | 'confirm';
 type PaymentMethod = 'tmoney' | 'flooz' | 'cash_on_delivery';
@@ -84,25 +85,22 @@ export function CheckoutPage() {
       return;
     }
 
-    fetchAddresses();
+    loadAddresses();
   }, [user, items]);
 
-  const fetchAddresses = async () => {
+  const loadAddresses = async () => {
     if (!user) return;
 
-    const { data } = await supabase
-      .from('addresses')
-      .select('*')
-      .eq('user_id', user.id)
-      .order('is_default', { ascending: false });
-
-    if (data && data.length > 0) {
-      setAddresses(data as Address[]);
+    try {
+      const data = await fetchAddresses();
+      setAddresses(data);
       const defaultAddress = data.find(a => a.is_default);
       if (defaultAddress) {
         setSelectedAddressId(defaultAddress.id);
         setUseNewAddress(false);
       }
+    } catch (error) {
+      console.error('Failed to load addresses:', error);
     }
   };
 
@@ -122,30 +120,7 @@ export function CheckoutPage() {
       }
 
       const orderNumber = `ORD-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).substr(2, 5).toUpperCase()}`;
-
-      const { data: order, error: orderError } = await supabase
-        .from('orders')
-        .insert({
-          user_id: user.id,
-          order_number: orderNumber,
-          status: 'pending',
-          payment_status: paymentMethod === 'cash_on_delivery' ? 'pending' : 'pending',
-          payment_method: paymentMethod,
-          subtotal: total,
-          shipping_fee: shippingFee,
-          total: grandTotal,
-          shipping_address: shippingAddress,
-          notes
-        })
-        .select()
-        .single();
-
-      if (orderError || !order) {
-        throw new Error('Erreur lors de la creation de la commande');
-      }
-
       const orderItems = items.map(item => ({
-        order_id: order.id,
         product_id: item.product_id,
         product_name: item.product?.name || 'Produit',
         product_sku: item.product?.sku || null,
@@ -154,33 +129,31 @@ export function CheckoutPage() {
         total: (item.product?.price || 0) * item.quantity
       }));
 
-      const { error: itemsError } = await supabase
-        .from('order_items')
-        .insert(orderItems);
-
-      if (itemsError) {
-        throw new Error('Erreur lors de l\'ajout des articles');
-      }
-
-      const { error: paymentError } = await supabase
-        .from('payments')
-        .insert({
-          order_id: order.id,
+      const order = await placeOrder({
+        user_id: user.id,
+        order_number: orderNumber,
+        status: 'pending',
+        payment_status: 'pending',
+        payment_method: paymentMethod,
+        subtotal: total,
+        shipping_fee: shippingFee,
+        total: grandTotal,
+        shipping_address: shippingAddress,
+        notes,
+        items: orderItems,
+        payment: {
           payment_method: paymentMethod,
           amount: grandTotal,
-          status: paymentMethod === 'cash_on_delivery' ? 'pending' : 'pending',
+          status: 'pending',
           phone_number: paymentMethod !== 'cash_on_delivery' ? phoneNumber : null
-        });
-
-      if (paymentError) {
-        console.error('Payment insert error:', paymentError);
-      }
+        }
+      });
 
       if (useNewAddress && user) {
-        await supabase.from('addresses').insert({
+        await createAddress({
           user_id: user.id,
           ...newAddress,
-          is_default: addresses.length === 0
+          is_default: addresses.length === 0 || newAddress.is_default
         });
       }
 

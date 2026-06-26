@@ -1,13 +1,13 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { supabase } from '../lib/supabase';
 import { useAuth } from '../context/AuthContext';
 import type { Order } from '../types';
 import { formatPrice, getStatusColor, getStatusLabel } from '../lib/utils';
 import { Package, ChevronRight, Search, Filter, ShoppingBag, ArrowLeft } from 'lucide-react';
 import { PageLoading } from '../components/LoadingSpinner';
 import { cn } from '../lib/utils';
+import { fetchOrders as fetchOrdersService, fetchOrderById } from '../services/orders';
 
 export function OrdersPage() {
   const { user } = useAuth();
@@ -23,16 +23,14 @@ export function OrdersPage() {
   const fetchOrders = async () => {
     if (!user) return;
 
-    const { data } = await supabase
-      .from('orders')
-      .select('*')
-      .eq('user_id', user.id)
-      .order('created_at', { ascending: false });
-
-    if (data) {
-      setOrders(data as Order[]);
+    try {
+      const data = await fetchOrdersService();
+      setOrders(data);
+    } catch (error) {
+      console.error('Error fetching orders:', error);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   const filteredOrders = orders.filter(order => {
@@ -209,20 +207,8 @@ export function OrderDetailPage() {
   const fetchOrder = async () => {
     if (!id || !user) return;
     try {
-      const { data: orderData } = await supabase
-        .from('orders')
-        .select('*')
-        .eq('id', id)
-        .eq('user_id', user.id)
-        .maybeSingle();
-
-      if (orderData) {
-        const { data: itemsData } = await supabase
-          .from('order_items')
-          .select('*')
-          .eq('order_id', id);
-        setOrder({ ...orderData, items: itemsData || [] } as Order);
-      }
+      const orderData = await fetchOrderById(id);
+      setOrder(orderData);
     } catch (err) {
       console.error('Order fetch error:', err);
     } finally {

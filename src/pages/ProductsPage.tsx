@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { supabase } from '../lib/supabase';
-import type { Product, Category } from '../types';
+import { fetchProducts, fetchCategories } from '../services/products';
+import type { Product, Category, FilterOptions } from '../types';
 import { ProductCard } from '../components/ProductCard';
 import { ProductsGridSkeleton } from '../components/LoadingSpinner';
 import {
@@ -50,70 +50,36 @@ export function ProductsPage() {
     async function fetchData() {
       setLoading(true);
       try {
-        const { data: categoriesData } = await supabase
-          .from('categories')
-          .select('*');
-        const loadedCategories = (categoriesData as Category[]) || [];
+        const loadedCategories = await fetchCategories();
         setCategories(loadedCategories);
 
-        let query = supabase
-          .from('products')
-          .select('*')
-          .eq('is_active', true);
-
-        if (selectedCategory) {
-          const cat = loadedCategories.find(c => c.slug === selectedCategory);
-          if (cat) {
-            query = query.eq('category_id', cat.id);
-          }
-        }
-
-        if (searchQuery) {
-          query = query.or(`name.ilike.%${searchQuery}%,description.ilike.%${searchQuery}%`);
-        }
+        const filters: FilterOptions = {
+          category: selectedCategory || undefined,
+          search: searchQuery || undefined,
+          sort: sortBy as FilterOptions['sort'] | undefined,
+          brand: selectedBrand || undefined
+        };
 
         if (selectedPriceRange) {
           const range = priceRanges.find(r =>
             `${r.min}-${r.max === Infinity ? 'infinity' : r.max}` === selectedPriceRange
           );
           if (range) {
-            query = query.gte('price', range.min).lte('price', range.max === Infinity ? 100000000 : range.max);
+            filters.minPrice = range.min;
+            filters.maxPrice = range.max === Infinity ? undefined : range.max;
           }
         }
 
-        if (selectedBrand) {
-          query = query.contains('specs', { brand: selectedBrand });
-        }
+        const productsData = await fetchProducts(filters);
+        setProducts(productsData);
 
-        switch (sortBy) {
-          case 'price_asc':
-            query = query.order('price', { ascending: true });
-            break;
-          case 'price_desc':
-            query = query.order('price', { ascending: false });
-            break;
-          case 'name_asc':
-            query = query.order('name', { ascending: true });
-            break;
-          case 'name_desc':
-            query = query.order('name', { ascending: false });
-            break;
-          default:
-            query = query.order('created_at', { ascending: false });
-        }
-
-        const { data: productsData } = await query;
-        if (productsData) {
-          setProducts(productsData as Product[]);
-
-          const brandSet = new Set<string>();
-          productsData.forEach((p: any) => {
-            if (p.specs?.brand) {
-              brandSet.add(p.specs.brand);
-            }
-          });
-          setBrands(Array.from(brandSet).sort());
-        }
+        const brandSet = new Set<string>();
+        productsData.forEach((p: Product) => {
+          if (p.specs?.brand) {
+            brandSet.add(p.specs.brand);
+          }
+        });
+        setBrands(Array.from(brandSet).sort());
       } catch (error) {
         console.error('Error fetching products:', error);
       } finally {

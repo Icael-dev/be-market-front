@@ -1,9 +1,9 @@
 import { useState } from 'react';
-import { supabase } from '../lib/supabase';
 import { Bell, Check } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
 import type { Product } from '../types';
+import { createStockNotification } from '../services/content';
 
 interface StockNotificationProps {
   product: Product;
@@ -21,18 +21,14 @@ export function StockNotificationButton({ product }: StockNotificationProps) {
 
     setLoading(true);
 
-    const { error } = await supabase
-      .from('stock_notifications')
-      .insert({
-        user_id: user?.id || null,
-        product_id: product.id,
-        email: email || user?.email
-      });
-
-    if (!error) {
+    try {
+      await createStockNotification(product.id, email || user?.email || '');
       setSuccess(true);
+    } catch (error) {
+      console.error('Failed to create stock notification:', error);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   if (success) {

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { supabase } from '../lib/supabase';
 import { useAuth } from '../context/AuthContext';
+import { fetchSupportTickets, createSupportTicket, fetchSupportTicket, createSupportMessage } from '../services/support';
 import type { SupportTicket, SupportMessage } from '../types';
 import { MessageSquare, Send, Clock, Loader2, Plus, ArrowLeft } from 'lucide-react';
 import { format } from 'date-fns';
@@ -20,12 +20,12 @@ export function SupportPage() {
   }, [user]);
 
   const fetchTickets = async () => {
-    const { data } = await supabase
-      .from('support_tickets')
-      .select('*')
-      .eq('user_id', user?.id)
-      .order('created_at', { ascending: false });
-    if (data) setTickets(data as SupportTicket[]);
+    try {
+      const data = await fetchSupportTickets();
+      setTickets(data);
+    } catch (error) {
+      console.error('Error fetching support tickets:', error);
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -33,25 +33,17 @@ export function SupportPage() {
     if (!subject || !message) return;
     setSubmitting(true);
 
-    const { data: ticket } = await supabase
-      .from('support_tickets')
-      .insert({ user_id: user!.id, subject })
-      .select()
-      .single();
-
-    if (ticket) {
-      await supabase.from('support_messages').insert({
-        ticket_id: ticket.id,
-        user_id: user!.id,
-        message,
-        is_from_admin: false
-      });
+    try {
+      await createSupportTicket({ subject, message });
       await fetchTickets();
       setShowForm(false);
       setSubject('');
       setMessage('');
+    } catch (error) {
+      console.error('Error creating support ticket:', error);
+    } finally {
+      setSubmitting(false);
     }
-    setSubmitting(false);
   };
 
   const statusColors: Record<string, string> = {
@@ -151,22 +143,30 @@ export function TicketDetailPage() {
   useEffect(() => { if (id) fetchTicket(); }, [id]);
 
   const fetchTicket = async () => {
-    const { data: ticketData } = await supabase.from('support_tickets').select('*').eq('id', id).single();
-    if (ticketData) {
-      setTicket(ticketData as SupportTicket);
-      const { data: messagesData } = await supabase.from('support_messages').select('*').eq('ticket_id', id).order('created_at');
-      if (messagesData) setMessages(messagesData as SupportMessage[]);
+    try {
+      if (!id) return;
+      const ticketData = await fetchSupportTicket(id);
+      setTicket(ticketData);
+      setMessages(ticketData.messages ?? []);
+    } catch (error) {
+      console.error('Error fetching ticket details:', error);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   const handleSend = async () => {
     if (!newMessage || !ticket) return;
     setSending(true);
-    await supabase.from('support_messages').insert({ ticket_id: ticket.id, user_id: user!.id, message: newMessage, is_from_admin: false });
-    await fetchTicket();
-    setNewMessage('');
-    setSending(false);
+    try {
+      await createSupportMessage(ticket.id, newMessage);
+      await fetchTicket();
+      setNewMessage('');
+    } catch (error) {
+      console.error('Error sending support message:', error);
+    } finally {
+      setSending(false);
+    }
   };
 
   if (loading) return <div className="min-h-screen flex items-center justify-center"><Loader2 className="w-8 h-8 animate-spin text-blue-600" /></div>;

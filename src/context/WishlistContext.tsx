@@ -1,7 +1,7 @@
-import { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react';
-import { supabase } from '../lib/supabase';
+import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { useAuth } from './AuthContext';
 import type { WishlistItem, Product } from '../types';
+import { fetchWishlist, addWishlistItem, removeWishlistItem } from '../services/wishlist';
 
 interface WishlistContextType {
   items: WishlistItem[];
@@ -20,34 +20,14 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
 
   const productIds = items.map(i => i.product_id);
 
-  const fetchWishlist = useCallback(async () => {
+  const loadWishlist = async () => {
     try {
       if (!user) {
         const stored = localStorage.getItem('electronica_wishlist');
         setItems(stored ? JSON.parse(stored) : []);
-        setLoading(false);
-        return;
-      }
-
-      const { data: wishlistData } = await supabase
-        .from('wishlist')
-        .select('*')
-        .eq('user_id', user.id);
-
-      if (wishlistData && wishlistData.length > 0) {
-        const productIds = wishlistData.map((i: any) => i.product_id);
-        const { data: productsData } = await supabase
-          .from('products')
-          .select('*')
-          .in('id', productIds);
-
-        const merged = wishlistData.map((item: any) => ({
-          ...item,
-          product: productsData?.find((p: any) => p.id === item.product_id)
-        }));
-        setItems(merged as WishlistItem[]);
       } else {
-        setItems([]);
+        const wishlistData = await fetchWishlist();
+        setItems(wishlistData);
       }
     } catch (err) {
       console.error('Wishlist fetch error:', err);
@@ -55,11 +35,12 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
     } finally {
       setLoading(false);
     }
-  }, [user]);
+  };
 
   useEffect(() => {
-    fetchWishlist();
-  }, [fetchWishlist]);
+    setLoading(true);
+    loadWishlist();
+  }, [user]);
 
   useEffect(() => {
     if (!user) {
@@ -73,18 +54,11 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
     if (user) {
       const existing = items.find(i => i.product_id === productId);
       if (existing) {
-        await supabase.from('wishlist').delete().eq('id', existing.id);
+        await removeWishlistItem(existing.id);
         setItems(prev => prev.filter(i => i.product_id !== productId));
       } else {
-        const { data, error } = await supabase
-          .from('wishlist')
-          .insert({ user_id: user.id, product_id: productId })
-          .select('*')
-          .single();
-
-        if (!error && data) {
-          setItems(prev => [...prev, { ...data, product } as WishlistItem]);
-        }
+        const data = await addWishlistItem(productId);
+        setItems(prev => [...prev, { ...data, product } as WishlistItem]);
       }
     } else {
       if (productIds.includes(productId)) {

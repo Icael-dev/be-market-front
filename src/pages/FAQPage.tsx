@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { supabase } from '../lib/supabase';
+import { fetchFaqs } from '../services/content';
 import type { FAQ } from '../types';
 import { ChevronDown, HelpCircle } from 'lucide-react';
 
@@ -11,8 +11,12 @@ export function FAQPage() {
   useEffect(() => { fetchFAQs(); }, []);
 
   const fetchFAQs = async () => {
-    const { data } = await supabase.from('faqs').select('*').eq('is_active', true).order('sort_order');
-    if (data) setFaqs(data as FAQ[]);
+    try {
+      const data = await fetchFaqs();
+      setFaqs(data);
+    } catch (error) {
+      console.error('Error fetching FAQs:', error);
+    }
   };
 
   const toggleItem = (id: string) => setOpenItems(prev => prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]);

@@ -1,7 +1,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { supabase } from '../lib/supabase';
+import { fetchBanners as fetchBannersService } from '../services/content';
 import type { Banner } from '../types';
 import { ChevronLeft, ChevronRight, Sparkles } from 'lucide-react';
 
@@ -12,7 +12,7 @@ export function BannerSlider() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchBanners();
+    loadBanners();
   }, []);
 
   useEffect(() => {
@@ -24,17 +24,15 @@ export function BannerSlider() {
     }
   }, [banners, isAutoPlaying]);
 
-  const fetchBanners = async () => {
-    const { data } = await supabase
-      .from('banners')
-      .select('*')
-      .eq('is_active', true)
-      .order('sort_order');
-
-    if (data && data.length > 0) {
-      setBanners(data as Banner[]);
+  const loadBanners = async () => {
+    try {
+      const data = await fetchBannersService();
+      setBanners(data);
+    } catch (error) {
+      console.error('Failed to load banners:', error);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   const goTo = useCallback((index: number) => {

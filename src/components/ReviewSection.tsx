@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { supabase } from '../lib/supabase';
 import { useAuth } from '../context/AuthContext';
+import { fetchReviews, submitReview } from '../services/content';
 import type { Review } from '../types';
 
 import { Star, MessageSquare, Send, User } from 'lucide-react';
@@ -22,14 +22,11 @@ export function ReviewSection({ productId }: ReviewSectionProps) {
   }, [productId]);
 
   const fetchReviews = async () => {
-    const { data } = await supabase
-      .from('reviews')
-      .select('*, profile:profiles(full_name)')
-      .eq('product_id', productId)
-      .order('created_at', { ascending: false });
-
-    if (data) {
-      setReviews(data as Review[]);
+    try {
+      const data = await fetchReviews(productId);
+      setReviews(data);
+    } catch (error) {
+      console.error('Failed to load reviews:', error);
     }
   };
 
@@ -38,23 +35,21 @@ export function ReviewSection({ productId }: ReviewSectionProps) {
     if (!user) return;
 
     setSubmitting(true);
-    const { error } = await supabase
-      .from('reviews')
-      .insert({
-        product_id: productId,
-        user_id: user.id,
-        rating: formData.rating,
-        title: formData.title || null,
-        comment: formData.comment || null,
-        is_verified_purchase: false
-      });
 
-    if (!error) {
+    try {
+      await submitReview(productId, {
+        rating: formData.rating,
+        title: formData.title || undefined,
+        comment: formData.comment || undefined
+      });
       await fetchReviews();
       setShowForm(false);
       setFormData({ rating: 5, title: '', comment: '' });
+    } catch (error) {
+      console.error('Failed to submit review:', error);
+    } finally {
+      setSubmitting(false);
     }
-    setSubmitting(false);
   };
 
   const averageRating = reviews.length > 0

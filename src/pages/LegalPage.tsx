@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { supabase } from '../lib/supabase';
+import { fetchLegalPages } from '../services/content';
 import type { LegalPage as LP } from '../types';
 import { FileText, Scale, Shield, RotateCcw } from 'lucide-react';
 import { format } from 'date-fns';
@@ -21,8 +21,15 @@ export function LegalPage() {
   }, [pages, slug]);
 
   const fetchPages = async () => {
-    const { data } = await supabase.from('legal_pages').select('*');
-    if (data) { setPages(data as LP[]); if (data.length > 0 && !slug) setCurrent(data[0] as LP); }
+    try {
+      const data = await fetchLegalPages();
+      if (data) {
+        setPages(data);
+        if (data.length > 0 && !slug) setCurrent(data[0]);
+      }
+    } catch (error) {
+      console.error('Failed to load legal pages:', error);
+    }
   };
 
   return (

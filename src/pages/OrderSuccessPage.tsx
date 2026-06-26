@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { supabase } from '../lib/supabase';
 import type { Order } from '../types';
 import { formatPrice, getStatusColor, getStatusLabel } from '../lib/utils';
 import {
@@ -12,6 +11,7 @@ import {
   ShoppingBag
 } from 'lucide-react';
 import { PageLoading } from '../components/LoadingSpinner';
+import { fetchOrderById } from '../services/orders';
 
 export function OrderSuccessPage() {
   const { orderId } = useParams();
@@ -25,19 +25,8 @@ export function OrderSuccessPage() {
   const fetchOrder = async () => {
     if (!orderId) return;
     try {
-      const { data: orderData } = await supabase
-        .from('orders')
-        .select('*')
-        .eq('id', orderId)
-        .maybeSingle();
-
-      if (orderData) {
-        const { data: itemsData } = await supabase
-          .from('order_items')
-          .select('*')
-          .eq('order_id', orderId);
-        setOrder({ ...orderData, items: itemsData || [] } as Order);
-      }
+      const orderData = await fetchOrderById(orderId);
+      setOrder(orderData);
     } catch (err) {
       console.error('Order fetch error:', err);
     } finally {

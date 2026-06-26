@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { supabase } from '../lib/supabase';
+import { fetchFlashSales as fetchFlashSalesService } from '../services/content';
 import type { FlashSale, Product } from '../types';
 import { formatPrice } from '../lib/utils';
 import { useCart } from '../context/CartContext';
@@ -20,7 +20,7 @@ export function FlashSaleSection() {
   const { toggleItem, isInWishlist } = useWishlist();
 
   useEffect(() => {
-    fetchFlashSales();
+    loadFlashSales();
   }, []);
 
   useEffect(() => {
@@ -46,36 +46,20 @@ export function FlashSaleSection() {
     return () => clearInterval(interval);
   }, [flashSales]);
 
-  const fetchFlashSales = async () => {
+  const loadFlashSales = async () => {
     try {
-      const now = new Date().toISOString();
-
-      const { data: salesData } = await supabase
-        .from('flash_sales')
-        .select('*')
-        .eq('is_active', true)
-        .lte('starts_at', now)
-        .gt('ends_at', now)
-        .limit(4);
-
-      if (!salesData || salesData.length === 0) {
+      const data = await fetchFlashSalesService();
+      if (!data || data.length === 0) {
         setLoading(false);
         return;
       }
 
-      const productIds = salesData.map((s: any) => s.product_id);
-      const { data: productsData } = await supabase
-        .from('products')
-        .select('*')
-        .in('id', productIds);
+      const merged = data.map(sale => ({
+        ...sale,
+        product: sale.product
+      })) as FlashSaleWithProduct[];
 
-      if (salesData && productsData) {
-        const merged = salesData.map((sale: any) => ({
-          ...sale,
-          product: productsData.find((p: any) => p.id === sale.product_id)
-        })).filter((s: any) => s.product);
-        setFlashSales(merged as FlashSaleWithProduct[]);
-      }
+      setFlashSales(merged);
     } catch (err) {
       console.error('FlashSales fetch error:', err);
     } finally {
