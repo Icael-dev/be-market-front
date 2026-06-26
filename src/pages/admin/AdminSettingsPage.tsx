@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { supabase } from '../../lib/supabase';
+import { fetchAdminSettings, updateAdminSettings } from '../../services/admin';
 import { Settings, Save, Loader2 } from 'lucide-react';
 import { AdminLayout } from '../../components/admin/AdminLayout';
 
 export function AdminSettingsPage() {
-  const [settings, setSettings] = useState<Record<string, string>>({});
+  const [settings, setSettings] = useState<Record<string, string | number>>({});
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -15,36 +15,30 @@ export function AdminSettingsPage() {
   }, []);
 
   const fetchSettings = async () => {
-    const { data } = await supabase.from('settings').select('*');
-    if (data) {
-      const settingsMap: Record<string, string> = {};
-      data.forEach(s => {
-        settingsMap[s.key] = s.value;
-      });
-      setSettings(settingsMap);
+    try {
+      const data = await fetchAdminSettings();
+      setSettings(data as unknown as Record<string, string | number>);
+    } catch (error) {
+      console.error('Settings fetch error:', error);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   const handleSave = async () => {
     setSaving(true);
     setSaved(false);
 
-    const updates = Object.entries(settings).map(([key, value]) => ({
-      key,
-      value
-    }));
-
-    for (const update of updates) {
-      await supabase
-        .from('settings')
-        .update({ value: update.value })
-        .eq('key', update.key);
+    try {
+      await updateAdminSettings(settings);
+      setSaved(true);
+      setTimeout(() => setSaved(false), 2000);
+    } catch (error) {
+      console.error('Settings save error:', error);
+      alert('Erreur lors de la sauvegarde');
+    } finally {
+      setSaving(false);
     }
-
-    setSaving(false);
-    setSaved(true);
-    setTimeout(() => setSaved(false), 2000);
   };
 
   const handleChange = (key: string, value: string) => {

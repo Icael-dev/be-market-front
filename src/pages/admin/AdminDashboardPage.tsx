@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { supabase } from '../../lib/supabase';
+import { fetchAdminOrders, fetchAdminStatistics } from '../../services/admin';
 import { formatPrice, getStatusColor, getStatusLabel } from '../../lib/utils';
 import { AdminLayout } from '../../components/admin/AdminLayout';
 import {
@@ -33,22 +33,16 @@ export function AdminDashboardPage() {
 
   const fetchDashboardData = async () => {
     try {
-      const [
-        ordersRes,
-        productsRes,
-        customersRes,
-        recentOrdersRes
-      ] = await Promise.all([
-        supabase.from('orders').select('total, created_at'),
-        supabase.from('products').select('id, name, stock', { count: 'exact' }),
-        supabase.from('profiles').select('id', { count: 'exact' }),
-        supabase.from('orders')
-          .select('*, items:order_items(product_name, quantity)')
-          .order('created_at', { ascending: false })
-          .limit(10)
+      const [statsRes, ordersRes] = await Promise.all([
+        fetchAdminStatistics(),
+        fetchAdminOrders()
       ]);
 
-      const totalRevenue = ordersRes.data?.reduce((acc: number, o: any) => acc + o.total, 0) || 0;
+      const stats = statsRes as any;
+      const totalRevenue = (stats as any).total_revenue || 0;
+      const totalOrders = (stats as any).total_orders || 0;
+      const totalProducts = (stats as any).total_products || 0;
+      const totalCustomers = (stats as any).total_customers || 0;
 
       setStats([
         {
@@ -61,7 +55,7 @@ export function AdminDashboardPage() {
         },
         {
           label: 'Commandes totales',
-          value: ordersRes.data?.length || 0,
+          value: totalOrders,
           change: '+8%',
           changeType: 'up',
           icon: Package,
@@ -69,13 +63,13 @@ export function AdminDashboardPage() {
         },
         {
           label: 'Produits',
-          value: productsRes.count || 0,
+          value: totalProducts,
           icon: ShoppingBag,
           color: 'purple'
         },
         {
           label: 'Clients',
-          value: customersRes.count || 0,
+          value: totalCustomers,
           change: '+15%',
           changeType: 'up',
           icon: Users,
@@ -83,12 +77,12 @@ export function AdminDashboardPage() {
         }
       ]);
 
-      if (recentOrdersRes.data) {
-        setRecentOrders(recentOrdersRes.data);
+      if (ordersRes) {
+        setRecentOrders(ordersRes.slice(0, 10));
       }
 
       const productSales: Record<string, { name: string; count: number }> = {};
-      recentOrdersRes.data?.forEach((order: any) => {
+      ordersRes?.forEach((order: any) => {
         order.items?.forEach((item: any) => {
           if (!productSales[item.product_name]) {
             productSales[item.product_name] = { name: item.product_name, count: 0 };

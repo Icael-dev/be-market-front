@@ -1,6 +1,11 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { supabase } from '../../lib/supabase';
+import {
+  fetchAdminBlogPosts,
+  createAdminBlogPost,
+  updateAdminBlogPost,
+  deleteAdminBlogPost
+} from '../../services/admin';
 import type { BlogPost } from '../../types';
 import { Plus, Edit2, Trash2, X, Save, FileText, Calendar, Eye } from 'lucide-react';
 import { AdminLayout } from '../../components/admin/AdminLayout';
@@ -27,15 +32,14 @@ export function AdminBlogPage() {
   }, []);
 
   const fetchPosts = async () => {
-    const { data } = await supabase
-      .from('blog_posts')
-      .select('*')
-      .order('created_at', { ascending: false });
-
-    if (data) {
-      setPosts(data as BlogPost[]);
+    try {
+      const data = await fetchAdminBlogPosts();
+      setPosts(data);
+    } catch (error) {
+      console.error('Error fetching blog posts:', error);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   const resetForm = () => {
@@ -71,33 +75,26 @@ export function AdminBlogPage() {
       .replace(/^-|-$/g, '');
 
     try {
-      let error;
+      const postData = {
+        ...formData,
+        slug: editingPost ? editingPost.slug : `${slug}-${Date.now().toString(36)}`,
+        published_at: formData.is_published && (!editingPost || !editingPost.is_published)
+          ? new Date().toISOString()
+          : (editingPost?.published_at || null)
+      };
+
       if (editingPost) {
-        ({ error } = await supabase
-          .from('blog_posts')
-          .update({
-            ...formData,
-            slug: editingPost.slug,
-            published_at: formData.is_published && !editingPost.is_published
-              ? new Date().toISOString()
-              : editingPost.published_at
-          })
-          .eq('id', editingPost.id));
+        await updateAdminBlogPost(editingPost.id, postData);
       } else {
-        ({ error } = await supabase
-          .from('blog_posts')
-          .insert({
-            ...formData,
-            slug: `${slug}-${Date.now().toString(36)}`,
-            published_at: formData.is_published ? new Date().toISOString() : null
-          }));
+        await createAdminBlogPost(postData);
       }
 
-      if (!error) {
-        await fetchPosts();
-        setShowForm(false);
-        resetForm();
-      }
+      await fetchPosts();
+      setShowForm(false);
+      resetForm();
+    } catch (error) {
+      console.error('Error saving blog post:', error);
+      alert('Erreur lors de l\'enregistrement');
     } finally {
       setSaving(false);
     }
@@ -106,13 +103,12 @@ export function AdminBlogPage() {
   const handleDelete = async (id: string) => {
     if (!window.confirm('Supprimer cet article ?')) return;
 
-    const { error } = await supabase
-      .from('blog_posts')
-      .delete()
-      .eq('id', id);
-
-    if (!error) {
+    try {
+      await deleteAdminBlogPost(id);
       setPosts(prev => prev.filter(p => p.id !== id));
+    } catch (error) {
+      console.error('Error deleting blog post:', error);
+      alert('Erreur lors de la suppression');
     }
   };
 

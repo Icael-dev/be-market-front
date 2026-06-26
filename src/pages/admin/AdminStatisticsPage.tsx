@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { supabase } from '../../lib/supabase';
+import { fetchAdminStatistics } from '../../services/admin';
 import { AdminLayout } from '../../components/admin/AdminLayout';
 import { formatPrice } from '../../lib/utils';
 import { DollarSign, ShoppingCart, Users, Package, ArrowUpRight, ArrowDownRight, Download } from 'lucide-react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell } from 'recharts';
-import { format, subDays, eachDayOfInterval } from 'date-fns';
+import { format } from 'date-fns';
 
 const COLORS = ['#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6'];
 
@@ -17,51 +17,26 @@ export function AdminStatisticsPage() {
   useEffect(() => { fetchStats(); }, [days]);
 
   const fetchStats = async () => {
-    const numDays = parseInt(days);
-    const start = subDays(new Date(), numDays);
-    const prevStart = subDays(start, numDays);
-
-    const [curr, prev, prods, custs] = await Promise.all([
-      supabase.from('orders').select('*').gte('created_at', start.toISOString()),
-      supabase.from('orders').select('*').gte('created_at', prevStart.toISOString()).lt('created_at', start.toISOString()),
-      supabase.from('products').select('id', { count: 'exact' }),
-      supabase.from('profiles').select('id').gte('created_at', start.toISOString())
-    ]);
-
-    const currData = curr.data || [];
-    const prevData = prev.data || [];
-
-    const totalRevenue = currData.reduce((s, o) => s + (o.payment_status === 'paid' ? o.total : 0), 0);
-    const prevRevenue = prevData.reduce((s, o) => s + (o.payment_status === 'paid' ? o.total : 0), 0);
-
-    const daysArr = eachDayOfInterval({ start, end: new Date() });
-    const daily = daysArr.map(d => ({
-      date: format(d, 'dd MMM'),
-      revenue: currData.filter(o => new Date(o.created_at).toDateString() === d.toDateString()).reduce((s, o) => s + (o.payment_status === 'paid' ? o.total : 0), 0),
-      orders: currData.filter(o => new Date(o.created_at).toDateString() === d.toDateString()).length
-    }));
-
-    const statusDist: Record<string, number> = {};
-    currData.forEach(o => { statusDist[o.status] = (statusDist[o.status] || 0) + 1; });
-    const statusData = Object.entries(statusDist).map(([name, value]) => ({ name: name.charAt(0).toUpperCase() + name.slice(1), value }));
-
-    const paymentDist: Record<string, number> = {};
-    currData.forEach(o => { if (o.payment_method) paymentDist[o.payment_method] = (paymentDist[o.payment_method] || 0) + 1; });
-    const paymentData = Object.entries(paymentDist).map(([name, value]) => ({ name: name === 'tmoney' ? 'Tmoney' : name === 'flooz' ? 'Flooz' : 'Livraison', value }));
-
-    setStats({
-      totalRevenue,
-      totalOrders: currData.length,
-      totalProducts: prods.count || 0,
-      newCustomers: custs.data?.length || 0,
-      revenueChange: prevRevenue > 0 ? ((totalRevenue - prevRevenue) / prevRevenue) * 100 : 0,
-      ordersChange: prevData.length > 0 ? ((currData.length - prevData.length) / prevData.length) * 100 : 0,
-      avgOrder: currData.length > 0 ? totalRevenue / currData.length : 0,
-      dailyRevenue: daily,
-      statusData,
-      paymentData
-    });
-    setLoading(false);
+    setLoading(true);
+    try {
+      const data = await fetchAdminStatistics(Number(days));
+      setStats({
+        totalRevenue: data.period_revenue,
+        totalOrders: data.period_orders,
+        totalProducts: data.total_products,
+        newCustomers: data.new_customers,
+        revenueChange: data.revenue_change,
+        ordersChange: data.orders_change,
+        avgOrder: data.avg_order,
+        dailyRevenue: data.daily_revenue,
+        statusData: data.status_data,
+        paymentData: data.payment_data
+      });
+    } catch (error) {
+      console.error('Stats fetch error:', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const exportData = () => {

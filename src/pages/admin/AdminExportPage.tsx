@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { supabase } from '../../lib/supabase';
+import { fetchAdminExport } from '../../services/admin';
 import { AdminLayout } from '../../components/admin/AdminLayout';
 import { Download, FileSpreadsheet, Loader2, CheckCircle } from 'lucide-react';
 import { format } from 'date-fns';
@@ -19,23 +19,20 @@ export function AdminExportPage() {
   const handleExport = async (type: string) => {
     setExporting(type); setSuccess(null);
     try {
-      let data: any[] = [];
+      const rows = await fetchAdminExport(type);
+      let data: Record<string, unknown>[] = [];
       switch (type) {
         case 'orders':
-          const { data: orders } = await supabase.from('orders').select('order_number, status, payment_status, total, created_at').order('created_at', { ascending: false });
-          data = orders?.map(o => ({ 'Numero': o.order_number, 'Statut': o.status, 'Paiement': o.payment_status, 'Total': o.total, 'Date': format(new Date(o.created_at), 'dd/MM/yyyy') })) || [];
+          data = rows.map(o => ({ 'Numero': o.order_number, 'Statut': o.status, 'Paiement': o.payment_status, 'Total': o.total, 'Date': format(new Date(String(o.created_at)), 'dd/MM/yyyy') }));
           break;
         case 'customers':
-          const { data: profiles } = await supabase.from('profiles').select('email, full_name, phone, created_at').order('created_at', { ascending: false });
-          data = profiles?.map(p => ({ 'Nom': p.full_name || '', 'Email': p.email || '', 'Telephone': p.phone || '', 'Inscrit': format(new Date(p.created_at), 'dd/MM/yyyy') })) || [];
+          data = rows.map(p => ({ 'Nom': p.full_name || '', 'Email': p.email || '', 'Telephone': p.phone || '', 'Inscrit': format(new Date(String(p.created_at)), 'dd/MM/yyyy') }));
           break;
         case 'products':
-          const { data: products } = await supabase.from('products').select('name, price, stock, is_active').order('name');
-          data = products?.map(p => ({ 'Nom': p.name, 'Prix': p.price, 'Stock': p.stock, 'Actif': p.is_active ? 'Oui' : 'Non' })) || [];
+          data = rows.map(p => ({ 'Nom': p.name, 'Prix': p.price, 'Stock': p.stock, 'Actif': p.is_active ? 'Oui' : 'Non' }));
           break;
         case 'newsletter':
-          const { data: subs } = await supabase.from('newsletter_subscribers').select('email, is_active, subscribed_at').order('subscribed_at', { ascending: false });
-          data = subs?.map(s => ({ 'Email': s.email, 'Actif': s.is_active ? 'Oui' : 'Non', 'Date': format(new Date(s.subscribed_at), 'dd/MM/yyyy') })) || [];
+          data = rows.map(s => ({ 'Email': s.email, 'Actif': s.is_active ? 'Oui' : 'Non', 'Date': s.subscribed_at ? format(new Date(String(s.subscribed_at)), 'dd/MM/yyyy') : '' }));
           break;
       }
       if (data.length > 0) {

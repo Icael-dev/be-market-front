@@ -1,6 +1,12 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { supabase } from '../../lib/supabase';
+import {
+  createAdminFlashSale,
+  deleteAdminFlashSale,
+  fetchAdminFlashSales,
+  fetchAdminProducts,
+  updateAdminFlashSale
+} from '../../services/admin';
 import type { FlashSale, Product } from '../../types';
 import { Plus, Edit2, Trash2, X, Save, Zap, Loader2 } from 'lucide-react';
 import { AdminLayout } from '../../components/admin/AdminLayout';
@@ -28,14 +34,19 @@ export function AdminFlashSalesPage() {
   }, []);
 
   const fetchData = async () => {
-    const [salesRes, productsRes] = await Promise.all([
-      supabase.from('flash_sales').select('*, product:products(name, images)').order('created_at', { ascending: false }),
-      supabase.from('products').select('id, name, price, images')
-    ]);
+    try {
+      const [sales, products] = await Promise.all([
+        fetchAdminFlashSales(),
+        fetchAdminProducts()
+      ]);
 
-    if (salesRes.data) setFlashSales(salesRes.data as FlashSale[]);
-    if (productsRes.data) setProducts(productsRes.data as Product[]);
-    setLoading(false);
+      setFlashSales(sales);
+      setProducts(products);
+    } catch (error) {
+      console.error('Flash sales fetch error:', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const resetForm = () => {
@@ -73,18 +84,18 @@ export function AdminFlashSalesPage() {
         ends_at: new Date(formData.ends_at).toISOString()
       };
 
-      let error;
       if (editingSale) {
-        ({ error } = await supabase.from('flash_sales').update(data).eq('id', editingSale.id));
+        await updateAdminFlashSale(editingSale.id, data);
       } else {
-        ({ error } = await supabase.from('flash_sales').insert(data));
+        await createAdminFlashSale(data);
       }
 
-      if (!error) {
-        await fetchData();
-        setShowForm(false);
-        resetForm();
-      }
+      await fetchData();
+      setShowForm(false);
+      resetForm();
+    } catch (error) {
+      console.error('Flash sale save error:', error);
+      alert('Erreur lors de l\'enregistrement');
     } finally {
       setSaving(false);
     }
@@ -92,8 +103,13 @@ export function AdminFlashSalesPage() {
 
   const handleDelete = async (id: string) => {
     if (!window.confirm('Supprimer ce flash sale ?')) return;
-    const { error } = await supabase.from('flash_sales').delete().eq('id', id);
-    if (!error) setFlashSales(prev => prev.filter(s => s.id !== id));
+    try {
+      await deleteAdminFlashSale(id);
+      setFlashSales(prev => prev.filter(s => s.id !== id));
+    } catch (error) {
+      console.error('Flash sale delete error:', error);
+      alert('Erreur lors de la suppression');
+    }
   };
 
   return (

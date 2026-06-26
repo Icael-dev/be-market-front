@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { supabase } from '../../lib/supabase';
+import { fetchAdminOrders, updateAdminOrder } from '../../services/admin';
 import { formatPrice, getStatusColor, getStatusLabel } from '../../lib/utils';
 import { AdminLayout } from '../../components/admin/AdminLayout';
 import type { Order, OrderStatus } from '../../types';
@@ -27,44 +27,24 @@ export function AdminOrdersPage() {
 
   const fetchOrders = async () => {
     try {
-      const { data: ordersData } = await supabase
-        .from('orders')
-        .select('*')
-        .order('created_at', { ascending: false });
-
-      if (ordersData && ordersData.length > 0) {
-        const orderIds = ordersData.map((o: any) => o.id);
-        const { data: itemsData } = await supabase
-          .from('order_items')
-          .select('*')
-          .in('order_id', orderIds);
-
-        const merged = ordersData.map((order: any) => ({
-          ...order,
-          items: (itemsData || []).filter((i: any) => i.order_id === order.id)
-        }));
-        setOrders(merged as Order[]);
-      } else {
-        setOrders([]);
-      }
+      setOrders(await fetchAdminOrders());
     } catch (err) {
       console.error('Orders fetch error:', err);
     }
   };
 
   const updateOrderStatus = async (orderId: string, status: OrderStatus) => {
-    const { error } = await supabase
-      .from('orders')
-      .update({ status })
-      .eq('id', orderId);
-
-    if (!error) {
+    try {
+      const updatedOrder = await updateAdminOrder(orderId, { status });
       setOrders(prev => prev.map(o =>
-        o.id === orderId ? { ...o, status } : o
+        o.id === orderId ? updatedOrder : o
       ));
       if (selectedOrder?.id === orderId) {
-        setSelectedOrder(prev => prev ? { ...prev, status } : null);
+        setSelectedOrder(updatedOrder);
       }
+    } catch (error) {
+      console.error('Order status update error:', error);
+      alert('Erreur lors de la mise a jour du statut');
     }
   };
 

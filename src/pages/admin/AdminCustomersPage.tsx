@@ -1,18 +1,12 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { supabase } from '../../lib/supabase';
+import { fetchAdminCustomers, type AdminCustomer } from '../../services/admin';
 import { formatPrice } from '../../lib/utils';
 import { AdminLayout } from '../../components/admin/AdminLayout';
-import type { Profile } from '../../types';
 import { Search, Users, Mail, Phone, ShoppingBag } from 'lucide-react';
 
-interface CustomerWithStats extends Profile {
-  orders_count?: number;
-  total_spent?: number;
-}
-
 export function AdminCustomersPage() {
-  const [customers, setCustomers] = useState<CustomerWithStats[]>([]);
+  const [customers, setCustomers] = useState<AdminCustomer[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
@@ -21,29 +15,7 @@ export function AdminCustomersPage() {
 
   const fetchCustomers = async () => {
     try {
-      const { data: profiles } = await supabase
-        .from('profiles')
-        .select('*')
-        .order('created_at', { ascending: false });
-
-      if (profiles) {
-        const customersWithStats = await Promise.all(
-          profiles.map(async (profile) => {
-            const { data: orders } = await supabase
-              .from('orders')
-              .select('total')
-              .eq('user_id', profile.user_id);
-
-            return {
-              ...profile,
-              orders_count: orders?.length || 0,
-              total_spent: orders?.reduce((acc, o) => acc + o.total, 0) || 0
-            } as CustomerWithStats;
-          })
-        );
-
-        setCustomers(customersWithStats);
-      }
+      setCustomers(await fetchAdminCustomers());
     } catch (error) {
       console.error('Error fetching customers:', error);
     }

@@ -1,6 +1,12 @@
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { supabase } from '../../lib/supabase';
+import {
+  fetchAdminProducts,
+  fetchAdminCategories,
+  createAdminProduct,
+  updateAdminProduct,
+  deleteAdminProduct
+} from '../../services/admin';
 import { formatPrice } from '../../lib/utils';
 import { AdminLayout } from '../../components/admin/AdminLayout';
 import type { Product, Category } from '../../types';
@@ -45,23 +51,19 @@ export function AdminProductsPage() {
 
   const fetchProducts = async () => {
     try {
-      const { data } = await supabase
-        .from('products')
-        .select('*')
-        .order('created_at', { ascending: false });
-
-      if (data) {
-        setProducts(data as Product[]);
-      }
+      const data = await fetchAdminProducts();
+      setProducts(data);
     } catch (err) {
       console.error('Products fetch error:', err);
     }
   };
 
   const fetchCategories = async () => {
-    const { data } = await supabase.from('categories').select('*');
-    if (data) {
-      setCategories(data as Category[]);
+    try {
+      const data = await fetchAdminCategories();
+      setCategories(data);
+    } catch (err) {
+      console.error('Categories fetch error:', err);
     }
   };
 
@@ -128,28 +130,18 @@ export function AdminProductsPage() {
     };
 
     try {
-      let error;
       if (editingProduct) {
-        ({ error } = await supabase
-          .from('products')
-          .update(productData)
-          .eq('id', editingProduct.id));
+        await updateAdminProduct(editingProduct.id, productData);
       } else {
-        ({ error } = await supabase
-          .from('products')
-          .insert(productData));
+        await createAdminProduct(productData);
       }
 
-      if (!error) {
-        await fetchProducts();
-        setShowForm(false);
-        resetForm();
-      } else {
-        console.error('Error saving product:', error);
-        alert('Erreur lors de l\'enregistrement');
-      }
+      await fetchProducts();
+      setShowForm(false);
+      resetForm();
     } catch (error) {
       console.error('Error:', error);
+      alert('Erreur lors de l\'enregistrement');
     } finally {
       setSaving(false);
     }
@@ -158,13 +150,12 @@ export function AdminProductsPage() {
   const handleDelete = async (productId: string) => {
     if (!window.confirm('Supprimer ce produit ?')) return;
 
-    const { error } = await supabase
-      .from('products')
-      .delete()
-      .eq('id', productId);
-
-    if (!error) {
+    try {
+      await deleteAdminProduct(productId);
       setProducts(prev => prev.filter(p => p.id !== productId));
+    } catch (error) {
+      console.error('Error deleting product:', error);
+      alert('Erreur lors de la suppression');
     }
   };
 

@@ -1,6 +1,11 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { supabase } from '../../lib/supabase';
+import {
+  fetchAdminCoupons,
+  createAdminCoupon,
+  updateAdminCoupon,
+  deleteAdminCoupon
+} from '../../services/admin';
 import type { Coupon } from '../../types';
 import { Plus, Edit2, Trash2, X, Save, Tag, Percent, DollarSign, Loader2 } from 'lucide-react';
 import { AdminLayout } from '../../components/admin/AdminLayout';
@@ -17,7 +22,16 @@ export function AdminCouponsPage() {
 
   useEffect(() => { fetchCoupons(); }, []);
 
-  const fetchCoupons = async () => { const { data } = await supabase.from('coupons').select('*').order('created_at', { ascending: false }); if (data) setCoupons(data as Coupon[]); setLoading(false); };
+  const fetchCoupons = async () => {
+    try {
+      const data = await fetchAdminCoupons();
+      setCoupons(data);
+    } catch (error) {
+      console.error('Error fetching coupons:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const reset = () => { setForm({ code: '', discount_type: 'percentage', discount_value: 10, min_order_amount: 0, max_uses: null, expires_at: '', is_active: true }); setEditing(null); };
 
@@ -27,14 +41,33 @@ export function AdminCouponsPage() {
     if (!form.code) return;
     setSaving(true);
     const data = { ...form, code: form.code.toUpperCase(), expires_at: form.expires_at ? new Date(form.expires_at).toISOString() : null };
-    const { error } = editing
-      ? await supabase.from('coupons').update(data).eq('id', editing.id)
-      : await supabase.from('coupons').insert(data);
-    if (!error) { await fetchCoupons(); setShowForm(false); reset(); }
-    setSaving(false);
+    try {
+      if (editing) {
+        await updateAdminCoupon(editing.id, data);
+      } else {
+        await createAdminCoupon(data);
+      }
+      await fetchCoupons();
+      setShowForm(false);
+      reset();
+    } catch (error) {
+      console.error('Error saving coupon:', error);
+      alert('Erreur lors de l\'enregistrement');
+    } finally {
+      setSaving(false);
+    }
   };
 
-  const handleDelete = async (id: string) => { if (!confirm('Supprimer ?')) return; const { error } = await supabase.from('coupons').delete().eq('id', id); if (!error) setCoupons(prev => prev.filter(c => c.id !== id)); };
+  const handleDelete = async (id: string) => {
+    if (!confirm('Supprimer ?')) return;
+    try {
+      await deleteAdminCoupon(id);
+      setCoupons(prev => prev.filter(c => c.id !== id));
+    } catch (error) {
+      console.error('Error deleting coupon:', error);
+      alert('Erreur lors de la suppression');
+    }
+  };
 
   return (
     <AdminLayout>

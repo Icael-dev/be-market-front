@@ -1,6 +1,11 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { supabase } from '../../lib/supabase';
+import {
+  fetchAdminBanners,
+  createAdminBanner,
+  updateAdminBanner,
+  deleteAdminBanner
+} from '../../services/admin';
 import type { Banner } from '../../types';
 import { Plus, Edit2, Trash2, X, Save, Image as ImageIcon } from 'lucide-react';
 import { AdminLayout } from '../../components/admin/AdminLayout';
@@ -28,15 +33,14 @@ export function AdminBannersPage() {
   }, []);
 
   const fetchBanners = async () => {
-    const { data } = await supabase
-      .from('banners')
-      .select('*')
-      .order('sort_order');
-
-    if (data) {
-      setBanners(data as Banner[]);
+    try {
+      const data = await fetchAdminBanners();
+      setBanners(data);
+    } catch (error) {
+      console.error('Error fetching banners:', error);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   const resetForm = () => {
@@ -70,23 +74,18 @@ export function AdminBannersPage() {
     setSaving(true);
 
     try {
-      let error;
       if (editingBanner) {
-        ({ error } = await supabase
-          .from('banners')
-          .update(formData)
-          .eq('id', editingBanner.id));
+        await updateAdminBanner(editingBanner.id, formData);
       } else {
-        ({ error } = await supabase
-          .from('banners')
-          .insert(formData));
+        await createAdminBanner(formData);
       }
 
-      if (!error) {
-        await fetchBanners();
-        setShowForm(false);
-        resetForm();
-      }
+      await fetchBanners();
+      setShowForm(false);
+      resetForm();
+    } catch (error) {
+      console.error('Error saving banner:', error);
+      alert('Erreur lors de l\'enregistrement');
     } finally {
       setSaving(false);
     }
@@ -95,13 +94,12 @@ export function AdminBannersPage() {
   const handleDelete = async (id: string) => {
     if (!window.confirm('Supprimer cette banniere ?')) return;
 
-    const { error } = await supabase
-      .from('banners')
-      .delete()
-      .eq('id', id);
-
-    if (!error) {
+    try {
+      await deleteAdminBanner(id);
       setBanners(prev => prev.filter(b => b.id !== id));
+    } catch (error) {
+      console.error('Error deleting banner:', error);
+      alert('Erreur lors de la suppression');
     }
   };
 
