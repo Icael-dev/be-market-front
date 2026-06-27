@@ -32,6 +32,7 @@ class ErrorBoundary extends Component<{ children: ReactNode }, { error: Error | 
 
 import { HomePage } from './pages/HomePage';
 import { ProductsPage } from './pages/ProductsPage';
+import { CategoriesPage } from './pages/CategoriesPage';
 import { ProductDetailPage } from './pages/ProductDetailPage';
 import { CartPage } from './pages/CartPage';
 import { CheckoutPage } from './pages/CheckoutPage';
@@ -49,6 +50,7 @@ import { BlogPage, BlogPostPage } from './pages/BlogPage';
 import { LoyaltyPage } from './pages/LoyaltyPage';
 
 import { AdminDashboardPage } from './pages/admin/AdminDashboardPage';
+import { AdminCategoriesPage } from './pages/admin/AdminCategoriesPage';
 import { AdminProductsPage } from './pages/admin/AdminProductsPage';
 import { AdminOrdersPage } from './pages/admin/AdminOrdersPage';
 import { AdminCustomersPage } from './pages/admin/AdminCustomersPage';
@@ -105,6 +107,7 @@ function AppRoutes() {
       <Route element={<Layout><Outlet /></Layout>}>
         <Route path="/" element={<HomePage />} />
         <Route path="/products" element={<ProductsPage />} />
+        <Route path="/categories" element={<CategoriesPage />} />
         <Route path="/product/:slug" element={<ProductDetailPage />} />
         <Route path="/cart" element={<CartPage />} />
         <Route path="/compare" element={<ComparePage />} />
@@ -163,6 +166,11 @@ function AppRoutes() {
         <Route path="/admin" element={
           <AdminRoute>
             <AdminDashboardPage />
+          </AdminRoute>
+        } />
+        <Route path="/admin/categories" element={
+          <AdminRoute>
+            <AdminCategoriesPage />
           </AdminRoute>
         } />
         <Route path="/admin/products" element={

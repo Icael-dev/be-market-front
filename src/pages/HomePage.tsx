@@ -313,26 +313,26 @@ export function HomePage() {
           <div className="grid md:grid-cols-3 gap-6">
             {[
               {
-                name: 'Kossi Mensah',
+                full_name: 'Kossi Mensah',
                 role: 'Entrepreneur',
                 comment: 'Service exceptionnel! J\'ai achete un MacBook et la livraison a ete rapide. Le produit etait exactement comme decrit.',
                 rating: 5
               },
               {
-                name: 'Ami Togo',
+                full_name: 'Ami Togo',
                 role: 'Designer',
                 comment: 'J\'adore faire mes achats ici. Les prix sont competitifs et le support client est tres reactif.',
                 rating: 5
               },
               {
-                name: 'Yao Kudjo',
+                full_name: 'Yao Kudjo',
                 role: 'Developpeur',
                 comment: 'Excellente qualite de produits. Mon AirPods Pro fonctionne parfaitement depuis 6 mois.',
                 rating: 5
               }
             ].map((review, index) => (
               <motion.div
-                key={review.name}
+                key={review.full_name}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
@@ -349,10 +349,10 @@ export function HomePage() {
                 <p className="text-gray-600 mb-4">"{review.comment}"</p>
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-600 to-cyan-500 flex items-center justify-center text-white font-medium">
-                    {review.name[0]}
+                    {review.full_name[0]}
                   </div>
                   <div>
-                    <p className="font-medium text-gray-900">{review.name}</p>
+                    <p className="font-medium text-gray-900">{review.full_name}</p>
                     <p className="text-sm text-gray-500">{review.role}</p>
                   </div>
                 </div>

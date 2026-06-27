@@ -36,7 +36,7 @@ async function parseResponse<T>(response: Response): Promise<T> {
   const body = isJson ? await response.json().catch(() => null) : null;
 
   if (!response.ok) {
-    const error = body?.error || body?.message || response.statusText;
+    const error = body?.error || body?.errors || body?.message || response.statusText;
     throw { status: response.status, error, body };
   }
 

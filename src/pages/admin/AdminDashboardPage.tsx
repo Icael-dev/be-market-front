@@ -50,16 +50,16 @@ export function AdminDashboardPage() {
         {
           label: 'Chiffre d\'affaires',
           value: formatPrice(totalRevenue),
-          change: '+12%',
-          changeType: 'up',
+          change: `${stats.revenue_change >= 0 ? '+' : ''}${stats.revenue_change}%`,
+          changeType: stats.revenue_change >= 0 ? 'up' : 'down',
           icon: DollarSign,
           color: 'blue'
         },
         {
           label: 'Commandes totales',
           value: totalOrders,
-          change: '+8%',
-          changeType: 'up',
+          change: `${stats.orders_change >= 0 ? '+' : ''}${stats.orders_change}%`,
+          changeType: stats.orders_change >= 0 ? 'up' : 'down',
           icon: Package,
           color: 'green'
         },
@@ -72,8 +72,8 @@ export function AdminDashboardPage() {
         {
           label: 'Clients',
           value: totalCustomers,
-          change: '+15%',
-          changeType: 'up',
+          change: `${stats.revenue_change >= 0 ? '+' : ''}${stats.revenue_change}%`,
+          changeType: stats.revenue_change >= 0 ? 'up' : 'down',
           icon: Users,
           color: 'cyan'
         }

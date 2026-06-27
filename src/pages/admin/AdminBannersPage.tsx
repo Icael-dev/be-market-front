@@ -24,6 +24,7 @@ export function AdminBannersPage() {
     image_url: '',
     link_url: '',
     button_text: '',
+    position: '',
     is_active: true,
     sort_order: 0
   });
@@ -50,6 +51,7 @@ export function AdminBannersPage() {
       image_url: '',
       link_url: '',
       button_text: '',
+      position: '',
       is_active: true,
       sort_order: 0
     });
@@ -64,6 +66,7 @@ export function AdminBannersPage() {
       image_url: banner.image_url,
       link_url: banner.link_url || '',
       button_text: banner.button_text || '',
+      position: banner.position || '',
       is_active: banner.is_active,
       sort_order: banner.sort_order
     });
@@ -281,6 +284,19 @@ export function AdminBannersPage() {
                     value={formData.button_text}
                     onChange={e => setFormData({ ...formData, button_text: e.target.value })}
                     className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Position
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.position}
+                    onChange={e => setFormData({ ...formData, position: e.target.value })}
+                    className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+                    placeholder="ex: hero, sidebar"
                   />
                 </div>
 

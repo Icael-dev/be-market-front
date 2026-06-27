@@ -37,6 +37,7 @@ export function Header() {
 
   const navLinks = [
     { path: '/', label: 'Accueil' },
+    { path: '/categories', label: 'Categories' },
     { path: '/products', label: 'Produits' },
     { path: '/products?category=telephones', label: 'Telephones' },
     { path: '/products?category=ordinateurs', label: 'PC' },

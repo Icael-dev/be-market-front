@@ -295,6 +295,12 @@ export function AdminOrdersPage() {
                     <span>Sous-total</span>
                     <span>{formatPrice(selectedOrder.subtotal)}</span>
                   </div>
+                  {selectedOrder.discount > 0 && (
+                    <div className="flex justify-between text-green-600">
+                      <span>Remise</span>
+                      <span>-{formatPrice(selectedOrder.discount)}</span>
+                    </div>
+                  )}
                   <div className="flex justify-between text-gray-600">
                     <span>Livraison</span>
                     <span>{selectedOrder.shipping_fee === 0 ? 'Gratuite' : formatPrice(selectedOrder.shipping_fee)}</span>

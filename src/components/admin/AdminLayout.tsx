@@ -16,7 +16,8 @@ import {
   BarChart3,
   Tag,
   Download,
-  Zap
+  Zap,
+  Grid3X3
 } from 'lucide-react';
 import { cn } from '../../lib/utils';
 
@@ -27,6 +28,7 @@ interface AdminLayoutProps {
 const navItems = [
   { path: '/admin', label: 'Tableau de bord', icon: LayoutDashboard },
   { path: '/admin/statistics', label: 'Statistiques', icon: BarChart3 },
+  { path: '/admin/categories', label: 'Categories', icon: Grid3X3 },
   { path: '/admin/products', label: 'Produits', icon: ShoppingBag },
   { path: '/admin/orders', label: 'Commandes', icon: Package },
   { path: '/admin/customers', label: 'Clients', icon: Users },
