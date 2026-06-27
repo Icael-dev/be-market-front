@@ -1,6 +1,9 @@
 import { ReactNode, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { useCart } from '../../context/CartContext';
+import { useWishlist } from '../../context/WishlistContext';
+import { useTheme } from '../../context/ThemeContext';
 import {
   LayoutDashboard,
   Package,
@@ -18,7 +21,11 @@ import {
   Download,
   Zap,
   Grid3X3,
-  Home
+  Home,
+  Heart,
+  ShoppingCart,
+  Sun,
+  Moon
 } from 'lucide-react';
 import { cn } from '../../lib/utils';
 
@@ -52,6 +59,9 @@ const sections = [...new Set(navItems.map(item => item.section).filter(Boolean))
 
 export function AdminLayout({ children }: AdminLayoutProps) {
   const { isAdmin, signOut, profile } = useAuth();
+  const { count } = useCart();
+  const { items: wishlistItems } = useWishlist();
+  const { theme, toggleTheme } = useTheme();
   const location = useLocation();
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -72,6 +82,37 @@ export function AdminLayout({ children }: AdminLayoutProps) {
         </button>
         <span className="font-bold text-gray-900">Admin</span>
         <div className="flex items-center gap-1">
+          <button
+            onClick={toggleTheme}
+            className="p-2 text-gray-600 hover:text-blue-600 hover:bg-gray-100 rounded-lg transition-colors"
+            title={theme === 'light' ? 'Mode sombre' : 'Mode clair'}
+          >
+            {theme === 'light' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+          </button>
+          <Link
+            to="/wishlist"
+            className="relative p-2 text-gray-600 hover:text-red-500 hover:bg-gray-100 rounded-lg transition-colors"
+            title="Favoris"
+          >
+            <Heart className="w-5 h-5" />
+            {wishlistItems.length > 0 && (
+              <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center">
+                {wishlistItems.length}
+              </span>
+            )}
+          </Link>
+          <Link
+            to="/cart"
+            className="relative p-2 text-gray-600 hover:text-blue-600 hover:bg-gray-100 rounded-lg transition-colors"
+            title="Panier"
+          >
+            <ShoppingCart className="w-5 h-5" />
+            {count > 0 && (
+              <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-blue-600 text-white text-[10px] font-bold rounded-full flex items-center justify-center">
+                {count}
+              </span>
+            )}
+          </Link>
           <Link
             to="/"
             className="p-2 text-gray-600 hover:text-blue-600 hover:bg-gray-100 rounded-lg transition-colors"

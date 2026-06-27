@@ -15,8 +15,7 @@ import {
   Heart,
   Sun,
   Moon,
-  Gift,
-  Home
+  Gift
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useCart } from '../../context/CartContext';
@@ -54,7 +53,7 @@ export function Header() {
     <>
       <header className={cn(
         "sticky top-0 z-50 bg-white/90 dark:bg-gray-900/90 backdrop-blur-lg border-b border-gray-200/80 dark:border-gray-700/80 shadow-sm transition-colors",
-        location.pathname.startsWith('/admin') && "lg:ml-72"
+        location.pathname.startsWith('/admin') && "lg:ml-72 hidden lg:block"
       )}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-20">
@@ -112,32 +111,6 @@ export function Header() {
             </div>
 
             <div className="flex items-center gap-1">
-              {isAdmin && location.pathname.startsWith('/admin') && (
-                <>
-                  <Link
-                    to="/"
-                    className={cn(
-                      'lg:hidden relative p-2.5 rounded-xl transition-all duration-200',
-                      'text-gray-600 dark:text-gray-300 hover:text-blue-600',
-                      'hover:bg-gray-100 dark:hover:bg-gray-800'
-                    )}
-                    title="Voir le site"
-                  >
-                    <Home className="w-5 h-5" />
-                  </Link>
-                  <button
-                    onClick={() => signOut()}
-                    className={cn(
-                      'lg:hidden relative p-2.5 rounded-xl transition-all duration-200',
-                      'text-gray-600 dark:text-gray-300 hover:text-red-500',
-                      'hover:bg-gray-100 dark:hover:bg-gray-800'
-                    )}
-                    title="Deconnexion"
-                  >
-                    <LogOut className="w-5 h-5" />
-                  </button>
-                </>
-              )}
               <button
                 onClick={toggleTheme}
                 className={cn(
