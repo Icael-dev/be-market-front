@@ -1,24 +1,31 @@
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
+import { cn } from '../../lib/utils';
 import { Mail, Phone, MapPin, Facebook, Instagram, Twitter } from 'lucide-react';
 import { NewsletterSignup } from '../../pages/NewsletterPage';
 
 export function Footer() {
+  const location = useLocation();
+  const isAdmin = location.pathname.startsWith('/admin');
+
   return (
-    <footer className="bg-gray-900 text-gray-300 dark:bg-gray-950 dark:text-gray-400">
+    <footer className={cn(
+      "bg-gray-900 text-gray-300 dark:bg-gray-950 dark:text-gray-400",
+      isAdmin && "lg:ml-72"
+    )}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
-          <div className="lg:col-span-2">
-            <Link to="/" className="flex items-center gap-2 mb-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-8 lg:gap-6">
+          <div className="sm:col-span-2 lg:col-span-2 text-center sm:text-left">
+            <Link to="/" className="inline-flex items-center gap-2 mb-4">
               <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-600 to-cyan-500 flex items-center justify-center">
                 <span className="text-white font-bold text-lg">E</span>
               </div>
               <span className="font-bold text-xl text-white">Electronica</span>
             </Link>
-            <p className="text-sm text-gray-400 mb-4">
+            <p className="text-sm text-gray-400 mb-4 max-w-md mx-auto sm:mx-0">
               Votre boutique de confiance pour tous vos accessoires electroniques.
               Qualite, prix competitifs et service irreprochable.
             </p>
-            <div className="flex items-center gap-4 mb-6">
+            <div className="flex items-center justify-center sm:justify-start gap-4 mb-6">
               <a href="#" className="text-gray-400 hover:text-white transition-colors">
                 <Facebook className="w-5 h-5" />
               </a>
@@ -30,14 +37,14 @@ export function Footer() {
               </a>
             </div>
 
-            <div className="bg-gray-800 dark:bg-gray-800/50 rounded-xl p-4">
+            <div className="bg-gray-800 dark:bg-gray-800/50 rounded-xl p-4 max-w-sm mx-auto sm:mx-0">
               <h4 className="font-semibold text-white mb-3">Newsletter</h4>
               <p className="text-sm text-gray-400 mb-3">Recevez nos offres exclusives</p>
               <NewsletterSignup />
             </div>
           </div>
 
-          <div>
+          <div className="text-center">
             <h3 className="font-semibold text-white mb-4">Categories</h3>
             <ul className="space-y-2">
               <li><Link to="/products?category=telephones" className="text-sm hover:text-white transition-colors">Telephones</Link></li>
@@ -49,7 +56,7 @@ export function Footer() {
             </ul>
           </div>
 
-          <div>
+          <div className="text-center">
             <h3 className="font-semibold text-white mb-4">Service Client</h3>
             <ul className="space-y-2">
               <li><Link to="/orders" className="text-sm hover:text-white transition-colors">Suivi de commande</Link></li>
@@ -67,18 +74,18 @@ export function Footer() {
             </ul>
           </div>
 
-          <div>
+          <div className="text-center">
             <h3 className="font-semibold text-white mb-4">Contact</h3>
             <ul className="space-y-3">
-              <li className="flex items-start gap-3">
-                <MapPin className="w-5 h-5 text-blue-400 flex-shrink-0 mt-0.5" />
+              <li className="flex items-center justify-center gap-3">
+                <MapPin className="w-5 h-5 text-blue-400 flex-shrink-0" />
                 <span className="text-sm">Lome, Togo</span>
               </li>
-              <li className="flex items-center gap-3">
+              <li className="flex items-center justify-center gap-3">
                 <Phone className="w-5 h-5 text-blue-400 flex-shrink-0" />
                 <span className="text-sm">+228 90 00 00 00</span>
               </li>
-              <li className="flex items-center gap-3">
+              <li className="flex items-center justify-center gap-3">
                 <Mail className="w-5 h-5 text-blue-400 flex-shrink-0" />
                 <span className="text-sm">contact@electronica.tg</span>
               </li>
@@ -86,7 +93,7 @@ export function Footer() {
 
             <div className="mt-6">
               <h4 className="font-semibold text-white mb-3">Paiement securise</h4>
-              <div className="flex flex-wrap items-center gap-2">
+              <div className="flex flex-wrap items-center justify-center gap-2">
                 <div className="px-3 py-1.5 bg-yellow-500 text-yellow-900 rounded text-xs font-bold">TMoney</div>
                 <div className="px-3 py-1.5 bg-blue-600 text-white rounded text-xs font-bold">Flooz</div>
                 <div className="px-3 py-1.5 bg-green-600 text-white rounded text-xs font-bold">Livraison</div>

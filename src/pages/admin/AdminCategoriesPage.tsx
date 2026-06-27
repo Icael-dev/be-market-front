@@ -252,14 +252,14 @@ export function AdminCategoriesPage() {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Slug *
+                    Slug (auto-genere)
                   </label>
                   <input
                     type="text"
                     value={formData.slug}
                     onChange={e => setFormData({ ...formData, slug: e.target.value })}
-                    className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 font-mono text-sm"
-                    placeholder="ex: telephones"
+                    disabled
+                    className="w-full px-4 py-3 border border-gray-200 rounded-xl bg-gray-50 text-gray-500 cursor-not-allowed font-mono text-sm"
                   />
                   <p className="text-xs text-gray-400 mt-1">Genere automatiquement depuis le nom</p>
                 </div>
