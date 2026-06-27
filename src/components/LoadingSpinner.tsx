@@ -12,7 +12,7 @@ export function LoadingSpinner({ size = 'md' }: { size?: 'sm' | 'md' | 'lg' }) {
       <motion.div
         animate={{ rotate: 360 }}
         transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
-        className={`${sizes[size]} border-2 border-gray-200 border-t-blue-600 rounded-full`}
+        className={`${sizes[size]} border-2 dark:border-gray-700 border-t-blue-600 rounded-full`}
       />
     </div>
   );
@@ -23,7 +23,7 @@ export function PageLoading() {
     <div className="min-h-[60vh] flex items-center justify-center">
       <div className="text-center">
         <LoadingSpinner size="lg" />
-        <p className="mt-4 text-gray-500">Chargement...</p>
+        <p className="mt-4 dark:text-gray-400">Chargement...</p>
       </div>
     </div>
   );
@@ -31,19 +31,19 @@ export function PageLoading() {
 
 export function ProductCardSkeleton() {
   return (
-    <div className="bg-white rounded-2xl overflow-hidden border border-gray-100 animate-pulse">
-      <div className="aspect-square bg-gray-200" />
+    <div className="dark:bg-gray-800 rounded-2xl overflow-hidden border border-gray-100 animate-pulse">
+      <div className="aspect-square dark:bg-gray-700" />
       <div className="p-4 space-y-3">
-        <div className="h-3 w-16 bg-gray-200 rounded" />
-        <div className="h-5 w-full bg-gray-200 rounded" />
+        <div className="h-3 w-16 dark:bg-gray-700 rounded" />
+        <div className="h-5 w-full dark:bg-gray-700 rounded" />
         <div className="flex gap-1">
           {[...Array(5)].map((_, i) => (
-            <div key={i} className="w-3.5 h-3.5 bg-gray-200 rounded" />
+            <div key={i} className="w-3.5 h-3.5 dark:bg-gray-700 rounded" />
           ))}
         </div>
         <div className="flex justify-between items-center">
-          <div className="h-6 w-24 bg-gray-200 rounded" />
-          <div className="h-4 w-12 bg-gray-200 rounded" />
+          <div className="h-6 w-24 dark:bg-gray-700 rounded" />
+          <div className="h-4 w-12 dark:bg-gray-700 rounded" />
         </div>
       </div>
     </div>

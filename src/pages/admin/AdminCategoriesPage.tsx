@@ -119,8 +119,8 @@ export function AdminCategoriesPage() {
           className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8"
         >
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Categories</h1>
-            <p className="text-gray-500 mt-1">{categories.length} categorie{categories.length > 1 ? 's' : ''}</p>
+            <h1 className="text-2xl font-bold dark:text-white">Categories</h1>
+            <p className="dark:text-gray-500 mt-1">{categories.length} categorie{categories.length > 1 ? 's' : ''}</p>
           </div>
 
           <button
@@ -132,14 +132,14 @@ export function AdminCategoriesPage() {
           </button>
         </motion.div>
 
-        <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
+        <div className="dark:bg-gray-800 rounded-2xl border dark:border-gray-700 overflow-hidden">
           <table className="w-full">
-            <thead className="bg-gray-50 border-b border-gray-200">
+            <thead className="bg-gray-50 border-b dark:border-gray-700">
               <tr>
-                <th className="text-left px-6 py-4 text-sm font-medium text-gray-500">Categorie</th>
-                <th className="text-left px-6 py-4 text-sm font-medium text-gray-500">Slug</th>
-                <th className="text-left px-6 py-4 text-sm font-medium text-gray-500">Statut</th>
-                <th className="text-right px-6 py-4 text-sm font-medium text-gray-500">Actions</th>
+                <th className="text-left px-6 py-4 text-sm font-medium dark:text-gray-500">Categorie</th>
+                <th className="text-left px-6 py-4 text-sm font-medium dark:text-gray-500">Slug</th>
+                <th className="text-left px-6 py-4 text-sm font-medium dark:text-gray-500">Statut</th>
+                <th className="text-right px-6 py-4 text-sm font-medium dark:text-gray-500">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
@@ -149,31 +149,31 @@ export function AdminCategoriesPage() {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.02 }}
-                  className="hover:bg-gray-50 transition-colors"
+                  className="dark:hover:bg-gray-700 transition-colors"
                 >
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center">
+                      <div className="w-10 h-10 rounded-lg dark:bg-gray-700 flex items-center justify-center">
                         {category.image_url ? (
                           <img src={category.image_url} alt={category.name} className="w-10 h-10 rounded-lg object-cover" />
                         ) : (
-                          <Grid3X3 className="w-5 h-5 text-gray-400" />
+                          <Grid3X3 className="w-5 h-5 dark:text-gray-500" />
                         )}
                       </div>
                       <div>
-                        <p className="font-medium text-gray-900">{category.name}</p>
+                        <p className="font-medium dark:text-white">{category.name}</p>
                         {category.description && (
-                          <p className="text-xs text-gray-500 truncate max-w-xs">{category.description}</p>
+                          <p className="text-xs dark:text-gray-500 truncate max-w-xs">{category.description}</p>
                         )}
                       </div>
                     </div>
                   </td>
-                  <td className="px-6 py-4 text-sm text-gray-600 font-mono">
+                  <td className="px-6 py-4 text-sm dark:text-gray-500 font-mono">
                     {category.slug}
                   </td>
                   <td className="px-6 py-4">
                     <span className={`inline-flex px-2 py-1 rounded-full text-xs font-medium ${
-                      category.is_active ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600'
+                      category.is_active ? 'bg-green-100 text-green-700' : 'dark:bg-gray-700 dark:text-gray-500'
                     }`}>
                       {category.is_active ? 'Active' : 'Inactive'}
                     </span>
@@ -182,9 +182,9 @@ export function AdminCategoriesPage() {
                     <div className="flex items-center justify-end gap-2">
                       <button
                         onClick={() => handleEdit(category)}
-                        className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                        className="p-2 hover:dark:bg-gray-700 rounded-lg transition-colors"
                       >
-                        <Edit2 className="w-4 h-4 text-gray-600" />
+                        <Edit2 className="w-4 h-4 dark:text-gray-500" />
                       </button>
                       <button
                         onClick={() => handleDelete(category.id)}
@@ -202,7 +202,7 @@ export function AdminCategoriesPage() {
           {categories.length === 0 && !loading && (
             <div className="text-center py-12">
               <Grid3X3 className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-              <p className="text-gray-500">Aucune categorie</p>
+              <p className="dark:text-gray-500">Aucune categorie</p>
             </div>
           )}
         </div>
@@ -222,15 +222,15 @@ export function AdminCategoriesPage() {
               initial={{ opacity: 0, x: '100%' }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: '100%' }}
-              className="fixed right-0 top-0 bottom-0 w-full max-w-xl bg-white z-50 overflow-y-auto"
+              className="fixed right-0 top-0 bottom-0 w-full max-w-xl dark:bg-gray-800 z-50 overflow-y-auto"
             >
-              <div className="p-6 border-b border-gray-200 flex items-center justify-between sticky top-0 bg-white">
-                <h2 className="text-xl font-bold text-gray-900">
+              <div className="p-6 border-b dark:border-gray-700 flex items-center justify-between sticky top-0 dark:bg-gray-800">
+                <h2 className="text-xl font-bold dark:text-white">
                   {editingCategory ? 'Modifier la categorie' : 'Nouvelle categorie'}
                 </h2>
                 <button
                   onClick={() => setShowForm(false)}
-                  className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                  className="p-2 hover:dark:bg-gray-700 rounded-lg transition-colors"
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -238,20 +238,20 @@ export function AdminCategoriesPage() {
 
               <div className="p-6 space-y-6">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium dark:text-gray-300 mb-2">
                     Nom *
                   </label>
                   <input
                     type="text"
                     value={formData.name}
                     onChange={e => handleNameChange(e.target.value)}
-                    className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+                    className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
                     placeholder="Ex: Telephones"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium dark:text-gray-300 mb-2">
                     Slug (auto-genere)
                   </label>
                   <input
@@ -259,20 +259,20 @@ export function AdminCategoriesPage() {
                     value={formData.slug}
                     onChange={e => setFormData({ ...formData, slug: e.target.value })}
                     disabled
-                    className="w-full px-4 py-3 border border-gray-200 rounded-xl bg-gray-50 text-gray-500 cursor-not-allowed font-mono text-sm"
+                    className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl bg-gray-50 dark:text-gray-500 cursor-not-allowed font-mono text-sm"
                   />
-                  <p className="text-xs text-gray-400 mt-1">Genere automatiquement depuis le nom</p>
+                  <p className="text-xs dark:text-gray-500 mt-1">Genere automatiquement depuis le nom</p>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium dark:text-gray-300 mb-2">
                     Description
                   </label>
                   <textarea
                     value={formData.description}
                     onChange={e => setFormData({ ...formData, description: e.target.value })}
                     rows={3}
-                    className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+                    className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
                     placeholder="Description de la categorie..."
                   />
                 </div>
@@ -282,12 +282,12 @@ export function AdminCategoriesPage() {
                     type="checkbox"
                     checked={formData.is_active}
                     onChange={e => setFormData({ ...formData, is_active: e.target.checked })}
-                    className="w-4 h-4 text-blue-600 border-gray-300 rounded"
+                    className="w-4 h-4 dark:text-blue-400 border-gray-300 rounded"
                   />
-                  <span className="text-sm text-gray-700">Categorie active</span>
+                  <span className="text-sm dark:text-gray-300">Categorie active</span>
                 </label>
 
-                <div className="flex gap-3 pt-4 border-t border-gray-200">
+                <div className="flex gap-3 pt-4 border-t dark:border-gray-700">
                   <button
                     onClick={handleSave}
                     disabled={saving || !formData.name || !formData.slug}
@@ -298,7 +298,7 @@ export function AdminCategoriesPage() {
                   </button>
                   <button
                     onClick={() => setShowForm(false)}
-                    className="px-6 py-2.5 border border-gray-200 rounded-xl font-medium hover:bg-gray-50 transition-colors"
+                    className="px-6 py-2.5 border dark:border-gray-700 rounded-xl font-medium dark:hover:bg-gray-700 transition-colors"
                   >
                     Annuler
                   </button>

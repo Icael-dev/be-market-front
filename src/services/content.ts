@@ -1,16 +1,8 @@
 import { api } from '../lib/api';
-import type {
-  Faq,
-  LegalPage,
-  Banner,
-  FlashSale,
-  Review,
-  LoyaltyPoints,
-  LoyaltyTransaction
-} from '../types';
+import { FAQ, LegalPage, Banner, FlashSale, Review, LoyaltyPoints, LoyaltyTransaction, BlogPost } from '../types';
 
-export async function fetchFaqs(): Promise<Faq[]> {
-  return api.get<Faq[]>('/api/faqs');
+export async function fetchFaqs(): Promise<FAQ[]> {
+  return api.get<FAQ[]>('/api/faqs');
 }
 
 export async function fetchLegalPages(): Promise<LegalPage[]> {

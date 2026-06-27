@@ -20,6 +20,7 @@ export function AddressesPage() {
     city: 'Lome',
     region: 'Maritime',
     country: 'Togo',
+    postal_code: '',
     is_default: false
   });
 
@@ -45,6 +46,7 @@ export function AddressesPage() {
       await createAddress({
         user_id: user.id,
         ...formData,
+        postal_code: formData.postal_code || null,
         is_default: addresses.length === 0 || formData.is_default
       });
       await loadAddresses();
@@ -92,6 +94,7 @@ export function AddressesPage() {
       city: 'Lome',
       region: 'Maritime',
       country: 'Togo',
+      postal_code: '',
       is_default: false
     });
   };
@@ -107,20 +110,21 @@ export function AddressesPage() {
       city: address.city,
       region: address.region || '',
       country: address.country,
+      postal_code: address.postal_code || '',
       is_default: address.is_default
     });
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="bg-white border-b border-gray-100">
+    <div className="min-h-screen dark:bg-gray-900">
+      <div className="dark:bg-gray-800 border-b dark:border-gray-700">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
           >
-            <h1 className="text-3xl font-bold text-gray-900">Mes adresses</h1>
-            <p className="text-gray-500 mt-1">
+            <h1 className="text-3xl font-bold dark:text-white">Mes adresses</h1>
+            <p className="dark:text-gray-500 mt-1">
               Gerez vos adresses de livraison
             </p>
           </motion.div>
@@ -151,15 +155,15 @@ export function AddressesPage() {
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="bg-white rounded-2xl border border-gray-100 p-12 text-center"
+              className="dark:bg-gray-800 rounded-2xl border dark:border-gray-700 p-12 text-center"
             >
-              <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <MapPin className="w-8 h-8 text-gray-400" />
+              <div className="w-16 h-16 dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4">
+                <MapPin className="w-8 h-8 dark:text-gray-500" />
               </div>
-              <h2 className="text-lg font-bold text-gray-900 mb-2">
+              <h2 className="text-lg font-bold dark:text-white mb-2">
                 Aucune adresse
               </h2>
-              <p className="text-gray-500 mb-6">
+              <p className="dark:text-gray-400 mb-6">
                 Ajoutez une adresse de livraison
               </p>
             </motion.div>
@@ -173,68 +177,68 @@ export function AddressesPage() {
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, x: -100 }}
                     transition={{ delay: index * 0.05 }}
-                    className="bg-white rounded-2xl border border-gray-100 p-6"
+                    className="dark:bg-gray-800 rounded-2xl border dark:border-gray-700 p-6"
                   >
                     {editingId === address.id ? (
                       <div className="space-y-4">
                         <div className="grid sm:grid-cols-2 gap-4">
                           <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                            <label className="block text-sm font-medium dark:text-gray-300 mb-2">
                               Nom complet
                             </label>
                             <input
                               type="text"
                               value={formData.full_name}
                               onChange={e => setFormData({ ...formData, full_name: e.target.value })}
-                              className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+                              className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
                             />
                           </div>
                           <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                            <label className="block text-sm font-medium dark:text-gray-300 mb-2">
                               Telephone
                             </label>
                             <input
                               type="tel"
                               value={formData.phone}
                               onChange={e => setFormData({ ...formData, phone: e.target.value })}
-                              className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+                              className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
                             />
                           </div>
                         </div>
 
                         <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                          <label className="block text-sm font-medium dark:text-gray-300 mb-2">
                             Adresse
                           </label>
                           <input
                             type="text"
                             value={formData.address_line1}
                             onChange={e => setFormData({ ...formData, address_line1: e.target.value })}
-                            className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+                            className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
                           />
                         </div>
 
                         <div className="grid sm:grid-cols-2 gap-4">
                           <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                            <label className="block text-sm font-medium dark:text-gray-300 mb-2">
                               Ville
                             </label>
                             <input
                               type="text"
                               value={formData.city}
                               onChange={e => setFormData({ ...formData, city: e.target.value })}
-                              className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+                              className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
                             />
                           </div>
                           <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                            <label className="block text-sm font-medium dark:text-gray-300 mb-2">
                               Region
                             </label>
                             <input
                               type="text"
                               value={formData.region}
                               onChange={e => setFormData({ ...formData, region: e.target.value })}
-                              className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+                              className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
                             />
                           </div>
                         </div>
@@ -252,7 +256,7 @@ export function AddressesPage() {
                               setEditingId(null);
                               resetForm();
                             }}
-                            className="px-6 py-2.5 border border-gray-200 rounded-xl font-medium hover:bg-gray-50 transition-colors"
+                            className="px-6 py-2.5 border dark:border-gray-700 rounded-xl font-medium hover:dark:bg-gray-900 transition-colors"
                           >
                             Annuler
                           </button>
@@ -261,24 +265,24 @@ export function AddressesPage() {
                     ) : (
                       <div className="flex items-start justify-between">
                         <div className="flex items-start gap-4">
-                          <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 mt-1">
+                          <div className="w-10 h-10 rounded-full dark:bg-blue-900/30 flex items-center justify-center dark:text-blue-400 mt-1">
                             <MapPin className="w-5 h-5" />
                           </div>
                           <div>
                             <div className="flex items-center gap-2">
-                              <p className="font-bold text-gray-900">{address.full_name}</p>
+                              <p className="font-bold dark:text-white">{address.full_name}</p>
                               {address.is_default && (
-                                <span className="px-2 py-0.5 bg-blue-100 text-blue-600 text-xs font-medium rounded-full">
+                                <span className="px-2 py-0.5 dark:bg-blue-900/30 dark:text-blue-400 text-xs font-medium rounded-full">
                                   Defaut
                                 </span>
                               )}
                             </div>
-                            <p className="text-gray-600 mt-1">{address.phone}</p>
-                            <p className="text-gray-500 mt-1">
+                            <p className="dark:text-gray-500 mt-1">{address.phone}</p>
+                            <p className="dark:text-gray-500 mt-1">
                               {address.address_line1}
                               {address.address_line2 && `, ${address.address_line2}`}
                             </p>
-                            <p className="text-gray-500">
+                            <p className="dark:text-gray-500">
                               {address.city}, {address.region} {address.country}
                             </p>
                           </div>
@@ -287,14 +291,14 @@ export function AddressesPage() {
                         <div className="flex items-center gap-2">
                           <button
                             onClick={() => startEditing(address)}
-                            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                            className="p-2 hover:dark:bg-gray-700 rounded-lg transition-colors"
                           >
-                            <Edit2 className="w-4 h-4 text-gray-500" />
+                            <Edit2 className="w-4 h-4 dark:text-gray-500" />
                           </button>
                           {!address.is_default && (
                             <button
                               onClick={() => handleDeleteAddress(address.id)}
-                              className="p-2 hover:bg-red-50 rounded-lg transition-colors"
+                              className="p-2 dark:hover:bg-red-900/30 rounded-lg transition-colors"
                             >
                               <Trash2 className="w-4 h-4 text-red-500" />
                             </button>
@@ -312,47 +316,47 @@ export function AddressesPage() {
                     initial={{ opacity: 0, height: 0 }}
                     animate={{ opacity: 1, height: 'auto' }}
                     exit={{ opacity: 0, height: 0 }}
-                    className="bg-white rounded-2xl border border-gray-100 p-6"
+                    className="dark:bg-gray-800 rounded-2xl border dark:border-gray-700 p-6"
                   >
-                    <h3 className="font-bold text-gray-900 mb-4">Nouvelle adresse</h3>
+                    <h3 className="font-bold dark:text-white mb-4">Nouvelle adresse</h3>
 
                     <div className="space-y-4">
                       <div className="grid sm:grid-cols-2 gap-4">
                         <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                          <label className="block text-sm font-medium dark:text-gray-300 mb-2">
                             Nom complet
                           </label>
                           <input
                             type="text"
                             value={formData.full_name}
                             onChange={e => setFormData({ ...formData, full_name: e.target.value })}
-                            className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+                            className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
                             required
                           />
                         </div>
                         <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                          <label className="block text-sm font-medium dark:text-gray-300 mb-2">
                             Telephone
                           </label>
                           <input
                             type="tel"
                             value={formData.phone}
                             onChange={e => setFormData({ ...formData, phone: e.target.value })}
-                            className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+                            className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
                             required
                           />
                         </div>
                       </div>
 
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                        <label className="block text-sm font-medium dark:text-gray-300 mb-2">
                           Adresse
                         </label>
                         <input
                           type="text"
                           value={formData.address_line1}
                           onChange={e => setFormData({ ...formData, address_line1: e.target.value })}
-                          className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+                          className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
                           placeholder="Quartier, Rue, Numero"
                           required
                         />
@@ -360,25 +364,25 @@ export function AddressesPage() {
 
                       <div className="grid sm:grid-cols-2 gap-4">
                         <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                          <label className="block text-sm font-medium dark:text-gray-300 mb-2">
                             Ville
                           </label>
                           <input
                             type="text"
                             value={formData.city}
                             onChange={e => setFormData({ ...formData, city: e.target.value })}
-                            className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+                            className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
                           />
                         </div>
                         <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                          <label className="block text-sm font-medium dark:text-gray-300 mb-2">
                             Region
                           </label>
                           <input
                             type="text"
                             value={formData.region}
                             onChange={e => setFormData({ ...formData, region: e.target.value })}
-                            className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+                            className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
                           />
                         </div>
                       </div>
@@ -388,9 +392,9 @@ export function AddressesPage() {
                           type="checkbox"
                           checked={formData.is_default}
                           onChange={e => setFormData({ ...formData, is_default: e.target.checked })}
-                          className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                          className="w-4 h-4 dark:text-blue-400 border-gray-300 rounded focus:ring-blue-500"
                         />
-                        <span className="text-sm text-gray-600">
+                        <span className="text-sm dark:text-gray-500">
                           Definir comme adresse par defaut
                         </span>
                       </label>
@@ -408,7 +412,7 @@ export function AddressesPage() {
                             setShowAddForm(false);
                             resetForm();
                           }}
-                          className="px-6 py-2.5 border border-gray-200 rounded-xl font-medium hover:bg-gray-50 transition-colors"
+                          className="px-6 py-2.5 border dark:border-gray-700 rounded-xl font-medium hover:dark:bg-gray-900 transition-colors"
                         >
                           Annuler
                         </button>

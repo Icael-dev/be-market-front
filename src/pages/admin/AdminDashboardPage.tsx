@@ -110,17 +110,17 @@ export function AdminDashboardPage() {
   };
 
   const colorClasses: Record<string, string> = {
-    blue: 'bg-blue-100 text-blue-600',
-    green: 'bg-green-100 text-green-600',
-    purple: 'bg-purple-100 text-purple-600',
-    cyan: 'bg-cyan-100 text-cyan-600'
+    blue: 'dark:bg-blue-900/30 dark:text-blue-400',
+    green: 'dark:bg-green-900/30 dark:text-green-400',
+    purple: 'dark:bg-purple-900/30 dark:text-purple-400',
+    cyan: 'dark:bg-cyan-900/30 dark:text-cyan-400'
   };
 
   if (loading) {
     return (
       <AdminLayout>
         <div className="p-6 lg:p-8 flex items-center justify-center min-h-[60vh]">
-          <div className="animate-spin w-10 h-10 border-2 border-gray-200 border-t-blue-600 rounded-full" />
+          <div className="animate-spin w-10 h-10 border-2 dark:border-gray-700 border-t-blue-600 rounded-full" />
         </div>
       </AdminLayout>
     );
@@ -134,8 +134,8 @@ export function AdminDashboardPage() {
           animate={{ opacity: 1, y: 0 }}
           className="mb-8"
         >
-          <h1 className="text-2xl font-bold text-gray-900">Tableau de bord</h1>
-          <p className="text-gray-500 mt-1">Vue d'ensemble de votre boutique</p>
+          <h1 className="text-2xl font-bold dark:text-white">Tableau de bord</h1>
+          <p className="dark:text-gray-500 mt-1">Vue d'ensemble de votre boutique</p>
         </motion.div>
 
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 mb-8">
@@ -145,7 +145,7 @@ export function AdminDashboardPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.05 }}
-              className="bg-white rounded-2xl border border-gray-200 p-6"
+              className="dark:bg-gray-800 rounded-2xl border dark:border-gray-700 p-6"
             >
               <div className="flex items-center justify-between mb-4">
                 <div className={`w-12 h-12 rounded-xl ${colorClasses[stat.color]} flex items-center justify-center`}>
@@ -153,7 +153,7 @@ export function AdminDashboardPage() {
                 </div>
                 {stat.change && (
                   <div className={`flex items-center gap-1 text-sm ${
-                    stat.changeType === 'up' ? 'text-green-600' : 'text-red-600'
+                    stat.changeType === 'up' ? 'dark:text-green-400' : 'dark:text-red-400'
                   }`}>
                     {stat.changeType === 'up' ? (
                       <TrendingUp className="w-4 h-4" />
@@ -164,8 +164,8 @@ export function AdminDashboardPage() {
                   </div>
                 )}
               </div>
-              <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
-              <p className="text-sm text-gray-500 mt-1">{stat.label}</p>
+              <p className="text-2xl font-bold dark:text-white">{stat.value}</p>
+              <p className="text-sm dark:text-gray-500 mt-1">{stat.label}</p>
             </motion.div>
           ))}
         </div>
@@ -175,26 +175,26 @@ export function AdminDashboardPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="bg-white rounded-2xl border border-gray-200 p-6"
+            className="dark:bg-gray-800 rounded-2xl border dark:border-gray-700 p-6"
           >
             <div className="flex items-center justify-between mb-6">
-              <h2 className="font-bold text-gray-900">Commandes recentes</h2>
-              <a href="/admin/orders" className="text-blue-600 text-sm font-medium hover:underline">
+              <h2 className="font-bold dark:text-white">Commandes recentes</h2>
+              <a href="/admin/orders" className="dark:text-blue-400 text-sm font-medium hover:underline">
                 Voir tout
               </a>
             </div>
 
             <div className="space-y-4">
               {recentOrders.slice(0, 5).map((order) => (
-                <div key={order.id} className="flex items-center justify-between py-3 border-b border-gray-100 last:border-0">
+                <div key={order.id} className="flex items-center justify-between py-3 border-b dark:border-gray-700 last:border-0">
                   <div>
-                    <p className="font-medium text-gray-900 text-sm">{order.order_number}</p>
-                    <p className="text-xs text-gray-500">
+                    <p className="font-medium dark:text-white text-sm">{order.order_number}</p>
+                    <p className="text-xs dark:text-gray-500">
                       {new Date(order.created_at).toLocaleDateString('fr-FR')}
                     </p>
                   </div>
                   <div className="text-right">
-                    <p className="font-medium text-gray-900">{formatPrice(order.total)}</p>
+                    <p className="font-medium dark:text-white">{formatPrice(order.total)}</p>
                     <span className={`inline-flex px-2 py-0.5 rounded-full text-xs font-medium ${getStatusColor(order.status)}`}>
                       {getStatusLabel(order.status)}
                     </span>
@@ -208,27 +208,27 @@ export function AdminDashboardPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
-            className="bg-white rounded-2xl border border-gray-200 p-6"
+            className="dark:bg-gray-800 rounded-2xl border dark:border-gray-700 p-6"
           >
             <div className="flex items-center justify-between mb-6">
-              <h2 className="font-bold text-gray-900">Produits populaires</h2>
+              <h2 className="font-bold dark:text-white">Produits populaires</h2>
             </div>
 
             <div className="space-y-4">
               {topProducts.map((product, index) => (
-                <div key={product.name} className="flex items-center justify-between py-3 border-b border-gray-100 last:border-0">
+                <div key={product.name} className="flex items-center justify-between py-3 border-b dark:border-gray-700 last:border-0">
                   <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-sm font-bold">
+                    <div className="w-8 h-8 rounded-full dark:bg-blue-900/30 dark:text-blue-400 flex items-center justify-center text-sm font-bold">
                       {index + 1}
                     </div>
-                    <p className="font-medium text-gray-900 text-sm">{product.name}</p>
+                    <p className="font-medium dark:text-white text-sm">{product.name}</p>
                   </div>
-                  <p className="text-sm text-gray-600">{product.count} ventes</p>
+                  <p className="text-sm dark:text-gray-500">{product.count} ventes</p>
                 </div>
               ))}
 
               {topProducts.length === 0 && (
-                <p className="text-center text-gray-500 py-8">Aucune vente encore</p>
+                <p className="text-center dark:text-gray-500 py-8">Aucune vente encore</p>
               )}
             </div>
           </motion.div>

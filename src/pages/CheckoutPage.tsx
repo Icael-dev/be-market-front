@@ -65,7 +65,10 @@ export function CheckoutPage() {
     address_line2: '',
     city: 'Lome',
     region: 'Maritime',
-    country: 'Togo'
+    country: 'Togo',
+    postal_code: '',
+    is_default: false,
+    label: ''
   });
 
   const [useNewAddress, setUseNewAddress] = useState(true);
@@ -149,13 +152,15 @@ export function CheckoutPage() {
         }
       });
 
-      if (useNewAddress && user) {
-        await createAddress({
-          user_id: user.id,
-          ...newAddress,
-          is_default: addresses.length === 0 || newAddress.is_default
-        });
-      }
+if (useNewAddress && user) {
+         await createAddress({
+           user_id: user.id,
+           ...newAddress,
+           postal_code: newAddress.postal_code || null,
+           is_default: addresses.length === 0 || newAddress.is_default,
+           label: newAddress.label || null
+         });
+       }
 
       await clearCart();
       navigate(`/order-success/${order.id}`);
@@ -176,15 +181,15 @@ export function CheckoutPage() {
   const currentStepIndex = steps.findIndex(s => s.id === step);
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="bg-white border-b border-gray-100">
+    <div className="min-h-screen dark:bg-gray-900">
+      <div className="dark:bg-gray-800 border-b dark:border-gray-700">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="flex items-center justify-between mb-8">
-            <Link to="/cart" className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors">
+            <Link to="/cart" className="flex items-center gap-2 dark:text-gray-500 hover:dark:text-white transition-colors">
               <ArrowLeft className="w-5 h-5" />
               <span className="hidden sm:inline">Retour au panier</span>
             </Link>
-            <h1 className="text-2xl font-bold text-gray-900">Commande</h1>
+            <h1 className="text-2xl font-bold dark:text-white">Commande</h1>
             <div className="w-16" />
           </div>
 
@@ -194,10 +199,10 @@ export function CheckoutPage() {
                 <div className={cn(
                   'flex items-center justify-center w-8 h-8 rounded-full text-sm font-medium transition-colors',
                   index < currentStepIndex
-                    ? 'bg-green-500 text-white'
+                    ? 'dark:bg-green-900/300 text-white'
                     : index === currentStepIndex
                     ? 'bg-blue-600 text-white'
-                    : 'bg-gray-200 text-gray-500'
+                    : 'dark:bg-gray-700 dark:text-gray-500'
                 )}>
                   {index < currentStepIndex ? (
                     <Check className="w-4 h-4" />
@@ -207,14 +212,14 @@ export function CheckoutPage() {
                 </div>
                 <span className={cn(
                   'ml-2 text-sm font-medium hidden sm:block',
-                  index <= currentStepIndex ? 'text-gray-900' : 'text-gray-400'
+                  index <= currentStepIndex ? 'dark:text-white' : 'dark:text-gray-500'
                 )}>
                   {s.label}
                 </span>
                 {index < steps.length - 1 && (
                   <div className={cn(
                     'w-8 sm:w-16 lg:w-24 h-0.5 mx-2',
-                    index < currentStepIndex ? 'bg-green-500' : 'bg-gray-200'
+                    index < currentStepIndex ? 'dark:bg-green-900/300' : 'dark:bg-gray-700'
                   )} />
                 )}
               </div>
@@ -233,9 +238,9 @@ export function CheckoutPage() {
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: 20 }}
-                  className="bg-white rounded-2xl border border-gray-100 p-6"
+                  className="dark:bg-gray-800 dark:bg-gray-900 rounded-2xl border dark:border-gray-700 dark:border-gray-800 p-6"
                 >
-                  <h2 className="text-lg font-bold text-gray-900 mb-6">
+                  <h2 className="text-lg font-bold dark:text-white mb-6">
                     Adresse de livraison
                   </h2>
 
@@ -251,19 +256,19 @@ export function CheckoutPage() {
                           className={cn(
                             'w-full text-left p-4 rounded-xl border-2 transition-all',
                             !useNewAddress && selectedAddressId === address.id
-                              ? 'border-blue-600 bg-blue-50'
-                              : 'border-gray-200 hover:border-gray-300'
+                              ? 'border-blue-600 dark:bg-blue-900/30'
+                              : 'dark:border-gray-700 dark:hover:border-gray-600'
                           )}
                         >
                           <div className="flex items-start justify-between">
                             <div>
-                              <p className="font-medium text-gray-900">{address.full_name}</p>
-                              <p className="text-sm text-gray-500">{address.phone}</p>
-                              <p className="text-sm text-gray-500 mt-1">
+                              <p className="font-medium dark:text-white">{address.full_name}</p>
+                              <p className="text-sm dark:text-gray-500">{address.phone}</p>
+                              <p className="text-sm dark:text-gray-500 mt-1">
                                 {address.address_line1}
                                 {address.address_line2 && `, ${address.address_line2}`}
                               </p>
-                              <p className="text-sm text-gray-500">
+                              <p className="text-sm dark:text-gray-500">
                                 {address.city}, {address.region || ''} {address.country}
                               </p>
                             </div>
@@ -284,11 +289,11 @@ export function CheckoutPage() {
                       className={cn(
                         'w-full text-left p-4 rounded-xl border-2 transition-all',
                         useNewAddress
-                          ? 'border-blue-600 bg-blue-50'
-                          : 'border-gray-200 hover:border-gray-300'
+                          ? 'border-blue-600 dark:bg-blue-900/30'
+                          : 'dark:border-gray-700 dark:hover:border-gray-600'
                       )}
                     >
-                      <p className="font-medium text-gray-900">Nouvelle adresse</p>
+                      <p className="font-medium dark:text-white">Nouvelle adresse</p>
                     </button>
                   </div>
 
@@ -300,26 +305,26 @@ export function CheckoutPage() {
                     >
                       <div className="grid sm:grid-cols-2 gap-4">
                         <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                          <label className="block text-sm font-medium dark:text-gray-300 mb-2">
                             Nom complet *
                           </label>
                           <input
                             type="text"
                             value={newAddress.full_name}
                             onChange={e => setNewAddress({ ...newAddress, full_name: e.target.value })}
-                            className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+                            className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
                             required
                           />
                         </div>
                         <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                          <label className="block text-sm font-medium dark:text-gray-300 mb-2">
                             Telephone *
                           </label>
                           <input
                             type="tel"
                             value={newAddress.phone}
                             onChange={e => setNewAddress({ ...newAddress, phone: e.target.value })}
-                            className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+                            className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
                             placeholder="+228 XX XX XX XX"
                             required
                           />
@@ -327,14 +332,14 @@ export function CheckoutPage() {
                       </div>
 
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                        <label className="block text-sm font-medium dark:text-gray-300 mb-2">
                           Adresse *
                         </label>
                         <input
                           type="text"
                           value={newAddress.address_line1}
                           onChange={e => setNewAddress({ ...newAddress, address_line1: e.target.value })}
-                          className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+                          className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
                           placeholder="Quartier, Rue, Numero"
                           required
                         />
@@ -342,32 +347,32 @@ export function CheckoutPage() {
 
                       <div className="grid sm:grid-cols-2 gap-4">
                         <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                          <label className="block text-sm font-medium dark:text-gray-300 mb-2">
                             Ville
                           </label>
                           <input
                             type="text"
                             value={newAddress.city}
                             onChange={e => setNewAddress({ ...newAddress, city: e.target.value })}
-                            className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+                            className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
                           />
                         </div>
                         <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                          <label className="block text-sm font-medium dark:text-gray-300 mb-2">
                             Region
                           </label>
                           <input
                             type="text"
                             value={newAddress.region}
                             onChange={e => setNewAddress({ ...newAddress, region: e.target.value })}
-                            className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+                            className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
                           />
                         </div>
                       </div>
                     </motion.div>
                   )}
 
-                  <div className="mt-6 pt-6 border-t border-gray-100 flex justify-end">
+                  <div className="mt-6 pt-6 border-t dark:border-gray-700 flex justify-end">
                     <button
                       onClick={() => setStep('payment')}
                       disabled={(!useNewAddress && !selectedAddressId) || (useNewAddress && !newAddress.address_line1)}
@@ -386,9 +391,9 @@ export function CheckoutPage() {
                   initial={{ opacity: 0, x: 20 }}
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: -20 }}
-                  className="bg-white rounded-2xl border border-gray-100 p-6"
+                  className="dark:bg-gray-800 dark:bg-gray-900 rounded-2xl border dark:border-gray-700 dark:border-gray-800 p-6"
                 >
-                  <h2 className="text-lg font-bold text-gray-900 mb-6">
+                  <h2 className="text-lg font-bold dark:text-white mb-6">
                     Mode de paiement
                   </h2>
 
@@ -400,8 +405,8 @@ export function CheckoutPage() {
                         className={cn(
                           'w-full flex items-center gap-4 p-4 rounded-xl border-2 transition-all',
                           paymentMethod === method.id
-                            ? 'border-blue-600 bg-blue-50'
-                            : 'border-gray-200 hover:border-gray-300'
+                            ? 'border-blue-600 dark:bg-blue-900/30'
+                            : 'dark:border-gray-700 dark:hover:border-gray-600'
                         )}
                       >
                         <div className={cn(
@@ -413,8 +418,8 @@ export function CheckoutPage() {
                           <method.icon className="w-6 h-6" />
                         </div>
                         <div className="text-left flex-1">
-                          <p className="font-medium text-gray-900">{method.name}</p>
-                          <p className="text-sm text-gray-500">{method.description}</p>
+                          <p className="font-medium dark:text-white">{method.name}</p>
+                          <p className="text-sm dark:text-gray-500">{method.description}</p>
                         </div>
                         <div className={cn(
                           'w-5 h-5 rounded-full border-2 flex items-center justify-center',
@@ -436,36 +441,36 @@ export function CheckoutPage() {
                       animate={{ opacity: 1, height: 'auto' }}
                       className="mt-6"
                     >
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <label className="block text-sm font-medium dark:text-gray-300 mb-2">
                         Numero de telephone {paymentMethod === 'tmoney' ? 'Tmoney' : 'Flooz'}
                       </label>
                       <input
                         type="tel"
                         value={phoneNumber}
                         onChange={e => setPhoneNumber(e.target.value)}
-                        className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+                        className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
                         placeholder="+228 XX XX XX XX"
                       />
                     </motion.div>
                   )}
 
                   <div className="mt-6">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium dark:text-gray-300 mb-2">
                       Notes (optionnel)
                     </label>
                     <textarea
                       value={notes}
                       onChange={e => setNotes(e.target.value)}
                       rows={3}
-                      className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+                      className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
                       placeholder="Instructions speciales pour la livraison..."
                     />
                   </div>
 
-                  <div className="mt-6 pt-6 border-t border-gray-100 flex justify-between">
+                  <div className="mt-6 pt-6 border-t dark:border-gray-700 flex justify-between">
                     <button
                       onClick={() => setStep('shipping')}
-                      className="flex items-center gap-2 text-gray-600 hover:text-gray-900 font-medium transition-colors"
+                      className="flex items-center gap-2 dark:text-gray-500 hover:dark:text-white font-medium transition-colors"
                     >
                       <ArrowLeft className="w-4 h-4" />
                       Retour
@@ -487,22 +492,22 @@ export function CheckoutPage() {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -20 }}
-                  className="bg-white rounded-2xl border border-gray-100 p-6"
+                  className="dark:bg-gray-800 dark:bg-gray-900 rounded-2xl border dark:border-gray-700 dark:border-gray-800 p-6"
                 >
-                  <h2 className="text-lg font-bold text-gray-900 mb-6">
+                  <h2 className="text-lg font-bold dark:text-white mb-6">
                     Confirmation de la commande
                   </h2>
 
                   <div className="space-y-6">
                     <div className="grid sm:grid-cols-2 gap-6">
                       <div>
-                        <h3 className="text-sm font-medium text-gray-500 mb-2">Adresse de livraison</h3>
-                        <p className="text-gray-900">
+                        <h3 className="text-sm font-medium dark:text-gray-500 mb-2">Adresse de livraison</h3>
+                        <p className="dark:text-white">
                           {useNewAddress
                             ? `${newAddress.full_name}, ${newAddress.phone}`
                             : addresses.find(a => a.id === selectedAddressId)?.full_name}
                         </p>
-                        <p className="text-sm text-gray-500">
+                        <p className="text-sm dark:text-gray-500">
                           {useNewAddress
                             ? newAddress.address_line1
                             : addresses.find(a => a.id === selectedAddressId)?.address_line1}
@@ -510,22 +515,22 @@ export function CheckoutPage() {
                       </div>
 
                       <div>
-                        <h3 className="text-sm font-medium text-gray-500 mb-2">Paiement</h3>
-                        <p className="text-gray-900">
+                        <h3 className="text-sm font-medium dark:text-gray-500 mb-2">Paiement</h3>
+                        <p className="dark:text-white">
                           {paymentMethods.find(m => m.id === paymentMethod)?.name}
                         </p>
                         {paymentMethod !== 'cash_on_delivery' && phoneNumber && (
-                          <p className="text-sm text-gray-500">{phoneNumber}</p>
+                          <p className="text-sm dark:text-gray-500">{phoneNumber}</p>
                         )}
                       </div>
                     </div>
 
                     <div>
-                      <h3 className="text-sm font-medium text-gray-500 mb-2">Articles ({count})</h3>
+                      <h3 className="text-sm font-medium dark:text-gray-500 mb-2">Articles ({count})</h3>
                       <div className="space-y-2">
                         {items.map(item => (
                           <div key={item.id} className="flex items-center gap-3">
-                            <div className="w-12 h-12 bg-gray-100 rounded-lg overflow-hidden">
+                            <div className="w-12 h-12 dark:bg-gray-700 rounded-lg overflow-hidden">
                               <img
                                 src={item.product?.images?.[0]}
                                 alt={item.product?.name}
@@ -533,10 +538,10 @@ export function CheckoutPage() {
                               />
                             </div>
                             <div className="flex-1 min-w-0">
-                              <p className="text-sm font-medium text-gray-900 truncate">
+                              <p className="text-sm font-medium dark:text-white truncate">
                                 {item.product?.name}
                               </p>
-                              <p className="text-xs text-gray-500">x{item.quantity}</p>
+                              <p className="text-xs dark:text-gray-500">x{item.quantity}</p>
                             </div>
                             <p className="text-sm font-medium">
                               {formatPrice((item.product?.price || 0) * item.quantity)}
@@ -547,10 +552,10 @@ export function CheckoutPage() {
                     </div>
                   </div>
 
-                  <div className="mt-6 pt-6 border-t border-gray-100 flex justify-between">
+                  <div className="mt-6 pt-6 border-t dark:border-gray-700 flex justify-between">
                     <button
                       onClick={() => setStep('payment')}
-                      className="flex items-center gap-2 text-gray-600 hover:text-gray-900 font-medium transition-colors"
+                      className="flex items-center gap-2 dark:text-gray-500 hover:dark:text-white font-medium transition-colors"
                     >
                       <ArrowLeft className="w-4 h-4" />
                       Retour
@@ -579,15 +584,15 @@ export function CheckoutPage() {
           </div>
 
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-2xl border border-gray-100 p-6 sticky top-24">
-              <h2 className="text-lg font-bold text-gray-900 mb-6">
+            <div className="dark:bg-gray-800 dark:bg-gray-900 rounded-2xl border dark:border-gray-700 dark:border-gray-800 p-6 sticky top-24">
+              <h2 className="text-lg font-bold dark:text-white mb-6">
                 recapitulatif
               </h2>
 
               <div className="space-y-3">
                 {items.map(item => (
                   <div key={item.id} className="flex gap-3">
-                    <div className="w-16 h-16 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0">
+                    <div className="w-16 h-16 dark:bg-gray-700 rounded-lg overflow-hidden flex-shrink-0">
                       <img
                         src={item.product?.images?.[0]}
                         alt={item.product?.name}
@@ -595,10 +600,10 @@ export function CheckoutPage() {
                       />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-gray-900 truncate">
+                      <p className="text-sm font-medium dark:text-white truncate">
                         {item.product?.name}
                       </p>
-                      <p className="text-xs text-gray-500">x{item.quantity}</p>
+                      <p className="text-xs dark:text-gray-500">x{item.quantity}</p>
                     </div>
                     <p className="text-sm font-medium">
                       {formatPrice((item.product?.price || 0) * item.quantity)}
@@ -607,12 +612,12 @@ export function CheckoutPage() {
                 ))}
               </div>
 
-              <div className="mt-6 pt-6 border-t border-gray-100 space-y-3">
-                <div className="flex justify-between text-gray-600">
+              <div className="mt-6 pt-6 border-t dark:border-gray-700 space-y-3">
+                <div className="flex justify-between dark:text-gray-500">
                   <span>Sous-total</span>
                   <span>{formatPrice(total)}</span>
                 </div>
-                <div className="flex justify-between text-gray-600">
+                <div className="flex justify-between dark:text-gray-500">
                   <span>Livraison</span>
                   <span className={shippingFee === 0 ? 'text-green-600 font-medium' : ''}>
                     {shippingFee === 0 ? 'Gratuite' : formatPrice(shippingFee)}
@@ -620,7 +625,7 @@ export function CheckoutPage() {
                 </div>
               </div>
 
-              <div className="mt-4 pt-4 border-t border-gray-100 flex justify-between text-lg font-bold text-gray-900">
+              <div className="mt-4 pt-4 border-t dark:border-gray-700 flex justify-between text-lg font-bold dark:text-white">
                 <span>Total</span>
                 <span>{formatPrice(grandTotal)}</span>
               </div>

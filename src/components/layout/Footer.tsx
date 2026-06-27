@@ -21,25 +21,25 @@ export function Footer() {
               </div>
               <span className="font-bold text-xl text-white">Electronica</span>
             </Link>
-            <p className="text-sm text-gray-400 mb-4 max-w-md mx-auto sm:mx-0">
+            <p className="text-sm dark:text-gray-500 mb-4 max-w-md mx-auto sm:mx-0">
               Votre boutique de confiance pour tous vos accessoires electroniques.
               Qualite, prix competitifs et service irreprochable.
             </p>
             <div className="flex items-center justify-center sm:justify-start gap-4 mb-6">
-              <a href="#" className="text-gray-400 hover:text-white transition-colors">
+              <a href="#" className="dark:text-gray-500 hover:text-white transition-colors">
                 <Facebook className="w-5 h-5" />
               </a>
-              <a href="#" className="text-gray-400 hover:text-white transition-colors">
+              <a href="#" className="dark:text-gray-500 hover:text-white transition-colors">
                 <Instagram className="w-5 h-5" />
               </a>
-              <a href="#" className="text-gray-400 hover:text-white transition-colors">
+              <a href="#" className="dark:text-gray-500 hover:text-white transition-colors">
                 <Twitter className="w-5 h-5" />
               </a>
             </div>
 
             <div className="bg-gray-800 dark:bg-gray-800/50 rounded-xl p-4 max-w-sm mx-auto sm:mx-0">
               <h4 className="font-semibold text-white mb-3">Newsletter</h4>
-              <p className="text-sm text-gray-400 mb-3">Recevez nos offres exclusives</p>
+              <p className="text-sm dark:text-gray-500 mb-3">Recevez nos offres exclusives</p>
               <NewsletterSignup />
             </div>
           </div>
@@ -102,7 +102,7 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="mt-8 pt-8 border-t border-gray-800 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-gray-400">
+        <div className="mt-8 pt-8 border-t dark:border-gray-700 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm dark:text-gray-500">
           <p>&copy; {new Date().getFullYear()} Electronica. Tous droits reserves.</p>
           <Link to="/blog" className="hover:text-white transition-colors">Blog & Actualites</Link>
         </div>

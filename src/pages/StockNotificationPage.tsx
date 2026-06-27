@@ -36,7 +36,7 @@ export function StockNotificationButton({ product }: StockNotificationProps) {
       <motion.div
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="flex items-center gap-2 text-green-600 bg-green-50 px-4 py-2 rounded-lg"
+        className="flex items-center gap-2 text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-900/50 px-4 py-2 rounded-lg"
       >
         <Check className="w-5 h-5" />
         <span className="text-sm font-medium">Vous serez prevenu(e)</span>

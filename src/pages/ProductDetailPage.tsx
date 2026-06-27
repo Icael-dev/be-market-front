@@ -97,30 +97,30 @@ export function ProductDetailPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="bg-white border-b border-gray-100">
+    <div className="min-h-screen dark:bg-gray-900">
+      <div className="dark:bg-gray-800 border-b dark:border-gray-700">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <nav className="flex items-center gap-2 text-sm">
-            <Link to="/" className="text-gray-500 hover:text-gray-700 transition-colors">
+            <Link to="/" className="dark:text-gray-500 hover:dark:text-gray-500 transition-colors">
               Accueil
             </Link>
-            <ChevronRight className="w-4 h-4 text-gray-400" />
-            <Link to="/products" className="text-gray-500 hover:text-gray-700 transition-colors">
+            <ChevronRight className="w-4 h-4 dark:text-gray-500" />
+            <Link to="/products" className="dark:text-gray-500 hover:dark:text-gray-500 transition-colors">
               Produits
             </Link>
             {product.category && (
               <>
-                <ChevronRight className="w-4 h-4 text-gray-400" />
+                <ChevronRight className="w-4 h-4 dark:text-gray-500" />
                 <Link
                   to={`/products?category=${product.category.slug}`}
-                  className="text-gray-500 hover:text-gray-700 transition-colors"
+                  className="dark:text-gray-500 hover:dark:text-gray-500 transition-colors"
                 >
                   {product.category.name}
                 </Link>
               </>
             )}
-            <ChevronRight className="w-4 h-4 text-gray-400" />
-            <span className="text-gray-900 font-medium truncate max-w-[200px]">
+            <ChevronRight className="w-4 h-4 dark:text-gray-500" />
+            <span className="dark:text-white font-medium truncate max-w-[200px]">
               {product.name}
             </span>
           </nav>
@@ -134,7 +134,7 @@ export function ProductDetailPage() {
             animate={{ opacity: 1, x: 0 }}
             className="space-y-4"
           >
-            <div className="relative aspect-square bg-white rounded-2xl overflow-hidden border border-gray-100">
+            <div className="relative aspect-square dark:bg-gray-800 rounded-2xl overflow-hidden border dark:border-gray-700">
               <img
                 src={imageError[selectedImage] ? images[0] : images[selectedImage]}
                 alt={product.name}
@@ -158,7 +158,7 @@ export function ProductDetailPage() {
                       'flex-shrink-0 w-20 h-20 rounded-xl overflow-hidden border-2 transition-all',
                       selectedImage === index
                         ? 'border-blue-600 ring-2 ring-blue-600/20'
-                        : 'border-gray-200 hover:border-gray-300'
+                        : 'dark:border-gray-700 hover:border-gray-300'
                     )}
                   >
                     <img
@@ -180,13 +180,13 @@ export function ProductDetailPage() {
           >
             <div>
               {specs.brand && (
-                <p className="text-sm text-blue-600 font-medium mb-2">{specs.brand}</p>
+                <p className="text-sm dark:text-blue-400 font-medium mb-2">{specs.brand}</p>
               )}
-              <h1 className="text-2xl md:text-3xl font-bold text-gray-900">
+              <h1 className="text-2xl md:text-3xl font-bold dark:text-white">
                 {product.name}
               </h1>
               {product.sku && (
-                <p className="text-sm text-gray-500 mt-1">SKU: {product.sku}</p>
+                <p className="text-sm dark:text-gray-500 mt-1">SKU: {product.sku}</p>
               )}
             </div>
 
@@ -197,40 +197,40 @@ export function ProductDetailPage() {
                     key={i}
                     className={cn(
                       'w-5 h-5',
-                      i < 4 ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300'
+                      i < 4 ? 'text-yellow-400 fill-yellow-400' : 'dark:text-gray-500'
                     )}
                   />
                 ))}
               </div>
-              <Link to="#reviews" className="text-blue-600 text-sm hover:underline">
+              <Link to="#reviews" className="dark:text-blue-400 text-sm hover:underline">
                 Voir les avis
               </Link>
             </div>
 
             <div className="flex items-baseline gap-3">
-              <span className="text-3xl font-bold text-gray-900">
+              <span className="text-3xl font-bold dark:text-white">
                 {formatPrice(product.price)}
               </span>
               {product.compare_price && (
-                <span className="text-xl text-gray-400 line-through">
+                <span className="text-xl dark:text-gray-500 line-through">
                   {formatPrice(product.compare_price)}
                 </span>
               )}
               {discount > 0 && (
-                <span className="px-2 py-1 bg-red-100 text-red-600 text-sm font-medium rounded">
+                <span className="px-2 py-1 dark:bg-red-900/30 text-red-600 text-sm font-medium rounded">
                   Economisez {formatPrice(product.compare_price! - product.price)}
                 </span>
               )}
             </div>
 
-            <p className="text-gray-600 leading-relaxed">
+            <p className="dark:text-gray-500 leading-relaxed">
               {product.description}
             </p>
 
             <div className="flex items-center gap-4">
               <span className={cn(
                 'font-medium',
-                product.stock > 0 ? 'text-green-600' : 'text-red-500'
+                product.stock > 0 ? 'text-green-600' : 'dark:text-red-400'
               )}>
                 {product.stock > 0 ? `En stock (${product.stock} disponibles)` : 'Rupture de stock'}
               </span>
@@ -239,12 +239,12 @@ export function ProductDetailPage() {
             {product.stock > 0 && (
               <div className="flex items-center gap-6">
                 <div className="flex items-center gap-3">
-                  <span className="text-gray-700 font-medium">Quantite:</span>
-                  <div className="flex items-center border border-gray-200 rounded-xl">
+                  <span className="dark:text-gray-500 font-medium">Quantite:</span>
+                  <div className="flex items-center border dark:border-gray-700 rounded-xl">
                     <button
                       onClick={() => setQuantity(Math.max(1, quantity - 1))}
                       disabled={quantity <= 1}
-                      className="p-3 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                      className="p-3 hover:dark:bg-gray-900 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                     >
                       <Minus className="w-4 h-4" />
                     </button>
@@ -252,7 +252,7 @@ export function ProductDetailPage() {
                     <button
                       onClick={() => setQuantity(Math.min(product.stock, quantity + 1))}
                       disabled={quantity >= product.stock}
-                      className="p-3 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                      className="p-3 hover:dark:bg-gray-900 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                     >
                       <Plus className="w-4 h-4" />
                     </button>
@@ -273,7 +273,7 @@ export function ProductDetailPage() {
               <button
                 onClick={handleBuyNow}
                 disabled={product.stock === 0}
-                className="flex-1 flex items-center justify-center gap-2 bg-gray-900 text-white py-3.5 rounded-xl font-medium hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex-1 flex items-center justify-center gap-2 bg-gray-900 text-white py-3.5 rounded-xl font-medium dark:hover:bg-gray-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Acheter maintenant
               </button>
@@ -283,22 +283,22 @@ export function ProductDetailPage() {
                   'p-3.5 rounded-xl transition-colors',
                   isWishlisted
                     ? 'bg-red-500 text-white'
-                    : 'border border-gray-200 text-gray-600 hover:bg-gray-50'
+                    : 'border dark:border-gray-700 dark:text-gray-500 hover:dark:bg-gray-900'
                 )}
               >
                 <Heart className={cn('w-5 h-5', isWishlisted && 'fill-current')} />
               </button>
             </div>
 
-            <div className="grid grid-cols-3 gap-4 pt-4 border-t border-gray-100">
+            <div className="grid grid-cols-3 gap-4 pt-4 border-t dark:border-gray-700">
               {features.map(feature => (
                 <div key={feature.title} className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600">
+                  <div className="w-10 h-10 rounded-xl dark:bg-blue-900/20 flex items-center justify-center dark:text-blue-400">
                     <feature.icon className="w-5 h-5" />
                   </div>
                   <div>
-                    <p className="text-sm font-medium text-gray-900">{feature.title}</p>
-                    <p className="text-xs text-gray-500">{feature.description}</p>
+                    <p className="text-sm font-medium dark:text-white">{feature.title}</p>
+                    <p className="text-xs dark:text-gray-500">{feature.description}</p>
                   </div>
                 </div>
               ))}
@@ -313,21 +313,21 @@ export function ProductDetailPage() {
             transition={{ delay: 0.2 }}
             className="mt-12"
           >
-            <h2 className="text-xl font-bold text-gray-900 mb-6">Specifications</h2>
-            <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
-              <div className="grid grid-cols-2 gap-px bg-gray-100">
+            <h2 className="text-xl font-bold dark:text-white mb-6">Specifications</h2>
+            <div className="dark:bg-gray-800 rounded-2xl border dark:border-gray-700 overflow-hidden">
+              <div className="grid grid-cols-2 gap-px dark:bg-gray-700">
                 {Object.entries(specs).map(([key, value], index) => (
                   <div
                     key={key}
                     className={cn(
                       'flex flex-col sm:flex-row sm:items-center p-4',
-                      index % 2 === 0 ? 'bg-white' : 'bg-gray-50'
+                      index % 2 === 0 ? 'dark:bg-gray-800' : 'dark:bg-gray-900'
                     )}
                   >
-                    <span className="text-gray-500 text-sm sm:w-40 flex-shrink-0 capitalize">
+                    <span className="dark:text-gray-500 text-sm sm:w-40 flex-shrink-0 capitalize">
                       {key.replace(/_/g, ' ')}
                     </span>
-                    <span className="font-medium text-gray-900 sm:mt-0 mt-1">{String(value)}</span>
+                    <span className="font-medium dark:text-white sm:mt-0 mt-1">{String(value)}</span>
                   </div>
                 ))}
               </div>
@@ -347,10 +347,10 @@ export function ProductDetailPage() {
             className="mt-12"
           >
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-bold text-gray-900">Produits similaires</h2>
+              <h2 className="text-xl font-bold dark:text-white">Produits similaires</h2>
               <Link
                 to={`/products?category=${product.category?.slug || ''}`}
-                className="text-blue-600 font-medium hover:underline"
+                className="dark:text-blue-400 font-medium hover:underline"
               >
                 Voir tout
               </Link>

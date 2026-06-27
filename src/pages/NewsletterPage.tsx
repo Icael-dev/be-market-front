@@ -27,7 +27,7 @@ export function NewsletterSignup() {
 
   return (
     <form onSubmit={handleSubmit} className="flex gap-3">
-      <div className="relative flex-1"><Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" /><input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="Email" required className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl" /></div>
+      <div className="relative flex-1"><Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 dark:text-gray-500" /><input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="Email" required className="w-full pl-10 pr-4 py-3 border border-gray-200 dark:border-gray-700 rounded-xl bg-white dark:bg-gray-800" /></div>
       <button type="submit" disabled={loading} className="px-6 py-3 bg-blue-600 text-white rounded-xl font-medium hover:bg-blue-700 disabled:opacity-50">{loading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'OK'}</button>
     </form>
   );
