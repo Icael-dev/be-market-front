@@ -60,10 +60,10 @@ export function Header() {
             <div className="flex items-center gap-8">
               <Link to="/" className="flex items-center gap-3 group">
                 <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-600 to-cyan-500 flex items-center justify-center shadow-md shadow-blue-500/30 group-hover:shadow-blue-500/50 transition-shadow">
-                  <span className="text-white font-bold text-lg">E</span>
+                  <span className="text-white font-bold text-lg">B</span>
                 </div>
                 <span className="font-bold text-xl text-gray-900 dark:text-white hidden sm:block tracking-tight">
-                  Electronica
+                  BE-Market
                 </span>
               </Link>
 

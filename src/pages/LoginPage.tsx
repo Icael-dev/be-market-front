@@ -44,7 +44,7 @@ export function LoginPage() {
             transition={{ duration: 0.6 }}
             className="max-w-md text-center"
           >
-            <h1 className="text-4xl font-bold mb-4">Bienvenue sur Electronica</h1>
+            <h1 className="text-4xl font-bold mb-4">Bienvenue sur BE-Market</h1>
             <p className="text-blue-100 text-lg">
               Votre destination pour les meilleurs accessoires electroniques au Togo.
             </p>
@@ -76,7 +76,7 @@ export function LoginPage() {
         >
           <div className="lg:hidden flex items-center justify-center mb-8">
             <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-600 to-cyan-500 flex items-center justify-center">
-              <span className="text-white font-bold text-xl">E</span>
+              <span className="text-white font-bold text-xl">B</span>
             </div>
           </div>
 

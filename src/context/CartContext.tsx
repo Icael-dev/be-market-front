@@ -33,7 +33,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
         const cartItems = await fetchCart();
         setItems(cartItems);
       } else {
-        const stored = localStorage.getItem('electronica_cart_items');
+        const stored = localStorage.getItem('be_market_cart_items');
         setItems(stored ? JSON.parse(stored) : []);
       }
     } catch (error) {
@@ -51,7 +51,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (!user) {
-      localStorage.setItem('electronica_cart_items', JSON.stringify(items));
+      localStorage.setItem('be_market_cart_items', JSON.stringify(items));
     }
   }, [items, user]);
 
@@ -132,7 +132,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
       }
     }
     setItems([]);
-    localStorage.removeItem('electronica_cart_items');
+    localStorage.removeItem('be_market_cart_items');
   };
 
   return (

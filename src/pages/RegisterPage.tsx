@@ -72,12 +72,12 @@ export function RegisterPage() {
           <div className="text-center mb-8">
             <div className="flex items-center justify-center mb-4">
               <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-600 to-cyan-500 flex items-center justify-center">
-                <span className="text-white font-bold text-xl">E</span>
+                <span className="text-white font-bold text-xl">B</span>
               </div>
             </div>
             <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Creer un compte</h2>
             <p className="text-gray-500 dark:text-gray-400 mt-2">
-              Rejoignez Electronica pour les meilleurs accessoires
+              Rejoignez BE-Market pour les meilleurs accessoires
             </p>
           </div>
 
@@ -215,7 +215,7 @@ export function RegisterPage() {
             transition={{ duration: 0.6 }}
           >
             <h1 className="text-4xl font-bold mb-4">
-              Rejoignez la communaute Electronica
+              Rejoignez la communaute BE-Market
             </h1>
             <p className="text-blue-100 text-lg mb-8">
               Crez votre compte pour acceder aux exclusivites, suivre vos commandes et profiter des offres speciales.

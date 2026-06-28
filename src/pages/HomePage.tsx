@@ -27,6 +27,7 @@ import {
 import image3 from '../assets/images/image3.jpg';
 import image4 from '../assets/images/image4.jpg';
 import image1 from '../assets/images/image1.jpg';
+import image2 from '../assets/images/image2.jpg';
 
 export function HomePage() {
   const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
@@ -93,32 +94,36 @@ export function HomePage() {
   return (
     <div className="min-h-screen">
       {/* Hero Banner with background image */}
-      <section className="relative py-6 md:py-8 px-4 sm:px-6 lg:px-8">
+      <section className="relative pt-4 md:pt-6 lg:pt-8 pb-6 md:pb-8 lg:pb-10 pl-0 pr-0 overflow-hidden">
         <div
           className="absolute inset-0 bg-cover bg-center opacity-15 -z-10"
           style={{ backgroundImage: `url(${image1})` }}
         />
+        <div
+          className="absolute inset-0 bg-cover bg-center block"
+          style={{ backgroundImage: `url(${image2})` }}
+        />
         <BannerSlider />
 
         {/* Decorative images with subtle float and glow */}
-        <div className="hidden xl:block absolute left-[5%] top-[22%] w-44 h-44 2xl:w-52 2xl:h-52 z-10 flex items-center justify-center">
-          <div className="w-24 h-24 2xl:w-28 2xl:h-28 bg-blue-400/40 rounded-full blur-[3rem]" />
+        <div className="absolute left-[5%] top-[22%] w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 lg:w-36 lg:h-36 xl:w-44 xl:h-44 2xl:w-52 2xl:h-52 z-10 flex items-center justify-center">
+          <div className="w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 lg:w-24 lg:h-24 xl:w-28 xl:h-28 bg-blue-400/40 rounded-full blur-[3rem]" />
         </div>
         <motion.img
           src={image3}
           alt=""
-          className="hidden xl:block absolute left-[5%] top-[22%] w-44 h-44 2xl:w-52 2xl:h-52 object-cover rounded-[2.5rem] opacity-95 z-20"
+          className="absolute left-[5%] top-[22%] w-16 h-16 sm:w-20 sm:h-20 md:w-28 md:h-28 lg:w-36 lg:h-36 xl:w-44 xl:h-44 2xl:w-52 2xl:h-52 object-cover opacity-95 z-20"
           animate={{ y: [0, -15, 0] }}
           transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
         />
 
-        <div className="hidden xl:block absolute right-[5%] bottom-[22%] w-40 h-40 2xl:w-48 2xl:h-48 z-10 flex items-center justify-center">
-          <div className="w-20 h-20 2xl:w-24 2xl:h-24 bg-cyan-400/40 rounded-full blur-[3rem]" />
+        <div className="absolute right-[5%] bottom-[22%] w-16 h-16 sm:w-20 sm:h-20 md:w-28 md:h-28 lg:w-36 lg:h-36 xl:w-48 xl:h-48 z-10 flex items-center justify-center">
+          <div className="w-10 h-10 sm:w-14 sm:h-14 md:w-20 md:h-20 lg:w-24 lg:h-24 xl:w-32 xl:h-32 bg-cyan-400/40 rounded-full blur-[3rem]" />
         </div>
         <motion.img
           src={image4}
           alt=""
-          className="hidden xl:block absolute right-[5%] bottom-[22%] w-40 h-40 2xl:w-48 2xl:h-48 object-cover rounded-[2.5rem] opacity-95 z-20"
+          className="absolute right-[5%] bottom-[22%] w-20 h-20 sm:w-24 sm:h-24 md:w-36 md:h-36 lg:w-40 lg:h-40 xl:w-48 xl:h-48 object-cover opacity-95 z-20"
           animate={{ y: [0, 15, 0] }}
           transition={{ duration: 4.5, repeat: Infinity, ease: 'easeInOut' }}
         />
@@ -134,16 +139,16 @@ export function HomePage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.1, duration: 0.5 }}
-                className="group relative flex items-center gap-4 p-4 rounded-2xl hover:bg-gray-50 dark:hover:bg-gray-800 transition-all duration-300"
+                className="group relative flex flex-col sm:flex-row items-center sm:items-center gap-3 sm:gap-4 p-3 sm:p-4 rounded-2xl hover:bg-gray-50 dark:hover:bg-gray-800 transition-all duration-300"
               >
-                <div className={`relative w-14 h-14 rounded-2xl bg-gradient-to-br ${feature.color} flex items-center justify-center text-white shadow-lg group-hover:shadow-xl group-hover:scale-110 transition-all duration-300`}>
-                  <feature.icon className="w-7 h-7" />
+                <div className={`relative w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-gradient-to-br ${feature.color} flex items-center justify-center text-white shadow-lg group-hover:shadow-xl group-hover:scale-110 transition-all duration-300`}>
+                  <feature.icon className="w-6 h-6 sm:w-7 sm:h-7" />
                 </div>
-                <div>
-                  <h3 className="font-bold text-gray-900 dark:text-white text-sm md:text-base group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                <div className="text-center sm:text-left">
+                  <h3 className="font-bold text-gray-900 dark:text-white text-xs sm:text-sm md:text-base group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
                     {feature.title}
                   </h3>
-                  <p className="text-xs md:text-sm text-gray-500 dark:text-gray-400 mt-0.5">
+                  <p className="text-[10px] sm:text-xs md:text-sm text-gray-500 dark:text-gray-400 mt-0.5">
                     {feature.description}
                   </p>
                 </div>

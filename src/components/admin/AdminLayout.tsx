@@ -139,10 +139,10 @@ export function AdminLayout({ children }: AdminLayoutProps) {
             <div className="flex items-center justify-between">
               <Link to="/" className="flex items-center gap-3 group">
                 <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-blue-600 to-cyan-500 flex items-center justify-center shadow-lg shadow-blue-500/30 group-hover:shadow-blue-500/50 transition-shadow">
-                  <span className="text-white font-bold text-lg">E</span>
+                  <span className="text-white font-bold text-lg">B</span>
                 </div>
                 <div>
-                  <span className="font-bold dark:text-white text-lg tracking-tight">Electronica</span>
+                  <span className="font-bold dark:text-white text-lg tracking-tight">BE-Market</span>
                   <p className="text-xs dark:text-gray-500 font-medium">Administration</p>
                 </div>
               </Link>

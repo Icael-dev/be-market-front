@@ -11,7 +11,7 @@ export function SocialShare({ url, title }: SocialShareProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [copied, setCopied] = useState(false);
 
-  const fullUrl = `https://electronica.tg${url}`;
+  const fullUrl = `https://be-market.tg${url}`;
 
   const links = [
     { name: 'Facebook', icon: Facebook, url: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(fullUrl)}`, color: 'bg-blue-600 hover:bg-blue-700' },
