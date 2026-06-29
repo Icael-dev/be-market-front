@@ -134,9 +134,9 @@ export function AdminFlashSalesPage() {
           </button>
         </motion.div>
 
-        <div className="dark:bg-gray-800 rounded-2xl border dark:border-gray-700 overflow-hidden">
+        <div className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 overflow-hidden">
           <table className="w-full">
-            <thead className="dark:bg-gray-800 border-b dark:border-gray-700">
+            <thead className="bg-gray-50 dark:bg-gray-800 border-b dark:border-gray-700">
               <tr>
                 <th className="text-left px-6 py-4 text-sm font-medium dark:text-gray-500">Produit</th>
                 <th className="text-left px-6 py-4 text-sm font-medium dark:text-gray-500">Reduction</th>
@@ -151,7 +151,7 @@ export function AdminFlashSalesPage() {
                 const isActive = sale.is_active && new Date(sale.starts_at) <= new Date() && new Date(sale.ends_at) > new Date();
 
                 return (
-                  <motion.tr key={sale.id} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: index * 0.02 }} className="dark:hover:bg-gray-700">
+                  <motion.tr key={sale.id} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: index * 0.02 }} className="hover:bg-gray-50 hover:dark:bg-gray-700">
                     <td className="px-6 py-4">
                       <span className="font-medium dark:text-white">{sale.product?.name || product?.name || 'Produit'}</span>
 
@@ -170,7 +170,7 @@ export function AdminFlashSalesPage() {
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center justify-end gap-2">
-                        <button onClick={() => handleEdit(sale)} className="p-2 hover:dark:bg-gray-700 rounded-lg">
+                        <button onClick={() => handleEdit(sale)} className="p-2 hover:bg-gray-100 hover:dark:bg-gray-700 rounded-lg">
                           <Edit2 className="w-4 h-4 dark:text-gray-500" />
                         </button>
                         <button onClick={() => handleDelete(sale.id)} className="p-2 hover:bg-red-50 rounded-lg">
@@ -197,10 +197,10 @@ export function AdminFlashSalesPage() {
         {showForm && (
           <>
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setShowForm(false)} className="fixed inset-0 bg-black/50 z-50" />
-            <motion.div initial={{ opacity: 0, x: '100%' }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: '100%' }} className="fixed right-0 top-0 bottom-0 w-full max-w-xl dark:bg-gray-800 z-50 overflow-y-auto">
-              <div className="p-6 border-b dark:border-gray-700 flex items-center justify-between sticky top-0 dark:bg-gray-800">
+            <motion.div initial={{ opacity: 0, x: '100%' }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: '100%' }} className="fixed right-0 top-0 bottom-0 w-full max-w-xl bg-white dark:bg-gray-800 z-50 overflow-y-auto">
+              <div className="p-6 border-b dark:border-gray-700 flex items-center justify-between sticky top-0 bg-white dark:bg-gray-800">
                 <h2 className="text-xl font-bold dark:text-white">{editingSale ? 'Modifier' : 'Nouveau Flash Sale'}</h2>
-                <button onClick={() => setShowForm(false)} className="p-2 hover:dark:bg-gray-700 rounded-lg"><X className="w-5 h-5" /></button>
+                <button onClick={() => setShowForm(false)} className="p-2 hover:bg-gray-100 hover:dark:bg-gray-700 rounded-lg"><X className="w-5 h-5" /></button>
               </div>
 
               <div className="p-6 space-y-6">
@@ -261,7 +261,7 @@ export function AdminFlashSalesPage() {
                     {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
                     Enregistrer
                   </button>
-                  <button onClick={() => setShowForm(false)} className="px-6 py-2.5 border dark:border-gray-700 rounded-xl font-medium dark:hover:bg-gray-700">Annuler</button>
+                  <button onClick={() => setShowForm(false)} className="px-6 py-2.5 border dark:border-gray-700 rounded-xl font-medium hover:bg-gray-100 dark:hover:bg-gray-700">Annuler</button>
                 </div>
               </div>
             </motion.div>

@@ -145,7 +145,7 @@ export function AdminDashboardPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.05 }}
-              className="dark:bg-gray-800 rounded-2xl border dark:border-gray-700 p-6"
+              className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 p-6"
             >
               <div className="flex items-center justify-between mb-4">
                 <div className={`w-12 h-12 rounded-xl ${colorClasses[stat.color]} flex items-center justify-center`}>
@@ -175,7 +175,7 @@ export function AdminDashboardPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="dark:bg-gray-800 rounded-2xl border dark:border-gray-700 p-6"
+            className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 p-6"
           >
             <div className="flex items-center justify-between mb-6">
               <h2 className="font-bold dark:text-white">Commandes recentes</h2>
@@ -208,7 +208,7 @@ export function AdminDashboardPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
-            className="dark:bg-gray-800 rounded-2xl border dark:border-gray-700 p-6"
+            className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 p-6"
           >
             <div className="flex items-center justify-between mb-6">
               <h2 className="font-bold dark:text-white">Produits populaires</h2>

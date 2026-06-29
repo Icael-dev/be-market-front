@@ -138,7 +138,7 @@ export function AdminBannersPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.05 }}
-              className="dark:bg-gray-800 rounded-2xl border dark:border-gray-700 overflow-hidden"
+              className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 overflow-hidden"
             >
               <div className="relative h-48">
                 <img
@@ -174,7 +174,7 @@ export function AdminBannersPage() {
                 <div className="flex gap-2">
                   <button
                     onClick={() => handleEdit(banner)}
-                    className="p-2 hover:dark:bg-gray-700 rounded-lg"
+                    className="p-2 hover:bg-gray-100 hover:dark:bg-gray-700 rounded-lg"
                   >
                     <Edit2 className="w-4 h-4 dark:text-gray-500" />
                   </button>
@@ -190,7 +190,7 @@ export function AdminBannersPage() {
           ))}
 
           {banners.length === 0 && !loading && (
-            <div className="dark:bg-gray-800 rounded-2xl border dark:border-gray-700 p-12 text-center">
+            <div className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 p-12 text-center">
               <ImageIcon className="w-12 h-12 dark:text-gray-500 mx-auto mb-4" />
               <p className="dark:text-gray-500">Aucune banniere</p>
             </div>
@@ -212,15 +212,15 @@ export function AdminBannersPage() {
               initial={{ opacity: 0, x: '100%' }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: '100%' }}
-              className="fixed right-0 top-0 bottom-0 w-full max-w-xl dark:bg-gray-800 z-50 overflow-y-auto"
+              className="fixed right-0 top-0 bottom-0 w-full max-w-xl bg-white dark:bg-gray-800 z-50 overflow-y-auto"
             >
-              <div className="p-6 border-b dark:border-gray-700 flex items-center justify-between sticky top-0 dark:bg-gray-800">
+              <div className="p-6 border-b dark:border-gray-700 flex items-center justify-between sticky top-0 bg-white dark:bg-gray-800">
                 <h2 className="text-xl font-bold dark:text-white">
                   {editingBanner ? 'Modifier la banniere' : 'Nouvelle banniere'}
                 </h2>
                 <button
                   onClick={() => setShowForm(false)}
-                  className="p-2 hover:dark:bg-gray-700 rounded-lg"
+                  className="p-2 hover:bg-gray-100 hover:dark:bg-gray-700 rounded-lg"
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -333,7 +333,7 @@ export function AdminBannersPage() {
                   </button>
                   <button
                     onClick={() => setShowForm(false)}
-                    className="px-6 py-2.5 border dark:border-gray-700 rounded-xl font-medium dark:hover:bg-gray-700"
+                    className="px-6 py-2.5 border dark:border-gray-700 rounded-xl font-medium hover:bg-gray-100 dark:hover:bg-gray-700"
                   >
                     Annuler
                   </button>

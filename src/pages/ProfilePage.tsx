@@ -76,8 +76,8 @@ export function ProfilePage() {
   };
 
   return (
-    <div className="min-h-screen dark:bg-gray-900">
-      <div className="dark:bg-gray-800 border-b dark:border-gray-700">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      <div className="bg-white dark:bg-gray-800 border-b dark:border-gray-700">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -93,7 +93,7 @@ export function ProfilePage() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="dark:bg-gray-800 rounded-2xl border dark:border-gray-700 p-6 md:p-8 mb-6"
+          className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 p-6 md:p-8 mb-6"
         >
           <div className="flex items-start justify-between mb-6">
             <h2 className="text-lg font-bold dark:text-white">Informations personnelles</h2>
@@ -180,7 +180,7 @@ export function ProfilePage() {
                 </button>
                 <button
                   onClick={() => setIsEditing(false)}
-                  className="px-6 py-2.5 border dark:border-gray-700 rounded-xl font-medium hover:dark:bg-gray-900 transition-colors"
+                  className="px-6 py-2.5 border dark:border-gray-700 rounded-xl font-medium hover:bg-gray-50 hover:dark:bg-gray-900 transition-colors"
                 >
                   Annuler
                 </button>
@@ -189,7 +189,7 @@ export function ProfilePage() {
           ) : (
             <div className="grid sm:grid-cols-2 gap-6">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl dark:bg-gray-700 flex items-center justify-center dark:text-gray-500">
+                <div className="w-10 h-10 rounded-xl bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-gray-500 dark:text-gray-500">
                   <User className="w-5 h-5" />
                 </div>
                 <div>
@@ -201,7 +201,7 @@ export function ProfilePage() {
               </div>
 
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl dark:bg-gray-700 flex items-center justify-center dark:text-gray-500">
+                <div className="w-10 h-10 rounded-xl bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-gray-500 dark:text-gray-500">
                   <Mail className="w-5 h-5" />
                 </div>
                 <div>
@@ -211,7 +211,7 @@ export function ProfilePage() {
               </div>
 
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl dark:bg-gray-700 flex items-center justify-center dark:text-gray-500">
+                <div className="w-10 h-10 rounded-xl bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-gray-500 dark:text-gray-500">
                   <Phone className="w-5 h-5" />
                 </div>
                 <div>
@@ -223,7 +223,7 @@ export function ProfilePage() {
               </div>
 
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl dark:bg-gray-700 flex items-center justify-center dark:text-gray-500">
+                <div className="w-10 h-10 rounded-xl bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-gray-500 dark:text-gray-500">
                   <Calendar className="w-5 h-5" />
                 </div>
                 <div>
@@ -247,9 +247,9 @@ export function ProfilePage() {
           <div className="grid sm:grid-cols-3 gap-4 mb-6">
             <Link
               to="/orders"
-              className="dark:bg-gray-800 rounded-2xl border dark:border-gray-700 p-6 hover:shadow-lg transition-all"
+              className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 p-6 hover:shadow-lg transition-all"
             >
-              <div className="w-12 h-12 rounded-xl dark:bg-blue-900/30 flex items-center justify-center dark:text-blue-400 mb-4">
+              <div className="w-12 h-12 rounded-xl bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center dark:text-blue-400 mb-4">
                 <Package className="w-6 h-6" />
               </div>
               <h3 className="font-semibold dark:text-white">Mes commandes</h3>
@@ -260,9 +260,9 @@ export function ProfilePage() {
 
             <Link
               to="/addresses"
-              className="dark:bg-gray-800 rounded-2xl border dark:border-gray-700 p-6 hover:shadow-lg transition-all"
+              className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 p-6 hover:shadow-lg transition-all"
             >
-              <div className="w-12 h-12 rounded-xl dark:bg-green-900/30 flex items-center justify-center dark:text-green-400 mb-4">
+              <div className="w-12 h-12 rounded-xl bg-green-50 dark:bg-green-900/30 flex items-center justify-center dark:text-green-400 mb-4">
                 <MapPin className="w-6 h-6" />
               </div>
               <h3 className="font-semibold dark:text-white">Adresses</h3>
@@ -273,9 +273,9 @@ export function ProfilePage() {
 
             <Link
               to="/products"
-              className="dark:bg-gray-800 rounded-2xl border dark:border-gray-700 p-6 hover:shadow-lg transition-all"
+              className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 p-6 hover:shadow-lg transition-all"
             >
-              <div className="w-12 h-12 rounded-xl dark:bg-orange-900/20 flex items-center justify-center dark:text-orange-400 mb-4">
+              <div className="w-12 h-12 rounded-xl bg-orange-50 dark:bg-orange-900/20 flex items-center justify-center dark:text-orange-400 mb-4">
                 <ShoppingBag className="w-6 h-6" />
               </div>
               <h3 className="font-semibold dark:text-white">Acheter</h3>
@@ -291,7 +291,7 @@ export function ProfilePage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="dark:bg-gray-800 rounded-2xl border dark:border-gray-700 p-6 md:p-8"
+            className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 p-6 md:p-8"
           >
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-lg font-bold dark:text-white">Commandes recentes</h2>
@@ -308,7 +308,7 @@ export function ProfilePage() {
                 <Link
                   key={order.id}
                   to={`/orders/${order.id}`}
-                  className="flex items-center justify-between p-4 dark:bg-gray-900 rounded-xl hover:dark:bg-gray-700 transition-colors"
+                  className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-900 rounded-xl hover:bg-gray-100 hover:dark:bg-gray-700 transition-colors"
                 >
                   <div className="flex items-center gap-4">
                     <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center dark:text-blue-400">

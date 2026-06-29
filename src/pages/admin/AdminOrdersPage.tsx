@@ -73,7 +73,7 @@ export function AdminOrdersPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="dark:bg-gray-800 rounded-2xl border dark:border-gray-700 p-4 mb-6"
+          className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 p-4 mb-6"
         >
           <div className="flex flex-col sm:flex-row gap-4">
             <div className="flex-1 relative">
@@ -90,7 +90,7 @@ export function AdminOrdersPage() {
             <select
               value={statusFilter}
               onChange={e => setStatusFilter(e.target.value)}
-              className="px-4 py-2.5 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 dark:bg-gray-800 cursor-pointer"
+              className="px-4 py-2.5 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 bg-white dark:bg-gray-800 cursor-pointer"
             >
               <option value="">Tous les statuts</option>
               {statuses.map(status => (
@@ -104,11 +104,11 @@ export function AdminOrdersPage() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.2 }}
-          className="dark:bg-gray-800 rounded-2xl border dark:border-gray-700 overflow-hidden"
+          className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 overflow-hidden"
         >
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead className="dark:bg-gray-800 border-b dark:border-gray-700">
+              <thead className="bg-gray-50 dark:bg-gray-800 border-b dark:border-gray-700">
                 <tr>
                   <th className="text-left px-6 py-4 text-sm font-medium dark:text-gray-500">Commande</th>
                   <th className="text-left px-6 py-4 text-sm font-medium dark:text-gray-500">Client</th>
@@ -125,7 +125,7 @@ export function AdminOrdersPage() {
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: index * 0.02 }}
-                    className="hover:dark:bg-gray-800 transition-colors"
+                    className="hover:bg-gray-50 hover:dark:bg-gray-800 transition-colors"
                   >
                     <td className="px-6 py-4">
                       <p className="font-medium dark:text-white">{order.order_number}</p>
@@ -170,7 +170,7 @@ export function AdminOrdersPage() {
                       <div className="flex items-center justify-end">
                         <button
                           onClick={() => setSelectedOrder(order)}
-                          className="p-2 hover:dark:bg-gray-700 rounded-lg transition-colors"
+                          className="p-2 hover:bg-gray-100 hover:dark:bg-gray-700 rounded-lg transition-colors"
                         >
                           <Eye className="w-4 h-4 dark:text-gray-500" />
                         </button>
@@ -205,22 +205,22 @@ export function AdminOrdersPage() {
               initial={{ opacity: 0, x: '100%' }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: '100%' }}
-              className="fixed right-0 top-0 bottom-0 w-full max-w-xl dark:bg-gray-800 z-50 overflow-y-auto"
+               className="fixed right-0 top-0 bottom-0 w-full max-w-xl bg-white dark:bg-gray-800 z-50 overflow-y-auto"
             >
-              <div className="p-6 border-b dark:border-gray-700 flex items-center justify-between sticky top-0 dark:bg-gray-800">
+              <div className="p-6 border-b dark:border-gray-700 flex items-center justify-between sticky top-0 bg-white dark:bg-gray-800">
                 <h2 className="text-xl font-bold dark:text-white">
                   {selectedOrder.order_number}
                 </h2>
                 <button
                   onClick={() => setSelectedOrder(null)}
-                  className="p-2 hover:dark:bg-gray-700 rounded-lg transition-colors"
+                  className="p-2 hover:bg-gray-100 hover:dark:bg-gray-700 rounded-lg transition-colors"
                 >
                   <X className="w-5 h-5" />
                 </button>
               </div>
 
               <div className="p-6 space-y-6">
-                <div className="flex items-center gap-3 p-4 dark:bg-gray-800 rounded-xl">
+                <div className="flex items-center gap-3 p-4 bg-gray-50 dark:bg-gray-800 rounded-xl">
                   <Calendar className="w-5 h-5 dark:text-gray-500" />
                   <div>
                     <p className="text-sm dark:text-gray-500">Date</p>
@@ -241,7 +241,7 @@ export function AdminOrdersPage() {
                     <MapPin className="w-4 h-4 dark:text-gray-500" />
                     Adresse de livraison
                   </h3>
-                  <div className="dark:bg-gray-800 rounded-xl p-4">
+                  <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-4">
                     <p className="font-medium">{selectedOrder.shipping_address?.full_name}</p>
                     <p className="text-sm dark:text-gray-500">{selectedOrder.shipping_address?.phone}</p>
                     <p className="text-sm dark:text-gray-500 mt-1">
@@ -258,7 +258,7 @@ export function AdminOrdersPage() {
                     <CreditCard className="w-4 h-4 dark:text-gray-500" />
                     Paiement
                   </h3>
-                  <div className="dark:bg-gray-800 rounded-xl p-4">
+                  <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-4">
                     <div className="flex justify-between mb-2">
                       <span className="dark:text-gray-500">Methode</span>
                       <span className="font-medium">{getStatusLabel(selectedOrder.payment_method || '')}</span>
@@ -279,7 +279,7 @@ export function AdminOrdersPage() {
                   <h3 className="font-medium dark:text-white mb-3">Articles</h3>
                   <div className="space-y-2">
                     {selectedOrder.items?.map(item => (
-                      <div key={item.id} className="flex justify-between p-3 dark:bg-gray-800 rounded-lg">
+                      <div key={item.id} className="flex justify-between p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
                         <div>
                           <p className="font-medium dark:text-white">{item.product_name}</p>
                           <p className="text-sm dark:text-gray-500">x{item.quantity}</p>

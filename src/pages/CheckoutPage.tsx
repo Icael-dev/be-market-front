@@ -181,8 +181,8 @@ if (useNewAddress && user) {
   const currentStepIndex = steps.findIndex(s => s.id === step);
 
   return (
-    <div className="min-h-screen dark:bg-gray-900">
-      <div className="dark:bg-gray-800 border-b dark:border-gray-700">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      <div className="bg-white dark:bg-gray-800 border-b dark:border-gray-700">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="flex items-center justify-between mb-8">
             <Link to="/cart" className="flex items-center gap-2 dark:text-gray-500 hover:dark:text-white transition-colors">
@@ -202,7 +202,7 @@ if (useNewAddress && user) {
                     ? 'dark:bg-green-900/300 text-white'
                     : index === currentStepIndex
                     ? 'bg-blue-600 text-white'
-                    : 'dark:bg-gray-700 dark:text-gray-500'
+                    : 'bg-gray-200 text-gray-500 dark:bg-gray-700 dark:text-gray-500'
                 )}>
                   {index < currentStepIndex ? (
                     <Check className="w-4 h-4" />
@@ -219,7 +219,7 @@ if (useNewAddress && user) {
                 {index < steps.length - 1 && (
                   <div className={cn(
                     'w-8 sm:w-16 lg:w-24 h-0.5 mx-2',
-                    index < currentStepIndex ? 'dark:bg-green-900/300' : 'dark:bg-gray-700'
+                    index < currentStepIndex ? 'bg-green-600 dark:bg-green-900/30' : 'bg-gray-200 dark:bg-gray-700'
                   )} />
                 )}
               </div>
@@ -238,7 +238,7 @@ if (useNewAddress && user) {
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: 20 }}
-                  className="dark:bg-gray-800 dark:bg-gray-900 rounded-2xl border dark:border-gray-700 dark:border-gray-800 p-6"
+                  className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 dark:border-gray-800 p-6"
                 >
                   <h2 className="text-lg font-bold dark:text-white mb-6">
                     Adresse de livraison
@@ -256,7 +256,7 @@ if (useNewAddress && user) {
                           className={cn(
                             'w-full text-left p-4 rounded-xl border-2 transition-all',
                             !useNewAddress && selectedAddressId === address.id
-                              ? 'border-blue-600 dark:bg-blue-900/30'
+                              ? 'border-blue-600 bg-blue-50 dark:bg-blue-900/30'
                               : 'dark:border-gray-700 dark:hover:border-gray-600'
                           )}
                         >
@@ -289,7 +289,7 @@ if (useNewAddress && user) {
                       className={cn(
                         'w-full text-left p-4 rounded-xl border-2 transition-all',
                         useNewAddress
-                          ? 'border-blue-600 dark:bg-blue-900/30'
+                          ? 'border-blue-600 bg-blue-50 dark:bg-blue-900/30'
                           : 'dark:border-gray-700 dark:hover:border-gray-600'
                       )}
                     >
@@ -391,7 +391,7 @@ if (useNewAddress && user) {
                   initial={{ opacity: 0, x: 20 }}
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: -20 }}
-                  className="dark:bg-gray-800 dark:bg-gray-900 rounded-2xl border dark:border-gray-700 dark:border-gray-800 p-6"
+                  className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 dark:border-gray-800 p-6"
                 >
                   <h2 className="text-lg font-bold dark:text-white mb-6">
                     Mode de paiement
@@ -492,7 +492,7 @@ if (useNewAddress && user) {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -20 }}
-                  className="dark:bg-gray-800 dark:bg-gray-900 rounded-2xl border dark:border-gray-700 dark:border-gray-800 p-6"
+                  className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 dark:border-gray-800 p-6"
                 >
                   <h2 className="text-lg font-bold dark:text-white mb-6">
                     Confirmation de la commande
@@ -530,7 +530,7 @@ if (useNewAddress && user) {
                       <div className="space-y-2">
                         {items.map(item => (
                           <div key={item.id} className="flex items-center gap-3">
-                            <div className="w-12 h-12 dark:bg-gray-700 rounded-lg overflow-hidden">
+                            <div className="w-12 h-12 bg-gray-200 dark:bg-gray-700 rounded-lg overflow-hidden">
                               <img
                                 src={item.product?.images?.[0]}
                                 alt={item.product?.name}
@@ -584,7 +584,7 @@ if (useNewAddress && user) {
           </div>
 
           <div className="lg:col-span-1">
-            <div className="dark:bg-gray-800 dark:bg-gray-900 rounded-2xl border dark:border-gray-700 dark:border-gray-800 p-6 sticky top-24">
+            <div className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 dark:border-gray-800 p-6 sticky top-24">
               <h2 className="text-lg font-bold dark:text-white mb-6">
                 recapitulatif
               </h2>
@@ -592,7 +592,7 @@ if (useNewAddress && user) {
               <div className="space-y-3">
                 {items.map(item => (
                   <div key={item.id} className="flex gap-3">
-                    <div className="w-16 h-16 dark:bg-gray-700 rounded-lg overflow-hidden flex-shrink-0">
+                    <div className="w-16 h-16 bg-gray-200 dark:bg-gray-700 rounded-lg overflow-hidden flex-shrink-0">
                       <img
                         src={item.product?.images?.[0]}
                         alt={item.product?.name}

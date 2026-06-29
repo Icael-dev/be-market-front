@@ -1,8 +1,9 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { fetchCategories, fetchFeaturedProducts } from '../services/products';
-import type { Product, Category } from '../types';
+ import { fetchTestimonials } from '../services/content';
+ import type { Product, Category, Testimonial } from '../types';
 import { ProductCard } from '../components/ProductCard';
 import { ProductsGridSkeleton } from '../components/LoadingSpinner';
 import { BannerSlider } from '../components/BannerSlider';
@@ -21,7 +22,19 @@ import {
   CreditCard,
   Headset,
   Zap,
-  Globe
+  Globe,
+  Monitor,
+  Camera,
+  Gamepad2,
+  Tablet,
+  ShoppingBag,
+  BookOpen,
+  Baby,
+  Car,
+  Hammer,
+  Wifi,
+  HardDrive,
+  Keyboard,
 } from 'lucide-react';
 
 import image3 from '../assets/images/image3.jpg';
@@ -30,38 +43,119 @@ import image1 from '../assets/images/image1.jpg';
 import image2 from '../assets/images/image2.jpg';
 
 export function HomePage() {
-  const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [loading, setLoading] = useState(true);
+   const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
+   const [categories, setCategories] = useState<Category[]>([]);
+   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
+   const [loading, setLoading] = useState(true);
+  const trackRef = useRef<HTMLDivElement>(null);
+  const rafRef = useRef<number>(0);
+  const posRef = useRef(0);
+  const pausedRef = useRef(false);
+  const isDraggingRef = useRef(false);
+  const didDragRef = useRef(false);
+  const startPosRef = useRef(0);
+  const startOffsetRef = useRef(0);
+  const [isDragging, setIsDragging] = useState(false);
+
+useEffect(() => {
+     async function fetchData() {
+       try {
+         const [products, categories, testimonials] = await Promise.all([
+           fetchFeaturedProducts(8),
+           fetchCategories(),
+           fetchTestimonials()
+         ]);
+
+         setFeaturedProducts(products);
+         setCategories(categories);
+         setTestimonials(testimonials);
+       } catch (error) {
+         console.error('Error fetching data:', error);
+       } finally {
+         setLoading(false);
+       }
+     }
+
+      fetchData();
+    }, []);
 
   useEffect(() => {
-    async function fetchData() {
-      try {
-        const [products, categories] = await Promise.all([
-          fetchFeaturedProducts(8),
-          fetchCategories()
-        ]);
+    const track = trackRef.current;
+    if (!track || categories.length === 0) return;
 
-        setFeaturedProducts(products);
-        setCategories(categories);
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      } finally {
-        setLoading(false);
+    const speed = 0.6;
+
+    const animate = () => {
+      if (!pausedRef.current) {
+        posRef.current -= speed;
+        const halfWidth = track.scrollWidth / 2;
+        if (Math.abs(posRef.current) >= halfWidth) {
+          posRef.current = 0;
+        }
+        track.style.transform = `translateX(${posRef.current}px)`;
       }
-    }
+      rafRef.current = requestAnimationFrame(animate);
+    };
 
-    fetchData();
-  }, []);
+    rafRef.current = requestAnimationFrame(animate);
+
+    return () => cancelAnimationFrame(rafRef.current);
+  }, [categories]);
+
+  const handlePointerDown = (e: React.PointerEvent) => {
+    isDraggingRef.current = true;
+    didDragRef.current = false;
+    startPosRef.current = e.clientX;
+    startOffsetRef.current = posRef.current;
+    pausedRef.current = true;
+    setIsDragging(true);
+    (e.target as HTMLElement).setPointerCapture(e.pointerId);
+  };
+
+  const handlePointerMove = (e: React.PointerEvent) => {
+    if (!isDraggingRef.current) return;
+    const delta = e.clientX - startPosRef.current;
+    if (Math.abs(delta) > 3) didDragRef.current = true;
+    posRef.current = startOffsetRef.current + delta;
+    const track = trackRef.current;
+    if (track) {
+      const halfWidth = track.scrollWidth / 2;
+      if (posRef.current > 0) posRef.current -= halfWidth;
+      if (posRef.current < -halfWidth) posRef.current += halfWidth;
+      track.style.transform = `translateX(${posRef.current}px)`;
+    }
+  };
+
+  const handlePointerUp = () => {
+    isDraggingRef.current = false;
+    pausedRef.current = false;
+    setIsDragging(false);
+  };
+
+  const handleLinkClick = (e: React.MouseEvent) => {
+    if (didDragRef.current) {
+      didDragRef.current = false;
+      e.preventDefault();
+    }
+  };
 
   const categoryIcons: Record<string, React.ComponentType<{ className?: string }>> = {
     telephones: Smartphone,
-    ordinateurs: Laptop,
-    chargeurs: Battery,
-    ecouteurs: Headphones,
+    'ordinateurs-portables': Laptop,
+    'ordinateurs-de-bureau': Monitor,
+    'pochettes-coques-telephone': Smartphone,
     'casques-audio': Headphones,
-    enceintes: Speaker,
-    'montres-connectees': Watch
+    'airpods-ecouteurs': Headset,
+    'baffles-enceintes': Speaker,
+    'huffers-power-banks': Battery,
+    'montres-connectees': Watch,
+    tablettes: Tablet,
+    'appareils-photo': Camera,
+    gaming: Gamepad2,
+    'reseau-wifi': Wifi,
+    stockage: HardDrive,
+    peripheriques: Keyboard,
+    'logiciels-abonnements': Globe,
   };
 
   const features = [
@@ -180,17 +274,28 @@ export function HomePage() {
 
           <div className="relative">
             <div className="overflow-hidden">
-              <div className="flex gap-4 md:gap-5 animate-scroll hover:[animation-play-state:paused]">
+              <div
+                ref={trackRef}
+                onMouseEnter={() => { if (!isDraggingRef.current) pausedRef.current = true; }}
+                onMouseLeave={() => { if (!isDraggingRef.current) pausedRef.current = false; }}
+                onPointerDown={handlePointerDown}
+                onPointerMove={handlePointerMove}
+                onPointerUp={handlePointerUp}
+                onPointerCancel={handlePointerUp}
+                className={`flex gap-4 md:gap-5 will-change-transform select-none ${isDragging ? 'cursor-grabbing' : 'cursor-grab'}`}
+                style={{ display: 'flex', width: 'max-content', touchAction: 'none' }}
+              >
                 {[...categories, ...categories].map((category, index) => {
                   const Icon = categoryIcons[category.slug] || Smartphone;
                   return (
                     <Link
                       key={`${category.id}-${index}`}
                       to={`/products?category=${category.slug}`}
-                      className="group flex-shrink-0 w-40 md:w-48 flex flex-col items-center p-5 md:p-6 bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 hover:border-blue-200 dark:hover:border-blue-800 hover:shadow-xl transition-all duration-300"
+                      onClick={handleLinkClick}
+                      className="group flex-shrink-0 w-32 sm:w-40 md:w-44 flex flex-col items-center p-3 sm:p-4 md:p-5 bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 hover:border-blue-200 dark:hover:border-blue-800 hover:shadow-xl transition-all duration-300 no-underline"
                     >
-                      <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-blue-900/20 dark:to-cyan-900/20 flex items-center justify-center text-blue-600 dark:text-blue-400 mb-3 group-hover:scale-110 transition-transform">
-                        <Icon className="w-7 h-7" />
+                      <div className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-2xl bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-blue-900/20 dark:to-cyan-900/20 flex items-center justify-center text-blue-600 dark:text-blue-400 mb-2 sm:mb-3 group-hover:scale-110 transition-transform">
+                        <Icon className="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7" />
                       </div>
                       <h3 className="font-semibold text-gray-900 dark:text-white text-center text-sm">
                         {category.name}
@@ -382,28 +487,9 @@ export function HomePage() {
           </motion.div>
 
           <div className="grid md:grid-cols-3 gap-6 md:gap-8">
-            {[
-              {
-                full_name: 'Kossi Mensah',
-                role: 'Entrepreneur',
-                comment: 'Service exceptionnel! J\'ai achete un MacBook et la livraison a ete rapide. Le produit etait exactement comme decrit.',
-                rating: 5
-              },
-              {
-                full_name: 'Ami Togo',
-                role: 'Designer',
-                comment: 'J\'adore faire mes achats ici. Les prix sont competitifs et le support client est tres reactif.',
-                rating: 5
-              },
-              {
-                full_name: 'Yao Kudjo',
-                role: 'Developpeur',
-                comment: 'Excellente qualite de produits. Mon AirPods Pro fonctionne parfaitement depuis 6 mois.',
-                rating: 5
-              }
-            ].map((review, index) => (
+            {testimonials.map((review, index) => (
               <motion.div
-                key={review.full_name}
+                key={review.id}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}

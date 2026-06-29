@@ -136,6 +136,17 @@ export interface Review {
   profile?: Profile;
 }
 
+export interface Testimonial {
+  id: string;
+  full_name: string;
+  role: string | null;
+  comment: string;
+  rating: number;
+  is_active: boolean;
+  sort_order: number;
+  created_at: string;
+}
+
 export interface WishlistItem {
   id: string;
   user_id: string;

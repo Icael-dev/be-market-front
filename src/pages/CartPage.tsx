@@ -25,15 +25,15 @@ export function CartPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen dark:bg-gray-900 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
         <div className="animate-spin w-8 h-8 border-2 dark:border-gray-700 border-t-blue-600 rounded-full" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen dark:bg-gray-900">
-      <div className="dark:bg-gray-800 border-b dark:border-gray-700">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      <div className="bg-white dark:bg-gray-800 border-b dark:border-gray-700">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -57,9 +57,9 @@ export function CartPage() {
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.9 }}
-              className="dark:bg-gray-800 rounded-2xl border dark:border-gray-700 p-12 text-center"
+              className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 p-12 text-center"
             >
-              <div className="w-20 h-20 dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-6">
+              <div className="w-20 h-20 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-6">
                 <ShoppingCart className="w-10 h-10 dark:text-gray-500" />
               </div>
               <h2 className="text-xl font-bold dark:text-white mb-2">
@@ -92,12 +92,12 @@ export function CartPage() {
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, x: -100 }}
                       transition={{ delay: index * 0.05 }}
-                      className="dark:bg-gray-800 dark:bg-gray-900 rounded-2xl border dark:border-gray-700 dark:border-gray-800 p-4 md:p-6"
+                      className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 dark:border-gray-800 p-4 md:p-6"
                     >
                       <div className="flex gap-4 md:gap-6">
                         <Link
                           to={`/product/${item.product?.slug || '#'}`}
-                          className="w-24 h-24 md:w-32 md:h-32 flex-shrink-0 dark:bg-gray-700 rounded-xl overflow-hidden"
+                          className="w-24 h-24 md:w-32 md:h-32 flex-shrink-0 bg-gray-200 dark:bg-gray-700 rounded-xl overflow-hidden"
                         >
                           <img
                             src={item.product?.images?.[0] || 'https://images.pexels.com/photos/607812/pexels-photo-607812.jpeg'}
@@ -134,7 +134,7 @@ export function CartPage() {
                               <button
                                 onClick={() => updateQuantity(item.product_id, item.quantity - 1)}
                                 disabled={item.quantity <= 1}
-                                className="p-2 hover:dark:bg-gray-900 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                                className="p-2 hover:bg-gray-50 dark:hover:bg-gray-900 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                               >
                                 <Minus className="w-4 h-4" />
                               </button>
@@ -144,7 +144,7 @@ export function CartPage() {
                               <button
                                 onClick={() => updateQuantity(item.product_id, item.quantity + 1)}
                                 disabled={item.quantity >= (item.product?.stock || 99)}
-                                className="p-2 hover:dark:bg-gray-900 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                                className="p-2 hover:bg-gray-50 dark:hover:bg-gray-900 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                               >
                                 <Plus className="w-4 h-4" />
                               </button>
@@ -179,7 +179,7 @@ export function CartPage() {
               </div>
 
               <div className="lg:col-span-1">
-                <div className="dark:bg-gray-800 dark:bg-gray-900 rounded-2xl border dark:border-gray-700 dark:border-gray-800 p-6 sticky top-24">
+                <div className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 dark:border-gray-800 p-6 sticky top-24">
                   <h2 className="text-lg font-bold dark:text-white dark:text-white mb-6">
                     Recapitulatif
                   </h2>

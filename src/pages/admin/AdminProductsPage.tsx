@@ -188,7 +188,7 @@ export function AdminProductsPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="dark:bg-gray-800 rounded-2xl border dark:border-gray-700 p-4 mb-6"
+          className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 p-4 mb-6"
         >
           <div className="flex flex-col sm:flex-row gap-4">
             <div className="flex-1 relative">
@@ -205,7 +205,7 @@ export function AdminProductsPage() {
             <select
               value={selectedCategory}
               onChange={e => setSelectedCategory(e.target.value)}
-              className="px-4 py-2.5 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 dark:bg-gray-800 cursor-pointer"
+              className="px-4 py-2.5 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 bg-white dark:bg-gray-800 cursor-pointer"
             >
               <option value="">Toutes les categories</option>
               {categories.map(cat => (
@@ -219,11 +219,11 @@ export function AdminProductsPage() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.2 }}
-          className="dark:bg-gray-800 rounded-2xl border dark:border-gray-700 overflow-hidden"
+          className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 overflow-hidden"
         >
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead className="dark:bg-gray-900 border-b dark:border-gray-700">
+              <thead className="bg-gray-50 dark:bg-gray-900 border-b dark:border-gray-700">
                 <tr>
                   <th className="text-left px-6 py-4 text-sm font-medium dark:text-gray-500">Produit</th>
                   <th className="text-left px-6 py-4 text-sm font-medium dark:text-gray-500">Categorie</th>
@@ -240,7 +240,7 @@ export function AdminProductsPage() {
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: index * 0.02 }}
-                    className="hover:dark:bg-gray-900 transition-colors"
+                    className="hover:bg-gray-50 hover:dark:bg-gray-900 transition-colors"
                   >
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
@@ -303,7 +303,7 @@ export function AdminProductsPage() {
                       <div className="flex items-center justify-end gap-2">
                         <button
                           onClick={() => handleEdit(product)}
-                          className="p-2 hover:dark:bg-gray-700 rounded-lg transition-colors"
+                          className="p-2 hover:bg-gray-100 hover:dark:bg-gray-700 rounded-lg transition-colors"
                         >
                           <Edit2 className="w-4 h-4 dark:text-gray-500" />
                         </button>
@@ -344,15 +344,15 @@ export function AdminProductsPage() {
               initial={{ opacity: 0, x: '100%' }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: '100%' }}
-              className="fixed right-0 top-0 bottom-0 w-full max-w-xl dark:bg-gray-800 z-50 overflow-y-auto"
+              className="fixed right-0 top-0 bottom-0 w-full max-w-xl bg-white dark:bg-gray-800 z-50 overflow-y-auto"
             >
-              <div className="p-6 border-b dark:border-gray-700 flex items-center justify-between sticky top-0 dark:bg-gray-800">
+              <div className="p-6 border-b dark:border-gray-700 flex items-center justify-between sticky top-0 bg-white dark:bg-gray-800">
                 <h2 className="text-xl font-bold dark:text-white">
                   {editingProduct ? 'Modifier le produit' : 'Nouveau produit'}
                 </h2>
                 <button
                   onClick={() => setShowForm(false)}
-                  className="p-2 hover:dark:bg-gray-700 rounded-lg transition-colors"
+                  className="p-2 hover:bg-gray-100 hover:dark:bg-gray-700 rounded-lg transition-colors"
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -432,7 +432,7 @@ export function AdminProductsPage() {
                     <select
                       value={formData.category_id}
                       onChange={e => setFormData({ ...formData, category_id: e.target.value })}
-                      className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 dark:bg-gray-800"
+                      className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 bg-white dark:bg-gray-800"
                     >
                       <option value="">Selectionner</option>
                       {categories.map(cat => (
@@ -488,7 +488,7 @@ export function AdminProductsPage() {
                   </button>
                   <button
                     onClick={() => setShowForm(false)}
-                    className="px-6 py-2.5 border dark:border-gray-700 rounded-xl font-medium hover:dark:bg-gray-900 transition-colors"
+                    className="px-6 py-2.5 border dark:border-gray-700 rounded-xl font-medium hover:bg-gray-100 hover:dark:bg-gray-900 transition-colors"
                   >
                     Annuler
                   </button>

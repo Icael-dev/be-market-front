@@ -132,7 +132,7 @@ export function AdminCategoriesPage() {
           </button>
         </motion.div>
 
-        <div className="dark:bg-gray-800 rounded-2xl border dark:border-gray-700 overflow-hidden">
+        <div         className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 overflow-hidden">
           <table className="w-full">
             <thead className="bg-gray-50 border-b dark:border-gray-700">
               <tr>
@@ -149,11 +149,11 @@ export function AdminCategoriesPage() {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.02 }}
-                  className="dark:hover:bg-gray-700 transition-colors"
+                  className="dark:hover:bg-gray-700 hover:bg-gray-100 transition-colors"
                 >
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-lg dark:bg-gray-700 flex items-center justify-center">
+                      <div className="w-10 h-10 rounded-lg bg-gray-100 dark:bg-gray-700 flex items-center justify-center">
                         {category.image_url ? (
                           <img src={category.image_url} alt={category.name} className="w-10 h-10 rounded-lg object-cover" />
                         ) : (
@@ -182,7 +182,7 @@ export function AdminCategoriesPage() {
                     <div className="flex items-center justify-end gap-2">
                       <button
                         onClick={() => handleEdit(category)}
-                        className="p-2 hover:dark:bg-gray-700 rounded-lg transition-colors"
+                        className="p-2 hover:bg-gray-100 hover:dark:bg-gray-700 rounded-lg transition-colors"
                       >
                         <Edit2 className="w-4 h-4 dark:text-gray-500" />
                       </button>
@@ -222,15 +222,15 @@ export function AdminCategoriesPage() {
               initial={{ opacity: 0, x: '100%' }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: '100%' }}
-              className="fixed right-0 top-0 bottom-0 w-full max-w-xl dark:bg-gray-800 z-50 overflow-y-auto"
+               className="fixed right-0 top-0 bottom-0 w-full max-w-xl bg-white dark:bg-gray-800 z-50 overflow-y-auto"
             >
-              <div className="p-6 border-b dark:border-gray-700 flex items-center justify-between sticky top-0 dark:bg-gray-800">
+              <div className="p-6 border-b dark:border-gray-700 flex items-center justify-between sticky top-0 bg-white dark:bg-gray-800">
                 <h2 className="text-xl font-bold dark:text-white">
                   {editingCategory ? 'Modifier la categorie' : 'Nouvelle categorie'}
                 </h2>
                 <button
                   onClick={() => setShowForm(false)}
-                  className="p-2 hover:dark:bg-gray-700 rounded-lg transition-colors"
+                  className="p-2 hover:bg-gray-100 hover:dark:bg-gray-700 rounded-lg transition-colors"
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -298,7 +298,7 @@ export function AdminCategoriesPage() {
                   </button>
                   <button
                     onClick={() => setShowForm(false)}
-                    className="px-6 py-2.5 border dark:border-gray-700 rounded-xl font-medium dark:hover:bg-gray-700 transition-colors"
+                    className="px-6 py-2.5 border dark:border-gray-700 rounded-xl font-medium hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
                   >
                     Annuler
                   </button>

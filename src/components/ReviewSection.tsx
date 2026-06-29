@@ -82,7 +82,7 @@ export function ReviewSection({ productId }: ReviewSectionProps) {
       </div>
 
       {reviews.length > 0 && (
-        <div className="dark:bg-gray-900 rounded-2xl p-6 mb-6">
+        <div className="bg-white dark:bg-gray-900 rounded-2xl p-6 mb-6">
           <div className="flex flex-col sm:flex-row gap-8">
             <div className="text-center">
               <p className="text-5xl font-bold dark:text-white">{averageRating.toFixed(1)}</p>
@@ -101,7 +101,7 @@ export function ReviewSection({ productId }: ReviewSectionProps) {
               {ratingDistribution.map(({ rating, count, percentage }) => (
                 <div key={rating} className="flex items-center gap-3">
                   <span className="text-sm dark:text-gray-500 w-8">{rating} etoile{rating > 1 ? 's' : ''}</span>
-                  <div className="flex-1 h-2 dark:bg-gray-700 rounded-full overflow-hidden">
+                  <div className="flex-1 h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
                     <div
                       className="h-full bg-yellow-400 rounded-full"
                       style={{ width: `${percentage}%` }}
@@ -123,7 +123,7 @@ export function ReviewSection({ productId }: ReviewSectionProps) {
             exit={{ opacity: 0, height: 0 }}
             className="mb-6"
           >
-            <form onSubmit={handleSubmit} className="dark:bg-gray-800 border dark:border-gray-700 rounded-2xl p-6">
+            <form onSubmit={handleSubmit} className="bg-white dark:bg-gray-800 border dark:border-gray-700 rounded-2xl p-6">
               <h3 className="font-bold dark:text-white mb-4">Donnez votre avis</h3>
 
               <div className="mb-4">
@@ -176,7 +176,7 @@ export function ReviewSection({ productId }: ReviewSectionProps) {
                 <button
                   type="button"
                   onClick={() => setShowForm(false)}
-                  className="px-6 py-2 border dark:border-gray-700 rounded-xl font-medium hover:dark:bg-gray-900"
+                  className="px-6 py-2 border dark:border-gray-700 rounded-xl font-medium hover:bg-gray-50 hover:dark:bg-gray-900"
                 >
                   Annuler
                 </button>
@@ -187,7 +187,7 @@ export function ReviewSection({ productId }: ReviewSectionProps) {
       </AnimatePresence>
 
       {reviews.length === 0 ? (
-        <div className="text-center py-12 dark:bg-gray-900 rounded-2xl">
+        <div className="text-center py-12 bg-gray-50 dark:bg-gray-900 rounded-2xl">
           <MessageSquare className="w-12 h-12 dark:text-gray-500 mx-auto mb-4" />
           <p className="dark:text-gray-500">Aucun avis pour ce produit</p>
           {user ? (
@@ -211,7 +211,7 @@ export function ReviewSection({ productId }: ReviewSectionProps) {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.05 }}
-              className="dark:bg-gray-800 border dark:border-gray-700 rounded-xl p-4"
+              className="bg-white dark:bg-gray-800 border dark:border-gray-700 rounded-xl p-4"
             >
               <div className="flex items-start gap-4">
                 <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-600 to-cyan-500 flex items-center justify-center text-white font-medium">
@@ -231,7 +231,7 @@ export function ReviewSection({ productId }: ReviewSectionProps) {
                       ))}
                     </div>
                     {review.is_verified_purchase && (
-                      <span className="text-xs dark:bg-green-900/30 dark:text-green-300 px-2 py-0.5 rounded-full">
+                      <span className="text-xs bg-green-50 dark:bg-green-900/30 dark:text-green-300 px-2 py-0.5 rounded-full">
                         Achat verifie
                       </span>
                     )}

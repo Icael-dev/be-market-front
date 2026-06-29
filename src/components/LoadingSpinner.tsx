@@ -31,19 +31,19 @@ export function PageLoading() {
 
 export function ProductCardSkeleton() {
   return (
-    <div className="dark:bg-gray-800 rounded-2xl overflow-hidden border border-gray-100 animate-pulse">
-      <div className="aspect-square dark:bg-gray-700" />
+    <div className="bg-white dark:bg-gray-800 rounded-2xl overflow-hidden border border-gray-100 animate-pulse">
+      <div className="aspect-square bg-gray-200 dark:bg-gray-700" />
       <div className="p-4 space-y-3">
-        <div className="h-3 w-16 dark:bg-gray-700 rounded" />
-        <div className="h-5 w-full dark:bg-gray-700 rounded" />
+        <div className="h-3 w-16 bg-gray-200 dark:bg-gray-700 rounded" />
+        <div className="h-5 w-full bg-gray-200 dark:bg-gray-700 rounded" />
         <div className="flex gap-1">
           {[...Array(5)].map((_, i) => (
-            <div key={i} className="w-3.5 h-3.5 dark:bg-gray-700 rounded" />
+            <div key={i} className="w-3.5 h-3.5 bg-gray-200 dark:bg-gray-700 rounded" />
           ))}
         </div>
         <div className="flex justify-between items-center">
-          <div className="h-6 w-24 dark:bg-gray-700 rounded" />
-          <div className="h-4 w-12 dark:bg-gray-700 rounded" />
+          <div className="h-6 w-24 bg-gray-200 dark:bg-gray-700 rounded" />
+          <div className="h-4 w-12 bg-gray-200 dark:bg-gray-700 rounded" />
         </div>
       </div>
     </div>

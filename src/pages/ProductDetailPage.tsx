@@ -97,8 +97,8 @@ export function ProductDetailPage() {
   ];
 
   return (
-    <div className="min-h-screen dark:bg-gray-900">
-      <div className="dark:bg-gray-800 border-b dark:border-gray-700">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      <div className="bg-white dark:bg-gray-800 border-b dark:border-gray-700">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <nav className="flex items-center gap-2 text-sm">
             <Link to="/" className="dark:text-gray-500 hover:dark:text-gray-500 transition-colors">
@@ -134,7 +134,7 @@ export function ProductDetailPage() {
             animate={{ opacity: 1, x: 0 }}
             className="space-y-4"
           >
-            <div className="relative aspect-square dark:bg-gray-800 rounded-2xl overflow-hidden border dark:border-gray-700">
+            <div className="relative aspect-square bg-gray-100 dark:bg-gray-800 rounded-2xl overflow-hidden border dark:border-gray-700">
               <img
                 src={imageError[selectedImage] ? images[0] : images[selectedImage]}
                 alt={product.name}
@@ -217,7 +217,7 @@ export function ProductDetailPage() {
                 </span>
               )}
               {discount > 0 && (
-                <span className="px-2 py-1 dark:bg-red-900/30 text-red-600 text-sm font-medium rounded">
+                <span className="px-2 py-1 bg-red-100 dark:bg-red-900/30 text-red-600 text-sm font-medium rounded">
                   Economisez {formatPrice(product.compare_price! - product.price)}
                 </span>
               )}
@@ -244,7 +244,7 @@ export function ProductDetailPage() {
                     <button
                       onClick={() => setQuantity(Math.max(1, quantity - 1))}
                       disabled={quantity <= 1}
-                      className="p-3 hover:dark:bg-gray-900 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                      className="p-3 hover:bg-gray-50 dark:hover:bg-gray-900 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                     >
                       <Minus className="w-4 h-4" />
                     </button>
@@ -252,7 +252,7 @@ export function ProductDetailPage() {
                     <button
                       onClick={() => setQuantity(Math.min(product.stock, quantity + 1))}
                       disabled={quantity >= product.stock}
-                      className="p-3 hover:dark:bg-gray-900 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                      className="p-3 hover:bg-gray-50 dark:hover:bg-gray-900 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                     >
                       <Plus className="w-4 h-4" />
                     </button>
@@ -281,9 +281,9 @@ export function ProductDetailPage() {
                 onClick={handleToggleWishlist}
                 className={cn(
                   'p-3.5 rounded-xl transition-colors',
-                  isWishlisted
-                    ? 'bg-red-500 text-white'
-                    : 'border dark:border-gray-700 dark:text-gray-500 hover:dark:bg-gray-900'
+isWishlisted
+                      ? 'bg-red-500 text-white'
+                      : 'bg-white border dark:border-gray-700 dark:text-gray-500 hover:bg-gray-50 hover:dark:bg-gray-900'
                 )}
               >
                 <Heart className={cn('w-5 h-5', isWishlisted && 'fill-current')} />
@@ -293,7 +293,7 @@ export function ProductDetailPage() {
             <div className="grid grid-cols-3 gap-4 pt-4 border-t dark:border-gray-700">
               {features.map(feature => (
                 <div key={feature.title} className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl dark:bg-blue-900/20 flex items-center justify-center dark:text-blue-400">
+                  <div className="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center dark:text-blue-400">
                     <feature.icon className="w-5 h-5" />
                   </div>
                   <div>
@@ -314,14 +314,14 @@ export function ProductDetailPage() {
             className="mt-12"
           >
             <h2 className="text-xl font-bold dark:text-white mb-6">Specifications</h2>
-            <div className="dark:bg-gray-800 rounded-2xl border dark:border-gray-700 overflow-hidden">
-              <div className="grid grid-cols-2 gap-px dark:bg-gray-700">
+            <div className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 overflow-hidden">
+              <div className="grid grid-cols-2 gap-px bg-gray-200 dark:bg-gray-700">
                 {Object.entries(specs).map(([key, value], index) => (
                   <div
                     key={key}
                     className={cn(
                       'flex flex-col sm:flex-row sm:items-center p-4',
-                      index % 2 === 0 ? 'dark:bg-gray-800' : 'dark:bg-gray-900'
+                      index % 2 === 0 ? 'bg-white dark:bg-gray-800' : 'bg-gray-50 dark:bg-gray-900'
                     )}
                   >
                     <span className="dark:text-gray-500 text-sm sm:w-40 flex-shrink-0 capitalize">

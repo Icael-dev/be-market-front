@@ -44,7 +44,7 @@ export function AdminCustomersPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="dark:bg-gray-800 rounded-2xl border dark:border-gray-700 p-4 mb-6"
+          className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 p-4 mb-6"
         >
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 dark:text-gray-500" />
@@ -62,11 +62,11 @@ export function AdminCustomersPage() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.2 }}
-          className="dark:bg-gray-800 rounded-2xl border dark:border-gray-700 overflow-hidden"
+          className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 overflow-hidden"
         >
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead className="dark:bg-gray-800 border-b dark:border-gray-700">
+              <thead className="bg-gray-50 dark:bg-gray-800 border-b dark:border-gray-700">
                 <tr>
                   <th className="text-left px-6 py-4 text-sm font-medium dark:text-gray-500">Client</th>
                   <th className="text-left px-6 py-4 text-sm font-medium dark:text-gray-500">Contact</th>
@@ -82,7 +82,7 @@ export function AdminCustomersPage() {
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: index * 0.02 }}
-                    className="dark:hover:bg-gray-700 transition-colors"
+                    className="dark:hover:bg-gray-700 hover:bg-gray-100 transition-colors"
                   >
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">

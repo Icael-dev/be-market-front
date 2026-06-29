@@ -26,8 +26,12 @@ export async function fetchFlashSales(): Promise<FlashSale[]> {
 }
 
 export async function fetchReviews(productId: string): Promise<Review[]> {
-  return api.get<Review[]>(`/api/reviews?product_id=${encodeURIComponent(productId)}`);
-}
+   return api.get<Review[]>(`/api/reviews?product_id=${encodeURIComponent(productId)}`);
+ }
+
+ export async function fetchTestimonials(): Promise<Testimonial[]> {
+   return api.get<Testimonial[]>('/api/testimonials');
+ }
 
 export async function submitReview(productId: string, payload: { rating: number; title?: string; comment?: string }): Promise<Review> {
   return api.post<Review>('/api/reviews', { product_id: productId, ...payload });

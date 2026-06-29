@@ -28,7 +28,7 @@ export function WishlistDrawer({ isOpen, onClose }: WishlistDrawerProps) {
             animate={{ x: 0 }}
             exit={{ x: '100%' }}
             transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-            className="fixed right-0 top-0 bottom-0 w-full max-w-md dark:bg-gray-900 z-50 shadow-xl"
+            className="fixed right-0 top-0 bottom-0 w-full max-w-md bg-white dark:bg-gray-900 z-50 shadow-xl"
           >
             <div className="flex flex-col h-full">
               <div className="flex items-center justify-between p-6 border-b dark:border-gray-700">
@@ -39,7 +39,7 @@ export function WishlistDrawer({ isOpen, onClose }: WishlistDrawerProps) {
                 </div>
                 <button
                   onClick={onClose}
-                  className="p-2 dark:hover:bg-gray-700 rounded-lg transition-colors"
+                  className="p-2 hover:bg-gray-100 hover:dark:bg-gray-700 rounded-lg transition-colors"
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -63,12 +63,12 @@ export function WishlistDrawer({ isOpen, onClose }: WishlistDrawerProps) {
                     {items.map(item => (
                       <div
                         key={item.id}
-                        className="flex gap-4 p-4 dark:bg-gray-700 rounded-xl"
+                        className="flex gap-4 p-4 bg-gray-50 dark:bg-gray-700 rounded-xl"
                       >
                         <Link
                           to={`/product/${item.product?.slug || item.product_id}`}
                           onClick={onClose}
-                          className="w-20 h-20 dark:bg-gray-900 rounded-lg overflow-hidden flex-shrink-0"
+                          className="w-20 h-20 bg-gray-100 dark:bg-gray-900 rounded-lg overflow-hidden flex-shrink-0"
                         >
                           <img
                             src={item.product?.images?.[0] || 'https://images.pexels.com/photos/607812/pexels-photo-607812.jpeg'}

@@ -176,7 +176,7 @@ export function TicketDetailPage() {
     }
   };
 
-if (loading) return <div className="min-h-screen dark:bg-gray-950 flex items-center justify-center"><Loader2 className="w-8 h-8 animate-spin text-blue-600" /></div>;
+if (loading) return <div className="min-h-screen bg-gray-50 dark:bg-gray-950 flex items-center justify-center"><Loader2 className="w-8 h-8 animate-spin text-blue-600" /></div>;
 
   if (!ticket) {
     return (

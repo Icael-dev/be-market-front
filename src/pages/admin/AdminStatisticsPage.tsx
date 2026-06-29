@@ -151,7 +151,7 @@ export function AdminStatisticsPage() {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: i * 0.05 }}
-                    className="dark:bg-gray-800 rounded-2xl border dark:border-gray-700 p-6"
+                    className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 p-6"
                   >
                     <div className="flex items-center justify-between mb-4">
                       <div
@@ -179,7 +179,7 @@ export function AdminStatisticsPage() {
               </div>
 
 <div className="grid lg:grid-cols-2 gap-6 min-h-0">
-                 <div className="dark:bg-gray-800 rounded-2xl border dark:border-gray-700 p-6 min-h-0 flex flex-col">
+                 <div className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 p-6 min-h-0 flex flex-col">
                    <h3 className="text-lg font-bold dark:text-white mb-4">Revenus quotidiens</h3>
                    <div className="h-64 flex-1 min-h-0">
                      <ResponsiveContainer width="100%" height="100%">
@@ -201,7 +201,7 @@ export function AdminStatisticsPage() {
                    </div>
                  </div>
 
-                 <div className="dark:bg-gray-800 rounded-2xl border dark:border-gray-700 p-6 min-h-0 flex flex-col">
+                 <div className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 p-6 min-h-0 flex flex-col">
                    <h3 className="text-lg font-bold dark:text-white mb-4">Commandes par jour</h3>
                    <div className="h-64 flex-1 min-h-0">
                      <ResponsiveContainer width="100%" height="100%">
@@ -216,7 +216,7 @@ export function AdminStatisticsPage() {
                    </div>
                  </div>
 
-                 <div className="dark:bg-gray-800 rounded-2xl border dark:border-gray-700 p-6 min-h-0 flex flex-col">
+                 <div className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 p-6 min-h-0 flex flex-col">
                    <h3 className="text-lg font-bold dark:text-white mb-4">Statuts commandes</h3>
                    <div className="h-48 flex-1 min-h-0">
                      <ResponsiveContainer width="100%" height="100%">
@@ -240,7 +240,7 @@ export function AdminStatisticsPage() {
                    </div>
                  </div>
 
-                 <div className="dark:bg-gray-800 rounded-2xl border dark:border-gray-700 p-6 min-h-0 flex flex-col">
+                 <div className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 p-6 min-h-0 flex flex-col">
                    <h3 className="text-lg font-bold dark:text-white mb-4">Methodes paiement</h3>
                    <div className="h-48 flex-1 min-h-0">
                      <ResponsiveContainer width="100%" height="100%">

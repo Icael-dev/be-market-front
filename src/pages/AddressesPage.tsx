@@ -116,8 +116,8 @@ export function AddressesPage() {
   };
 
   return (
-    <div className="min-h-screen dark:bg-gray-900">
-      <div className="dark:bg-gray-800 border-b dark:border-gray-700">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      <div className="bg-white dark:bg-gray-800 border-b dark:border-gray-700">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -155,9 +155,9 @@ export function AddressesPage() {
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="dark:bg-gray-800 rounded-2xl border dark:border-gray-700 p-12 text-center"
+              className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 p-12 text-center"
             >
-              <div className="w-16 h-16 dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4">
+              <div className="w-16 h-16 bg-gray-200 dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4">
                 <MapPin className="w-8 h-8 dark:text-gray-500" />
               </div>
               <h2 className="text-lg font-bold dark:text-white mb-2">
@@ -177,7 +177,7 @@ export function AddressesPage() {
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, x: -100 }}
                     transition={{ delay: index * 0.05 }}
-                    className="dark:bg-gray-800 rounded-2xl border dark:border-gray-700 p-6"
+                    className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 p-6"
                   >
                     {editingId === address.id ? (
                       <div className="space-y-4">
@@ -256,7 +256,7 @@ export function AddressesPage() {
                               setEditingId(null);
                               resetForm();
                             }}
-                            className="px-6 py-2.5 border dark:border-gray-700 rounded-xl font-medium hover:dark:bg-gray-900 transition-colors"
+                            className="px-6 py-2.5 border dark:border-gray-700 rounded-xl font-medium hover:bg-gray-50 hover:dark:bg-gray-900 transition-colors"
                           >
                             Annuler
                           </button>
@@ -265,14 +265,14 @@ export function AddressesPage() {
                     ) : (
                       <div className="flex items-start justify-between">
                         <div className="flex items-start gap-4">
-                          <div className="w-10 h-10 rounded-full dark:bg-blue-900/30 flex items-center justify-center dark:text-blue-400 mt-1">
+                          <div className="w-10 h-10 rounded-full bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center dark:text-blue-400 mt-1">
                             <MapPin className="w-5 h-5" />
                           </div>
                           <div>
                             <div className="flex items-center gap-2">
                               <p className="font-bold dark:text-white">{address.full_name}</p>
                               {address.is_default && (
-                                <span className="px-2 py-0.5 dark:bg-blue-900/30 dark:text-blue-400 text-xs font-medium rounded-full">
+                                <span className="px-2 py-0.5 bg-blue-50 dark:bg-blue-900/30 dark:text-blue-400 text-xs font-medium rounded-full">
                                   Defaut
                                 </span>
                               )}
@@ -291,7 +291,7 @@ export function AddressesPage() {
                         <div className="flex items-center gap-2">
                           <button
                             onClick={() => startEditing(address)}
-                            className="p-2 hover:dark:bg-gray-700 rounded-lg transition-colors"
+                            className="p-2 hover:bg-gray-50 hover:dark:bg-gray-700 rounded-lg transition-colors"
                           >
                             <Edit2 className="w-4 h-4 dark:text-gray-500" />
                           </button>
@@ -316,7 +316,7 @@ export function AddressesPage() {
                     initial={{ opacity: 0, height: 0 }}
                     animate={{ opacity: 1, height: 'auto' }}
                     exit={{ opacity: 0, height: 0 }}
-                    className="dark:bg-gray-800 rounded-2xl border dark:border-gray-700 p-6"
+                    className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 p-6"
                   >
                     <h3 className="font-bold dark:text-white mb-4">Nouvelle adresse</h3>
 
@@ -412,7 +412,7 @@ export function AddressesPage() {
                             setShowAddForm(false);
                             resetForm();
                           }}
-                          className="px-6 py-2.5 border dark:border-gray-700 rounded-xl font-medium hover:dark:bg-gray-900 transition-colors"
+                          className="px-6 py-2.5 border dark:border-gray-700 rounded-xl font-medium hover:bg-gray-50 hover:dark:bg-gray-900 transition-colors"
                         >
                           Annuler
                         </button>

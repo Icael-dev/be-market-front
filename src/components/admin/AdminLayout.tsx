@@ -72,27 +72,27 @@ export function AdminLayout({ children }: AdminLayoutProps) {
   }
 
   return (
-    <div className="min-h-screen dark:bg-gray-900">
-      <div className="lg:hidden fixed top-0 left-0 right-0 h-20 dark:bg-gray-800 border-b dark:border-gray-700 z-50 flex items-center px-4 justify-between">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      <div className="lg:hidden fixed top-0 left-0 right-0 h-20 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 z-50 flex items-center px-4 justify-between">
         <button
           onClick={() => setSidebarOpen(true)}
-          className="p-2 dark:hover:bg-gray-700 rounded-lg"
+          className="p-2 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg"
         >
           <Menu className="w-6 h-6" />
         </button>
-        <span className="font-bold dark:text-white">Admin</span>
+        <span className="font-bold text-gray-900 dark:text-white">Admin</span>
         <div className="flex items-center gap-1">
           <button
             onClick={toggleTheme}
-            className="p-2 dark:text-gray-400 hover:dark:text-blue-400 dark:hover:bg-gray-700 rounded-lg transition-colors"
+            className="p-2 text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
             title={theme === 'light' ? 'Mode sombre' : 'Mode clair'}
           >
             {theme === 'light' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
           </button>
           <Link
             to="/wishlist"
-            className="relative p-2 dark:text-gray-400 hover:text-red-500 dark:hover:bg-gray-700 rounded-lg transition-colors"
-            title="Favoris"
+          className="relative p-2 text-gray-600 dark:text-gray-400 hover:text-red-500 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+          title="Favoris"
           >
             <Heart className="w-5 h-5" />
             {wishlistItems.length > 0 && (
@@ -103,8 +103,8 @@ export function AdminLayout({ children }: AdminLayoutProps) {
           </Link>
           <Link
             to="/cart"
-            className="relative p-2 dark:text-gray-400 hover:dark:text-blue-400 dark:hover:bg-gray-700 rounded-lg transition-colors"
-            title="Panier"
+          className="relative p-2 text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+          title="Panier"
           >
             <ShoppingCart className="w-5 h-5" />
             {count > 0 && (
@@ -115,14 +115,14 @@ export function AdminLayout({ children }: AdminLayoutProps) {
           </Link>
           <Link
             to="/"
-            className="p-2 dark:text-gray-400 hover:dark:text-blue-400 dark:hover:bg-gray-700 rounded-lg transition-colors"
-            title="Voir le site"
+          className="p-2 text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+          title="Voir le site"
           >
             <Home className="w-5 h-5" />
           </Link>
           <button
             onClick={signOut}
-            className="p-2 dark:text-gray-400 hover:text-red-500 dark:hover:bg-red-900/30 rounded-lg transition-colors"
+            className="p-2 text-gray-600 dark:text-gray-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg transition-colors"
             title="Deconnexion"
           >
             <LogOut className="w-5 h-5" />
@@ -131,11 +131,11 @@ export function AdminLayout({ children }: AdminLayoutProps) {
       </div>
 
       <div className={cn(
-        'fixed inset-y-0 left-0 w-72 dark:bg-gray-800 border-r dark:border-gray-700 z-50 transform transition-transform duration-200 ease-in-out lg:translate-x-0 shadow-xl lg:shadow-none',
+        'fixed inset-y-0 left-0 w-72 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 z-50 transform transition-transform duration-200 ease-in-out lg:translate-x-0 shadow-xl lg:shadow-none',
         sidebarOpen ? 'translate-x-0' : '-translate-x-full'
       )}>
         <div className="h-full flex flex-col">
-          <div className="p-5 border-b dark:border-gray-700">
+          <div className="p-5 border-b border-gray-200 dark:border-gray-700">
             <div className="flex items-center justify-between">
               <Link to="/" className="flex items-center gap-3 group">
                 <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-blue-600 to-cyan-500 flex items-center justify-center shadow-lg shadow-blue-500/30 group-hover:shadow-blue-500/50 transition-shadow">
@@ -148,7 +148,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
               </Link>
               <button
                 onClick={() => setSidebarOpen(false)}
-                className="lg:hidden p-2 dark:hover:bg-gray-700 rounded-lg transition-colors"
+                className="lg:hidden p-2 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -158,7 +158,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
           <nav className="flex-1 overflow-y-auto p-4">
             {sections.map(section => (
               <div key={section} className="mb-6">
-                <p className="px-4 mb-2 text-xs font-semibold dark:text-gray-500 uppercase tracking-wider">
+                <p className="px-4 mb-2 text-xs font-semibold text-gray-500 dark:text-gray-500 uppercase tracking-wider">
                   {section}
                 </p>
                 <div className="space-y-1">
@@ -175,8 +175,8 @@ export function AdminLayout({ children }: AdminLayoutProps) {
                           className={cn(
                             'flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 group relative',
                             isActive
-                              ? 'dark:bg-blue-900/30 dark:text-blue-400 font-semibold shadow-sm shadow-blue-100'
-                              : 'dark:text-gray-400 hover:dark:bg-gray-900 hover:dark:text-white'
+                              ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 font-semibold shadow-sm shadow-blue-100'
+                              : 'text-gray-700 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-900 hover:text-gray-900 dark:hover:text-white'
                           )}
                         >
                           {isActive && (
@@ -184,11 +184,11 @@ export function AdminLayout({ children }: AdminLayoutProps) {
                           )}
                           <item.icon className={cn(
                             'w-5 h-5 transition-colors',
-                            isActive ? 'dark:text-blue-400' : 'dark:text-gray-500 group-hover:dark:text-gray-400'
+                            isActive ? 'text-blue-600 dark:text-blue-400' : 'text-gray-500 dark:text-gray-500 group-hover:text-gray-700 dark:group-hover:text-gray-400'
                           )} />
                           <span className="text-sm font-medium">{item.label}</span>
                           {isActive && (
-                            <ChevronRight className="w-4 h-4 ml-auto dark:text-blue-400" />
+                            <ChevronRight className="w-4 h-4 ml-auto text-blue-600 dark:text-blue-400" />
                           )}
                         </Link>
                       );
@@ -198,23 +198,23 @@ export function AdminLayout({ children }: AdminLayoutProps) {
             ))}
           </nav>
 
-          <div className="p-4 border-t dark:border-gray-700 dark:bg-gray-900/50">
+          <div className="p-4 border-t border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-900/50">
             <div className="flex items-center gap-3 mb-3 px-2">
               <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-600 to-cyan-500 flex items-center justify-center text-white font-semibold shadow-md">
                 {profile?.full_name?.[0] || 'A'}
               </div>
               <div className="flex-1 min-w-0">
-                <p className="font-semibold dark:text-white text-sm truncate">
+                <p className="font-semibold text-gray-900 dark:text-white text-sm truncate">
                   {profile?.full_name || 'Admin'}
                 </p>
-                <p className="text-xs dark:text-gray-500 truncate">Administrateur</p>
+                <p className="text-xs text-gray-500 dark:text-gray-500 truncate">Administrateur</p>
               </div>
             </div>
 
             <div className="space-y-1">
               <Link
                 to="/"
-                className="hidden lg:flex items-center gap-3 px-3 py-2 text-sm dark:text-gray-400 hover:dark:text-white hover:dark:bg-gray-800 rounded-lg transition-all"
+                className="hidden lg:flex items-center gap-3 px-3 py-2 text-sm text-gray-700 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-all"
               >
                 <Home className="w-4 h-4" />
                 Voir le site

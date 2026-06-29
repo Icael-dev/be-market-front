@@ -111,7 +111,7 @@ export function AdminSettingsPage() {
                 key={group.group}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="dark:bg-gray-800 rounded-2xl border dark:border-gray-700 p-6"
+                className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 p-6"
               >
                 <h2 className="text-lg font-bold dark:text-white mb-4 flex items-center gap-2">
                   <Settings className="w-5 h-5 dark:text-gray-500" />
