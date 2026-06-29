@@ -43,3 +43,11 @@ export async function fetchRelatedProducts(categoryId: string, excludeId: string
   const params = new URLSearchParams({ category_id: categoryId, exclude_id: excludeId, limit: String(limit) });
   return api.get<Product[]>(`/api/products?${params.toString()}`);
 }
+
+export async function fetchPriceBounds(category?: string, search?: string, brand?: string): Promise<{ min: number; max: number }> {
+  const params = new URLSearchParams();
+  if (category) params.set('category', category);
+  if (search) params.set('search', search);
+  if (brand) params.set('brand', brand);
+  return api.get<{ min: number; max: number }>(`/api/products/price-bounds${params.toString() ? `?${params.toString()}` : ''}`);
+}
