@@ -78,8 +78,8 @@ export function AdminSettingsPage() {
           className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8"
         >
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Configuration</h1>
-            <p className="text-gray-500 mt-1">Parametres de la boutique</p>
+            <h1 className="text-2xl font-bold dark:text-white">Configuration</h1>
+            <p className="dark:text-gray-500 mt-1">Parametres de la boutique</p>
           </div>
 
           <button
@@ -111,24 +111,24 @@ export function AdminSettingsPage() {
                 key={group.group}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="bg-white rounded-2xl border border-gray-200 p-6"
+                className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 p-6"
               >
-                <h2 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
-                  <Settings className="w-5 h-5 text-gray-400" />
+                <h2 className="text-lg font-bold dark:text-white mb-4 flex items-center gap-2">
+                  <Settings className="w-5 h-5 dark:text-gray-500" />
                   {group.group}
                 </h2>
 
                 <div className="grid sm:grid-cols-2 gap-4">
                   {group.items.map(item => (
                     <div key={item.key}>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <label className="block text-sm font-medium dark:text-gray-300 mb-2">
                         {item.label}
                       </label>
                       <input
                         type={item.type}
                         value={settings[item.key] || ''}
                         onChange={e => handleChange(item.key, e.target.value)}
-                        className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+                        className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
                       />
                     </div>
                   ))}

@@ -24,6 +24,7 @@ export function AdminBannersPage() {
     image_url: '',
     link_url: '',
     button_text: '',
+    position: '',
     is_active: true,
     sort_order: 0
   });
@@ -50,6 +51,7 @@ export function AdminBannersPage() {
       image_url: '',
       link_url: '',
       button_text: '',
+      position: '',
       is_active: true,
       sort_order: 0
     });
@@ -64,6 +66,7 @@ export function AdminBannersPage() {
       image_url: banner.image_url,
       link_url: banner.link_url || '',
       button_text: banner.button_text || '',
+      position: banner.position || '',
       is_active: banner.is_active,
       sort_order: banner.sort_order
     });
@@ -112,8 +115,8 @@ export function AdminBannersPage() {
           className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8"
         >
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Bannieres</h1>
-            <p className="text-gray-500 mt-1">{banners.length} banniere{banners.length > 1 ? 's' : ''}</p>
+            <h1 className="text-2xl font-bold dark:text-white">Bannieres</h1>
+            <p className="dark:text-gray-500 mt-1">{banners.length} banniere{banners.length > 1 ? 's' : ''}</p>
           </div>
 
           <button
@@ -135,7 +138,7 @@ export function AdminBannersPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.05 }}
-              className="bg-white rounded-2xl border border-gray-200 overflow-hidden"
+              className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 overflow-hidden"
             >
               <div className="relative h-48">
                 <img
@@ -163,7 +166,7 @@ export function AdminBannersPage() {
               </div>
 
               <div className="p-4 flex justify-between items-center">
-                <div className="text-sm text-gray-500">
+                <div className="text-sm dark:text-gray-500">
                   {banner.link_url && (
                     <span>Lien: {banner.link_url}</span>
                   )}
@@ -171,15 +174,15 @@ export function AdminBannersPage() {
                 <div className="flex gap-2">
                   <button
                     onClick={() => handleEdit(banner)}
-                    className="p-2 hover:bg-gray-100 rounded-lg"
+                    className="p-2 hover:bg-gray-100 hover:dark:bg-gray-700 rounded-lg"
                   >
-                    <Edit2 className="w-4 h-4 text-gray-600" />
+                    <Edit2 className="w-4 h-4 dark:text-gray-500" />
                   </button>
                   <button
                     onClick={() => handleDelete(banner.id)}
                     className="p-2 hover:bg-red-50 rounded-lg"
                   >
-                    <Trash2 className="w-4 h-4 text-red-500" />
+                    <Trash2 className="w-4 h-4 dark:text-red-400" />
                   </button>
                 </div>
               </div>
@@ -187,9 +190,9 @@ export function AdminBannersPage() {
           ))}
 
           {banners.length === 0 && !loading && (
-            <div className="bg-white rounded-2xl border border-gray-200 p-12 text-center">
-              <ImageIcon className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-              <p className="text-gray-500">Aucune banniere</p>
+            <div className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 p-12 text-center">
+              <ImageIcon className="w-12 h-12 dark:text-gray-500 mx-auto mb-4" />
+              <p className="dark:text-gray-500">Aucune banniere</p>
             </div>
           )}
         </div>
@@ -209,15 +212,15 @@ export function AdminBannersPage() {
               initial={{ opacity: 0, x: '100%' }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: '100%' }}
-              className="fixed right-0 top-0 bottom-0 w-full max-w-xl bg-white z-50 overflow-y-auto"
+              className="fixed right-0 top-0 bottom-0 w-full max-w-xl bg-white dark:bg-gray-800 z-50 overflow-y-auto"
             >
-              <div className="p-6 border-b border-gray-200 flex items-center justify-between sticky top-0 bg-white">
-                <h2 className="text-xl font-bold text-gray-900">
+              <div className="p-6 border-b dark:border-gray-700 flex items-center justify-between sticky top-0 bg-white dark:bg-gray-800">
+                <h2 className="text-xl font-bold dark:text-white">
                   {editingBanner ? 'Modifier la banniere' : 'Nouvelle banniere'}
                 </h2>
                 <button
                   onClick={() => setShowForm(false)}
-                  className="p-2 hover:bg-gray-100 rounded-lg"
+                  className="p-2 hover:bg-gray-100 hover:dark:bg-gray-700 rounded-lg"
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -225,74 +228,87 @@ export function AdminBannersPage() {
 
               <div className="p-6 space-y-6">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium dark:text-gray-500 mb-2">
                     Titre *
                   </label>
                   <input
                     type="text"
                     value={formData.title}
                     onChange={e => setFormData({ ...formData, title: e.target.value })}
-                    className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+                    className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium dark:text-gray-500 mb-2">
                     Sous-titre
                   </label>
                   <input
                     type="text"
                     value={formData.subtitle}
                     onChange={e => setFormData({ ...formData, subtitle: e.target.value })}
-                    className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+                    className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium dark:text-gray-500 mb-2">
                     URL de l'image *
                   </label>
                   <input
                     type="text"
                     value={formData.image_url}
                     onChange={e => setFormData({ ...formData, image_url: e.target.value })}
-                    className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+                    className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium dark:text-gray-500 mb-2">
                     Lien du bouton
                   </label>
                   <input
                     type="text"
                     value={formData.link_url}
                     onChange={e => setFormData({ ...formData, link_url: e.target.value })}
-                    className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+                    className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium dark:text-gray-500 mb-2">
                     Texte du bouton
                   </label>
                   <input
                     type="text"
                     value={formData.button_text}
                     onChange={e => setFormData({ ...formData, button_text: e.target.value })}
-                    className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+                    className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium dark:text-gray-500 mb-2">
+                    Position
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.position}
+                    onChange={e => setFormData({ ...formData, position: e.target.value })}
+                    className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+                    placeholder="ex: hero, sidebar"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium dark:text-gray-500 mb-2">
                     Ordre
                   </label>
                   <input
                     type="number"
                     value={formData.sort_order}
                     onChange={e => setFormData({ ...formData, sort_order: parseInt(e.target.value) || 0 })}
-                    className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+                    className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
                   />
                 </div>
 
@@ -303,10 +319,10 @@ export function AdminBannersPage() {
                     onChange={e => setFormData({ ...formData, is_active: e.target.checked })}
                     className="w-4 h-4 text-blue-600 border-gray-300 rounded"
                   />
-                  <span className="text-sm text-gray-700">Banniere active</span>
+                  <span className="text-sm dark:text-gray-500">Banniere active</span>
                 </label>
 
-                <div className="flex gap-3 pt-4 border-t border-gray-200">
+                <div className="flex gap-3 pt-4 border-t dark:border-gray-700">
                   <button
                     onClick={handleSave}
                     disabled={saving || !formData.title || !formData.image_url}
@@ -317,7 +333,7 @@ export function AdminBannersPage() {
                   </button>
                   <button
                     onClick={() => setShowForm(false)}
-                    className="px-6 py-2.5 border border-gray-200 rounded-xl font-medium hover:bg-gray-50"
+                    className="px-6 py-2.5 border dark:border-gray-700 rounded-xl font-medium hover:bg-gray-100 dark:hover:bg-gray-700"
                   >
                     Annuler
                   </button>

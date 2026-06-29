@@ -73,7 +73,7 @@ export function FlashSaleSection() {
     <section className="py-12 bg-gradient-to-r from-orange-500 via-red-500 to-pink-500 relative overflow-hidden">
       <div className="absolute inset-0">
         <div className="absolute top-0 left-1/4 w-96 h-96 bg-yellow-400/20 rounded-full blur-3xl" />
-        <div className="absolute bottom-0 right-1/4 w-72 h-72 bg-red-600/30 rounded-full blur-3xl" />
+        <div className="absolute bottom-0 right-1/4 w-72 h-72 dark:bg-red-700/30 rounded-full blur-3xl" />
       </div>
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -84,10 +84,10 @@ export function FlashSaleSection() {
           className="flex flex-col sm:flex-row items-center justify-between mb-8"
         >
           <div className="flex items-center gap-3 mb-4 sm:mb-0">
-            <motion.div
-              animate={{ scale: [1, 1.2, 1] }}
-              transition={{ repeat: Infinity, duration: 1.5 }}
-              className="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center"
+<motion.div
+               animate={{ scale: [1, 1.2, 1] }}
+               transition={{ repeat: Infinity, duration: 1.5 }}
+               className="w-12 h-12 rounded-full bg-gray-100/20 dark:bg-gray-800/20 flex items-center justify-center"
             >
               <Flame className="w-6 h-6 text-white" />
             </motion.div>
@@ -101,7 +101,7 @@ export function FlashSaleSection() {
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
-              className="flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-xl px-5 py-3"
+              className="flex items-center gap-2 bg-white/10 dark:bg-gray-800/10 backdrop-blur-sm rounded-xl px-5 py-3"
             >
               <Clock className="w-5 h-5 text-white" />
               <div className="flex gap-2 font-mono">
@@ -144,12 +144,12 @@ export function FlashSaleSection() {
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1 }}
                 whileHover={{ y: -5 }}
-                className="relative bg-white rounded-2xl overflow-hidden shadow-xl"
+                className="relative bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-xl"
               >
                 <motion.div
                   animate={{ scale: [1, 1.1, 1] }}
                   transition={{ repeat: Infinity, duration: 2, delay: index * 0.2 }}
-                  className="absolute top-3 left-3 z-10 bg-white text-red-600 text-xs font-bold px-3 py-1.5 rounded-full flex items-center gap-1 shadow-lg"
+                  className="absolute top-3 left-3 z-10 bg-red-500 dark:bg-gray-800 dark:text-red-400 text-white text-xs font-bold px-3 py-1.5 rounded-full flex items-center gap-1 shadow-lg"
                 >
                   <Zap className="w-3 h-3" />
                   -{sale.discount_percentage}%
@@ -167,16 +167,16 @@ export function FlashSaleSection() {
 
                 <div className="p-3">
                   <Link to={`/product/${sale.product.slug}`}>
-                    <h3 className="font-semibold text-gray-900 text-sm line-clamp-2 mb-1 hover:text-blue-600 transition-colors">
+                    <h3 className="font-semibold dark:text-white text-sm line-clamp-2 mb-1 hover:text-blue-600 transition-colors">
                       {sale.product.name}
                     </h3>
                   </Link>
 
                   <div className="flex items-center gap-2 mb-2">
-                    <span className="text-lg font-bold text-red-600">
+                    <span className="text-lg font-bold dark:text-red-400">
                       {formatPrice(discountedPrice)}
                     </span>
-                    <span className="text-sm text-gray-400 line-through">
+                    <span className="text-sm dark:text-gray-400 line-through">
                       {formatPrice(sale.product.price)}
                     </span>
                   </div>
@@ -184,7 +184,7 @@ export function FlashSaleSection() {
                   <div className="flex gap-2">
                     <button
                       onClick={() => addItem(productWithDiscount, 1)}
-                      className="flex-1 flex items-center justify-center gap-1 bg-red-600 text-white py-2 rounded-lg text-xs font-medium hover:bg-red-700 transition-colors"
+                      className="flex-1 flex items-center justify-center gap-1 dark:bg-red-700 text-white py-2 rounded-lg text-xs font-medium dark:hover:bg-red-800 transition-colors"
                     >
                       <ShoppingCart className="w-3 h-3" />
                       Ajouter
@@ -192,9 +192,9 @@ export function FlashSaleSection() {
                     <button
                       onClick={() => toggleItem(sale.product.id, sale.product)}
                       className={`p-2 rounded-lg transition-colors ${
-                        isInWishlist(sale.product.id)
-                          ? 'bg-red-500 text-white'
-                          : 'bg-gray-100 text-gray-600 hover:text-red-500'
+isInWishlist(sale.product.id)
+                            ? 'bg-red-500 text-white'
+                            : 'bg-gray-100 dark:bg-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:text-red-400'
                       }`}
                     >
                       <Heart className={`w-4 h-4 ${isInWishlist(sale.product.id) ? 'fill-current' : ''}`} />
@@ -209,7 +209,7 @@ export function FlashSaleSection() {
         <div className="text-center mt-8">
           <Link
             to="/products?flash_sale=true"
-            className="inline-flex items-center gap-2 bg-white text-red-600 px-8 py-3 rounded-xl font-semibold hover:bg-gray-100 transition-all hover:scale-105 shadow-lg"
+            className="inline-flex items-center gap-2 bg-red-50 dark:bg-gray-800 text-red-600 dark:text-red-400 px-8 py-3 rounded-xl font-semibold hover:bg-red-100 hover:dark:bg-gray-700 transition-all hover:scale-105 shadow-lg"
           >
             Voir toutes les offres
             <Flame className="w-5 h-5" />

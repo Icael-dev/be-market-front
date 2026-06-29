@@ -47,10 +47,10 @@ export function AdminExportPage() {
   return (
     <AdminLayout>
       <div className="p-6 lg:p-8">
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mb-8"><h1 className="text-2xl font-bold text-gray-900">Export de donnees</h1><p className="text-gray-500">Exportez vos donnees au format CSV</p></motion.div>
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mb-8"><h1 className="text-2xl font-bold dark:text-white">Export de donnees</h1><p className="dark:text-gray-400">Exportez vos donnees au format CSV</p></motion.div>
         <div className="grid md:grid-cols-2 gap-4">{options.map((opt, i) => (
-          <motion.div key={opt.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }} className="bg-white rounded-2xl border border-gray-200 p-6">
-            <div className="flex items-center gap-3 mb-4"><div className="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center"><FileSpreadsheet className="w-6 h-6 text-blue-600" /></div><div><h3 className="font-bold text-gray-900">{opt.label}</h3><p className="text-sm text-gray-500">{opt.desc}</p></div></div>
+          <motion.div key={opt.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}           className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 p-6">
+            <div className="flex items-center gap-3 mb-4"><div className="w-12 h-12 rounded-xl dark:bg-blue-900/30 flex items-center justify-center"><FileSpreadsheet className="w-6 h-6 dark:text-blue-400" /></div><div><h3 className="font-bold dark:text-white">{opt.label}</h3><p className="text-sm dark:text-gray-400">{opt.desc}</p></div></div>
             <button onClick={() => handleExport(opt.id)} disabled={exporting !== null} className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-gray-900 text-white rounded-xl font-medium hover:bg-gray-800 disabled:opacity-50">{exporting === opt.id ? <Loader2 className="w-4 h-4 animate-spin" /> : success === opt.id ? <CheckCircle className="w-4 h-4 text-green-400" /> : <Download className="w-4 h-4" />}{exporting === opt.id ? 'Export...' : success === opt.id ? 'Exporte !' : 'Exporter CSV'}</button>
           </motion.div>
         ))}</div>

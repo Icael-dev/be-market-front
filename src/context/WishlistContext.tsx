@@ -23,7 +23,7 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
   const loadWishlist = async () => {
     try {
       if (!user) {
-        const stored = localStorage.getItem('electronica_wishlist');
+        const stored = localStorage.getItem('be_market_wishlist');
         setItems(stored ? JSON.parse(stored) : []);
       } else {
         const wishlistData = await fetchWishlist();
@@ -44,7 +44,7 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (!user) {
-      localStorage.setItem('electronica_wishlist', JSON.stringify(items));
+      localStorage.setItem('be_market_wishlist', JSON.stringify(items));
     }
   }, [items, user]);
 

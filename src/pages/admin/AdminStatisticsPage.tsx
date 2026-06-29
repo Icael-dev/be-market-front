@@ -115,14 +115,14 @@ export function AdminStatisticsPage() {
           className="flex items-center justify-between mb-8"
         >
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Statistiques</h1>
-            <p className="text-gray-500">Performances de la boutique</p>
+            <h1 className="text-2xl font-bold dark:text-white">Statistiques</h1>
+            <p className="dark:text-gray-400">Performances de la boutique</p>
           </div>
           <div className="flex gap-3">
             <select
               value={days}
               onChange={e => setDays(e.target.value as '7' | '30' | '90')}
-              className="px-4 py-2 border border-gray-200 rounded-xl"
+              className="px-4 py-2 border dark:border-gray-700 rounded-xl"
             >
               <option value="7">7 jours</option>
               <option value="30">30 jours</option>
@@ -139,7 +139,7 @@ export function AdminStatisticsPage() {
 
         {loading ? (
           <div className="flex justify-center py-20">
-            <div className="animate-spin w-8 h-8 border-2 border-gray-200 border-t-blue-600 rounded-full" />
+            <div className="animate-spin w-8 h-8 border-2 dark:border-gray-700 border-t-blue-600 rounded-full" />
           </div>
         ) : (
           stats && (
@@ -151,7 +151,7 @@ export function AdminStatisticsPage() {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: i * 0.05 }}
-                    className="bg-white rounded-2xl border border-gray-200 p-6"
+                    className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 p-6"
                   >
                     <div className="flex items-center justify-between mb-4">
                       <div
@@ -172,98 +172,98 @@ export function AdminStatisticsPage() {
                         </div>
                       )}
                     </div>
-                    <p className="text-2xl font-bold text-gray-900">{c.value}</p>
-                    <p className="text-sm text-gray-500 mt-1">{c.title}</p>
+                    <p className="text-2xl font-bold dark:text-white">{c.value}</p>
+                    <p className="text-sm dark:text-gray-400 mt-1">{c.title}</p>
                   </motion.div>
                 ))}
               </div>
 
-              <div className="grid lg:grid-cols-2 gap-6">
-                <div className="bg-white rounded-2xl border border-gray-200 p-6">
-                  <h3 className="text-lg font-bold text-gray-900 mb-4">Revenus quotidiens</h3>
-                  <div className="h-64">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <AreaChart data={stats.dailyRevenue}>
-                        <CartesianGrid strokeDasharray="3 3" stroke="#F3F4F6" />
-                        <XAxis dataKey="date" tick={{ fontSize: 12 }} stroke="#9CA3AF" />
-                        <YAxis
-                          tick={{ fontSize: 12 }}
-                          stroke="#9CA3AF"
-                          tickFormatter={v => `${(v / 1000).toFixed(0)}k`}
-                        />
-                        <Tooltip
-                          formatter={(value) => formatPrice(Number(value) || 0)}
-                          contentStyle={{ background: '#1F2937', border: 'none', borderRadius: '12px', color: 'white' }}
-                        />
-                        <Area type="monotone" dataKey="revenue" stroke="#3B82F6" fill="#3B82F620" />
-                      </AreaChart>
-                    </ResponsiveContainer>
-                  </div>
-                </div>
+<div className="grid lg:grid-cols-2 gap-6 min-h-0">
+                 <div className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 p-6 min-h-0 flex flex-col">
+                   <h3 className="text-lg font-bold dark:text-white mb-4">Revenus quotidiens</h3>
+                   <div className="h-64 flex-1 min-h-0">
+                     <ResponsiveContainer width="100%" height="100%">
+                       <AreaChart data={stats.dailyRevenue}>
+                         <CartesianGrid strokeDasharray="3 3" stroke="#F3F4F6" />
+                         <XAxis dataKey="date" tick={{ fontSize: 12 }} stroke="#9CA3AF" />
+                         <YAxis
+                           tick={{ fontSize: 12 }}
+                           stroke="#9CA3AF"
+                           tickFormatter={v => `${(v / 1000).toFixed(0)}k`}
+                         />
+                         <Tooltip
+                           formatter={(value) => formatPrice(Number(value) || 0)}
+                           contentStyle={{ background: '#1F2937', border: 'none', borderRadius: '12px', color: 'white' }}
+                         />
+                         <Area type="monotone" dataKey="revenue" stroke="#3B82F6" fill="#3B82F620" />
+                       </AreaChart>
+                     </ResponsiveContainer>
+                   </div>
+                 </div>
 
-                <div className="bg-white rounded-2xl border border-gray-200 p-6">
-                  <h3 className="text-lg font-bold text-gray-900 mb-4">Commandes par jour</h3>
-                  <div className="h-64">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <BarChart data={stats.dailyRevenue}>
-                        <CartesianGrid strokeDasharray="3 3" stroke="#F3F4F6" />
-                        <XAxis dataKey="date" tick={{ fontSize: 12 }} stroke="#9CA3AF" />
-                        <YAxis tick={{ fontSize: 12 }} stroke="#9CA3AF" />
-                        <Tooltip contentStyle={{ background: '#1F2937', border: 'none', borderRadius: '12px', color: 'white' }} />
-                        <Bar dataKey="orders" fill="#3B82F6" radius={[4, 4, 0, 0]} />
-                      </BarChart>
-                    </ResponsiveContainer>
-                  </div>
-                </div>
+                 <div className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 p-6 min-h-0 flex flex-col">
+                   <h3 className="text-lg font-bold dark:text-white mb-4">Commandes par jour</h3>
+                   <div className="h-64 flex-1 min-h-0">
+                     <ResponsiveContainer width="100%" height="100%">
+                       <BarChart data={stats.dailyRevenue}>
+                         <CartesianGrid strokeDasharray="3 3" stroke="#F3F4F6" />
+                         <XAxis dataKey="date" tick={{ fontSize: 12 }} stroke="#9CA3AF" />
+                         <YAxis tick={{ fontSize: 12 }} stroke="#9CA3AF" />
+                         <Tooltip contentStyle={{ background: '#1F2937', border: 'none', borderRadius: '12px', color: 'white' }} />
+                         <Bar dataKey="orders" fill="#3B82F6" radius={[4, 4, 0, 0]} />
+                       </BarChart>
+                     </ResponsiveContainer>
+                   </div>
+                 </div>
 
-                <div className="bg-white rounded-2xl border border-gray-200 p-6">
-                  <h3 className="text-lg font-bold text-gray-900 mb-4">Statuts commandes</h3>
-                  <div className="h-48">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <PieChart>
-                        <Pie
-                          data={stats.statusData}
-                          cx="50%"
-                          cy="50%"
-                          innerRadius={50}
-                          outerRadius={70}
-                          dataKey="value"
-                          label={({ name, value }) => `${name}: ${value}`}
-                        >
-                          {stats.statusData.map((row, i) => (
-                            <Cell key={row.name} fill={COLORS[i % COLORS.length]} />
-                          ))}
-                        </Pie>
-                        <Tooltip />
-                      </PieChart>
-                    </ResponsiveContainer>
-                  </div>
-                </div>
+                 <div className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 p-6 min-h-0 flex flex-col">
+                   <h3 className="text-lg font-bold dark:text-white mb-4">Statuts commandes</h3>
+                   <div className="h-48 flex-1 min-h-0">
+                     <ResponsiveContainer width="100%" height="100%">
+                       <PieChart>
+                         <Pie
+                           data={stats.statusData}
+                           cx="50%"
+                           cy="50%"
+                           innerRadius={50}
+                           outerRadius={70}
+                           dataKey="value"
+                           label={({ name, value }) => `${name}: ${value}`}
+                         >
+                           {stats.statusData.map((row, i) => (
+                             <Cell key={row.name} fill={COLORS[i % COLORS.length]} />
+                           ))}
+                         </Pie>
+                         <Tooltip />
+                       </PieChart>
+                     </ResponsiveContainer>
+                   </div>
+                 </div>
 
-                <div className="bg-white rounded-2xl border border-gray-200 p-6">
-                  <h3 className="text-lg font-bold text-gray-900 mb-4">Methodes paiement</h3>
-                  <div className="h-48">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <PieChart>
-                        <Pie
-                          data={stats.paymentData}
-                          cx="50%"
-                          cy="50%"
-                          innerRadius={50}
-                          outerRadius={70}
-                          dataKey="value"
-                          label={({ name, value }) => `${name}: ${value}`}
-                        >
-                          {stats.paymentData.map((row, i) => (
-                            <Cell key={row.name} fill={COLORS[i % COLORS.length]} />
-                          ))}
-                        </Pie>
-                        <Tooltip />
-                      </PieChart>
-                    </ResponsiveContainer>
-                  </div>
-                </div>
-              </div>
+                 <div className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 p-6 min-h-0 flex flex-col">
+                   <h3 className="text-lg font-bold dark:text-white mb-4">Methodes paiement</h3>
+                   <div className="h-48 flex-1 min-h-0">
+                     <ResponsiveContainer width="100%" height="100%">
+                       <PieChart>
+                         <Pie
+                           data={stats.paymentData}
+                           cx="50%"
+                           cy="50%"
+                           innerRadius={50}
+                           outerRadius={70}
+                           dataKey="value"
+                           label={({ name, value }) => `${name}: ${value}`}
+                         >
+                           {stats.paymentData.map((row, i) => (
+                             <Cell key={row.name} fill={COLORS[i % COLORS.length]} />
+                           ))}
+                         </Pie>
+                         <Tooltip />
+                       </PieChart>
+                     </ResponsiveContainer>
+                   </div>
+                 </div>
+               </div>
             </>
           )
         )}

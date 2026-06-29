@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { fetchBanners as fetchBannersService } from '../services/content';
 import type { Banner } from '../types';
 import { ChevronLeft, ChevronRight, Sparkles } from 'lucide-react';
+import image1 from '../assets/images/image1.jpg';
 
 export function BannerSlider() {
   const [banners, setBanners] = useState<Banner[]>([]);
@@ -50,17 +51,19 @@ export function BannerSlider() {
   }, [currentIndex, banners.length, goTo]);
 
   if (loading) return (
-    <div className="w-full h-64 sm:h-80 md:h-96 lg:h-[500px] rounded-2xl bg-gray-100 dark:bg-gray-800 animate-pulse" />
+    <div className="w-full h-[36rem] sm:h-[40rem] md:h-[44rem] lg:h-[48rem] xl:h-[56rem] bg-gray-100 dark:bg-gray-800 animate-pulse" />
   );
 
   if (banners.length === 0) return (
-    <div className="w-full h-64 sm:h-80 md:h-96 lg:h-[500px] rounded-2xl bg-gradient-to-br from-blue-600 via-blue-700 to-cyan-600 overflow-hidden relative">
-      <div className="absolute inset-0 flex items-center justify-center text-white text-center px-8">
+    <div className="w-full h-[36rem] sm:h-[40rem] md:h-[44rem] lg:h-[48rem] xl:h-[56rem] overflow-hidden relative">
+      <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url(${image1})` }} />
+      <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-transparent" />
+      <div className="absolute inset-0 flex items-center justify-center text-white text-center px-8 z-30">
         <div>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="inline-flex items-center gap-2 bg-white/10 px-4 py-2 rounded-full mb-4"
+            className="inline-flex items-center gap-2 bg-white/15 backdrop-blur-sm px-4 py-2 mb-4"
           >
             <Sparkles className="w-4 h-4" />
             Offres exclusives
@@ -71,17 +74,17 @@ export function BannerSlider() {
             transition={{ delay: 0.1 }}
             className="text-3xl md:text-5xl font-bold mb-4"
           >
-            Bienvenue chez Electronica
+            Bienvenue chez BE-Market
           </motion.h2>
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="text-lg md:text-xl text-blue-100 mb-6"
+            className="text-lg md:text-xl text-white/80 mb-6"
           >
             Decouvrez les meilleurs accessoires electroniques au Togo
           </motion.p>
-          <Link to="/products" className="inline-flex items-center gap-2 bg-white text-blue-600 px-6 py-3 rounded-xl font-semibold hover:bg-gray-100 transition-colors">
+          <Link to="/products" className="inline-flex items-center gap-2 bg-white text-blue-600 px-6 py-3 rounded-xl font-semibold dark:hover:bg-gray-700 transition-colors">
             Voir les produits
             <ChevronRight className="w-5 h-5" />
           </Link>
@@ -92,10 +95,12 @@ export function BannerSlider() {
 
   return (
     <div
-      className="relative w-full h-64 sm:h-80 md:h-96 lg:h-[500px] overflow-hidden rounded-2xl group"
+      className="relative w-full h-[36rem] sm:h-[40rem] md:h-[44rem] lg:h-[48rem] xl:h-[56rem] overflow-hidden group"
       onMouseEnter={() => setIsAutoPlaying(false)}
       onMouseLeave={() => setIsAutoPlaying(true)}
     >
+      <div className="absolute inset-0 bg-gradient-to-br from-blue-600/80 via-blue-700/80 to-cyan-600/80" />
+
       <AnimatePresence mode="wait">
         <motion.div
           key={banners[currentIndex].id}
@@ -111,8 +116,8 @@ export function BannerSlider() {
               alt={banners[currentIndex].title}
               className="w-full h-full object-cover"
             />
-            <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/40 to-transparent" />
-            <div className="absolute inset-0 flex items-center px-8 md:px-16">
+            <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-transparent" />
+            <div className="absolute inset-0 flex items-center px-8 md:px-16 z-30">
               <motion.div
                 initial={{ opacity: 0, x: -50 }}
                 animate={{ opacity: 1, x: 0 }}
@@ -154,7 +159,7 @@ export function BannerSlider() {
                   >
                     <Link
                       to={banners[currentIndex].link_url!}
-                      className="inline-flex items-center gap-2 bg-white text-gray-900 px-6 py-3 rounded-xl font-semibold hover:bg-gray-100 transition-all hover:scale-105 shadow-lg"
+                      className="inline-flex items-center gap-2 bg-white dark:text-white px-6 py-3 font-semibold dark:hover:bg-gray-700 transition-all hover:scale-105 shadow-lg"
                     >
                       {banners[currentIndex].button_text}
                       <ChevronRight className="w-5 h-5" />
@@ -175,9 +180,9 @@ export function BannerSlider() {
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
             onClick={goToPrev}
-            className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 hover:bg-white rounded-full flex items-center justify-center shadow-lg opacity-0 group-hover:opacity-100 transition-opacity"
+            className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 hover:bg-white  flex items-center justify-center shadow-lg opacity-0 group-hover:opacity-100 transition-opacity"
           >
-            <ChevronLeft className="w-6 h-6 text-gray-700" />
+            <ChevronLeft className="w-6 h-6 dark:text-gray-300" />
           </motion.button>
           <motion.button
             initial={{ opacity: 0 }}
@@ -185,9 +190,9 @@ export function BannerSlider() {
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
             onClick={goToNext}
-            className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 hover:bg-white rounded-full flex items-center justify-center shadow-lg opacity-0 group-hover:opacity-100 transition-opacity"
+            className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 hover:bg-white  flex items-center justify-center shadow-lg opacity-0 group-hover:opacity-100 transition-opacity"
           >
-            <ChevronRight className="w-6 h-6 text-gray-700" />
+            <ChevronRight className="w-6 h-6 dark:text-gray-300" />
           </motion.button>
 
           <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2">

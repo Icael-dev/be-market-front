@@ -23,14 +23,6 @@ const sortOptions = [
   { value: 'name_desc', label: 'Nom Z-A' }
 ];
 
-const priceRanges = [
-  { min: 0, max: 25000, label: 'Moins de 25 000 FCFA' },
-  { min: 25000, max: 50000, label: '25 000 - 50 000 FCFA' },
-  { min: 50000, max: 100000, label: '50 000 - 100 000 FCFA' },
-  { min: 100000, max: 500000, label: '100 000 - 500 000 FCFA' },
-  { min: 500000, max: Infinity, label: 'Plus de 500 000 FCFA' }
-];
-
 export function ProductsPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [products, setProducts] = useState<Product[]>([]);
@@ -43,7 +35,6 @@ export function ProductsPage() {
   const selectedCategory = searchParams.get('category') || '';
   const searchQuery = searchParams.get('search') || '';
   const sortBy = searchParams.get('sort') || 'newest';
-  const selectedPriceRange = searchParams.get('price') || '';
   const selectedBrand = searchParams.get('brand') || '';
 
   useEffect(() => {
@@ -59,16 +50,6 @@ export function ProductsPage() {
           sort: sortBy as FilterOptions['sort'] | undefined,
           brand: selectedBrand || undefined
         };
-
-        if (selectedPriceRange) {
-          const range = priceRanges.find(r =>
-            `${r.min}-${r.max === Infinity ? 'infinity' : r.max}` === selectedPriceRange
-          );
-          if (range) {
-            filters.minPrice = range.min;
-            filters.maxPrice = range.max === Infinity ? undefined : range.max;
-          }
-        }
 
         const productsData = await fetchProducts(filters);
         setProducts(productsData);
@@ -88,7 +69,7 @@ export function ProductsPage() {
     }
 
     fetchData();
-  }, [selectedCategory, searchQuery, sortBy, selectedPriceRange, selectedBrand]);
+  }, [selectedCategory, searchQuery, sortBy, selectedBrand]);
 
   const updateFilter = (key: string, value: string | null) => {
     const params = new URLSearchParams(searchParams);
@@ -104,24 +85,24 @@ export function ProductsPage() {
     setSearchParams(new URLSearchParams());
   };
 
-  const activeFiltersCount = [selectedCategory, selectedPriceRange, searchQuery, selectedBrand].filter(Boolean).length;
+  const activeFiltersCount = [selectedCategory, searchQuery, selectedBrand].filter(Boolean).length;
 
   const selectedCategoryName = selectedCategory
     ? categories.find(c => c.id === selectedCategory || c.slug === selectedCategory)?.name
     : null;
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="bg-white border-b border-gray-100">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      <div className="bg-white dark:bg-gray-800 border-b dark:border-gray-700">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
           >
-            <h1 className="text-3xl font-bold text-gray-900">
+            <h1 className="text-3xl font-bold dark:text-white">
               {selectedCategoryName || 'Tous les produits'}
             </h1>
-            <p className="text-gray-500 mt-2">
+            <p className="dark:text-gray-500 mt-2">
               {loading ? 'Chargement...' : `${products.length} produits trouves`}
             </p>
           </motion.div>
@@ -131,8 +112,8 @@ export function ProductsPage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <div className="flex flex-col lg:flex-row gap-6">
           <div className="hidden lg:block w-64 flex-shrink-0">
-            <div className="bg-white rounded-2xl border border-gray-100 p-6 sticky top-20">
-              <h3 className="font-semibold text-gray-900 mb-4">Categories</h3>
+            <div className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 p-6 sticky top-20">
+              <h3 className="font-semibold dark:text-white mb-4">Categories</h3>
               <ul className="space-y-2">
                 <li>
                   <button
@@ -140,8 +121,8 @@ export function ProductsPage() {
                     className={cn(
                       'w-full text-left px-3 py-2 rounded-lg text-sm transition-colors',
                       !selectedCategory
-                        ? 'bg-blue-50 text-blue-600 font-medium'
-                        : 'text-gray-600 hover:bg-gray-50'
+                        ? 'bg-blue-50 dark:bg-blue-900/30 dark:text-blue-400 font-medium'
+                        : 'dark:text-gray-500 hover:bg-gray-50 hover:dark:bg-gray-900'
                     )}
                   >
                     Toutes les categories
@@ -154,8 +135,8 @@ export function ProductsPage() {
                       className={cn(
                         'w-full text-left px-3 py-2 rounded-lg text-sm transition-colors',
                         selectedCategory === category.slug
-                          ? 'bg-blue-50 text-blue-600 font-medium'
-                          : 'text-gray-600 hover:bg-gray-50'
+                          ? 'bg-blue-50 dark:bg-blue-900/30 dark:text-blue-400 font-medium'
+                          : 'dark:text-gray-500 hover:bg-gray-50 hover:dark:bg-gray-900'
                       )}
                     >
                       {category.name}
@@ -164,34 +145,10 @@ export function ProductsPage() {
                 ))}
               </ul>
 
-              <hr className="my-6 border-gray-100" />
-
-              <h3 className="font-semibold text-gray-900 mb-4">Prix</h3>
-              <ul className="space-y-2">
-                {priceRanges.map(range => (
-                  <li key={range.min}>
-                    <button
-                      onClick={() => {
-                        const value = `${range.min}-${range.max === Infinity ? 'infinity' : range.max}`;
-                        updateFilter('price', selectedPriceRange === value ? null : value);
-                      }}
-                      className={cn(
-                        'w-full text-left px-3 py-2 rounded-lg text-sm transition-colors',
-                        selectedPriceRange === `${range.min}-${range.max === Infinity ? 'infinity' : range.max}`
-                          ? 'bg-blue-50 text-blue-600 font-medium'
-                          : 'text-gray-600 hover:bg-gray-50'
-                      )}
-                    >
-                      {range.label}
-                    </button>
-                  </li>
-                ))}
-              </ul>
-
               {brands.length > 0 && (
                 <>
-                  <hr className="my-6 border-gray-100" />
-                  <h3 className="font-semibold text-gray-900 mb-4">Marques</h3>
+                  <hr className="my-6 dark:border-gray-700" />
+                  <h3 className="font-semibold dark:text-white mb-4">Marques</h3>
                   <ul className="space-y-2">
                     {brands.map(brand => (
                       <li key={brand}>
@@ -200,8 +157,8 @@ export function ProductsPage() {
                           className={cn(
                             'w-full text-left px-3 py-2 rounded-lg text-sm transition-colors',
                             selectedBrand === brand
-                              ? 'bg-blue-50 text-blue-600 font-medium'
-                              : 'text-gray-600 hover:bg-gray-50'
+                              ? 'bg-blue-50 dark:bg-blue-900/30 dark:text-blue-400 font-medium'
+                              : 'dark:text-gray-500 hover:bg-gray-50 hover:dark:bg-gray-900'
                           )}
                         >
                           {brand}
@@ -215,12 +172,12 @@ export function ProductsPage() {
           </div>
 
           <div className="flex-1">
-            <div className="bg-white rounded-xl border border-gray-100 p-4 mb-6">
+            <div className="bg-white dark:bg-gray-800 rounded-xl border dark:border-gray-700 p-4 mb-6">
               <div className="flex flex-wrap items-center justify-between gap-4">
                 <div className="flex items-center gap-3">
                   <button
                     onClick={() => setShowFilters(true)}
-                    className="lg:hidden flex items-center gap-2 px-4 py-2 border border-gray-200 rounded-xl text-sm font-medium hover:bg-gray-50 transition-colors"
+                    className="lg:hidden flex items-center gap-2 px-4 py-2 border bg-white dark:border-gray-700 rounded-xl text-sm font-medium hover:bg-gray-50 hover:dark:bg-gray-900 transition-colors"
                   >
                     <SlidersHorizontal className="w-4 h-4" />
                     Filtres
@@ -235,7 +192,7 @@ export function ProductsPage() {
                     <select
                       value={sortBy}
                       onChange={(e) => updateFilter('sort', e.target.value)}
-                      className="appearance-none pl-4 pr-10 py-2 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 bg-white cursor-pointer"
+                      className="appearance-none pl-4 pr-10 py-2 border border-gray-200 dark:border-gray-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 bg-white dark:bg-gray-800 cursor-pointer"
                     >
                       {sortOptions.map(option => (
                         <option key={option.value} value={option.value}>
@@ -243,7 +200,7 @@ export function ProductsPage() {
                         </option>
                       ))}
                     </select>
-                    <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+                    <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 dark:text-gray-500 pointer-events-none" />
                   </div>
                 </div>
 
@@ -253,8 +210,8 @@ export function ProductsPage() {
                     className={cn(
                       'p-2 rounded-lg transition-colors',
                       view === 'grid'
-                        ? 'bg-blue-50 text-blue-600'
-                        : 'text-gray-400 hover:text-gray-600'
+                        ? 'bg-blue-50 dark:bg-blue-900/30 dark:text-blue-400'
+                        : 'dark:text-gray-500 hover:dark:text-gray-500'
                     )}
                   >
                     <Grid3X3 className="w-5 h-5" />
@@ -264,8 +221,8 @@ export function ProductsPage() {
                     className={cn(
                       'p-2 rounded-lg transition-colors',
                       view === 'list'
-                        ? 'bg-blue-50 text-blue-600'
-                        : 'text-gray-400 hover:text-gray-600'
+                        ? 'bg-blue-50 dark:bg-blue-900/30 dark:text-blue-400'
+                        : 'dark:text-gray-500 hover:dark:text-gray-500'
                     )}
                   >
                     <LayoutList className="w-5 h-5" />
@@ -275,29 +232,20 @@ export function ProductsPage() {
 
               {activeFiltersCount > 0 && (
                 <div className="mt-4 flex flex-wrap items-center gap-2">
-                  <span className="text-sm text-gray-500">Filtres actifs:</span>
+                  <span className="text-sm dark:text-gray-500">Filtres actifs:</span>
                   {selectedCategory && (
                     <button
                       onClick={() => updateFilter('category', null)}
-                      className="inline-flex items-center gap-1 px-3 py-1 bg-blue-50 text-blue-600 rounded-full text-sm"
+                      className="inline-flex items-center gap-1 px-3 py-1 bg-blue-50 dark:bg-blue-900/30 dark:text-blue-400 rounded-full text-sm"
                     >
                       {selectedCategoryName}
-                      <X className="w-3 h-3" />
-                    </button>
-                  )}
-                  {selectedPriceRange && (
-                    <button
-                      onClick={() => updateFilter('price', null)}
-                      className="inline-flex items-center gap-1 px-3 py-1 bg-blue-50 text-blue-600 rounded-full text-sm"
-                    >
-                      {priceRanges.find(r => `${r.min}-${r.max === Infinity ? 'infinity' : r.max}` === selectedPriceRange)?.label}
                       <X className="w-3 h-3" />
                     </button>
                   )}
                   {searchQuery && (
                     <button
                       onClick={() => updateFilter('search', null)}
-                      className="inline-flex items-center gap-1 px-3 py-1 bg-blue-50 text-blue-600 rounded-full text-sm"
+                      className="inline-flex items-center gap-1 px-3 py-1 bg-blue-50 dark:bg-blue-900/30 dark:text-blue-400 rounded-full text-sm"
                     >
                       "{searchQuery}"
                       <X className="w-3 h-3" />
@@ -306,7 +254,7 @@ export function ProductsPage() {
                   {selectedBrand && (
                     <button
                       onClick={() => updateFilter('brand', null)}
-                      className="inline-flex items-center gap-1 px-3 py-1 bg-blue-50 text-blue-600 rounded-full text-sm"
+                      className="inline-flex items-center gap-1 px-3 py-1 bg-blue-50 dark:bg-blue-900/30 dark:text-blue-400 rounded-full text-sm"
                     >
                       {selectedBrand}
                       <X className="w-3 h-3" />
@@ -314,7 +262,7 @@ export function ProductsPage() {
                   )}
                   <button
                     onClick={clearFilters}
-                    className="text-sm text-gray-500 hover:text-gray-700 underline"
+                    className="text-sm dark:text-gray-500 hover:dark:text-gray-300 underline"
                   >
                     Effacer tout
                   </button>
@@ -325,14 +273,14 @@ export function ProductsPage() {
             {loading ? (
               <ProductsGridSkeleton count={12} />
             ) : products.length === 0 ? (
-              <div className="bg-white rounded-2xl border border-gray-100 p-12 text-center">
-                <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Search className="w-8 h-8 text-gray-400" />
+              <div className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 p-12 text-center">
+                <div className="w-16 h-16 bg-gray-200 dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Search className="w-8 h-8 dark:text-gray-500" />
                 </div>
-                <h3 className="text-lg font-medium text-gray-900 mb-2">
+                <h3 className="text-lg font-medium dark:text-white mb-2">
                   Aucun produit trouve
                 </h3>
-                <p className="text-gray-500 mb-6">
+                <p className="dark:text-gray-500 mb-6">
                   Essayez de modifier vos criteres de recherche
                 </p>
                 <button
@@ -373,20 +321,20 @@ export function ProductsPage() {
               animate={{ x: 0 }}
               exit={{ x: '-100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-              className="fixed left-0 top-0 bottom-0 w-80 bg-white z-50 lg:hidden overflow-y-auto"
+              className="fixed left-0 top-0 bottom-0 w-80 bg-white dark:bg-gray-800 z-50 lg:hidden overflow-y-auto"
             >
               <div className="p-6">
                 <div className="flex items-center justify-between mb-6">
                   <h2 className="text-lg font-bold">Filtres</h2>
                   <button
                     onClick={() => setShowFilters(false)}
-                    className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                    className="p-2 hover:bg-gray-50 hover:dark:bg-gray-700 rounded-lg transition-colors"
                   >
                     <X className="w-5 h-5" />
                   </button>
                 </div>
 
-                <h3 className="font-semibold text-gray-900 mb-4">Categories</h3>
+                <h3 className="font-semibold dark:text-white mb-4">Categories</h3>
                 <ul className="space-y-2 mb-6">
                   <li>
                     <button
@@ -397,8 +345,8 @@ export function ProductsPage() {
                       className={cn(
                         'w-full text-left px-3 py-2 rounded-lg text-sm transition-colors',
                         !selectedCategory
-                          ? 'bg-blue-50 text-blue-600 font-medium'
-                          : 'text-gray-600 hover:bg-gray-50'
+                          ? 'bg-blue-50 dark:bg-blue-900/30 dark:text-blue-400 font-medium'
+                          : 'dark:text-gray-500 hover:bg-gray-50 hover:dark:bg-gray-900'
                       )}
                     >
                       Toutes les categories
@@ -414,34 +362,11 @@ export function ProductsPage() {
                         className={cn(
                           'w-full text-left px-3 py-2 rounded-lg text-sm transition-colors',
                           selectedCategory === category.slug
-                            ? 'bg-blue-50 text-blue-600 font-medium'
-                            : 'text-gray-600 hover:bg-gray-50'
+                            ? 'bg-blue-50 dark:bg-blue-900/30 dark:text-blue-400 font-medium'
+                            : 'dark:text-gray-500 hover:bg-gray-50 hover:dark:bg-gray-900'
                         )}
                       >
                         {category.name}
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-
-                <h3 className="font-semibold text-gray-900 mb-4">Prix</h3>
-                <ul className="space-y-2">
-                  {priceRanges.map(range => (
-                    <li key={range.min}>
-                      <button
-                        onClick={() => {
-                          const value = `${range.min}-${range.max === Infinity ? 'infinity' : range.max}`;
-                          updateFilter('price', selectedPriceRange === value ? null : value);
-                          setShowFilters(false);
-                        }}
-                        className={cn(
-                          'w-full text-left px-3 py-2 rounded-lg text-sm transition-colors',
-                          selectedPriceRange === `${range.min}-${range.max === Infinity ? 'infinity' : range.max}`
-                            ? 'bg-blue-50 text-blue-600 font-medium'
-                            : 'text-gray-600 hover:bg-gray-50'
-                        )}
-                      >
-                        {range.label}
                       </button>
                     </li>
                   ))}

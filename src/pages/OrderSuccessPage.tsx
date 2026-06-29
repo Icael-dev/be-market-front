@@ -38,9 +38,9 @@ export function OrderSuccessPage() {
 
   if (!order) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-6">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center p-6">
         <div className="text-center">
-          <h2 className="text-xl font-bold text-gray-900 mb-4">Commande introuvable</h2>
+          <h2 className="text-xl font-bold dark:text-white mb-4">Commande introuvable</h2>
           <Link to="/" className="text-blue-600 hover:underline">
             Retour a l'accueil
           </Link>
@@ -50,19 +50,19 @@ export function OrderSuccessPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden"
+          className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 shadow-sm overflow-hidden"
         >
           <div className="bg-gradient-to-r from-green-500 to-emerald-600 p-8 text-white text-center">
             <motion.div
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               transition={{ delay: 0.2, type: 'spring' }}
-              className="w-20 h-20 bg-white rounded-full flex items-center justify-center mx-auto mb-4"
+              className="w-20 h-20 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-4"
             >
               <CheckCircle className="w-12 h-12 text-green-600" />
             </motion.div>
@@ -73,14 +73,14 @@ export function OrderSuccessPage() {
           </div>
 
           <div className="p-6 md:p-8">
-            <div className="flex items-center justify-between pb-6 border-b border-gray-100">
+            <div className="flex items-center justify-between pb-6 border-b dark:border-gray-700">
               <div>
-                <p className="text-sm text-gray-500">Numero de commande</p>
-                <p className="text-lg font-bold text-gray-900">{order.order_number}</p>
+                <p className="text-sm dark:text-gray-500">Numero de commande</p>
+                <p className="text-lg font-bold dark:text-white">{order.order_number}</p>
               </div>
               <div className="text-right">
-                <p className="text-sm text-gray-500">Date</p>
-                <p className="text-gray-900">
+                <p className="text-sm dark:text-gray-500">Date</p>
+                <p className="dark:text-white">
                   {new Date(order.created_at).toLocaleDateString('fr-FR', {
                     day: 'numeric',
                     month: 'long',
@@ -90,13 +90,13 @@ export function OrderSuccessPage() {
               </div>
             </div>
 
-            <div className="grid md:grid-cols-2 gap-6 py-6 border-b border-gray-100">
+            <div className="grid md:grid-cols-2 gap-6 py-6 border-b dark:border-gray-700">
               <div>
-                <h3 className="flex items-center gap-2 font-medium text-gray-900 mb-3">
-                  <MapPin className="w-4 h-4 text-gray-400" />
+                <h3 className="flex items-center gap-2 font-medium dark:text-white mb-3">
+                  <MapPin className="w-4 h-4 dark:text-gray-500" />
                   Adresse de livraison
                 </h3>
-                <div className="text-sm text-gray-600 space-y-1">
+                <div className="text-sm dark:text-gray-500 space-y-1">
                   <p>{order.shipping_address?.full_name}</p>
                   <p>{order.shipping_address?.phone}</p>
                   <p>{order.shipping_address?.address_line1}</p>
@@ -109,11 +109,11 @@ export function OrderSuccessPage() {
               </div>
 
               <div>
-                <h3 className="flex items-center gap-2 font-medium text-gray-900 mb-3">
-                  <CreditCard className="w-4 h-4 text-gray-400" />
+                <h3 className="flex items-center gap-2 font-medium dark:text-white mb-3">
+                  <CreditCard className="w-4 h-4 dark:text-gray-500" />
                   Paiement
                 </h3>
-                <div className="text-sm text-gray-600 space-y-1">
+                <div className="text-sm dark:text-gray-500 space-y-1">
                   <p className="font-medium">
                     {getStatusLabel(order.payment_method || '')}
                   </p>
@@ -124,16 +124,16 @@ export function OrderSuccessPage() {
               </div>
             </div>
 
-            <div className="py-6 border-b border-gray-100">
-              <h3 className="font-medium text-gray-900 mb-4">
+            <div className="py-6 border-b dark:border-gray-700">
+              <h3 className="font-medium dark:text-white mb-4">
                 Articles commandes
               </h3>
               <div className="space-y-4">
                 {order.items?.map(item => (
                   <div key={item.id} className="flex items-center justify-between">
                     <div>
-                      <p className="font-medium text-gray-900">{item.product_name}</p>
-                      <p className="text-sm text-gray-500">Quantite: {item.quantity}</p>
+                      <p className="font-medium dark:text-white">{item.product_name}</p>
+                      <p className="text-sm dark:text-gray-500">Quantite: {item.quantity}</p>
                     </div>
                     <p className="font-medium">{formatPrice(item.total)}</p>
                   </div>
@@ -142,23 +142,23 @@ export function OrderSuccessPage() {
             </div>
 
             <div className="py-6 space-y-2">
-              <div className="flex justify-between text-gray-600">
+              <div className="flex justify-between dark:text-gray-500">
                 <span>Sous-total</span>
                 <span>{formatPrice(order.subtotal)}</span>
               </div>
-              <div className="flex justify-between text-gray-600">
+              <div className="flex justify-between dark:text-gray-500">
                 <span>Livraison</span>
                 <span>{order.shipping_fee === 0 ? 'Gratuite' : formatPrice(order.shipping_fee)}</span>
               </div>
-              <div className="flex justify-between text-lg font-bold text-gray-900 pt-2 border-t border-gray-100">
+              <div className="flex justify-between text-lg font-bold dark:text-white pt-2 border-t dark:border-gray-700">
                 <span>Total</span>
                 <span>{formatPrice(order.total)}</span>
               </div>
             </div>
 
             {order.payment_method !== 'cash_on_delivery' && (
-              <div className="bg-blue-50 rounded-xl p-4 mb-6">
-                <p className="text-sm text-blue-800">
+              <div className="bg-blue-50 dark:bg-blue-900/30 rounded-xl p-4 mb-6">
+                <p className="text-sm dark:text-blue-300">
                   <strong>Instructions de paiement:</strong> Vous recevrez une notification sur votre telephone pour confirmer le paiement {order.payment_method === 'tmoney' ? 'Tmoney' : 'Flooz'}.
                 </p>
               </div>
@@ -174,7 +174,7 @@ export function OrderSuccessPage() {
               </Link>
               <Link
                 to="/products"
-                className="flex-1 flex items-center justify-center gap-2 border border-gray-200 text-gray-700 py-3 rounded-xl font-medium hover:bg-gray-50 transition-colors"
+                className="flex-1 flex items-center justify-center gap-2 border bg-white dark:border-gray-700 dark:text-gray-300 py-3 rounded-xl font-medium hover:bg-gray-50 hover:dark:bg-gray-900 transition-colors"
               >
                 <ShoppingBag className="w-5 h-5" />
                 Continuer les achats

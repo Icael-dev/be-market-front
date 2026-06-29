@@ -4,6 +4,7 @@ export interface Category {
   slug: string;
   description: string | null;
   image_url: string | null;
+  is_active: boolean;
   created_at: string;
 }
 
@@ -57,6 +58,7 @@ export interface Address {
   city: string;
   region: string | null;
   country: string;
+  postal_code: string | null;
   is_default: boolean;
   created_at: string;
 }
@@ -86,6 +88,7 @@ export interface Order {
   payment_status: PaymentStatus;
   payment_method: PaymentMethod | null;
   subtotal: number;
+  discount: number;
   shipping_fee: number;
   tax: number;
   total: number;
@@ -133,6 +136,17 @@ export interface Review {
   profile?: Profile;
 }
 
+export interface Testimonial {
+  id: string;
+  full_name: string;
+  role: string | null;
+  comment: string;
+  rating: number;
+  is_active: boolean;
+  sort_order: number;
+  created_at: string;
+}
+
 export interface WishlistItem {
   id: string;
   user_id: string;
@@ -177,6 +191,7 @@ export interface Settings {
   store_name: string;
   store_email: string;
   store_phone: string;
+  site_description?: string;
 }
 
 export interface Coupon {
@@ -184,7 +199,7 @@ export interface Coupon {
   code: string;
   discount_type: 'percentage' | 'fixed';
   discount_value: number;
-  min_order_amount: number;
+  min_order_amount: number | null;
   max_uses: number | null;
   uses_count: number;
   starts_at: string;

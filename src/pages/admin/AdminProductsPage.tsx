@@ -168,8 +168,8 @@ export function AdminProductsPage() {
           className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8"
         >
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Produits</h1>
-            <p className="text-gray-500 mt-1">{products.length} produits</p>
+            <h1 className="text-2xl font-bold dark:text-white">Produits</h1>
+            <p className="dark:text-gray-500 mt-1">{products.length} produits</p>
           </div>
 
           <button
@@ -188,24 +188,24 @@ export function AdminProductsPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="bg-white rounded-2xl border border-gray-200 p-4 mb-6"
+          className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 p-4 mb-6"
         >
           <div className="flex flex-col sm:flex-row gap-4">
             <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 dark:text-gray-500" />
               <input
                 type="text"
                 placeholder="Rechercher un produit..."
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+                className="w-full pl-10 pr-4 py-2.5 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
               />
             </div>
 
             <select
               value={selectedCategory}
               onChange={e => setSelectedCategory(e.target.value)}
-              className="px-4 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 bg-white cursor-pointer"
+              className="px-4 py-2.5 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 bg-white dark:bg-gray-800 cursor-pointer"
             >
               <option value="">Toutes les categories</option>
               {categories.map(cat => (
@@ -219,18 +219,18 @@ export function AdminProductsPage() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.2 }}
-          className="bg-white rounded-2xl border border-gray-200 overflow-hidden"
+          className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 overflow-hidden"
         >
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead className="bg-gray-50 border-b border-gray-200">
+              <thead className="bg-gray-50 dark:bg-gray-900 border-b dark:border-gray-700">
                 <tr>
-                  <th className="text-left px-6 py-4 text-sm font-medium text-gray-500">Produit</th>
-                  <th className="text-left px-6 py-4 text-sm font-medium text-gray-500">Categorie</th>
-                  <th className="text-left px-6 py-4 text-sm font-medium text-gray-500">Prix</th>
-                  <th className="text-left px-6 py-4 text-sm font-medium text-gray-500">Stock</th>
-                  <th className="text-left px-6 py-4 text-sm font-medium text-gray-500">Statut</th>
-                  <th className="text-right px-6 py-4 text-sm font-medium text-gray-500">Actions</th>
+                  <th className="text-left px-6 py-4 text-sm font-medium dark:text-gray-500">Produit</th>
+                  <th className="text-left px-6 py-4 text-sm font-medium dark:text-gray-500">Categorie</th>
+                  <th className="text-left px-6 py-4 text-sm font-medium dark:text-gray-500">Prix</th>
+                  <th className="text-left px-6 py-4 text-sm font-medium dark:text-gray-500">Stock</th>
+                  <th className="text-left px-6 py-4 text-sm font-medium dark:text-gray-500">Statut</th>
+                  <th className="text-right px-6 py-4 text-sm font-medium dark:text-gray-500">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
@@ -240,11 +240,11 @@ export function AdminProductsPage() {
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: index * 0.02 }}
-                    className="hover:bg-gray-50 transition-colors"
+                    className="hover:bg-gray-50 hover:dark:bg-gray-900 transition-colors"
                   >
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
-                        <div className="w-12 h-12 rounded-lg bg-gray-100 overflow-hidden flex-shrink-0">
+                        <div className="w-12 h-12 rounded-lg dark:bg-gray-700 overflow-hidden flex-shrink-0">
                           {product.images?.[0] ? (
                             <img
                               src={product.images[0]}
@@ -253,25 +253,25 @@ export function AdminProductsPage() {
                             />
                           ) : (
                             <div className="w-full h-full flex items-center justify-center">
-                              <ImageIcon className="w-5 h-5 text-gray-400" />
+                              <ImageIcon className="w-5 h-5 dark:text-gray-500" />
                             </div>
                           )}
                         </div>
                         <div>
-                          <p className="font-medium text-gray-900">{product.name}</p>
+                          <p className="font-medium dark:text-white">{product.name}</p>
                           {product.sku && (
-                            <p className="text-xs text-gray-500">SKU: {product.sku}</p>
+                            <p className="text-xs dark:text-gray-500">SKU: {product.sku}</p>
                           )}
                         </div>
                       </div>
                     </td>
-                    <td className="px-6 py-4 text-sm text-gray-600">
+                    <td className="px-6 py-4 text-sm dark:text-gray-500">
                       {product.category?.name || '-'}
                     </td>
                     <td className="px-6 py-4">
-                      <p className="font-medium text-gray-900">{formatPrice(product.price)}</p>
+                      <p className="font-medium dark:text-white">{formatPrice(product.price)}</p>
                       {product.compare_price && (
-                        <p className="text-sm text-gray-400 line-through">
+                        <p className="text-sm dark:text-gray-500 line-through">
                           {formatPrice(product.compare_price)}
                         </p>
                       )}
@@ -279,7 +279,7 @@ export function AdminProductsPage() {
                     <td className="px-6 py-4">
                       <span className={cn(
                         'font-medium',
-                        product.stock < 10 ? 'text-red-600' : 'text-gray-900'
+                        product.stock < 10 ? 'text-red-600' : 'dark:text-white'
                       )}>
                         {product.stock}
                       </span>
@@ -289,7 +289,7 @@ export function AdminProductsPage() {
                         'inline-flex px-2 py-1 rounded-full text-xs font-medium',
                         product.is_active
                           ? 'bg-green-100 text-green-700'
-                          : 'bg-gray-100 text-gray-700'
+                          : 'dark:bg-gray-700 dark:text-gray-500'
                       )}>
                         {product.is_active ? 'Actif' : 'Inactif'}
                       </span>
@@ -303,15 +303,15 @@ export function AdminProductsPage() {
                       <div className="flex items-center justify-end gap-2">
                         <button
                           onClick={() => handleEdit(product)}
-                          className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                          className="p-2 hover:bg-gray-100 hover:dark:bg-gray-700 rounded-lg transition-colors"
                         >
-                          <Edit2 className="w-4 h-4 text-gray-600" />
+                          <Edit2 className="w-4 h-4 dark:text-gray-500" />
                         </button>
                         <button
                           onClick={() => handleDelete(product.id)}
-                          className="p-2 hover:bg-red-50 rounded-lg transition-colors"
+                          className="p-2 dark:bg-red-900/30 rounded-lg transition-colors"
                         >
-                          <Trash2 className="w-4 h-4 text-red-500" />
+                          <Trash2 className="w-4 h-4 dark:text-red-400" />
                         </button>
                       </div>
                     </td>
@@ -323,8 +323,8 @@ export function AdminProductsPage() {
 
           {filteredProducts.length === 0 && (
             <div className="text-center py-12">
-              <Package className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-              <p className="text-gray-500">Aucun produit trouve</p>
+              <Package className="w-12 h-12 dark:text-gray-500 mx-auto mb-4" />
+              <p className="dark:text-gray-500">Aucun produit trouve</p>
             </div>
           )}
         </motion.div>
@@ -344,15 +344,15 @@ export function AdminProductsPage() {
               initial={{ opacity: 0, x: '100%' }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: '100%' }}
-              className="fixed right-0 top-0 bottom-0 w-full max-w-xl bg-white z-50 overflow-y-auto"
+              className="fixed right-0 top-0 bottom-0 w-full max-w-xl bg-white dark:bg-gray-800 z-50 overflow-y-auto"
             >
-              <div className="p-6 border-b border-gray-200 flex items-center justify-between sticky top-0 bg-white">
-                <h2 className="text-xl font-bold text-gray-900">
+              <div className="p-6 border-b dark:border-gray-700 flex items-center justify-between sticky top-0 bg-white dark:bg-gray-800">
+                <h2 className="text-xl font-bold dark:text-white">
                   {editingProduct ? 'Modifier le produit' : 'Nouveau produit'}
                 </h2>
                 <button
                   onClick={() => setShowForm(false)}
-                  className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                  className="p-2 hover:bg-gray-100 hover:dark:bg-gray-700 rounded-lg transition-colors"
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -360,79 +360,79 @@ export function AdminProductsPage() {
 
               <div className="p-6 space-y-6">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium dark:text-gray-500 mb-2">
                     Nom du produit *
                   </label>
                   <input
                     type="text"
                     value={formData.name}
                     onChange={e => setFormData({ ...formData, name: e.target.value })}
-                    className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+                    className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
                     required
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium dark:text-gray-500 mb-2">
                     Description
                   </label>
                   <textarea
                     value={formData.description}
                     onChange={e => setFormData({ ...formData, description: e.target.value })}
                     rows={4}
-                    className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+                    className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
                   />
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium dark:text-gray-500 mb-2">
                       Prix (FCFA) *
                     </label>
                     <input
                       type="number"
                       value={formData.price}
                       onChange={e => setFormData({ ...formData, price: e.target.value })}
-                      className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+                      className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
                       required
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium dark:text-gray-500 mb-2">
                       Prix compare (FCFA)
                     </label>
                     <input
                       type="number"
                       value={formData.compare_price}
                       onChange={e => setFormData({ ...formData, compare_price: e.target.value })}
-                      className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+                      className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
                     />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium dark:text-gray-500 mb-2">
                       Stock *
                     </label>
                     <input
                       type="number"
                       value={formData.stock}
                       onChange={e => setFormData({ ...formData, stock: e.target.value })}
-                      className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+                      className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
                       required
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium dark:text-gray-500 mb-2">
                       Categorie
                     </label>
                     <select
                       value={formData.category_id}
                       onChange={e => setFormData({ ...formData, category_id: e.target.value })}
-                      className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 bg-white"
+                      className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 bg-white dark:bg-gray-800"
                     >
                       <option value="">Selectionner</option>
                       {categories.map(cat => (
@@ -443,14 +443,14 @@ export function AdminProductsPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium dark:text-gray-500 mb-2">
                     URL de l'image
                   </label>
                   <input
                     type="text"
                     value={formData.images[0] || ''}
                     onChange={e => setFormData({ ...formData, images: [e.target.value] })}
-                    className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+                    className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
                     placeholder="https://..."
                   />
                 </div>
@@ -461,9 +461,9 @@ export function AdminProductsPage() {
                       type="checkbox"
                       checked={formData.is_active}
                       onChange={e => setFormData({ ...formData, is_active: e.target.checked })}
-                      className="w-4 h-4 text-blue-600 border-gray-300 rounded"
+                      className="w-4 h-4 dark:text-blue-400 border-gray-300 rounded"
                     />
-                    <span className="text-sm text-gray-700">Produit actif</span>
+                    <span className="text-sm dark:text-gray-500">Produit actif</span>
                   </label>
 
                   <label className="flex items-center gap-2 cursor-pointer">
@@ -471,13 +471,13 @@ export function AdminProductsPage() {
                       type="checkbox"
                       checked={formData.is_featured}
                       onChange={e => setFormData({ ...formData, is_featured: e.target.checked })}
-                      className="w-4 h-4 text-blue-600 border-gray-300 rounded"
+                      className="w-4 h-4 dark:text-blue-400 border-gray-300 rounded"
                     />
-                    <span className="text-sm text-gray-700">Produit vedette</span>
+                    <span className="text-sm dark:text-gray-500">Produit vedette</span>
                   </label>
                 </div>
 
-                <div className="flex gap-3 pt-4 border-t border-gray-200">
+                <div className="flex gap-3 pt-4 border-t dark:border-gray-700">
                   <button
                     onClick={handleSave}
                     disabled={saving || !formData.name || !formData.price}
@@ -488,7 +488,7 @@ export function AdminProductsPage() {
                   </button>
                   <button
                     onClick={() => setShowForm(false)}
-                    className="px-6 py-2.5 border border-gray-200 rounded-xl font-medium hover:bg-gray-50 transition-colors"
+                    className="px-6 py-2.5 border dark:border-gray-700 rounded-xl font-medium hover:bg-gray-100 hover:dark:bg-gray-900 transition-colors"
                   >
                     Annuler
                   </button>

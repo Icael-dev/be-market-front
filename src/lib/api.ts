@@ -1,5 +1,5 @@
 const API_BASE_URL = import.meta.env.VITE_API_URL?.replace(/\/$/, '') ?? '';
-const TOKEN_KEY = 'electronica_jwt_token';
+const TOKEN_KEY = 'be_market_jwt_token';
 
 export function getAuthToken(): string | null {
   return localStorage.getItem(TOKEN_KEY);
@@ -36,7 +36,7 @@ async function parseResponse<T>(response: Response): Promise<T> {
   const body = isJson ? await response.json().catch(() => null) : null;
 
   if (!response.ok) {
-    const error = body?.error || body?.message || response.statusText;
+    const error = body?.error || body?.errors || body?.message || response.statusText;
     throw { status: response.status, error, body };
   }
 
