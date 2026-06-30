@@ -255,72 +255,98 @@ export function ProductsPage() {
                 </div>
               </div>
 
-              <div className="mt-3 pt-3 border-t border-gray-100 dark:border-gray-700">
-                <div className="flex flex-col sm:flex-row sm:items-center gap-3">
-                  <span className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider whitespace-nowrap">
-                    Fourchette
-                  </span>
-                  <div className="flex-1 flex items-center gap-3">
-                    <span className="text-sm font-bold text-gray-900 dark:text-white min-w-[75px] text-right">
-                      {formatPrice(localMin)}
+               <div className="mt-3 pt-3 border-t border-gray-100 dark:border-gray-700">
+                <div className="flex flex-col gap-3">
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="number"
+                      value={localMin}
+                      onChange={(e) => {
+                        const val = Math.max(0, parseInt(e.target.value) || 0);
+                        setLocalMin(Math.min(val, localMax - 5000));
+                      }}
+                      onBlur={() => {
+                        updateFilter('min_price', localMin > 0 ? String(localMin) : null);
+                        updateFilter('max_price', localMax < 1000000 ? String(localMax) : null);
+                      }}
+                      placeholder="Min"
+                      className="w-24 px-2 py-1.5 text-sm border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-right focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+                    />
+                    <span className="text-gray-400 text-sm">—</span>
+                    <input
+                      type="number"
+                      value={localMax}
+                      onChange={(e) => {
+                        const val = Math.min(1000000, parseInt(e.target.value) || 0);
+                        setLocalMax(Math.max(val, localMin + 5000));
+                      }}
+                      onBlur={() => {
+                        updateFilter('min_price', localMin > 0 ? String(localMin) : null);
+                        updateFilter('max_price', localMax < 1000000 ? String(localMax) : null);
+                      }}
+                      placeholder="Max"
+                      className="w-24 px-2 py-1.5 text-sm border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-right focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+                    />
+                    <span className="text-xs text-gray-400 dark:text-gray-500 whitespace-nowrap">
+                      FCFA
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <span className="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider whitespace-nowrap hidden sm:block">
+                      Fourchette
                     </span>
                     <div className="flex-1 relative h-2">
                       <div className="absolute inset-0 bg-gray-200 dark:bg-gray-600 rounded-full" />
                       {(priceBounds.max > priceBounds.min) && (
                         <div
-                          className="absolute h-2 bg-blue-600 rounded-full"
+                          className="absolute h-2 bg-blue-600/30 rounded-full"
                           style={{
-                            left: `${((localMin - priceBounds.min) / (priceBounds.max - priceBounds.min)) * 100}%`,
-                            right: `${100 - ((localMax - priceBounds.min) / (priceBounds.max - priceBounds.min)) * 100}%`,
+                            left: `${(priceBounds.min / 1000000) * 100}%`,
+                            right: `${100 - (priceBounds.max / 1000000) * 100}%`,
                           }}
                         />
                       )}
                       <input
                         type="range"
-                        min={priceBounds.min}
-                        max={priceBounds.max}
+                        min={0}
+                        max={1000000}
                         step={5000}
                         value={localMin}
                         onChange={(e) => {
                           const val = parseInt(e.target.value);
                           setLocalMin(Math.min(val, localMax - 5000));
                         }}
-                        onTouchEnd={() => {
-                          updateFilter('min_price', localMin > priceBounds.min ? String(localMin) : null);
-                          updateFilter('max_price', localMax < priceBounds.max ? String(localMax) : null);
-                        }}
                         onMouseUp={() => {
-                          updateFilter('min_price', localMin > priceBounds.min ? String(localMin) : null);
-                          updateFilter('max_price', localMax < priceBounds.max ? String(localMax) : null);
+                          updateFilter('min_price', localMin > 0 ? String(localMin) : null);
+                          updateFilter('max_price', localMax < 1000000 ? String(localMax) : null);
                         }}
-                        disabled={priceBounds.max === priceBounds.min}
-                        className="absolute w-full h-2 appearance-none bg-transparent pointer-events-auto [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-600 [&::-webkit-slider-thumb]:shadow-lg [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:relative [&::-webkit-slider-thumb]:z-20 disabled:opacity-50 disabled:cursor-not-allowed"
+                        onTouchEnd={() => {
+                          updateFilter('min_price', localMin > 0 ? String(localMin) : null);
+                          updateFilter('max_price', localMax < 1000000 ? String(localMax) : null);
+                        }}
+                        className="absolute w-full h-2 appearance-none bg-transparent pointer-events-auto [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-600 [&::-webkit-slider-thumb]:shadow-lg [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:relative [&::-webkit-slider-thumb]:z-10"
                       />
                       <input
                         type="range"
-                        min={priceBounds.min}
-                        max={priceBounds.max}
+                        min={0}
+                        max={1000000}
                         step={5000}
                         value={localMax}
                         onChange={(e) => {
                           const val = parseInt(e.target.value);
                           setLocalMax(Math.max(val, localMin + 5000));
                         }}
-                        onTouchEnd={() => {
-                          updateFilter('min_price', localMin > priceBounds.min ? String(localMin) : null);
-                          updateFilter('max_price', localMax < priceBounds.max ? String(localMax) : null);
-                        }}
                         onMouseUp={() => {
-                          updateFilter('min_price', localMin > priceBounds.min ? String(localMin) : null);
-                          updateFilter('max_price', localMax < priceBounds.max ? String(localMax) : null);
+                          updateFilter('min_price', localMin > 0 ? String(localMin) : null);
+                          updateFilter('max_price', localMax < 1000000 ? String(localMax) : null);
                         }}
-                        disabled={priceBounds.max === priceBounds.min}
-                        className="absolute w-full h-2 appearance-none bg-transparent pointer-events-auto [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-600 [&::-webkit-slider-thumb]:shadow-lg [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:relative [&::-webkit-slider-thumb]:z-10 disabled:opacity-50 disabled:cursor-not-allowed"
+                        onTouchEnd={() => {
+                          updateFilter('min_price', localMin > 0 ? String(localMin) : null);
+                          updateFilter('max_price', localMax < 1000000 ? String(localMax) : null);
+                        }}
+                        className="absolute w-full h-2 appearance-none bg-transparent pointer-events-auto [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-600 [&::-webkit-slider-thumb]:shadow-lg [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:relative [&::-webkit-slider-thumb]:z-10"
                       />
                     </div>
-                    <span className="text-sm font-bold text-gray-900 dark:text-white min-w-[75px]">
-                      {formatPrice(localMax)}
-                    </span>
                   </div>
                 </div>
               </div>

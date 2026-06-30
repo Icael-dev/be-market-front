@@ -13,12 +13,12 @@ export function setAuthToken(token: string | null) {
   }
 }
 
-function buildHeaders(customHeaders?: HeadersInit): Headers {
+function buildHeaders(customHeaders?: HeadersInit, isFormData?: boolean): Headers {
   const headers = new Headers(customHeaders);
   if (!headers.has('Accept')) {
     headers.set('Accept', 'application/json');
   }
-  if (!headers.has('Content-Type')) {
+  if (!isFormData && !headers.has('Content-Type')) {
     headers.set('Content-Type', 'application/json');
   }
 
@@ -45,7 +45,8 @@ async function parseResponse<T>(response: Response): Promise<T> {
 
 async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
   const url = path.startsWith('http') ? path : `${API_BASE_URL}${path}`;
-  const headers = buildHeaders(options.headers);
+  const bodyIsFormData = options.body instanceof FormData;
+  const headers = buildHeaders(options.headers, bodyIsFormData);
 
   const response = await fetch(url, {
     ...options,
@@ -60,12 +61,12 @@ export const api = {
   post: <T>(path: string, body?: unknown) =>
     request<T>(path, {
       method: 'POST',
-      body: body !== undefined ? JSON.stringify(body) : undefined,
+      body: body !== undefined ? (body instanceof FormData ? body : JSON.stringify(body)) : undefined,
     }),
   put: <T>(path: string, body?: unknown) =>
     request<T>(path, {
       method: 'PUT',
-      body: body !== undefined ? JSON.stringify(body) : undefined,
+      body: body !== undefined ? (body instanceof FormData ? body : JSON.stringify(body)) : undefined,
     }),
   delete: <T>(path: string) => request<T>(path, { method: 'DELETE' }),
 };

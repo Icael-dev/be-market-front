@@ -38,6 +38,10 @@ function unwrapList<T>(response: MaybePaginated<T>): T[] {
   return Array.isArray(response) ? response : response.data;
 }
 
+export async function uploadProductImage(formData: FormData): Promise<{ url: string }> {
+  return api.post<{ url: string }>('/api/admin/products/upload-image', formData);
+}
+
 // Products
 export async function fetchAdminProducts(): Promise<Product[]> {
   return unwrapList(await api.get<MaybePaginated<Product>>('/api/admin/products'));
