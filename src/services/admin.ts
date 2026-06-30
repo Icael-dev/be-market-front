@@ -61,7 +61,11 @@ export async function deleteAdminProduct(id: string): Promise<void> {
 
 // Categories
 export async function fetchAdminCategories(): Promise<Category[]> {
-  return unwrapList(await api.get<MaybePaginated<Category>>('/api/admin/categories'));
+  try {
+    return await api.get<Category[]>('/api/admin/categories');
+  } catch {
+    return await api.get<Category[]>('/api/categories');
+  }
 }
 
 export async function createAdminCategory(category: Partial<Category>): Promise<Category> {

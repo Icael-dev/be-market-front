@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   fetchAdminProducts,
@@ -24,12 +24,54 @@ import {
   GripVertical,
   AlertCircle,
   Loader2,
+  ChevronDown,
+  Tag,
+  Ruler,
+  Globe,
+  TrendingUp,
+  Box,
+  RefreshCw,
 } from 'lucide-react';
 import { cn } from '../../lib/utils';
 
 interface SpecEntry {
   key: string;
   value: string;
+  placeholder?: string;
+}
+
+function TabButton({ icon, label, active, onClick, badge }: {
+  icon: React.ReactNode;
+  label: string;
+  active: boolean;
+  onClick: () => void;
+  badge?: number;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={cn(
+        'flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg whitespace-nowrap transition-colors',
+        active
+          ? 'bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400'
+          : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300'
+      )}
+    >
+      {icon}
+      {label}
+      {badge !== undefined && (
+        <span className={cn(
+          'ml-1 px-1.5 py-0.5 text-xs rounded-full',
+          active
+            ? 'bg-blue-100 text-blue-600 dark:bg-blue-800 dark:text-blue-300'
+            : 'bg-gray-100 text-gray-500 dark:bg-gray-700 dark:text-gray-400'
+        )}>
+          {badge}
+        </span>
+      )}
+    </button>
+  );
 }
 
 export function AdminProductsPage() {
@@ -38,6 +80,7 @@ export function AdminProductsPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('');
   const [showForm, setShowForm] = useState(false);
+  const [activeTab, setActiveTab] = useState('general');
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [saving, setSaving] = useState(false);
   const [errors, setErrors] = useState<Record<string, string[]>>({});
@@ -45,8 +88,36 @@ export function AdminProductsPage() {
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
   const [uploadingImage, setUploadingImage] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [specsSource, setSpecsSource] = useState<'custom' | 'category'>('category');
 
-  const [formData, setFormData] = useState({
+  type DimensionsType = { length: string; width: string; height: string };
+  type VariantColor = { name: string; hex: string };
+
+  interface FormDataType {
+    sku: string;
+    name: string;
+    description: string;
+    price: string;
+    compare_price: string;
+    stock: string;
+    category_id: string;
+    images: string[];
+    specs: { key: string; value: string; placeholder?: string }[];
+    is_featured: boolean;
+    is_active: boolean;
+    weight: string;
+    short_description: string;
+    cost_price: string;
+    dimensions: DimensionsType;
+    min_stock_alert: string;
+    meta_title: string;
+    meta_description: string;
+    meta_keywords: string;
+    variant_sizes: string[];
+    variant_colors: VariantColor[];
+  }
+
+  const [formData, setFormData] = useState<FormDataType>({
     sku: '',
     name: '',
     description: '',
@@ -54,16 +125,110 @@ export function AdminProductsPage() {
     compare_price: '',
     stock: '',
     category_id: '',
-    images: [] as string[],
-    specs: [] as SpecEntry[],
+    images: [],
+    specs: [{ key: '', value: '', placeholder: '' }],
     is_featured: false,
     is_active: true,
     weight: '',
+    short_description: '',
+    cost_price: '',
+    dimensions: { length: '', width: '', height: '' },
+    min_stock_alert: '',
+    meta_title: '',
+    meta_description: '',
+    meta_keywords: '',
+    variant_sizes: [],
+    variant_colors: [],
   });
 
+  const DEFAULT_SPECS_BY_CATEGORY: Record<string, { key: string; placeholder?: string }[]> = {
+    'telephones': [
+      { key: 'Marque', placeholder: 'Ex: Samsung, Apple, Xiaomi' },
+      { key: 'Modele', placeholder: 'Ex: Galaxy S24' },
+      { key: 'Couleur', placeholder: 'Ex: Noir, Blanc, Bleu' },
+      { key: 'Stockage', placeholder: 'Ex: 128GB, 256GB' },
+      { key: 'RAM', placeholder: 'Ex: 8GB' },
+      { key: 'Ecran', placeholder: 'Ex: 6.1 pouces' },
+    ],
+    'ordinateurs': [
+      { key: 'Marque', placeholder: 'Ex: HP, Dell, Lenovo' },
+      { key: 'Processeur', placeholder: 'Ex: Intel i7-13700H' },
+      { key: 'RAM', placeholder: 'Ex: 16GB DDR5' },
+      { key: 'Stockage', placeholder: 'Ex: 512GB SSD' },
+      { key: 'Ecran', placeholder: 'Ex: 15.6 pouces FHD' },
+      { key: 'Carte graphique', placeholder: 'Ex: RTX 4060' },
+    ],
+    'vetements-hommes': [
+      { key: 'Taille', placeholder: 'Ex: S, M, L, XL' },
+      { key: 'Couleur', placeholder: 'Ex: Noir, Blanc' },
+      { key: 'Matiere', placeholder: 'Ex: Coton, Jean' },
+      { key: 'Style', placeholder: 'Ex: Casual, Sport' },
+    ],
+    'vetements-femmes': [
+      { key: 'Taille', placeholder: 'Ex: S, M, L' },
+      { key: 'Couleur', placeholder: 'Ex: Rouge, Rose' },
+      { key: 'Matiere', placeholder: 'Ex: Coton, Soie' },
+      { key: 'Style', placeholder: 'Ex: Casual, Elegant' },
+    ],
+    'chaussures-hommes': [
+      { key: 'Pointure', placeholder: 'Ex: 42, 43, 44' },
+      { key: 'Couleur', placeholder: 'Ex: Noir, Marron' },
+      { key: 'Matiere', placeholder: 'Ex: Cuir, Tissu' },
+    ],
+    'chaussures-femmes': [
+      { key: 'Pointure', placeholder: 'Ex: 37, 38, 39' },
+      { key: 'Couleur', placeholder: 'Ex: Noir, Beige' },
+      { key: 'Matiere', placeholder: 'Ex: Cuir, Tissu' },
+      { key: 'Talons', placeholder: 'Ex: Plat, 5cm' },
+    ],
+    'accessoires': [
+      { key: 'Materiau', placeholder: 'Ex: Acier, Cuir' },
+      { key: 'Couleur', placeholder: 'Ex: Or, Argent' },
+      { key: 'Genre', placeholder: 'Ex: Homme, Femme, Unisexe' },
+    ],
+    'maison': [
+      { key: 'Materiau', placeholder: 'Ex: Bois, Metal' },
+      { key: 'Dimensions', placeholder: 'Ex: 100x50x30 cm' },
+      { key: 'Couleur', placeholder: 'Ex: Blanc, Gris' },
+    ],
+    'electronique': [
+      { key: 'Marque', placeholder: 'Ex: Sony, Samsung' },
+      { key: 'Puissance', placeholder: 'Ex: 20W' },
+      { key: 'Connectivite', placeholder: 'Ex: Bluetooth 5.0' },
+      { key: 'Autonomie', placeholder: 'Ex: 10 heures' },
+    ],
+  };
+
+  const getCategoryDefaultSpecs = useCallback((categoryId: string) => {
+    const category = categories.find(c => c.id === categoryId);
+    if (category?.default_specs && category.default_specs.length > 0) {
+      return category.default_specs.map(s => ({ key: s.key, value: '', placeholder: s.placeholder }));
+    }
+    return DEFAULT_SPECS_BY_CATEGORY[categoryId] || [];
+  }, [categories]);
+
   useEffect(() => {
-    fetchProducts();
-    fetchCategories();
+    if (formData.category_id && specsSource === 'category') {
+      const defaultSpecs = getCategoryDefaultSpecs(formData.category_id);
+      if (defaultSpecs.length > 0) {
+        const currentKeys = formData.specs.filter(s => s.key).map(s => s.key.toLowerCase());
+        const defaultKeys = defaultSpecs.map(s => s.key.toLowerCase());
+        const hasMatch = defaultKeys.every(k => currentKeys.includes(k));
+        if (!hasMatch) {
+          setFormData(prev => ({
+            ...prev,
+            specs: defaultSpecs.map(s => {
+              const existing = prev.specs.find(es => es.key.toLowerCase() === s.key.toLowerCase());
+              return existing || { key: s.key, value: '', placeholder: s.placeholder };
+            }),
+          }));
+        }
+      }
+    }
+  }, [formData.category_id, specsSource, getCategoryDefaultSpecs]);
+
+  const switchToCustomSpecs = useCallback(() => {
+    setSpecsSource('custom');
   }, []);
 
   const fetchProducts = async () => {
@@ -84,6 +249,11 @@ export function AdminProductsPage() {
     }
   };
 
+  useEffect(() => {
+    fetchProducts();
+    fetchCategories();
+  }, []);
+
   const filteredProducts = products.filter(p => {
     const matchesSearch = !searchQuery ||
       p.name.toLowerCase().includes(searchQuery.toLowerCase());
@@ -101,13 +271,24 @@ export function AdminProductsPage() {
       stock: '',
       category_id: '',
       images: [],
-      specs: [{ key: '', value: '' }],
+      specs: [{ key: '', value: '', placeholder: '' }],
       is_featured: false,
       is_active: true,
       weight: '',
+      short_description: '',
+      cost_price: '',
+      dimensions: { length: '', width: '', height: '' },
+      min_stock_alert: '',
+      meta_title: '',
+      meta_description: '',
+      meta_keywords: '',
+      variant_sizes: [],
+      variant_colors: [],
     });
     setErrors({});
     setEditingProduct(null);
+    setActiveTab('general');
+    setSpecsSource('category');
   };
 
   const handleEdit = (product: Product) => {
@@ -125,9 +306,26 @@ export function AdminProductsPage() {
       is_featured: product.is_featured,
       is_active: product.is_active,
       weight: product.weight?.toString() || '',
+      short_description: product.short_description || '',
+      cost_price: product.cost_price?.toString() || '',
+      dimensions: product.dimensions
+        ? {
+            length: product.dimensions.length?.toString() || '',
+            width: product.dimensions.width?.toString() || '',
+            height: product.dimensions.height?.toString() || '',
+          }
+        : { length: '', width: '', height: '' },
+      min_stock_alert: product.min_stock_alert?.toString() || '',
+      meta_title: product.meta_title || '',
+      meta_description: product.meta_description || '',
+      meta_keywords: product.meta_keywords || '',
+      variant_sizes: product.variants?.sizes || [],
+      variant_colors: product.variants?.colors || [],
     });
     setErrors({});
     setShowForm(true);
+    setActiveTab('general');
+    setSpecsSource('custom');
   };
 
   const handleSave = async () => {
@@ -135,9 +333,7 @@ export function AdminProductsPage() {
     setErrors({});
 
     const specsObject = formData.specs.reduce<Record<string, string>>((acc, { key, value }) => {
-      if (key.trim()) {
-        acc[key.trim()] = value;
-      }
+      if (key.trim()) acc[key.trim()] = value;
       return acc;
     }, {});
 
@@ -153,11 +349,25 @@ export function AdminProductsPage() {
       specs: Object.keys(specsObject).length > 0 ? specsObject : null,
       is_featured: formData.is_featured,
       is_active: formData.is_active,
+      short_description: formData.short_description || null,
+      cost_price: formData.cost_price ? parseFloat(formData.cost_price) : null,
+      dimensions: (formData.dimensions.length || formData.dimensions.width || formData.dimensions.height)
+        ? {
+            length: parseFloat(formData.dimensions.length) || 0,
+            width: parseFloat(formData.dimensions.width) || 0,
+            height: parseFloat(formData.dimensions.height) || 0,
+          }
+        : null,
+      min_stock_alert: formData.min_stock_alert ? parseInt(formData.min_stock_alert) : null,
+      meta_title: formData.meta_title || null,
+      meta_description: formData.meta_description || null,
+      meta_keywords: formData.meta_keywords || null,
+      variants: (formData.variant_sizes.length > 0 || formData.variant_colors.length > 0)
+        ? { sizes: formData.variant_sizes, colors: formData.variant_colors }
+        : null,
     };
 
-    if (formData.weight) {
-      productData.weight = parseFloat(formData.weight);
-    }
+    if (formData.weight) productData.weight = parseFloat(formData.weight);
 
     try {
       if (editingProduct) {
@@ -243,15 +453,17 @@ export function AdminProductsPage() {
   const addSpecRow = () => {
     setFormData(prev => ({
       ...prev,
-      specs: [...prev.specs, { key: '', value: '' }],
+      specs: [...prev.specs, { key: '', value: '', placeholder: '' }],
     }));
+    setSpecsSource('custom');
   };
 
-  const updateSpec = (index: number, field: 'key' | 'value', val: string) => {
+  const updateSpec = (index: number, field: 'key' | 'value' | 'placeholder', val: string) => {
     setFormData(prev => ({
       ...prev,
       specs: prev.specs.map((s, i) => i === index ? { ...s, [field]: val } : s),
     }));
+    setSpecsSource('custom');
   };
 
   const removeSpec = (index: number) => {
@@ -261,8 +473,18 @@ export function AdminProductsPage() {
     }));
   };
 
-  const fieldError = (field: string) => errors[field]?.[0];
+  const applyCategorySpecs = () => {
+    const defaultSpecs = getCategoryDefaultSpecs(formData.category_id);
+    if (defaultSpecs.length > 0) {
+      setFormData(prev => ({
+        ...prev,
+        specs: defaultSpecs,
+      }));
+      setSpecsSource('category');
+    }
+  };
 
+  const fieldError = (field: string) => errors[field]?.[0];
   const isFormValid = formData.name.trim() && formData.price && parseFloat(formData.price) >= 0;
 
   return (
@@ -469,339 +691,263 @@ export function AdminProductsPage() {
                 </button>
               </div>
 
-              <div className="p-6 space-y-5">
-                <div>
-                  <label className="block text-sm font-medium dark:text-gray-500 mb-2">
-                    Nom du produit <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.name}
-                    onChange={e => setFormData({ ...formData, name: e.target.value })}
-                    className={cn(
-                      'w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 dark:bg-gray-800',
-                      fieldError('name') ? 'border-red-500' : 'dark:border-gray-700'
-                    )}
-                  />
-                  {fieldError('name') && (
-                    <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
-                      <AlertCircle className="w-3 h-3" /> {fieldError('name')}
-                    </p>
+              <div className="p-6 space-y-6">
+                <div className="flex overflow-x-auto gap-2 border-b dark:border-gray-700 pb-2">
+                  <TabButton icon={<Package className="w-4 h-4" />} label="General" active={activeTab === 'general'} onClick={() => setActiveTab('general')} />
+                  <TabButton icon={<ImageIcon className="w-4 h-4" />} label="Images" active={activeTab === 'images'} onClick={() => setActiveTab('images')} badge={formData.images.length > 0 ? formData.images.length : undefined} />
+                  <TabButton icon={<Tag className="w-4 h-4" />} label="Specs" active={activeTab === 'specs'} onClick={() => setActiveTab('specs')} />
+                  <TabButton icon={<Ruler className="w-4 h-4" />} label="Livraison" active={activeTab === 'shipping'} onClick={() => setActiveTab('shipping')} />
+                  <TabButton icon={<Globe className="w-4 h-4" />} label="SEO" active={activeTab === 'seo'} onClick={() => setActiveTab('seo')} />
+                  <TabButton icon={<TrendingUp className="w-4 h-4" />} label="Variantes" active={activeTab === 'variants'} onClick={() => setActiveTab('variants')} />
+                </div>
+
+                <AnimatePresence mode="wait">
+                  {activeTab === 'general' && (
+                    <motion.div key="general" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="space-y-5">
+                      <div>
+                        <label className="block text-sm font-medium dark:text-gray-500 mb-2">Nom du produit <span className="text-red-500">*</span></label>
+                        <input type="text" value={formData.name} onChange={e => setFormData({ ...formData, name: e.target.value })} className={cn('w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 dark:bg-gray-800', fieldError('name') ? 'border-red-500' : 'dark:border-gray-700')} />
+                        {fieldError('name') && <p className="text-red-500 text-xs mt-1 flex items-center gap-1"><AlertCircle className="w-3 h-3" /> {fieldError('name')}</p>}
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium dark:text-gray-500 mb-2">Description courte</label>
+                        <textarea value={formData.short_description} onChange={e => setFormData({ ...formData, short_description: e.target.value })} rows={2} className="w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 dark:bg-gray-800 dark:border-gray-700" placeholder="Resume du produit (optionnel)" />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium dark:text-gray-500 mb-2">Description</label>
+                        <textarea value={formData.description} onChange={e => setFormData({ ...formData, description: e.target.value })} rows={4} className={cn('w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 dark:bg-gray-800', fieldError('description') ? 'border-red-500' : 'dark:border-gray-700')} />
+                      </div>
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <label className="block text-sm font-medium dark:text-gray-500 mb-2">SKU</label>
+                          <input type="text" value={formData.sku} onChange={e => setFormData({ ...formData, sku: e.target.value })} placeholder="Ex: PROD-001" className={cn('w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 dark:bg-gray-800', fieldError('sku') ? 'border-red-500' : 'dark:border-gray-700')} />
+                          {fieldError('sku') && <p className="text-red-500 text-xs mt-1 flex items-center gap-1"><AlertCircle className="w-3 h-3" /> {fieldError('sku')}</p>}
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium dark:text-gray-500 mb-2">Categorie</label>
+                          <select value={formData.category_id} onChange={e => setFormData({ ...formData, category_id: e.target.value })} className={cn('w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 dark:bg-gray-800', fieldError('category_id') ? 'border-red-500' : 'dark:border-gray-700')}>
+                            <option value="">Selectionner</option>
+                            {categories.map(cat => <option key={cat.id} value={cat.id}>{cat.name}</option>)}
+                          </select>
+                        </div>
+                      </div>
+                      <div className="grid grid-cols-3 gap-4">
+                        <div>
+                          <label className="block text-sm font-medium dark:text-gray-500 mb-2">Prix (FCFA) <span className="text-red-500">*</span></label>
+                          <input type="number" value={formData.price} onChange={e => setFormData({ ...formData, price: e.target.value })} className={cn('w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 dark:bg-gray-800', fieldError('price') ? 'border-red-500' : 'dark:border-gray-700')} />
+                          {fieldError('price') && <p className="text-red-500 text-xs mt-1 flex items-center gap-1"><AlertCircle className="w-3 h-3" /> {fieldError('price')}</p>}
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium dark:text-gray-500 mb-2">Prix compare (FCFA)</label>
+                          <input type="number" value={formData.compare_price} onChange={e => setFormData({ ...formData, compare_price: e.target.value })} className={cn('w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 dark:bg-gray-800', fieldError('compare_price') ? 'border-red-500' : 'dark:border-gray-700')} />
+                          {fieldError('compare_price') && <p className="text-red-500 text-xs mt-1 flex items-center gap-1"><AlertCircle className="w-3 h-3" /> {fieldError('compare_price')}</p>}
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium dark:text-gray-500 mb-2">Stock <span className="text-red-500">*</span></label>
+                          <input type="number" value={formData.stock} onChange={e => setFormData({ ...formData, stock: e.target.value })} className={cn('w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 dark:bg-gray-800', fieldError('stock') ? 'border-red-500' : 'dark:border-gray-700')} />
+                          {fieldError('stock') && <p className="text-red-500 text-xs mt-1 flex items-center gap-1"><AlertCircle className="w-3 h-3" /> {fieldError('stock')}</p>}
+                        </div>
+                      </div>
+                      <div className="flex flex-wrap gap-6">
+                        <label className="flex items-center gap-2 cursor-pointer">
+                          <input type="checkbox" checked={formData.is_active} onChange={e => setFormData({ ...formData, is_active: e.target.checked })} className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500" />
+                          <span className="text-sm dark:text-gray-500">Produit actif</span>
+                        </label>
+                        <label className="flex items-center gap-2 cursor-pointer">
+                          <input type="checkbox" checked={formData.is_featured} onChange={e => setFormData({ ...formData, is_featured: e.target.checked })} className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500" />
+                          <span className="text-sm dark:text-gray-500">Produit vedette</span>
+                        </label>
+                      </div>
+                    </motion.div>
                   )}
-                </div>
 
-                <div>
-                  <label className="block text-sm font-medium dark:text-gray-500 mb-2">
-                    Description
-                  </label>
-                  <textarea
-                    value={formData.description}
-                    onChange={e => setFormData({ ...formData, description: e.target.value })}
-                    rows={3}
-                    className={cn(
-                      'w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 dark:bg-gray-800',
-                      fieldError('description') ? 'border-red-500' : 'dark:border-gray-700'
-                    )}
-                  />
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium dark:text-gray-500 mb-2">
-                      SKU
-                    </label>
-                    <input
-                      type="text"
-                      value={formData.sku}
-                      onChange={e => setFormData({ ...formData, sku: e.target.value })}
-                      placeholder="Ex: PROD-001"
-                      className={cn(
-                        'w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 dark:bg-gray-800',
-                        fieldError('sku') ? 'border-red-500' : 'dark:border-gray-700'
+                  {activeTab === 'images' && (
+                    <motion.div key="images" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="space-y-5">
+                      <div>
+                        <label className="block text-sm font-medium dark:text-gray-500 mb-2">Images du produit ({formData.images.length})</label>
+                        <button type="button" onClick={() => fileInputRef.current?.click()} disabled={uploadingImage} className="w-full flex items-center justify-center gap-2 px-4 py-6 border-2 border-dashed dark:border-gray-700 rounded-xl hover:border-blue-500 dark:hover:border-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/10 transition-colors disabled:opacity-50">
+                          {uploadingImage ? <Loader2 className="w-5 h-5 animate-spin" /> : <Upload className="w-5 h-5" />}
+                          <span className="text-sm font-medium">{uploadingImage ? 'Upload en cours...' : 'Cliquer pour uploader des images'}</span>
+                        </button>
+                        <input ref={fileInputRef} type="file" accept="image/*" multiple className="hidden" onChange={handleFileUpload} />
+                      </div>
+                      {formData.images.length > 0 && (
+                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                          {formData.images.map((img, i) => (
+                            <div key={i} className="relative group">
+                              <img src={img} alt={`Preview ${i + 1}`} className="w-full aspect-square object-cover rounded-lg border dark:border-gray-700" onError={(e) => { (e.target as HTMLImageElement).src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="%239CA3AF" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>'; }} />
+                              <button type="button" onClick={() => removeImage(img)} className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"><X className="w-3 h-3" /></button>
+                            </div>
+                          ))}
+                        </div>
                       )}
-                    />
-                    {fieldError('sku') && (
-                      <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
-                        <AlertCircle className="w-3 h-3" /> {fieldError('sku')}
-                      </p>
-                    )}
-                  </div>
+                    </motion.div>
+                  )}
 
-                  <div>
-                    <label className="block text-sm font-medium dark:text-gray-500 mb-2">
-                      Categorie
-                    </label>
-                    <select
-                      value={formData.category_id}
-                      onChange={e => setFormData({ ...formData, category_id: e.target.value })}
-                      className={cn(
-                        'w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 dark:bg-gray-800',
-                        fieldError('category_id') ? 'border-red-500' : 'dark:border-gray-700'
-                      )}
-                    >
-                      <option value="">Selectionner</option>
-                      {categories.map(cat => (
-                        <option key={cat.id} value={cat.id}>{cat.name}</option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-3 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium dark:text-gray-500 mb-2">
-                      Prix (FCFA) <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                      type="number"
-                      value={formData.price}
-                      onChange={e => setFormData({ ...formData, price: e.target.value })}
-                      className={cn(
-                        'w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 dark:bg-gray-800',
-                        fieldError('price') ? 'border-red-500' : 'dark:border-gray-700'
-                      )}
-                    />
-                    {fieldError('price') && (
-                      <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
-                        <AlertCircle className="w-3 h-3" /> {fieldError('price')}
-                      </p>
-                    )}
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium dark:text-gray-500 mb-2">
-                      Prix compare (FCFA)
-                    </label>
-                    <input
-                      type="number"
-                      value={formData.compare_price}
-                      onChange={e => setFormData({ ...formData, compare_price: e.target.value })}
-                      className={cn(
-                        'w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 dark:bg-gray-800',
-                        fieldError('compare_price') ? 'border-red-500' : 'dark:border-gray-700'
-                      )}
-                    />
-                    {fieldError('compare_price') && (
-                      <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
-                        <AlertCircle className="w-3 h-3" /> {fieldError('compare_price')}
-                      </p>
-                    )}
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium dark:text-gray-500 mb-2">
-                      Poids (kg)
-                    </label>
-                    <input
-                      type="number"
-                      step="0.01"
-                      value={formData.weight}
-                      onChange={e => setFormData({ ...formData, weight: e.target.value })}
-                      placeholder="0.00"
-                      className={cn(
-                        'w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 dark:bg-gray-800',
-                        fieldError('weight') ? 'border-red-500' : 'dark:border-gray-700'
-                      )}
-                    />
-                    {fieldError('weight') && (
-                      <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
-                        <AlertCircle className="w-3 h-3" /> {fieldError('weight')}
-                      </p>
-                    )}
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium dark:text-gray-500 mb-2">
-                      Stock <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                      type="number"
-                      value={formData.stock}
-                      onChange={e => setFormData({ ...formData, stock: e.target.value })}
-                      className={cn(
-                        'w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 dark:bg-gray-800',
-                        fieldError('stock') ? 'border-red-500' : 'dark:border-gray-700'
-                      )}
-                    />
-                    {fieldError('stock') && (
-                      <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
-                        <AlertCircle className="w-3 h-3" /> {fieldError('stock')}
-                      </p>
-                    )}
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium dark:text-gray-500 mb-2">
-                      Images ({formData.images.length})
-                    </label>
-                    <div className="flex gap-2">
-                      <button
-                        type="button"
-                        onClick={() => fileInputRef.current?.click()}
-                        disabled={uploadingImage}
-                        className="flex-1 flex items-center justify-center gap-2 px-4 py-3 border dark:border-gray-700 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors disabled:opacity-50"
-                      >
-                        {uploadingImage ? (
-                          <Loader2 className="w-4 h-4 animate-spin" />
-                        ) : (
-                          <Upload className="w-4 h-4" />
-                        )}
-                        <span className="text-sm">{uploadingImage ? 'Upload...' : 'Uploader'}</span>
-                      </button>
-                      <input
-                        ref={fileInputRef}
-                        type="file"
-                        accept="image/*"
-                        multiple
-                        className="hidden"
-                        onChange={handleFileUpload}
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                {formData.images.length > 0 && (
-                  <div>
-                    <label className="block text-sm font-medium dark:text-gray-500 mb-2">
-                      Apercu des images
-                    </label>
-                    <div className="flex flex-wrap gap-3">
-                      {formData.images.map((img, i) => (
-                        <div key={i} className="relative group">
-                          <img
-                            src={img}
-                            alt={`Preview ${i + 1}`}
-                            className="w-20 h-20 object-cover rounded-lg border dark:border-gray-700"
-                            onError={(e) => {
-                              (e.target as HTMLImageElement).src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="%239CA3AF" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>';
-                            }}
-                          />
+                  {activeTab === 'specs' && (
+                    <motion.div key="specs" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="space-y-4">
+                      <div className="flex flex-wrap items-center justify-between gap-2">
+                        <label className="block text-sm font-medium dark:text-gray-500">Caracteristiques</label>
+                        <div className="flex gap-2">
                           <button
                             type="button"
-                            onClick={() => removeImage(img)}
-                            className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                            onClick={() => applyCategorySpecs()}
+                            disabled={!formData.category_id || specsSource === 'category'}
+                            className="flex items-center gap-1.5 text-xs bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400 px-3 py-1.5 rounded-lg font-medium hover:bg-blue-100 dark:hover:bg-blue-900/50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                           >
-                            <X className="w-3 h-3" />
+                            <RefreshCw className="w-3 h-3" />
+                            Specs categorie
+                          </button>
+                          <button
+                            type="button"
+                            onClick={addSpecRow}
+                            className="text-xs text-blue-600 hover:text-blue-700 font-medium"
+                          >
+                            + Ajouter
                           </button>
                         </div>
-                      ))}
-                    </div>
-                    {fieldError('images') && (
-                      <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
-                        <AlertCircle className="w-3 h-3" /> {fieldError('images')}
-                      </p>
-                    )}
-                  </div>
-                )}
-
-                <div>
-                  <div className="flex items-center justify-between mb-2">
-                    <label className="block text-sm font-medium dark:text-gray-500">
-                      Caracteristiques
-                    </label>
-                    <button
-                      type="button"
-                      onClick={addSpecRow}
-                      className="text-xs text-blue-600 hover:text-blue-700 font-medium"
-                    >
-                      + Ajouter
-                    </button>
-                  </div>
-                  <div className="space-y-2">
-                    {formData.specs.map((spec, i) => (
-                      <div key={i} className="flex gap-2 items-center">
-                        <GripVertical className="w-4 h-4 text-gray-400 flex-shrink-0" />
-                        <input
-                          type="text"
-                          value={spec.key}
-                          onChange={e => updateSpec(i, 'key', e.target.value)}
-                          placeholder="Cle"
-                          className={cn(
-                            'flex-1 px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 dark:bg-gray-800',
-                            'dark:border-gray-700'
-                          )}
-                        />
-                        <input
-                          type="text"
-                          value={spec.value}
-                          onChange={e => updateSpec(i, 'value', e.target.value)}
-                          placeholder="Valeur"
-                          className={cn(
-                            'flex-1 px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 dark:bg-gray-800',
-                            'dark:border-gray-700'
-                          )}
-                        />
-                        <button
-                          type="button"
-                          onClick={() => removeSpec(i)}
-                          className="p-1.5 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
-                        >
-                          <X className="w-4 h-4" />
-                        </button>
                       </div>
-                    ))}
-                    {formData.specs.length === 0 && (
-                      <p className="text-xs dark:text-gray-500">Aucune caracteristique ajoutee</p>
-                    )}
-                  </div>
-                </div>
+                      {!formData.category_id && (
+                        <p className="text-xs text-amber-600 dark:text-amber-400 flex items-center gap-1">
+                          <AlertCircle className="w-3 h-3" />
+                          Selectionnez une categorie pour charger les specifications predefinies
+                        </p>
+                      )}
+                      <div className="space-y-2">
+                        {formData.specs.map((spec, i) => (
+                          <div key={i} className="flex gap-2 items-center">
+                            <GripVertical className="w-4 h-4 text-gray-400 flex-shrink-0" />
+                            <input
+                              type="text"
+                              value={spec.key}
+                              onChange={e => updateSpec(i, 'key', e.target.value)}
+                              placeholder="Cle"
+                              className={cn(
+                                'flex-1 px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 dark:bg-gray-800',
+                                'dark:border-gray-700'
+                              )}
+                            />
+                            <input
+                              type="text"
+                              value={spec.value}
+                              onChange={e => updateSpec(i, 'value', e.target.value)}
+                              placeholder={spec.placeholder || 'Valeur'}
+                              className={cn(
+                                'flex-1 px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 dark:bg-gray-800',
+                                'dark:border-gray-700'
+                              )}
+                            />
+                            <button
+                              type="button"
+                              onClick={() => removeSpec(i)}
+                              className="p-1.5 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
+                            >
+                              <X className="w-4 h-4" />
+                            </button>
+                          </div>
+                        ))}
+                        {formData.specs.length === 0 && (
+                          <p className="text-xs dark:text-gray-500">Aucune caracteristique ajoutee</p>
+                        )}
+                      </div>
+                    </motion.div>
+                  )}
 
-                <div className="flex flex-wrap gap-6">
-                  <label className="flex items-center gap-2 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={formData.is_active}
-                      onChange={e => setFormData({ ...formData, is_active: e.target.checked })}
-                      className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                    />
-                    <span className="text-sm dark:text-gray-500">Produit actif</span>
-                  </label>
+                  {activeTab === 'shipping' && (
+                    <motion.div key="shipping" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="space-y-5">
+                      <div>
+                        <label className="block text-sm font-medium dark:text-gray-500 mb-2">Poids (kg)</label>
+                        <input type="number" step="0.01" value={formData.weight} onChange={e => setFormData({ ...formData, weight: e.target.value })} placeholder="0.00" className={cn('w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 dark:bg-gray-800', fieldError('weight') ? 'border-red-500' : 'dark:border-gray-700')} />
+                        {fieldError('weight') && <p className="text-red-500 text-xs mt-1 flex items-center gap-1"><AlertCircle className="w-3 h-3" /> {fieldError('weight')}</p>}
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium dark:text-gray-500 mb-2">Dimensions (cm)</label>
+                        <div className="grid grid-cols-3 gap-3">
+                          {(['length', 'width', 'height'] as const).map((dim) => (
+                            <input key={dim} type="number" step="0.1" value={formData.dimensions[dim]} onChange={e => setFormData({ ...formData, dimensions: { ...formData.dimensions, [dim]: e.target.value } })} placeholder={dim === 'length' ? 'Longueur' : dim === 'width' ? 'Largeur' : 'Hauteur'} className="px-3 py-2 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 dark:bg-gray-800 dark:border-gray-700" />
+                          ))}
+                        </div>
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium dark:text-gray-500 mb-2">Prix coûtant (FCFA)</label>
+                        <input type="number" value={formData.cost_price} onChange={e => setFormData({ ...formData, cost_price: e.target.value })} className="w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 dark:bg-gray-800 dark:border-gray-700" />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium dark:text-gray-500 mb-2">Alerte stock minimum</label>
+                        <input type="number" value={formData.min_stock_alert} onChange={e => setFormData({ ...formData, min_stock_alert: e.target.value })} placeholder="Ex: 5" className="w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 dark:bg-gray-800 dark:border-gray-700" />
+                      </div>
+                    </motion.div>
+                  )}
 
-                  <label className="flex items-center gap-2 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={formData.is_featured}
-                      onChange={e => setFormData({ ...formData, is_featured: e.target.checked })}
-                      className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                    />
-                    <span className="text-sm dark:text-gray-500">Produit vedette</span>
-                  </label>
-                </div>
+                  {activeTab === 'seo' && (
+                    <motion.div key="seo" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="space-y-5">
+                      <div>
+                        <label className="block text-sm font-medium dark:text-gray-500 mb-2">Meta titre</label>
+                        <input type="text" value={formData.meta_title} onChange={e => setFormData({ ...formData, meta_title: e.target.value })} placeholder="Titre pour les moteurs de recherche" className="w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 dark:bg-gray-800 dark:border-gray-700" />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium dark:text-gray-500 mb-2">Meta description</label>
+                        <textarea value={formData.meta_description} onChange={e => setFormData({ ...formData, meta_description: e.target.value })} rows={3} placeholder="Description pour les moteurs de recherche" className="w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 dark:bg-gray-800 dark:border-gray-700" />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium dark:text-gray-500 mb-2">Meta keywords</label>
+                        <input type="text" value={formData.meta_keywords} onChange={e => setFormData({ ...formData, meta_keywords: e.target.value })} placeholder="Mot-cles separes par des virgules" className="w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 dark:bg-gray-800 dark:border-gray-700" />
+                      </div>
+                    </motion.div>
+                  )}
+
+                  {activeTab === 'variants' && (
+                    <motion.div key="variants" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="space-y-6">
+                      <div>
+                        <div className="flex items-center justify-between mb-3">
+                          <label className="block text-sm font-medium dark:text-gray-500">Tailles disponibles</label>
+                          <button type="button" onClick={() => setFormData({ ...formData, variant_sizes: [...formData.variant_sizes, ''] })} className="text-xs text-blue-600 font-medium hover:text-blue-700">+ Ajouter</button>
+                        </div>
+                        <div className="flex flex-wrap gap-2">
+                          {formData.variant_sizes.map((size, i) => (
+                            <div key={i} className="flex items-center gap-1 bg-gray-100 dark:bg-gray-700 rounded-lg px-3 py-1.5">
+                              <input type="text" value={size} onChange={e => setFormData({ ...formData, variant_sizes: formData.variant_sizes.map((s, idx) => idx === i ? e.target.value : s) })} placeholder="Ex: S, M, L" className="bg-transparent border-none outline-none text-sm w-16 dark:text-white" />
+                              <button type="button" onClick={() => setFormData({ ...formData, variant_sizes: formData.variant_sizes.filter((_, idx) => idx !== i) })} className="text-red-500 hover:text-red-700"><X className="w-3 h-3" /></button>
+                            </div>
+                          ))}
+                        </div>
+                        {formData.variant_sizes.length === 0 && <p className="text-xs text-gray-500 mt-1">Aucune taille ajoutee</p>}
+                      </div>
+                      <div>
+                        <div className="flex items-center justify-between mb-3">
+                          <label className="block text-sm font-medium dark:text-gray-500">Couleurs disponibles</label>
+                          <button type="button" onClick={() => setFormData({ ...formData, variant_colors: [...formData.variant_colors, { name: '', hex: '#000000' }] })} className="text-xs text-blue-600 font-medium hover:text-blue-700">+ Ajouter</button>
+                        </div>
+                        <div className="space-y-2">
+                          {formData.variant_colors.map((color, i) => (
+                            <div key={i} className="flex items-center gap-2">
+                              <input type="color" value={color.hex} onChange={e => setFormData({ ...formData, variant_colors: formData.variant_colors.map((c, idx) => idx === i ? { ...c, hex: e.target.value } : c) })} className="w-8 h-8 rounded cursor-pointer border dark:border-gray-700" />
+                              <input type="text" value={color.name} onChange={e => setFormData({ ...formData, variant_colors: formData.variant_colors.map((c, idx) => idx === i ? { ...c, name: e.target.value } : c) })} placeholder="Nom (ex: Rouge)" className="flex-1 px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 dark:bg-gray-800 dark:border-gray-700" />
+                              <button type="button" onClick={() => setFormData({ ...formData, variant_colors: formData.variant_colors.filter((_, idx) => idx !== i) })} className="p-1.5 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg"><X className="w-4 h-4" /></button>
+                            </div>
+                          ))}
+                        </div>
+                        {formData.variant_colors.length === 0 && <p className="text-xs text-gray-500 mt-1">Aucune couleur ajoutee</p>}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
 
                 {Object.keys(errors).length > 0 && (
                   <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-4">
-                    <p className="text-red-700 dark:text-red-400 text-sm font-medium mb-2">
-                      Veuillez corriger les erreurs suivantes :
-                    </p>
+                    <p className="text-red-700 dark:text-red-400 text-sm font-medium mb-2">Veuillez corriger les erreurs suivantes :</p>
                     <ul className="list-disc list-inside text-red-600 dark:text-red-400 text-xs space-y-1">
-                      {Object.entries(errors).map(([field, msgs]) => (
-                        msgs.map((msg, i) => <li key={`${field}-${i}`}>{msg}</li>)
-                      ))}
+                      {Object.entries(errors).map(([field, msgs]) => (msgs.map((msg, i) => <li key={`${field}-${i}`}>{msg}</li>)))}
                     </ul>
                   </div>
                 )}
 
                 <div className="flex gap-3 pt-4 border-t dark:border-gray-700">
-                  <button
-                    onClick={handleSave}
-                    disabled={saving || !isFormValid}
-                    className="flex items-center gap-2 bg-blue-600 text-white px-6 py-2.5 rounded-xl font-medium hover:bg-blue-700 transition-colors disabled:opacity-50"
-                  >
-                    {saving ? (
-                      <Loader2 className="w-4 h-4 animate-spin" />
-                    ) : (
-                      <Save className="w-4 h-4" />
-                    )}
+                  <button onClick={handleSave} disabled={saving || !isFormValid} className="flex items-center gap-2 bg-blue-600 text-white px-6 py-2.5 rounded-xl font-medium hover:bg-blue-700 transition-colors disabled:opacity-50">
+                    {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
                     {saving ? 'Enregistrement...' : 'Enregistrer'}
                   </button>
-                  <button
-                    onClick={() => setShowForm(false)}
-                    className="px-6 py-2.5 border dark:border-gray-700 rounded-xl font-medium hover:bg-gray-100 hover:dark:bg-gray-700 transition-colors"
-                  >
-                    Annuler
-                  </button>
+                  <button onClick={() => setShowForm(false)} className="px-6 py-2.5 border dark:border-gray-700 rounded-xl font-medium hover:bg-gray-100 hover:dark:bg-gray-700 transition-colors">Annuler</button>
                 </div>
               </div>
             </motion.div>

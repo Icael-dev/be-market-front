@@ -6,6 +6,7 @@ export interface Category {
   image_url: string | null;
   is_active: boolean;
   created_at: string;
+  default_specs?: { key: string; placeholder?: string }[];
 }
 
 export interface Product {
@@ -23,6 +24,14 @@ export interface Product {
   is_featured: boolean;
   is_active: boolean;
   weight: number | null;
+  short_description: string | null;
+  cost_price: number | null;
+  dimensions: { length: number; width: number; height: number } | null;
+  min_stock_alert: number | null;
+  meta_title: string | null;
+  meta_description: string | null;
+  meta_keywords: string | null;
+  variants: { sizes: string[]; colors: { name: string; hex: string }[] } | null;
   created_at: string;
   updated_at: string;
   category?: Category;
