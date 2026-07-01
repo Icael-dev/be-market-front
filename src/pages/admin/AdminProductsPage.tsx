@@ -460,6 +460,40 @@ export function AdminProductsPage() {
     return url;
   };
 
+  const addSpecRow = () => {
+    setFormData(prev => ({
+      ...prev,
+      specs: [...prev.specs, { key: '', value: '', placeholder: '' }],
+    }));
+    setSpecsSource('custom');
+  };
+
+  const updateSpec = (index: number, field: 'key' | 'value' | 'placeholder', val: string) => {
+    setFormData(prev => ({
+      ...prev,
+      specs: prev.specs.map((s, i) => i === index ? { ...s, [field]: val } : s),
+    }));
+    setSpecsSource('custom');
+  };
+
+  const removeSpec = (index: number) => {
+    setFormData(prev => ({
+      ...prev,
+      specs: prev.specs.filter((_, i) => i !== index),
+    }));
+  };
+
+  const applyCategorySpecs = () => {
+    const defaultSpecs = getCategoryDefaultSpecs(formData.category_id);
+    if (defaultSpecs.length > 0) {
+      setFormData(prev => ({
+        ...prev,
+        specs: defaultSpecs,
+      }));
+      setSpecsSource('category');
+    }
+  };
+
   const fieldError = (field: string) => errors[field]?.[0];
   const isFormValid = formData.name.trim() && formData.price && parseFloat(formData.price) >= 0;
 
