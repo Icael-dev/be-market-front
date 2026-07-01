@@ -106,7 +106,6 @@ export function AdminProductsPage() {
     is_featured: boolean;
     is_active: boolean;
     weight: string;
-    short_description: string;
     cost_price: string;
     dimensions: DimensionsType;
     min_stock_alert: string;
@@ -130,7 +129,6 @@ export function AdminProductsPage() {
     is_featured: false,
     is_active: true,
     weight: '',
-    short_description: '',
     cost_price: '',
     dimensions: { length: '', width: '', height: '' },
     min_stock_alert: '',
@@ -275,7 +273,6 @@ export function AdminProductsPage() {
       is_featured: false,
       is_active: true,
       weight: '',
-      short_description: '',
       cost_price: '',
       dimensions: { length: '', width: '', height: '' },
       min_stock_alert: '',
@@ -301,12 +298,11 @@ export function AdminProductsPage() {
       compare_price: product.compare_price?.toString() || '',
       stock: product.stock.toString(),
       category_id: product.category_id || '',
-      images: product.images || [],
+      images: (product.images || []).map(img => getImageUrl(img)),
       specs: Object.entries(product.specs || {}).map(([key, value]) => ({ key, value: value as string })),
       is_featured: product.is_featured,
       is_active: product.is_active,
       weight: product.weight?.toString() || '',
-      short_description: product.short_description || '',
       cost_price: product.cost_price?.toString() || '',
       dimensions: product.dimensions
         ? {
@@ -349,7 +345,6 @@ export function AdminProductsPage() {
       specs: Object.keys(specsObject).length > 0 ? specsObject : null,
       is_featured: formData.is_featured,
       is_active: formData.is_active,
-      short_description: formData.short_description || null,
       cost_price: formData.cost_price ? parseFloat(formData.cost_price) : null,
       dimensions: (formData.dimensions.length || formData.dimensions.width || formData.dimensions.height)
         ? {
@@ -417,7 +412,9 @@ export function AdminProductsPage() {
     if (!files || files.length === 0) return;
 
     setUploadingImage(true);
+    setErrors({});
     const newImages: string[] = [];
+    const uploadErrors: string[] = [];
 
     for (const file of Array.from(files)) {
       try {
@@ -427,6 +424,7 @@ export function AdminProductsPage() {
         newImages.push(result.url);
       } catch (err) {
         console.error('Upload error:', err);
+        uploadErrors.push(`Erreur upload: ${file.name}`);
       }
     }
 
@@ -435,6 +433,10 @@ export function AdminProductsPage() {
         ...prev,
         images: [...prev.images, ...newImages],
       }));
+    }
+
+    if (uploadErrors.length > 0) {
+      setErrors(prev => ({ ...prev, images: uploadErrors }));
     }
 
     setUploadingImage(false);
@@ -450,38 +452,12 @@ export function AdminProductsPage() {
     }));
   };
 
-  const addSpecRow = () => {
-    setFormData(prev => ({
-      ...prev,
-      specs: [...prev.specs, { key: '', value: '', placeholder: '' }],
-    }));
-    setSpecsSource('custom');
-  };
-
-  const updateSpec = (index: number, field: 'key' | 'value' | 'placeholder', val: string) => {
-    setFormData(prev => ({
-      ...prev,
-      specs: prev.specs.map((s, i) => i === index ? { ...s, [field]: val } : s),
-    }));
-    setSpecsSource('custom');
-  };
-
-  const removeSpec = (index: number) => {
-    setFormData(prev => ({
-      ...prev,
-      specs: prev.specs.filter((_, i) => i !== index),
-    }));
-  };
-
-  const applyCategorySpecs = () => {
-    const defaultSpecs = getCategoryDefaultSpecs(formData.category_id);
-    if (defaultSpecs.length > 0) {
-      setFormData(prev => ({
-        ...prev,
-        specs: defaultSpecs,
-      }));
-      setSpecsSource('category');
+  const getImageUrl = (url: string) => {
+    if (!url) return url;
+    if (url.includes('/storage/products/')) {
+      return url.replace('/storage/products/', '/api/images/');
     }
+    return url;
   };
 
   const fieldError = (field: string) => errors[field]?.[0];
@@ -574,11 +550,11 @@ export function AdminProductsPage() {
                       <div className="flex items-center gap-3">
                         <div className="w-12 h-12 rounded-lg dark:bg-gray-700 overflow-hidden flex-shrink-0">
                           {product.images?.[0] ? (
-                            <img
-                              src={product.images[0]}
-                              alt={product.name}
-                              className="w-full h-full object-cover"
-                            />
+                              <img
+                                src={getImageUrl(product.images[0])}
+                                alt={product.name}
+                                className="w-full h-full object-cover"
+                              />
                           ) : (
                             <div className="w-full h-full flex items-center justify-center">
                               <ImageIcon className="w-5 h-5 dark:text-gray-500" />
@@ -691,7 +667,7 @@ export function AdminProductsPage() {
                 </button>
               </div>
 
-              <div className="p-6 space-y-6">
+              <div className="p-4 sm:p-6 space-y-4 sm:space-y-6">
                 <div className="flex overflow-x-auto gap-2 border-b dark:border-gray-700 pb-2">
                   <TabButton icon={<Package className="w-4 h-4" />} label="General" active={activeTab === 'general'} onClick={() => setActiveTab('general')} />
                   <TabButton icon={<ImageIcon className="w-4 h-4" />} label="Images" active={activeTab === 'images'} onClick={() => setActiveTab('images')} badge={formData.images.length > 0 ? formData.images.length : undefined} />
@@ -703,52 +679,43 @@ export function AdminProductsPage() {
 
                 <AnimatePresence mode="wait">
                   {activeTab === 'general' && (
-                    <motion.div key="general" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="space-y-5">
+                    <motion.div key="general" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="space-y-4">
                       <div>
                         <label className="block text-sm font-medium dark:text-gray-500 mb-2">Nom du produit <span className="text-red-500">*</span></label>
-                        <input type="text" value={formData.name} onChange={e => setFormData({ ...formData, name: e.target.value })} className={cn('w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 dark:bg-gray-800', fieldError('name') ? 'border-red-500' : 'dark:border-gray-700')} />
+                        <input type="text" value={formData.name} onChange={e => setFormData({ ...formData, name: e.target.value })} className={cn('w-full px-3 py-2.5 sm:px-4 sm:py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 dark:bg-gray-800', fieldError('name') ? 'border-red-500' : 'dark:border-gray-700')} />
                         {fieldError('name') && <p className="text-red-500 text-xs mt-1 flex items-center gap-1"><AlertCircle className="w-3 h-3" /> {fieldError('name')}</p>}
                       </div>
                       <div>
-                        <label className="block text-sm font-medium dark:text-gray-500 mb-2">Description courte</label>
-                        <textarea value={formData.short_description} onChange={e => setFormData({ ...formData, short_description: e.target.value })} rows={2} className="w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 dark:bg-gray-800 dark:border-gray-700" placeholder="Resume du produit (optionnel)" />
-                      </div>
-                      <div>
                         <label className="block text-sm font-medium dark:text-gray-500 mb-2">Description</label>
-                        <textarea value={formData.description} onChange={e => setFormData({ ...formData, description: e.target.value })} rows={4} className={cn('w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 dark:bg-gray-800', fieldError('description') ? 'border-red-500' : 'dark:border-gray-700')} />
+                        <textarea value={formData.description} onChange={e => setFormData({ ...formData, description: e.target.value })} rows={4} className={cn('w-full px-3 py-2.5 sm:px-4 sm:py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 dark:bg-gray-800', fieldError('description') ? 'border-red-500' : 'dark:border-gray-700')} />
                       </div>
-                      <div className="grid grid-cols-2 gap-4">
-                        <div>
-                          <label className="block text-sm font-medium dark:text-gray-500 mb-2">SKU</label>
-                          <input type="text" value={formData.sku} onChange={e => setFormData({ ...formData, sku: e.target.value })} placeholder="Ex: PROD-001" className={cn('w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 dark:bg-gray-800', fieldError('sku') ? 'border-red-500' : 'dark:border-gray-700')} />
-                          {fieldError('sku') && <p className="text-red-500 text-xs mt-1 flex items-center gap-1"><AlertCircle className="w-3 h-3" /> {fieldError('sku')}</p>}
-                        </div>
-                        <div>
-                          <label className="block text-sm font-medium dark:text-gray-500 mb-2">Categorie</label>
-                          <select value={formData.category_id} onChange={e => setFormData({ ...formData, category_id: e.target.value })} className={cn('w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 dark:bg-gray-800', fieldError('category_id') ? 'border-red-500' : 'dark:border-gray-700')}>
+                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                         <div>
+                           <label className="block text-sm font-medium dark:text-gray-500 mb-2">Categorie</label>
+                          <select value={formData.category_id} onChange={e => setFormData({ ...formData, category_id: e.target.value })} className={cn('w-full px-3 py-2.5 sm:px-4 sm:py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 dark:bg-gray-800', fieldError('category_id') ? 'border-red-500' : 'dark:border-gray-700')}>
                             <option value="">Selectionner</option>
                             {categories.map(cat => <option key={cat.id} value={cat.id}>{cat.name}</option>)}
                           </select>
                         </div>
                       </div>
-                      <div className="grid grid-cols-3 gap-4">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                         <div>
                           <label className="block text-sm font-medium dark:text-gray-500 mb-2">Prix (FCFA) <span className="text-red-500">*</span></label>
-                          <input type="number" value={formData.price} onChange={e => setFormData({ ...formData, price: e.target.value })} className={cn('w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 dark:bg-gray-800', fieldError('price') ? 'border-red-500' : 'dark:border-gray-700')} />
+                          <input type="number" value={formData.price} onChange={e => setFormData({ ...formData, price: e.target.value })} className={cn('w-full px-3 py-2.5 sm:px-4 sm:py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 dark:bg-gray-800', fieldError('price') ? 'border-red-500' : 'dark:border-gray-700')} />
                           {fieldError('price') && <p className="text-red-500 text-xs mt-1 flex items-center gap-1"><AlertCircle className="w-3 h-3" /> {fieldError('price')}</p>}
                         </div>
                         <div>
                           <label className="block text-sm font-medium dark:text-gray-500 mb-2">Prix compare (FCFA)</label>
-                          <input type="number" value={formData.compare_price} onChange={e => setFormData({ ...formData, compare_price: e.target.value })} className={cn('w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 dark:bg-gray-800', fieldError('compare_price') ? 'border-red-500' : 'dark:border-gray-700')} />
+                          <input type="number" value={formData.compare_price} onChange={e => setFormData({ ...formData, compare_price: e.target.value })} className={cn('w-full px-3 py-2.5 sm:px-4 sm:py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 dark:bg-gray-800', fieldError('compare_price') ? 'border-red-500' : 'dark:border-gray-700')} />
                           {fieldError('compare_price') && <p className="text-red-500 text-xs mt-1 flex items-center gap-1"><AlertCircle className="w-3 h-3" /> {fieldError('compare_price')}</p>}
                         </div>
                         <div>
                           <label className="block text-sm font-medium dark:text-gray-500 mb-2">Stock <span className="text-red-500">*</span></label>
-                          <input type="number" value={formData.stock} onChange={e => setFormData({ ...formData, stock: e.target.value })} className={cn('w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 dark:bg-gray-800', fieldError('stock') ? 'border-red-500' : 'dark:border-gray-700')} />
+                          <input type="number" value={formData.stock} onChange={e => setFormData({ ...formData, stock: e.target.value })} className={cn('w-full px-3 py-2.5 sm:px-4 sm:py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 dark:bg-gray-800', fieldError('stock') ? 'border-red-500' : 'dark:border-gray-700')} />
                           {fieldError('stock') && <p className="text-red-500 text-xs mt-1 flex items-center gap-1"><AlertCircle className="w-3 h-3" /> {fieldError('stock')}</p>}
                         </div>
                       </div>
-                      <div className="flex flex-wrap gap-6">
+                      <div className="flex flex-col sm:flex-row sm:flex-wrap gap-4 sm:gap-6">
                         <label className="flex items-center gap-2 cursor-pointer">
                           <input type="checkbox" checked={formData.is_active} onChange={e => setFormData({ ...formData, is_active: e.target.checked })} className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500" />
                           <span className="text-sm dark:text-gray-500">Produit actif</span>
@@ -862,7 +829,7 @@ export function AdminProductsPage() {
                       </div>
                       <div>
                         <label className="block text-sm font-medium dark:text-gray-500 mb-2">Dimensions (cm)</label>
-                        <div className="grid grid-cols-3 gap-3">
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                           {(['length', 'width', 'height'] as const).map((dim) => (
                             <input key={dim} type="number" step="0.1" value={formData.dimensions[dim]} onChange={e => setFormData({ ...formData, dimensions: { ...formData.dimensions, [dim]: e.target.value } })} placeholder={dim === 'length' ? 'Longueur' : dim === 'width' ? 'Largeur' : 'Hauteur'} className="px-3 py-2 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 dark:bg-gray-800 dark:border-gray-700" />
                           ))}
