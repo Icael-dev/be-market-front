@@ -6,7 +6,7 @@ export interface Category {
   image_url: string | null;
   is_active: boolean;
   created_at: string;
-  default_specs?: { key: string; placeholder?: string }[];
+  specs?: { key: string; placeholder?: string }[];
 }
 
 export interface Product {
