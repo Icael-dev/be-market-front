@@ -8,8 +8,9 @@ import {
   deleteAdminProduct,
   uploadProductImage,
 } from '../../services/admin';
-import { formatPrice } from '../../lib/utils';
+import { formatPrice, cn } from '../../lib/utils';
 import { AdminLayout } from '../../components/admin/AdminLayout';
+import { useProductForm } from '../../hooks/useProductForm';
 import type { Product, Category } from '../../types';
 import {
   Plus,
@@ -17,28 +18,19 @@ import {
   Edit2,
   Trash2,
   X,
-  Save,
   Package,
   Image as ImageIcon,
-  Upload,
-  GripVertical,
-  AlertCircle,
   Loader2,
-  ChevronDown,
+  AlertCircle,
+  Upload,
   Tag,
   Ruler,
   Globe,
   TrendingUp,
-  Box,
   RefreshCw,
+  GripVertical,
+  Save,
 } from 'lucide-react';
-import { cn } from '../../lib/utils';
-
-interface SpecEntry {
-  key: string;
-  value: string;
-  placeholder?: string;
-}
 
 function TabButton({ icon, label, active, onClick, badge }: {
   icon: React.ReactNode;
@@ -80,7 +72,6 @@ export function AdminProductsPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('');
   const [showForm, setShowForm] = useState(false);
-  const [activeTab, setActiveTab] = useState('general');
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [saving, setSaving] = useState(false);
   const [errors, setErrors] = useState<Record<string, string[]>>({});
@@ -88,169 +79,51 @@ export function AdminProductsPage() {
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
   const [uploadingImage, setUploadingImage] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [specsSource, setSpecsSource] = useState<'custom' | 'category'>('category');
 
-  type DimensionsType = { length: string; width: string; height: string };
-  type VariantColor = { name: string; hex: string };
+  const {
+    formData,
+    setFormData,
+    activeTab,
+    setActiveTab,
+    specsSource,
+    resetForm,
+    populateForm,
+    applyCategorySpecs,
+    addSpecRow,
+    updateSpec,
+    removeSpec,
+    handleDimensionChange,
+    addVariantSize,
+    updateVariantSize,
+    removeVariantSize,
+    addVariantColor,
+    updateVariantColor,
+    removeVariantColor,
+    isFormValid,
+  } = useProductForm(categories);
 
-  interface FormDataType {
-    sku: string;
-    name: string;
-    description: string;
-    price: string;
-    compare_price: string;
-    stock: string;
-    category_id: string;
-    images: string[];
-    specs: { key: string; value: string; placeholder?: string }[];
-    is_featured: boolean;
-    is_active: boolean;
-    weight: string;
-    cost_price: string;
-    dimensions: DimensionsType;
-    min_stock_alert: string;
-    meta_title: string;
-    meta_description: string;
-    meta_keywords: string;
-    variant_sizes: string[];
-    variant_colors: VariantColor[];
-  }
-
-  const [formData, setFormData] = useState<FormDataType>({
-    sku: '',
-    name: '',
-    description: '',
-    price: '',
-    compare_price: '',
-    stock: '',
-    category_id: '',
-    images: [],
-    specs: [{ key: '', value: '', placeholder: '' }],
-    is_featured: false,
-    is_active: true,
-    weight: '',
-    cost_price: '',
-    dimensions: { length: '', width: '', height: '' },
-    min_stock_alert: '',
-    meta_title: '',
-    meta_description: '',
-    meta_keywords: '',
-    variant_sizes: [],
-    variant_colors: [],
-  });
-
-  const DEFAULT_SPECS_BY_CATEGORY: Record<string, { key: string; placeholder?: string }[]> = {
-    'telephones': [
-      { key: 'Marque', placeholder: 'Ex: Samsung, Apple, Xiaomi' },
-      { key: 'Modele', placeholder: 'Ex: Galaxy S24' },
-      { key: 'Couleur', placeholder: 'Ex: Noir, Blanc, Bleu' },
-      { key: 'Stockage', placeholder: 'Ex: 128GB, 256GB' },
-      { key: 'RAM', placeholder: 'Ex: 8GB' },
-      { key: 'Ecran', placeholder: 'Ex: 6.1 pouces' },
-    ],
-    'ordinateurs': [
-      { key: 'Marque', placeholder: 'Ex: HP, Dell, Lenovo' },
-      { key: 'Processeur', placeholder: 'Ex: Intel i7-13700H' },
-      { key: 'RAM', placeholder: 'Ex: 16GB DDR5' },
-      { key: 'Stockage', placeholder: 'Ex: 512GB SSD' },
-      { key: 'Ecran', placeholder: 'Ex: 15.6 pouces FHD' },
-      { key: 'Carte graphique', placeholder: 'Ex: RTX 4060' },
-    ],
-    'vetements-hommes': [
-      { key: 'Taille', placeholder: 'Ex: S, M, L, XL' },
-      { key: 'Couleur', placeholder: 'Ex: Noir, Blanc' },
-      { key: 'Matiere', placeholder: 'Ex: Coton, Jean' },
-      { key: 'Style', placeholder: 'Ex: Casual, Sport' },
-    ],
-    'vetements-femmes': [
-      { key: 'Taille', placeholder: 'Ex: S, M, L' },
-      { key: 'Couleur', placeholder: 'Ex: Rouge, Rose' },
-      { key: 'Matiere', placeholder: 'Ex: Coton, Soie' },
-      { key: 'Style', placeholder: 'Ex: Casual, Elegant' },
-    ],
-    'chaussures-hommes': [
-      { key: 'Pointure', placeholder: 'Ex: 42, 43, 44' },
-      { key: 'Couleur', placeholder: 'Ex: Noir, Marron' },
-      { key: 'Matiere', placeholder: 'Ex: Cuir, Tissu' },
-    ],
-    'chaussures-femmes': [
-      { key: 'Pointure', placeholder: 'Ex: 37, 38, 39' },
-      { key: 'Couleur', placeholder: 'Ex: Noir, Beige' },
-      { key: 'Matiere', placeholder: 'Ex: Cuir, Tissu' },
-      { key: 'Talons', placeholder: 'Ex: Plat, 5cm' },
-    ],
-    'accessoires': [
-      { key: 'Materiau', placeholder: 'Ex: Acier, Cuir' },
-      { key: 'Couleur', placeholder: 'Ex: Or, Argent' },
-      { key: 'Genre', placeholder: 'Ex: Homme, Femme, Unisexe' },
-    ],
-    'maison': [
-      { key: 'Materiau', placeholder: 'Ex: Bois, Metal' },
-      { key: 'Dimensions', placeholder: 'Ex: 100x50x30 cm' },
-      { key: 'Couleur', placeholder: 'Ex: Blanc, Gris' },
-    ],
-    'electronique': [
-      { key: 'Marque', placeholder: 'Ex: Sony, Samsung' },
-      { key: 'Puissance', placeholder: 'Ex: 20W' },
-      { key: 'Connectivite', placeholder: 'Ex: Bluetooth 5.0' },
-      { key: 'Autonomie', placeholder: 'Ex: 10 heures' },
-    ],
-  };
-
-  const getCategoryDefaultSpecs = useCallback((categoryId: string) => {
-    const category = categories.find(c => c.id === categoryId);
-    if (category?.default_specs && category.default_specs.length > 0) {
-      return category.default_specs.map(s => ({ key: s.key, value: '', placeholder: s.placeholder }));
-    }
-    return DEFAULT_SPECS_BY_CATEGORY[categoryId] || [];
-  }, [categories]);
-
-  useEffect(() => {
-    if (formData.category_id && specsSource === 'category') {
-      const defaultSpecs = getCategoryDefaultSpecs(formData.category_id);
-      if (defaultSpecs.length > 0) {
-        const currentKeys = formData.specs.filter(s => s.key).map(s => s.key.toLowerCase());
-        const defaultKeys = defaultSpecs.map(s => s.key.toLowerCase());
-        const hasMatch = defaultKeys.every(k => currentKeys.includes(k));
-        if (!hasMatch) {
-          setFormData(prev => ({
-            ...prev,
-            specs: defaultSpecs.map(s => {
-              const existing = prev.specs.find(es => es.key.toLowerCase() === s.key.toLowerCase());
-              return existing || { key: s.key, value: '', placeholder: s.placeholder };
-            }),
-          }));
-        }
-      }
-    }
-  }, [formData.category_id, specsSource, getCategoryDefaultSpecs]);
-
-  const switchToCustomSpecs = useCallback(() => {
-    setSpecsSource('custom');
-  }, []);
-
-  const fetchProducts = async () => {
+  const fetchProducts = useCallback(async () => {
     try {
       const data = await fetchAdminProducts();
       setProducts(data);
     } catch (err) {
       console.error('Products fetch error:', err);
     }
-  };
+  }, []);
 
-  const fetchCategories = async () => {
+  const fetchCategories = useCallback(async () => {
     try {
       const data = await fetchAdminCategories();
       setCategories(data);
     } catch (err) {
       console.error('Categories fetch error:', err);
     }
-  };
+  }, []);
 
   useEffect(() => {
     fetchProducts();
     fetchCategories();
-  }, []);
+  }, [fetchProducts, fetchCategories]);
 
   const filteredProducts = products.filter(p => {
     const matchesSearch = !searchQuery ||
@@ -259,72 +132,15 @@ export function AdminProductsPage() {
     return matchesSearch && matchesCategory;
   });
 
-  const resetForm = () => {
-    setFormData({
-      sku: '',
-      name: '',
-      description: '',
-      price: '',
-      compare_price: '',
-      stock: '',
-      category_id: '',
-      images: [],
-      specs: [{ key: '', value: '', placeholder: '' }],
-      is_featured: false,
-      is_active: true,
-      weight: '',
-      cost_price: '',
-      dimensions: { length: '', width: '', height: '' },
-      min_stock_alert: '',
-      meta_title: '',
-      meta_description: '',
-      meta_keywords: '',
-      variant_sizes: [],
-      variant_colors: [],
-    });
-    setErrors({});
-    setEditingProduct(null);
-    setActiveTab('general');
-    setSpecsSource('category');
-  };
-
-  const handleEdit = (product: Product) => {
+  const handleEdit = useCallback((product: Product) => {
     setEditingProduct(product);
-    setFormData({
-      sku: product.sku || '',
-      name: product.name,
-      description: product.description || '',
-      price: product.price.toString(),
-      compare_price: product.compare_price?.toString() || '',
-      stock: product.stock.toString(),
-      category_id: product.category_id || '',
-      images: (product.images || []).map(img => getImageUrl(img)),
-      specs: Object.entries(product.specs || {}).map(([key, value]) => ({ key, value: value as string })),
-      is_featured: product.is_featured,
-      is_active: product.is_active,
-      weight: product.weight?.toString() || '',
-      cost_price: product.cost_price?.toString() || '',
-      dimensions: product.dimensions
-        ? {
-            length: product.dimensions.length?.toString() || '',
-            width: product.dimensions.width?.toString() || '',
-            height: product.dimensions.height?.toString() || '',
-          }
-        : { length: '', width: '', height: '' },
-      min_stock_alert: product.min_stock_alert?.toString() || '',
-      meta_title: product.meta_title || '',
-      meta_description: product.meta_description || '',
-      meta_keywords: product.meta_keywords || '',
-      variant_sizes: product.variants?.sizes || [],
-      variant_colors: product.variants?.colors || [],
-    });
+    setFormData(populateForm(product));
     setErrors({});
     setShowForm(true);
     setActiveTab('general');
-    setSpecsSource('custom');
-  };
+  }, [populateForm, setActiveTab, setFormData]);
 
-  const handleSave = async () => {
+  const handleSave = useCallback(async () => {
     setSaving(true);
     setErrors({});
 
@@ -385,13 +201,13 @@ export function AdminProductsPage() {
     } finally {
       setSaving(false);
     }
-  };
+  }, [editingProduct, formData, fetchProducts, resetForm]);
 
-  const handleDelete = async (productId: string) => {
+  const handleDelete = useCallback((productId: string) => {
     setConfirmDeleteId(productId);
-  };
+  }, []);
 
-  const confirmDelete = async () => {
+  const confirmDelete = useCallback(async () => {
     if (!confirmDeleteId) return;
     const id = confirmDeleteId;
     setDeletingId(id);
@@ -405,9 +221,9 @@ export function AdminProductsPage() {
     } finally {
       setDeletingId(null);
     }
-  };
+  }, [confirmDeleteId]);
 
-  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileUpload = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files || files.length === 0) return;
 
@@ -429,10 +245,7 @@ export function AdminProductsPage() {
     }
 
     if (newImages.length > 0) {
-      setFormData(prev => ({
-        ...prev,
-        images: [...prev.images, ...newImages],
-      }));
+      setFormData(prev => ({ ...prev, images: [...prev.images, ...newImages] }));
     }
 
     if (uploadErrors.length > 0) {
@@ -443,14 +256,11 @@ export function AdminProductsPage() {
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
-  };
+  }, [uploadProductImage, setFormData, setErrors, setUploadingImage]);
 
-  const removeImage = (url: string) => {
-    setFormData(prev => ({
-      ...prev,
-      images: prev.images.filter(img => img !== url),
-    }));
-  };
+  const removeImage = useCallback((url: string) => {
+    setFormData(prev => ({ ...prev, images: prev.images.filter(img => img !== url) }));
+  }, [setFormData]);
 
   const getImageUrl = (url: string) => {
     if (!url) return url;
@@ -460,42 +270,7 @@ export function AdminProductsPage() {
     return url;
   };
 
-  const addSpecRow = () => {
-    setFormData(prev => ({
-      ...prev,
-      specs: [...prev.specs, { key: '', value: '', placeholder: '' }],
-    }));
-    setSpecsSource('custom');
-  };
-
-  const updateSpec = (index: number, field: 'key' | 'value' | 'placeholder', val: string) => {
-    setFormData(prev => ({
-      ...prev,
-      specs: prev.specs.map((s, i) => i === index ? { ...s, [field]: val } : s),
-    }));
-    setSpecsSource('custom');
-  };
-
-  const removeSpec = (index: number) => {
-    setFormData(prev => ({
-      ...prev,
-      specs: prev.specs.filter((_, i) => i !== index),
-    }));
-  };
-
-  const applyCategorySpecs = () => {
-    const defaultSpecs = getCategoryDefaultSpecs(formData.category_id);
-    if (defaultSpecs.length > 0) {
-      setFormData(prev => ({
-        ...prev,
-        specs: defaultSpecs,
-      }));
-      setSpecsSource('category');
-    }
-  };
-
   const fieldError = (field: string) => errors[field]?.[0];
-  const isFormValid = formData.name.trim() && formData.price && parseFloat(formData.price) >= 0;
 
   return (
     <AdminLayout>
@@ -865,7 +640,7 @@ export function AdminProductsPage() {
                         <label className="block text-sm font-medium dark:text-gray-500 mb-2">Dimensions (cm)</label>
                         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                           {(['length', 'width', 'height'] as const).map((dim) => (
-                            <input key={dim} type="number" step="0.1" value={formData.dimensions[dim]} onChange={e => setFormData({ ...formData, dimensions: { ...formData.dimensions, [dim]: e.target.value } })} placeholder={dim === 'length' ? 'Longueur' : dim === 'width' ? 'Largeur' : 'Hauteur'} className="px-3 py-2 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 dark:bg-gray-800 dark:border-gray-700" />
+                            <input key={dim} type="number" step="0.1" value={formData.dimensions[dim]} onChange={e => handleDimensionChange(dim, e.target.value)} placeholder={dim === 'length' ? 'Longueur' : dim === 'width' ? 'Largeur' : 'Hauteur'} className="px-3 py-2 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 dark:bg-gray-800 dark:border-gray-700" />
                           ))}
                         </div>
                       </div>
@@ -902,13 +677,13 @@ export function AdminProductsPage() {
                       <div>
                         <div className="flex items-center justify-between mb-3">
                           <label className="block text-sm font-medium dark:text-gray-500">Tailles disponibles</label>
-                          <button type="button" onClick={() => setFormData({ ...formData, variant_sizes: [...formData.variant_sizes, ''] })} className="text-xs text-blue-600 font-medium hover:text-blue-700">+ Ajouter</button>
+                          <button type="button" onClick={addVariantSize} className="text-xs text-blue-600 font-medium hover:text-blue-700">+ Ajouter</button>
                         </div>
                         <div className="flex flex-wrap gap-2">
                           {formData.variant_sizes.map((size, i) => (
                             <div key={i} className="flex items-center gap-1 bg-gray-100 dark:bg-gray-700 rounded-lg px-3 py-1.5">
-                              <input type="text" value={size} onChange={e => setFormData({ ...formData, variant_sizes: formData.variant_sizes.map((s, idx) => idx === i ? e.target.value : s) })} placeholder="Ex: S, M, L" className="bg-transparent border-none outline-none text-sm w-16 dark:text-white" />
-                              <button type="button" onClick={() => setFormData({ ...formData, variant_sizes: formData.variant_sizes.filter((_, idx) => idx !== i) })} className="text-red-500 hover:text-red-700"><X className="w-3 h-3" /></button>
+                              <input type="text" value={size} onChange={e => updateVariantSize(i, e.target.value)} placeholder="Ex: S, M, L" className="bg-transparent border-none outline-none text-sm w-16 dark:text-white" />
+                              <button type="button" onClick={() => removeVariantSize(i)} className="text-red-500 hover:text-red-700"><X className="w-3 h-3" /></button>
                             </div>
                           ))}
                         </div>
@@ -917,14 +692,14 @@ export function AdminProductsPage() {
                       <div>
                         <div className="flex items-center justify-between mb-3">
                           <label className="block text-sm font-medium dark:text-gray-500">Couleurs disponibles</label>
-                          <button type="button" onClick={() => setFormData({ ...formData, variant_colors: [...formData.variant_colors, { name: '', hex: '#000000' }] })} className="text-xs text-blue-600 font-medium hover:text-blue-700">+ Ajouter</button>
+                          <button type="button" onClick={addVariantColor} className="text-xs text-blue-600 font-medium hover:text-blue-700">+ Ajouter</button>
                         </div>
                         <div className="space-y-2">
                           {formData.variant_colors.map((color, i) => (
                             <div key={i} className="flex items-center gap-2">
-                              <input type="color" value={color.hex} onChange={e => setFormData({ ...formData, variant_colors: formData.variant_colors.map((c, idx) => idx === i ? { ...c, hex: e.target.value } : c) })} className="w-8 h-8 rounded cursor-pointer border dark:border-gray-700" />
-                              <input type="text" value={color.name} onChange={e => setFormData({ ...formData, variant_colors: formData.variant_colors.map((c, idx) => idx === i ? { ...c, name: e.target.value } : c) })} placeholder="Nom (ex: Rouge)" className="flex-1 px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 dark:bg-gray-800 dark:border-gray-700" />
-                              <button type="button" onClick={() => setFormData({ ...formData, variant_colors: formData.variant_colors.filter((_, idx) => idx !== i) })} className="p-1.5 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg"><X className="w-4 h-4" /></button>
+                              <input type="color" value={color.hex} onChange={e => updateVariantColor(i, 'hex', e.target.value)} className="w-8 h-8 rounded cursor-pointer border dark:border-gray-700" />
+                              <input type="text" value={color.name} onChange={e => updateVariantColor(i, 'name', e.target.value)} placeholder="Nom (ex: Rouge)" className="flex-1 px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 dark:bg-gray-800 dark:border-gray-700" />
+                              <button type="button" onClick={() => removeVariantColor(i)} className="p-1.5 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg"><X className="w-4 h-4" /></button>
                             </div>
                           ))}
                         </div>
