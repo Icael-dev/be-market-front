@@ -85,6 +85,7 @@ export function AdminProductsPage() {
     resetForm,
     populateForm,
     applyCategorySpecs,
+    addSpecRow,
     updateSpec,
     removeSpec,
     handleDimensionChange,
@@ -269,7 +270,10 @@ export function AdminProductsPage() {
 
   const handleDuplicate = useCallback((product: Product) => {
     setEditingProduct(null);
-    setFormData(populateForm(product));
+    setFormData({
+      ...populateForm(product),
+      sku: ''
+    });
     setErrors({});
     setShowForm(true);
     setActiveTab('general');
@@ -577,16 +581,23 @@ export function AdminProductsPage() {
                         <div>
                           <div className="flex flex-wrap items-center justify-between gap-2">
                             <label className="block text-sm font-medium dark:text-gray-500">Caracteristiques</label>
-                            <div className="flex gap-2">
-                              <button
-                                type="button"
-                                onClick={() => applyCategorySpecs()}
-                                disabled={!formData.category_id}
-                                className="flex items-center gap-1.5 text-xs bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400 px-3 py-1.5 rounded-lg font-medium hover:bg-blue-100 dark:hover:bg-blue-900/50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                              >
-                                + Ajouter
-                              </button>
-                            </div>
+<div className="flex gap-2">
+                               <button
+                                 type="button"
+                                 onClick={addSpecRow}
+                                 className="flex items-center gap-1.5 text-xs bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400 px-3 py-1.5 rounded-lg font-medium hover:bg-blue-100 dark:hover:bg-blue-900/50 transition-colors"
+                               >
+                                 + Personnalise
+                               </button>
+                               <button
+                                 type="button"
+                                 onClick={() => applyCategorySpecs()}
+                                 disabled={!formData.category_id}
+                                 className="flex items-center gap-1.5 text-xs bg-green-50 text-green-600 dark:bg-green-900/30 dark:text-green-400 px-3 py-1.5 rounded-lg font-medium hover:bg-green-100 dark:hover:bg-green-900/50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                               >
+                                 + Par défaut
+                               </button>
+                             </div>
                           </div>
                           {!formData.category_id && (
                             <p className="text-xs text-amber-600 dark:text-amber-400 flex items-center gap-1 mt-2">

@@ -7,8 +7,9 @@ import {
   deleteAdminCategory
 } from '../../services/admin';
 import type { Category } from '../../types';
-import { Plus, Edit2, Trash2, X, Save, Loader2, Grid3X3 } from 'lucide-react';
+import { Plus, Edit2, Trash2, X, Save, Loader2, Grid3X3, Tag } from 'lucide-react';
 import { AdminLayout } from '../../components/admin/AdminLayout';
+import { cn } from '../../lib/utils';
 
 export function AdminCategoriesPage() {
   const [categories, setCategories] = useState<Category[]>([]);
@@ -21,7 +22,8 @@ export function AdminCategoriesPage() {
     name: '',
     slug: '',
     description: '',
-    is_active: true
+    is_active: true,
+    default_specs: [{ key: '', placeholder: '' }] as { key: string; placeholder?: string }[]
   });
 
   useEffect(() => {
@@ -40,7 +42,7 @@ export function AdminCategoriesPage() {
   };
 
   const resetForm = () => {
-    setFormData({ name: '', slug: '', description: '', is_active: true });
+    setFormData({ name: '', slug: '', description: '', is_active: true, default_specs: [{ key: '', placeholder: '' }] });
     setEditingCategory(null);
   };
 
@@ -50,9 +52,35 @@ export function AdminCategoriesPage() {
       name: category.name,
       slug: category.slug,
       description: category.description || '',
-      is_active: category.is_active
+      is_active: category.is_active,
+      default_specs: category.default_specs && category.default_specs.length > 0
+        ? category.default_specs.map(s => ({ key: s.key, placeholder: s.placeholder || '' }))
+        : [{ key: '', placeholder: '' }]
     });
     setShowForm(true);
+  };
+
+  const addSpecRow = () => {
+    setFormData(prev => ({
+      ...prev,
+      default_specs: [...prev.default_specs, { key: '', placeholder: '' }]
+    }));
+  };
+
+  const updateSpec = (index: number, field: 'key' | 'placeholder', value: string) => {
+    setFormData(prev => ({
+      ...prev,
+      default_specs: prev.default_specs.map((s, i) =>
+        i === index ? { ...s, [field]: value } : s
+      )
+    }));
+  };
+
+  const removeSpec = (index: number) => {
+    setFormData(prev => ({
+      ...prev,
+      default_specs: prev.default_specs.filter((_, i) => i !== index)
+    }));
   };
 
   const generateSlug = (name: string) => {
@@ -74,12 +102,17 @@ export function AdminCategoriesPage() {
     if (!formData.name || !formData.slug) return;
     setSaving(true);
 
+    const specsToSend = formData.default_specs
+      .filter(s => s.key.trim())
+      .map(s => ({ key: s.key.trim(), placeholder: s.placeholder || undefined }));
+
     try {
       const data = {
         name: formData.name,
         slug: formData.slug,
         description: formData.description || null,
-        is_active: formData.is_active
+        is_active: formData.is_active,
+        default_specs: specsToSend.length > 0 ? specsToSend : null
       };
 
       if (editingCategory) {
@@ -286,6 +319,57 @@ export function AdminCategoriesPage() {
                   />
                   <span className="text-sm dark:text-gray-300">Categorie active</span>
                 </label>
+
+                <div className="border-t dark:border-gray-700 pt-4">
+                  <div className="flex items-center justify-between mb-3">
+                    <label className="block text-sm font-medium dark:text-gray-300">Specifications par defaut</label>
+                    <button
+                      type="button"
+                      onClick={addSpecRow}
+                      className="text-xs text-blue-600 font-medium hover:text-blue-700"
+                    >
+                      + Ajouter
+                    </button>
+                  </div>
+                  <div className="space-y-2">
+                    {formData.default_specs.map((spec, i) => (
+                      <div key={i} className="flex gap-2 items-center">
+                        <Tag className="w-4 h-4 text-gray-400 flex-shrink-0" />
+                        <input
+                          type="text"
+                          value={spec.key}
+                          onChange={e => updateSpec(i, 'key', e.target.value)}
+                          placeholder="Cle (ex: Marque)"
+                          className={cn(
+                            'flex-1 px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 dark:bg-gray-800',
+                            'dark:border-gray-700'
+                          )}
+                        />
+                        <input
+                          type="text"
+                          value={spec.placeholder}
+                          onChange={e => updateSpec(i, 'placeholder', e.target.value)}
+                          placeholder="Placeholder (ex: Ex: Samsung)"
+                          className={cn(
+                            'flex-1 px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 dark:bg-gray-800',
+                            'dark:border-gray-700'
+                          )}
+                        />
+                        <button
+                          type="button"
+                          onClick={() => removeSpec(i)}
+                          disabled={formData.default_specs.length <= 1}
+                          className="p-1.5 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors disabled:opacity-50"
+                        >
+                          <X className="w-4 h-4" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                  <p className="text-xs dark:text-gray-500 mt-2">
+                    Ces specifications seront pre-remplies quand vous creerez un produit dans cette categorie
+                  </p>
+                </div>
 
                 <div className="flex gap-3 pt-4 border-t dark:border-gray-700">
                   <button
