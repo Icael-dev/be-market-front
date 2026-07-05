@@ -23,13 +23,10 @@ import {
   Loader2,
   AlertCircle,
   Upload,
-  Tag,
-  Ruler,
-  Globe,
   TrendingUp,
-  RefreshCw,
-  GripVertical,
+  Settings,
   Save,
+  Copy,
 } from 'lucide-react';
 
 function TabButton({ icon, label, active, onClick, badge }: {
@@ -85,11 +82,9 @@ export function AdminProductsPage() {
     setFormData,
     activeTab,
     setActiveTab,
-    specsSource,
     resetForm,
     populateForm,
     applyCategorySpecs,
-    addSpecRow,
     updateSpec,
     removeSpec,
     handleDimensionChange,
@@ -272,6 +267,14 @@ export function AdminProductsPage() {
 
   const fieldError = (field: string) => errors[field]?.[0];
 
+  const handleDuplicate = useCallback((product: Product) => {
+    setEditingProduct(null);
+    setFormData(populateForm(product));
+    setErrors({});
+    setShowForm(true);
+    setActiveTab('general');
+  }, [populateForm, setActiveTab, setFormData]);
+
   return (
     <AdminLayout>
       <div className="p-6 lg:p-8">
@@ -413,10 +416,18 @@ export function AdminProductsPage() {
                       )}
                     </td>
                     <td className="px-6 py-4">
-                      <div className="flex items-center justify-end gap-2">
+                      <div className="flex items-center justify-end gap-1">
+                        <button
+                          onClick={() => handleDuplicate(product)}
+                          className="p-2 hover:bg-gray-100 hover:dark:bg-gray-700 rounded-lg transition-colors"
+                          title="Dupliquer"
+                        >
+                          <Copy className="w-4 h-4 dark:text-gray-500" />
+                        </button>
                         <button
                           onClick={() => handleEdit(product)}
                           className="p-2 hover:bg-gray-100 hover:dark:bg-gray-700 rounded-lg transition-colors"
+                          title="Modifier"
                         >
                           <Edit2 className="w-4 h-4 dark:text-gray-500" />
                         </button>
@@ -424,6 +435,7 @@ export function AdminProductsPage() {
                           onClick={() => handleDelete(product.id)}
                           disabled={deletingId === product.id}
                           className="p-2 rounded-lg transition-colors dark:hover:bg-red-900/30 disabled:opacity-50"
+                          title="Supprimer"
                         >
                           {deletingId === product.id ? (
                             <Loader2 className="w-4 h-4 dark:text-red-400 animate-spin" />
@@ -480,10 +492,8 @@ export function AdminProductsPage() {
                 <div className="flex overflow-x-auto gap-2 border-b dark:border-gray-700 pb-2">
                   <TabButton icon={<Package className="w-4 h-4" />} label="General" active={activeTab === 'general'} onClick={() => setActiveTab('general')} />
                   <TabButton icon={<ImageIcon className="w-4 h-4" />} label="Images" active={activeTab === 'images'} onClick={() => setActiveTab('images')} badge={formData.images.length > 0 ? formData.images.length : undefined} />
-                  <TabButton icon={<Tag className="w-4 h-4" />} label="Specs" active={activeTab === 'specs'} onClick={() => setActiveTab('specs')} />
-                  <TabButton icon={<Ruler className="w-4 h-4" />} label="Livraison" active={activeTab === 'shipping'} onClick={() => setActiveTab('shipping')} />
-                  <TabButton icon={<Globe className="w-4 h-4" />} label="SEO" active={activeTab === 'seo'} onClick={() => setActiveTab('seo')} />
                   <TabButton icon={<TrendingUp className="w-4 h-4" />} label="Variantes" active={activeTab === 'variants'} onClick={() => setActiveTab('variants')} />
+                  <TabButton icon={<Settings className="w-4 h-4" />} label="Avancé" active={activeTab === 'advanced'} onClick={() => setActiveTab('advanced')} />
                 </div>
 
                 <AnimatePresence mode="wait">
@@ -498,9 +508,9 @@ export function AdminProductsPage() {
                         <label className="block text-sm font-medium dark:text-gray-500 mb-2">Description</label>
                         <textarea value={formData.description} onChange={e => setFormData({ ...formData, description: e.target.value })} rows={4} className={cn('w-full px-3 py-2.5 sm:px-4 sm:py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 dark:bg-gray-800', fieldError('description') ? 'border-red-500' : 'dark:border-gray-700')} />
                       </div>
-                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                         <div>
-                           <label className="block text-sm font-medium dark:text-gray-500 mb-2">Categorie</label>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                          <label className="block text-sm font-medium dark:text-gray-500 mb-2">Categorie</label>
                           <select value={formData.category_id} onChange={e => setFormData({ ...formData, category_id: e.target.value })} className={cn('w-full px-3 py-2.5 sm:px-4 sm:py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 dark:bg-gray-800', fieldError('category_id') ? 'border-red-500' : 'dark:border-gray-700')}>
                             <option value="">Selectionner</option>
                             {categories.map(cat => <option key={cat.id} value={cat.id}>{cat.name}</option>)}
@@ -560,114 +570,112 @@ export function AdminProductsPage() {
                     </motion.div>
                   )}
 
-                  {activeTab === 'specs' && (
-                    <motion.div key="specs" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="space-y-4">
-                      <div className="flex flex-wrap items-center justify-between gap-2">
-                        <label className="block text-sm font-medium dark:text-gray-500">Caracteristiques</label>
-                        <div className="flex gap-2">
-                          <button
-                            type="button"
-                            onClick={() => applyCategorySpecs()}
-                            disabled={!formData.category_id || specsSource === 'category'}
-                            className="flex items-center gap-1.5 text-xs bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400 px-3 py-1.5 rounded-lg font-medium hover:bg-blue-100 dark:hover:bg-blue-900/50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                          >
-                            <RefreshCw className="w-3 h-3" />
-                            Specs categorie
-                          </button>
-                          <button
-                            type="button"
-                            onClick={addSpecRow}
-                            className="text-xs text-blue-600 hover:text-blue-700 font-medium"
-                          >
-                            + Ajouter
-                          </button>
-                        </div>
-                      </div>
-                      {!formData.category_id && (
-                        <p className="text-xs text-amber-600 dark:text-amber-400 flex items-center gap-1">
-                          <AlertCircle className="w-3 h-3" />
-                          Selectionnez une categorie pour charger les specifications predefinies
-                        </p>
-                      )}
-                      <div className="space-y-2">
-                        {formData.specs.map((spec, i) => (
-                          <div key={i} className="flex gap-2 items-center">
-                            <GripVertical className="w-4 h-4 text-gray-400 flex-shrink-0" />
-                            <input
-                              type="text"
-                              value={spec.key}
-                              onChange={e => updateSpec(i, 'key', e.target.value)}
-                              placeholder="Cle"
-                              className={cn(
-                                'flex-1 px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 dark:bg-gray-800',
-                                'dark:border-gray-700'
-                              )}
-                            />
-                            <input
-                              type="text"
-                              value={spec.value}
-                              onChange={e => updateSpec(i, 'value', e.target.value)}
-                              placeholder={spec.placeholder || 'Valeur'}
-                              className={cn(
-                                'flex-1 px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 dark:bg-gray-800',
-                                'dark:border-gray-700'
-                              )}
-                            />
-                            <button
-                              type="button"
-                              onClick={() => removeSpec(i)}
-                              className="p-1.5 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
-                            >
-                              <X className="w-4 h-4" />
-                            </button>
+                  {activeTab === 'advanced' && (
+                    <motion.div key="advanced" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="space-y-6">
+                      <div className="border-b dark:border-gray-700 pb-4 mb-4">
+                        <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">Specifications</h3>
+                        <div>
+                          <div className="flex flex-wrap items-center justify-between gap-2">
+                            <label className="block text-sm font-medium dark:text-gray-500">Caracteristiques</label>
+                            <div className="flex gap-2">
+                              <button
+                                type="button"
+                                onClick={() => applyCategorySpecs()}
+                                disabled={!formData.category_id}
+                                className="flex items-center gap-1.5 text-xs bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400 px-3 py-1.5 rounded-lg font-medium hover:bg-blue-100 dark:hover:bg-blue-900/50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                              >
+                                + Ajouter
+                              </button>
+                            </div>
                           </div>
-                        ))}
-                        {formData.specs.length === 0 && (
-                          <p className="text-xs dark:text-gray-500">Aucune caracteristique ajoutee</p>
-                        )}
-                      </div>
-                    </motion.div>
-                  )}
-
-                  {activeTab === 'shipping' && (
-                    <motion.div key="shipping" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="space-y-5">
-                      <div>
-                        <label className="block text-sm font-medium dark:text-gray-500 mb-2">Poids (kg)</label>
-                        <input type="number" step="0.01" value={formData.weight} onChange={e => setFormData({ ...formData, weight: e.target.value })} placeholder="0.00" className={cn('w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 dark:bg-gray-800', fieldError('weight') ? 'border-red-500' : 'dark:border-gray-700')} />
-                        {fieldError('weight') && <p className="text-red-500 text-xs mt-1 flex items-center gap-1"><AlertCircle className="w-3 h-3" /> {fieldError('weight')}</p>}
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium dark:text-gray-500 mb-2">Dimensions (cm)</label>
-                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                          {(['length', 'width', 'height'] as const).map((dim) => (
-                            <input key={dim} type="number" step="0.1" value={formData.dimensions[dim]} onChange={e => handleDimensionChange(dim, e.target.value)} placeholder={dim === 'length' ? 'Longueur' : dim === 'width' ? 'Largeur' : 'Hauteur'} className="px-3 py-2 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 dark:bg-gray-800 dark:border-gray-700" />
-                          ))}
+                          {!formData.category_id && (
+                            <p className="text-xs text-amber-600 dark:text-amber-400 flex items-center gap-1 mt-2">
+                              <AlertCircle className="w-3 h-3" />
+                              Selectionnez une categorie pour charger les specifications predefinies
+                            </p>
+                          )}
+                          <div className="space-y-2 mt-2">
+                            {formData.specs.map((spec, i) => (
+                              <div key={i} className="flex gap-2 items-center">
+                                <input
+                                  type="text"
+                                  value={spec.key}
+                                  onChange={e => updateSpec(i, 'key', e.target.value)}
+                                  placeholder="Cle"
+                                  className={cn(
+                                    'flex-1 px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 dark:bg-gray-800',
+                                    'dark:border-gray-700'
+                                  )}
+                                />
+                                <input
+                                  type="text"
+                                  value={spec.value}
+                                  onChange={e => updateSpec(i, 'value', e.target.value)}
+                                  placeholder={spec.placeholder || 'Valeur'}
+                                  className={cn(
+                                    'flex-1 px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 dark:bg-gray-800',
+                                    'dark:border-gray-700'
+                                  )}
+                                />
+                                <button
+                                  type="button"
+                                  onClick={() => removeSpec(i)}
+                                  className="p-1.5 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
+                                >
+                                  <X className="w-4 h-4" />
+                                </button>
+                              </div>
+                            ))}
+                            {formData.specs.length === 0 && (
+                              <p className="text-xs dark:text-gray-500">Aucune caracteristique ajoutee</p>
+                            )}
+                          </div>
                         </div>
                       </div>
-                      <div>
-                        <label className="block text-sm font-medium dark:text-gray-500 mb-2">Prix coûtant (FCFA)</label>
-                        <input type="number" value={formData.cost_price} onChange={e => setFormData({ ...formData, cost_price: e.target.value })} className="w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 dark:bg-gray-800 dark:border-gray-700" />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium dark:text-gray-500 mb-2">Alerte stock minimum</label>
-                        <input type="number" value={formData.min_stock_alert} onChange={e => setFormData({ ...formData, min_stock_alert: e.target.value })} placeholder="Ex: 5" className="w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 dark:bg-gray-800 dark:border-gray-700" />
-                      </div>
-                    </motion.div>
-                  )}
 
-                  {activeTab === 'seo' && (
-                    <motion.div key="seo" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="space-y-5">
-                      <div>
-                        <label className="block text-sm font-medium dark:text-gray-500 mb-2">Meta titre</label>
-                        <input type="text" value={formData.meta_title} onChange={e => setFormData({ ...formData, meta_title: e.target.value })} placeholder="Titre pour les moteurs de recherche" className="w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 dark:bg-gray-800 dark:border-gray-700" />
+                      <div className="border-b dark:border-gray-700 pb-4 mb-4">
+                        <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">Livraison & Stock</h3>
+                        <div className="space-y-4">
+                          <div>
+                            <label className="block text-sm font-medium dark:text-gray-500 mb-2">Poids (kg)</label>
+                            <input type="number" step="0.01" value={formData.weight} onChange={e => setFormData({ ...formData, weight: e.target.value })} placeholder="0.00" className={cn('w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 dark:bg-gray-800', fieldError('weight') ? 'border-red-500' : 'dark:border-gray-700')} />
+                            {fieldError('weight') && <p className="text-red-500 text-xs mt-1 flex items-center gap-1"><AlertCircle className="w-3 h-3" /> {fieldError('weight')}</p>}
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium dark:text-gray-500 mb-2">Dimensions (cm)</label>
+                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                              {(['length', 'width', 'height'] as const).map((dim) => (
+                                <input key={dim} type="number" step="0.1" value={formData.dimensions[dim]} onChange={e => handleDimensionChange(dim, e.target.value)} placeholder={dim === 'length' ? 'Longueur' : dim === 'width' ? 'Largeur' : 'Hauteur'} className="px-3 py-2 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 dark:bg-gray-800 dark:border-gray-700" />
+                              ))}
+                            </div>
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium dark:text-gray-500 mb-2">Prix coûtant (FCFA)</label>
+                            <input type="number" value={formData.cost_price} onChange={e => setFormData({ ...formData, cost_price: e.target.value })} className="w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 dark:bg-gray-800 dark:border-gray-700" />
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium dark:text-gray-500 mb-2">Alerte stock minimum</label>
+                            <input type="number" value={formData.min_stock_alert} onChange={e => setFormData({ ...formData, min_stock_alert: e.target.value })} placeholder="Ex: 5" className="w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 dark:bg-gray-800 dark:border-gray-700" />
+                          </div>
+                        </div>
                       </div>
+
                       <div>
-                        <label className="block text-sm font-medium dark:text-gray-500 mb-2">Meta description</label>
-                        <textarea value={formData.meta_description} onChange={e => setFormData({ ...formData, meta_description: e.target.value })} rows={3} placeholder="Description pour les moteurs de recherche" className="w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 dark:bg-gray-800 dark:border-gray-700" />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium dark:text-gray-500 mb-2">Meta keywords</label>
-                        <input type="text" value={formData.meta_keywords} onChange={e => setFormData({ ...formData, meta_keywords: e.target.value })} placeholder="Mot-cles separes par des virgules" className="w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 dark:bg-gray-800 dark:border-gray-700" />
+                        <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">SEO</h3>
+                        <div className="space-y-4">
+                          <div>
+                            <label className="block text-sm font-medium dark:text-gray-500 mb-2">Meta titre</label>
+                            <input type="text" value={formData.meta_title} onChange={e => setFormData({ ...formData, meta_title: e.target.value })} placeholder="Titre pour les moteurs de recherche" className="w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 dark:bg-gray-800 dark:border-gray-700" />
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium dark:text-gray-500 mb-2">Meta description</label>
+                            <textarea value={formData.meta_description} onChange={e => setFormData({ ...formData, meta_description: e.target.value })} rows={3} placeholder="Description pour les moteurs de recherche" className="w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 dark:bg-gray-800 dark:border-gray-700" />
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium dark:text-gray-500 mb-2">Meta keywords</label>
+                            <input type="text" value={formData.meta_keywords} onChange={e => setFormData({ ...formData, meta_keywords: e.target.value })} placeholder="Mot-cles separes par des virgules" className="w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 dark:bg-gray-800 dark:border-gray-700" />
+                          </div>
+                        </div>
                       </div>
                     </motion.div>
                   )}
