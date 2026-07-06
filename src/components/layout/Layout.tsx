@@ -10,7 +10,7 @@ interface LayoutProps {
   compactFooter?: boolean;
 }
 
-export function Layout({ children, hideHeader, hideFooter, compactFooter }: LayoutProps) {
+export function Layout({ children, hideHeader, hideFooter }: LayoutProps) {
   const location = useLocation();
   const isHomepage = location.pathname === '/';
 

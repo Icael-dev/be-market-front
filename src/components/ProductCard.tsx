@@ -68,7 +68,7 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: isHovered ? 1 : 0 }}
-              className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"
+              className="absolute inset-0 bg-gradient-to-t from-black/50 dark:from-black/70 via-transparent to-transparent"
             />
 
             {discount > 0 && (
@@ -83,7 +83,7 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
             )}
 
             {product.is_featured && (
-              <div className="absolute top-3 right-3 bg-blue-600 text-white text-xs font-medium px-3 py-1.5 rounded-full shadow-lg">
+              <div className="absolute top-3 right-3 bg-blue-600 dark:bg-blue-500 text-white text-xs font-medium px-3 py-1.5 rounded-full shadow-lg">
                 Vedette
               </div>
             )}
@@ -139,27 +139,27 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
               <span className="text-xs text-gray-500 dark:text-gray-400 ml-1">(24)</span>
             </div>
 
-<div className="flex flex-col items-start mt-3 pt-3 border-t border-gray-100 dark:border-gray-700">
-               {product.compare_price && (
-                 <span className="text-sm text-gray-400 line-through mb-1">
-                   {formatPrice(product.compare_price)}
-                 </span>
-               )}
-               <span className="text-xl font-bold text-gray-900 dark:text-white">
-                 {formatPrice(product.price)}
-               </span>
-             </div>
-             <div className="flex items-center justify-end mt-2">
-               {product.stock > 0 ? (
-                 <span className="text-xs text-green-600 dark:text-green-400 font-medium bg-green-100 dark:bg-green-900/30 px-2 py-1 rounded-full">
-                   En stock
-                 </span>
-               ) : (
-                 <span className="text-xs text-red-500 dark:text-red-400 font-medium bg-red-100 dark:bg-red-900/30 px-2 py-1 rounded-full">
-                   Rupture
-                 </span>
-               )}
-             </div>
+            <div className="flex flex-col items-start mt-3 pt-3 border-t border-gray-100 dark:border-gray-700">
+              {product.compare_price && (
+                <span className="text-sm text-gray-400 dark:text-gray-500 line-through mb-1">
+                  {formatPrice(product.compare_price)}
+                </span>
+              )}
+              <span className="text-xl font-bold text-gray-900 dark:text-white">
+                {formatPrice(product.price)}
+              </span>
+            </div>
+            <div className="flex items-center justify-end mt-2">
+              {product.stock > 0 ? (
+                <span className="text-xs text-green-600 dark:text-green-400 font-medium bg-green-100 dark:bg-green-900/30 px-2 py-1 rounded-full">
+                  En stock
+                </span>
+              ) : (
+                <span className="text-xs text-red-500 dark:text-red-400 font-medium bg-red-100 dark:bg-red-900/30 px-2 py-1 rounded-full">
+                  Rupture
+                </span>
+              )}
+            </div>
           </div>
         </div>
       </Link>

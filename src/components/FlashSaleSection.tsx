@@ -161,7 +161,7 @@ export function FlashSaleSection() {
                     <span className="text-lg font-bold dark:text-red-400">
                       {formatPrice(discountedPrice)}
                     </span>
-                    <span className="text-sm dark:text-gray-400 line-through">
+                    <span className="text-sm text-gray-400 dark:text-gray-400 line-through">
                       {formatPrice(sale.product.price)}
                     </span>
                   </div>
@@ -169,7 +169,7 @@ export function FlashSaleSection() {
                   <div className="flex gap-2">
                     <button
                       onClick={() => addItem(productWithDiscount, 1)}
-                      className="flex-1 flex items-center justify-center gap-1 dark:bg-red-700 text-white py-2 rounded-lg text-xs font-medium dark:hover:bg-red-800 transition-colors"
+                      className="flex-1 flex items-center justify-center gap-1 bg-red-600 hover:bg-red-700 dark:bg-red-700 dark:hover:bg-red-800 text-white py-2 rounded-lg text-xs font-medium transition-colors"
                     >
                       <ShoppingCart className="w-3 h-3" />
                       Ajouter

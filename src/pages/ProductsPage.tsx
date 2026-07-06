@@ -1,17 +1,17 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { fetchProducts, fetchCategories, fetchPriceBounds } from '../services/products';
 import type { Product, Category, FilterOptions } from '../types';
 import { ProductCard } from '../components/ProductCard';
 import { ProductsGridSkeleton } from '../components/LoadingSpinner';
+import { SearchWithSuggestions } from '../components/SearchWithSuggestions';
 import {
   SlidersHorizontal,
   X,
   ChevronDown,
   Grid3X3,
-  LayoutList,
-  Search
+  LayoutList
 } from 'lucide-react';
 import { cn, formatPrice } from '../lib/utils';
 

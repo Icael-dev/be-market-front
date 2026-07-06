@@ -27,14 +27,6 @@ import {
   Camera,
   Gamepad2,
   Tablet,
-  ShoppingBag,
-  BookOpen,
-  Baby,
-  Car,
-  Hammer,
-  Wifi,
-  HardDrive,
-  Keyboard,
 } from 'lucide-react';
 
 import image3 from '../assets/images/image3.jpg';

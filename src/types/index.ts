@@ -142,7 +142,10 @@ export interface Review {
   comment: string | null;
   is_verified_purchase: boolean;
   created_at: string;
-  profile?: Profile;
+  user?: {
+    id: string;
+    profile?: Profile;
+  };
 }
 
 export interface Testimonial {

@@ -215,12 +215,12 @@ export function ReviewSection({ productId }: ReviewSectionProps) {
             >
               <div className="flex items-start gap-4">
                 <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-600 to-cyan-500 flex items-center justify-center text-white font-medium">
-                  {review.profile?.full_name?.[0] || <User className="w-5 h-5" />}
+                  {review.user?.profile?.full_name?.[0] || <User className="w-5 h-5" />}
                 </div>
                 <div className="flex-1">
                   <div className="flex items-center gap-2 flex-wrap">
                     <p className="font-medium dark:text-white">
-                      {review.profile?.full_name || 'Utilisateur'}
+                      {review.user?.profile?.full_name || 'Utilisateur'}
                     </p>
                     <div className="flex items-center gap-1">
                       {[...Array(5)].map((_, i) => (
