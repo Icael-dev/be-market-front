@@ -93,11 +93,6 @@ export function AdminCustomersPage() {
                           <p className="font-medium dark:text-white">
                             {customer.full_name || 'Sans nom'}
                           </p>
-                          {customer.is_admin && (
-                            <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full">
-                              Admin
-                            </span>
-                          )}
                         </div>
                       </div>
                     </td>

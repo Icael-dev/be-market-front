@@ -27,6 +27,9 @@ import {
   Camera,
   Gamepad2,
   Tablet,
+  Wifi,
+  HardDrive,
+  Keyboard,
 } from 'lucide-react';
 
 import image3 from '../assets/images/image3.jpg';

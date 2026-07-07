@@ -112,7 +112,7 @@ export function AdminCategoriesPage() {
         slug: formData.slug,
         description: formData.description || null,
         is_active: formData.is_active,
-        default_specs: specsToSend.length > 0 ? specsToSend : null
+        specs: specsToSend.length > 0 ? specsToSend : null
       };
 
       if (editingCategory) {

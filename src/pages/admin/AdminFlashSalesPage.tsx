@@ -65,8 +65,8 @@ export function AdminFlashSalesPage() {
     setFormData({
       product_id: sale.product_id,
       discount_percentage: sale.discount_percentage,
-      starts_at: sale.starts_at.split('T')[0],
-      ends_at: sale.ends_at.split('T')[0],
+      starts_at: sale.starts_at.slice(0, 16).replace('T', ' '),
+      ends_at: sale.ends_at.slice(0, 16).replace('T', ' '),
       is_active: sale.is_active
     });
     setShowForm(true);
@@ -78,10 +78,17 @@ export function AdminFlashSalesPage() {
     setSaving(true);
 
     try {
+      const startsAt = formData.starts_at.includes('T')
+        ? formData.starts_at
+        : formData.starts_at.replace(' ', 'T');
+      const endsAt = formData.ends_at.includes('T')
+        ? formData.ends_at
+        : formData.ends_at.replace(' ', 'T');
+
       const data = {
         ...formData,
-        starts_at: new Date(formData.starts_at).toISOString(),
-        ends_at: new Date(formData.ends_at).toISOString()
+        starts_at: new Date(startsAt).toISOString(),
+        ends_at: new Date(endsAt).toISOString()
       };
 
       if (editingSale) {
