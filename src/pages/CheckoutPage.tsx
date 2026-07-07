@@ -107,60 +107,55 @@ export function CheckoutPage() {
     }
   };
 
-  const handlePlaceOrder = async () => {
+const handlePlaceOrder = async () => {
     if (!user) return;
 
     setLoading(true);
 
     try {
       const shippingAddress = useNewAddress
-        ? newAddress
-        : addresses.find(a => a.id === selectedAddressId);
+        ? {
+            full_name: newAddress.full_name,
+            phone: newAddress.phone,
+            address_line1: newAddress.address_line1,
+            address_line2: newAddress.address_line2,
+            city: newAddress.city,
+            region: newAddress.region,
+            country: newAddress.country,
+            postal_code: newAddress.postal_code,
+          }
+        : {
+            full_name: addresses.find(a => a.id === selectedAddressId)?.full_name,
+            phone: addresses.find(a => a.id === selectedAddressId)?.phone,
+            address_line1: addresses.find(a => a.id === selectedAddressId)?.address_line1,
+            address_line2: addresses.find(a => a.id === selectedAddressId)?.address_line2,
+            city: addresses.find(a => a.id === selectedAddressId)?.city,
+            region: addresses.find(a => a.id === selectedAddressId)?.region,
+            country: addresses.find(a => a.id === selectedAddressId)?.country,
+            postal_code: addresses.find(a => a.id === selectedAddressId)?.postal_code,
+          };
 
-      if (!shippingAddress) {
+      if (!shippingAddress.full_name) {
         setLoading(false);
         return;
       }
 
-      const orderNumber = `ORD-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).substr(2, 5).toUpperCase()}`;
-      const orderItems = items.map(item => ({
-        product_id: item.product_id,
-        product_name: item.product?.name || 'Produit',
-        product_sku: item.product?.sku || null,
-        price: item.product?.price || 0,
-        quantity: item.quantity,
-        total: (item.product?.price || 0) * item.quantity
-      }));
-
       const order = await placeOrder({
-        user_id: user.id,
-        order_number: orderNumber,
-        status: 'pending',
-        payment_status: 'pending',
-        payment_method: paymentMethod,
-        subtotal: total,
-        shipping_fee: shippingFee,
-        total: grandTotal,
         shipping_address: shippingAddress,
+        billing_address: useNewAddress ? undefined : addresses.find(a => a.id === selectedAddressId),
+        payment_method: paymentMethod,
         notes,
-        items: orderItems,
-        payment: {
-          payment_method: paymentMethod,
-          amount: grandTotal,
-          status: 'pending',
-          phone_number: paymentMethod !== 'cash_on_delivery' ? phoneNumber : null
-        }
       });
 
-if (useNewAddress && user) {
-         await createAddress({
-           user_id: user.id,
-           ...newAddress,
-           postal_code: newAddress.postal_code || null,
-           is_default: addresses.length === 0 || newAddress.is_default,
-           label: newAddress.label || null
-         });
-       }
+      if (useNewAddress && user) {
+        await createAddress({
+          user_id: user.id,
+          ...newAddress,
+          postal_code: newAddress.postal_code || null,
+          is_default: addresses.length === 0 || newAddress.is_default,
+          label: newAddress.label || null
+        });
+      }
 
       await clearCart();
       navigate(`/order-success/${order.id}`);

@@ -13,6 +13,12 @@ export async function fetchOrderById(id: string): Promise<Order> {
   return api.get<Order>(`/api/orders/${id}`);
 }
 
-export async function placeOrder(payload: Record<string, unknown>): Promise<Order> {
+export async function placeOrder(payload: {
+  shipping_address: Record<string, unknown>;
+  billing_address?: Record<string, unknown>;
+  payment_method?: string;
+  notes?: string;
+  coupon_code?: string;
+}): Promise<Order> {
   return api.post<Order>('/api/checkout', payload);
 }

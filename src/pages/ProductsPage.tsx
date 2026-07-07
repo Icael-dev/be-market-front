@@ -1,19 +1,19 @@
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { fetchProducts, fetchCategories } from '../services/products';
+import { fetchProducts, fetchCategories, fetchPriceBounds } from '../services/products';
 import type { Product, Category, FilterOptions } from '../types';
 import { ProductCard } from '../components/ProductCard';
 import { ProductsGridSkeleton } from '../components/LoadingSpinner';
+import { SearchWithSuggestions } from '../components/SearchWithSuggestions';
 import {
   SlidersHorizontal,
   X,
   ChevronDown,
   Grid3X3,
-  LayoutList,
-  Search
+  LayoutList
 } from 'lucide-react';
-import { cn } from '../lib/utils';
+import { cn, formatPrice } from '../lib/utils';
 
 const sortOptions = [
   { value: 'newest', label: 'Plus recent' },
@@ -36,6 +36,20 @@ export function ProductsPage() {
   const searchQuery = searchParams.get('search') || '';
   const sortBy = searchParams.get('sort') || 'newest';
   const selectedBrand = searchParams.get('brand') || '';
+  const minPriceParam = searchParams.get('min_price');
+  const maxPriceParam = searchParams.get('max_price');
+
+  const [priceBounds, setPriceBounds] = useState<{ min: number; max: number }>({ min: 0, max: 500000 });
+  const [localMin, setLocalMin] = useState(minPriceParam ? parseInt(minPriceParam) : 0);
+  const [localMax, setLocalMax] = useState(maxPriceParam ? parseInt(maxPriceParam) : 500000);
+
+  const minPrice = minPriceParam ? parseInt(minPriceParam) : 0;
+  const maxPrice = maxPriceParam ? parseInt(maxPriceParam) : priceBounds.max;
+
+  useEffect(() => {
+    setLocalMin(minPriceParam ? parseInt(minPriceParam) : priceBounds.min);
+    setLocalMax(maxPriceParam ? parseInt(maxPriceParam) : priceBounds.max);
+  }, [minPriceParam, maxPriceParam, priceBounds.min, priceBounds.max]);
 
   useEffect(() => {
     async function fetchData() {
@@ -44,11 +58,20 @@ export function ProductsPage() {
         const loadedCategories = await fetchCategories();
         setCategories(loadedCategories);
 
+        const bounds = await fetchPriceBounds(
+          selectedCategory || undefined,
+          searchQuery || undefined,
+          selectedBrand || undefined
+        );
+        setPriceBounds(bounds);
+
         const filters: FilterOptions = {
           category: selectedCategory || undefined,
           search: searchQuery || undefined,
           sort: sortBy as FilterOptions['sort'] | undefined,
-          brand: selectedBrand || undefined
+          brand: selectedBrand || undefined,
+          minPrice: minPrice > priceBounds.min ? minPrice : undefined,
+          maxPrice: maxPrice < priceBounds.max ? maxPrice : undefined,
         };
 
         const productsData = await fetchProducts(filters);
@@ -85,7 +108,7 @@ export function ProductsPage() {
     setSearchParams(new URLSearchParams());
   };
 
-  const activeFiltersCount = [selectedCategory, searchQuery, selectedBrand].filter(Boolean).length;
+  const activeFiltersCount = [selectedCategory, searchQuery, selectedBrand, minPrice > priceBounds.min, maxPrice < priceBounds.max].filter(Boolean).length;
 
   const selectedCategoryName = selectedCategory
     ? categories.find(c => c.id === selectedCategory || c.slug === selectedCategory)?.name
@@ -173,7 +196,7 @@ export function ProductsPage() {
 
           <div className="flex-1">
             <div className="bg-white dark:bg-gray-800 rounded-xl border dark:border-gray-700 p-4 mb-6">
-              <div className="flex flex-wrap items-center justify-between gap-4">
+               <div className="flex flex-wrap items-center justify-between gap-4">
                 <div className="flex items-center gap-3">
                   <button
                     onClick={() => setShowFilters(true)}
@@ -187,7 +210,9 @@ export function ProductsPage() {
                       </span>
                     )}
                   </button>
+                </div>
 
+                <div className="flex items-center gap-3">
                   <div className="relative">
                     <select
                       value={sortBy}
@@ -202,31 +227,127 @@ export function ProductsPage() {
                     </select>
                     <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 dark:text-gray-500 pointer-events-none" />
                   </div>
-                </div>
 
-                <div className="hidden sm:flex items-center gap-2">
-                  <button
-                    onClick={() => setView('grid')}
-                    className={cn(
-                      'p-2 rounded-lg transition-colors',
-                      view === 'grid'
-                        ? 'bg-blue-50 dark:bg-blue-900/30 dark:text-blue-400'
-                        : 'dark:text-gray-500 hover:dark:text-gray-500'
-                    )}
-                  >
-                    <Grid3X3 className="w-5 h-5" />
-                  </button>
-                  <button
-                    onClick={() => setView('list')}
-                    className={cn(
-                      'p-2 rounded-lg transition-colors',
-                      view === 'list'
-                        ? 'bg-blue-50 dark:bg-blue-900/30 dark:text-blue-400'
-                        : 'dark:text-gray-500 hover:dark:text-gray-500'
-                    )}
-                  >
-                    <LayoutList className="w-5 h-5" />
-                  </button>
+                  <div className="hidden sm:flex items-center gap-2">
+                    <button
+                      onClick={() => setView('grid')}
+                      className={cn(
+                        'p-2 rounded-lg transition-colors',
+                        view === 'grid'
+                          ? 'bg-blue-50 dark:bg-blue-900/30 dark:text-blue-400'
+                          : 'dark:text-gray-500 hover:dark:text-gray-500'
+                      )}
+                    >
+                      <Grid3X3 className="w-5 h-5" />
+                    </button>
+                    <button
+                      onClick={() => setView('list')}
+                      className={cn(
+                        'p-2 rounded-lg transition-colors',
+                        view === 'list'
+                          ? 'bg-blue-50 dark:bg-blue-900/30 dark:text-blue-400'
+                          : 'dark:text-gray-500 hover:dark:text-gray-500'
+                      )}
+                    >
+                      <LayoutList className="w-5 h-5" />
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+               <div className="mt-3 pt-3 border-t border-gray-100 dark:border-gray-700">
+                <div className="flex flex-col gap-3">
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="number"
+                      value={localMin}
+                      onChange={(e) => {
+                        const val = Math.max(0, parseInt(e.target.value) || 0);
+                        setLocalMin(Math.min(val, localMax - 5000));
+                      }}
+                      onBlur={() => {
+                        updateFilter('min_price', localMin > 0 ? String(localMin) : null);
+                        updateFilter('max_price', localMax < 1000000 ? String(localMax) : null);
+                      }}
+                      placeholder="Min"
+                      className="w-24 px-2 py-1.5 text-sm border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-right focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+                    />
+                    <span className="text-gray-400 text-sm">—</span>
+                    <input
+                      type="number"
+                      value={localMax}
+                      onChange={(e) => {
+                        const val = Math.min(1000000, parseInt(e.target.value) || 0);
+                        setLocalMax(Math.max(val, localMin + 5000));
+                      }}
+                      onBlur={() => {
+                        updateFilter('min_price', localMin > 0 ? String(localMin) : null);
+                        updateFilter('max_price', localMax < 1000000 ? String(localMax) : null);
+                      }}
+                      placeholder="Max"
+                      className="w-24 px-2 py-1.5 text-sm border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-right focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+                    />
+                    <span className="text-xs text-gray-400 dark:text-gray-500 whitespace-nowrap">
+                      FCFA
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <span className="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider whitespace-nowrap hidden sm:block">
+                      Fourchette
+                    </span>
+                    <div className="flex-1 relative h-2">
+                      <div className="absolute inset-0 bg-gray-200 dark:bg-gray-600 rounded-full" />
+                      {(priceBounds.max > priceBounds.min) && (
+                        <div
+                          className="absolute h-2 bg-blue-600/30 rounded-full"
+                          style={{
+                            left: `${(priceBounds.min / 1000000) * 100}%`,
+                            right: `${100 - (priceBounds.max / 1000000) * 100}%`,
+                          }}
+                        />
+                      )}
+                      <input
+                        type="range"
+                        min={0}
+                        max={1000000}
+                        step={5000}
+                        value={localMin}
+                        onChange={(e) => {
+                          const val = parseInt(e.target.value);
+                          setLocalMin(Math.min(val, localMax - 5000));
+                        }}
+                        onMouseUp={() => {
+                          updateFilter('min_price', localMin > 0 ? String(localMin) : null);
+                          updateFilter('max_price', localMax < 1000000 ? String(localMax) : null);
+                        }}
+                        onTouchEnd={() => {
+                          updateFilter('min_price', localMin > 0 ? String(localMin) : null);
+                          updateFilter('max_price', localMax < 1000000 ? String(localMax) : null);
+                        }}
+                        className="absolute w-full h-2 appearance-none bg-transparent pointer-events-auto [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-600 [&::-webkit-slider-thumb]:shadow-lg [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:relative [&::-webkit-slider-thumb]:z-10"
+                      />
+                      <input
+                        type="range"
+                        min={0}
+                        max={1000000}
+                        step={5000}
+                        value={localMax}
+                        onChange={(e) => {
+                          const val = parseInt(e.target.value);
+                          setLocalMax(Math.max(val, localMin + 5000));
+                        }}
+                        onMouseUp={() => {
+                          updateFilter('min_price', localMin > 0 ? String(localMin) : null);
+                          updateFilter('max_price', localMax < 1000000 ? String(localMax) : null);
+                        }}
+                        onTouchEnd={() => {
+                          updateFilter('min_price', localMin > 0 ? String(localMin) : null);
+                          updateFilter('max_price', localMax < 1000000 ? String(localMax) : null);
+                        }}
+                        className="absolute w-full h-2 appearance-none bg-transparent pointer-events-auto [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-600 [&::-webkit-slider-thumb]:shadow-lg [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:relative [&::-webkit-slider-thumb]:z-10"
+                      />
+                    </div>
+                  </div>
                 </div>
               </div>
 
@@ -257,6 +378,18 @@ export function ProductsPage() {
                       className="inline-flex items-center gap-1 px-3 py-1 bg-blue-50 dark:bg-blue-900/30 dark:text-blue-400 rounded-full text-sm"
                     >
                       {selectedBrand}
+                      <X className="w-3 h-3" />
+                    </button>
+                  )}
+                  {(minPrice > priceBounds.min || maxPrice < priceBounds.max) && (
+                    <button
+                      onClick={() => {
+                        updateFilter('min_price', null);
+                        updateFilter('max_price', null);
+                      }}
+                      className="inline-flex items-center gap-1 px-3 py-1 bg-purple-50 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400 rounded-full text-sm"
+                    >
+                      {formatPrice(minPrice)} - {formatPrice(maxPrice)}
                       <X className="w-3 h-3" />
                     </button>
                   )}

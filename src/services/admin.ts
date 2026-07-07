@@ -38,6 +38,10 @@ function unwrapList<T>(response: MaybePaginated<T>): T[] {
   return Array.isArray(response) ? response : response.data;
 }
 
+export async function uploadProductImage(formData: FormData): Promise<{ url: string }> {
+  return api.post<{ url: string }>('/api/admin/products/upload-image', formData);
+}
+
 // Products
 export async function fetchAdminProducts(): Promise<Product[]> {
   return unwrapList(await api.get<MaybePaginated<Product>>('/api/admin/products'));
@@ -57,7 +61,11 @@ export async function deleteAdminProduct(id: string): Promise<void> {
 
 // Categories
 export async function fetchAdminCategories(): Promise<Category[]> {
-  return unwrapList(await api.get<MaybePaginated<Category>>('/api/admin/categories'));
+  try {
+    return await api.get<Category[]>('/api/admin/categories');
+  } catch {
+    return await api.get<Category[]>('/api/categories');
+  }
 }
 
 export async function createAdminCategory(category: Partial<Category>): Promise<Category> {

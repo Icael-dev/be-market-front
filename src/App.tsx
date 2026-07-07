@@ -1,10 +1,12 @@
-import { BrowserRouter, Routes, Route, Navigate, Outlet, useLocation } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, Outlet, useLocation, useNavigationType } from 'react-router-dom';
 import { Component, ErrorInfo, ReactNode, useEffect } from 'react';
 import { Toaster } from 'react-hot-toast';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
 import { WishlistProvider } from './context/WishlistContext';
 import { Layout } from './components/layout/Layout';
+
+const scrollPositions = new Map<string, number>();
 
 class ErrorBoundary extends Component<{ children: ReactNode }, { error: Error | null }> {
   state = { error: null };
@@ -100,16 +102,24 @@ function AdminRoute({ children }: { children: React.ReactNode }) {
 
 function AppRoutes() {
   const location = useLocation();
+  const navType = useNavigationType();
 
   useEffect(() => {
-    window.scrollTo(0, 0);
-  }, [location]);
+    if (navType === 'POP') {
+      const savedPos = scrollPositions.get(location.key || location.pathname);
+      if (savedPos !== undefined) {
+        window.scrollTo(0, savedPos);
+      }
+    } else {
+      window.scrollTo(0, 0);
+    }
 
-  useEffect(() => {
-    const onLoad = () => window.scrollTo(0, 0);
-    window.addEventListener('load', onLoad);
-    return () => window.removeEventListener('load', onLoad);
-  }, []);
+    const handleScroll = () => {
+      scrollPositions.set(location.key || location.pathname, window.scrollY);
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [location, navType]);
 
   return (
     <Routes>
