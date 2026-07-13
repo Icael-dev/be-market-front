@@ -10,31 +10,34 @@ export function Footer({ compact = false }: { compact?: boolean }) {
     return (
       <footer className={cn(
         "bg-gray-900 text-gray-300 dark:bg-gray-950 dark:text-gray-400",
-        isAdmin && "lg:ml-72"
+        "fixed bottom-0 left-0 right-0 z-40",
+        isAdmin && "lg:ml-72",
+        "border-t border-gray-700/50"
       )}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="border-t border-gray-700/50 pt-4 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-gray-400 dark:text-gray-500">
+        <div className="w-full px-4 py-3">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-3 max-w-7xl mx-auto text-sm text-gray-400 dark:text-gray-500">
             <div className="flex items-center gap-2">
-              <div className="w-6 h-6 rounded-md bg-gradient-to-br from-blue-600 to-cyan-500 flex items-center justify-center">
-                <span className="text-white font-bold text-xs">B</span>
+              <div className="w-5 h-5 rounded bg-gradient-to-br from-blue-600 to-cyan-500 flex items-center justify-center">
+                <span className="text-white font-bold text-[10px]">B</span>
               </div>
-              <span className="text-gray-400 dark:text-gray-500">&copy; {new Date().getFullYear()} BE-Market. Tous droits reserves.</span>
+              <span className="text-gray-400 dark:text-gray-500">&copy; {new Date().getFullYear()} BE-Market</span>
             </div>
             <div className="flex items-center gap-4">
               <a href="#" className="text-gray-400 hover:text-white transition-colors">
-                <Facebook className="w-7 h-7" />
+                <Facebook className="w-5 h-5" />
               </a>
               <a href="#" className="text-gray-400 hover:text-white transition-colors">
-                <Instagram className="w-7 h-7" />
+                <Instagram className="w-5 h-5" />
               </a>
               <a href="#" className="text-gray-400 hover:text-white transition-colors">
-                <Twitter className="w-7 h-7" />
+                <Twitter className="w-5 h-5" />
               </a>
-              <a href="#" className="text-gray-400 hover:text-white transition-colors">
-                <svg className="w-7 h-7" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.88-2.88 2.89 2.89 0 0 1 2.88-2.88c.28 0 .54.04.79.1v-3.5a6.37 6.37 0 0 0-.79-.05A6.34 6.34 0 0 0 3.15 15.2a6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.34-6.34V8.73a8.16 8.16 0 0 0 4.76 1.52v-3.4a4.85 4.85 0 0 1-1-.16z"/></svg>
-              </a>
-              <Link to="/faq" className="text-gray-400 hover:text-white transition-colors">FAQ</Link>
-              <Link to="/blog" className="text-gray-400 hover:text-white transition-colors">Blog</Link>
+              {isAdmin && (
+                <>
+                  <Link to="/faq" className="text-gray-400 hover:text-white transition-colors">FAQ</Link>
+                  <Link to="/blog" className="text-gray-400 hover:text-white transition-colors">Blog</Link>
+                </>
+              )}
             </div>
           </div>
         </div>
@@ -79,20 +82,20 @@ export function Footer({ compact = false }: { compact?: boolean }) {
           <div className="text-center">
             <h3 className="font-semibold text-white mb-4">Service Client</h3>
             <ul className="space-y-2">
-              <li><Link to="/orders" className="text-sm hover:text-white transition-colors">Suivi de commande</Link></li>
-              <li><Link to="/faq" className="text-sm hover:text-white transition-colors">FAQ</Link></li>
-              <li><Link to="/support" className="text-sm hover:text-white transition-colors">Support</Link></li>
-              <li><Link to="/loyalty" className="text-sm hover:text-white transition-colors">Programme Fidelite</Link></li>
+              <li><Link to="/orders" className="text-sm text-gray-400 hover:text-white transition-colors inline-block">Suivi de commande</Link></li>
+              <li><Link to="/faq" className="text-sm text-gray-400 hover:text-white transition-colors inline-block">FAQ</Link></li>
+              <li><Link to="/support" className="text-sm text-gray-400 hover:text-white transition-colors inline-block">Support</Link></li>
+              <li><Link to="/loyalty" className="text-sm text-gray-400 hover:text-white transition-colors inline-block">Programme Fidelite</Link></li>
             </ul>
           </div>
 
           <div className="text-center">
             <h3 className="font-semibold text-white mb-4">Informations</h3>
             <ul className="space-y-2">
-              <li><Link to="/legal/cgv" className="text-sm hover:text-white transition-colors">CGV</Link></li>
-              <li><Link to="/legal/returns" className="text-sm hover:text-white transition-colors">Retours</Link></li>
-              <li><Link to="/legal/privacy" className="text-sm hover:text-white transition-colors">Confidentialite</Link></li>
-              <li><Link to="/legal/terms" className="text-sm hover:text-white transition-colors">Mentions Legales</Link></li>
+              <li><Link to="/legal/cgv" className="text-sm text-gray-400 hover:text-white transition-colors inline-block">CGV</Link></li>
+              <li><Link to="/legal/returns" className="text-sm text-gray-400 hover:text-white transition-colors inline-block">Retours</Link></li>
+              <li><Link to="/legal/privacy" className="text-sm text-gray-400 hover:text-white transition-colors inline-block">Confidentialite</Link></li>
+              <li><Link to="/legal/terms" className="text-sm text-gray-400 hover:text-white transition-colors inline-block">Mentions Legales</Link></li>
             </ul>
           </div>
 
@@ -101,19 +104,19 @@ export function Footer({ compact = false }: { compact?: boolean }) {
             <ul className="space-y-3">
               <li className="flex items-center justify-center gap-3">
                 <MapPin className="w-6 h-6 text-blue-400 flex-shrink-0" />
-                <span className="text-sm">Lome, Togo</span>
+                <span className="text-sm text-gray-300">Lome, Togo</span>
               </li>
               <li className="flex items-center justify-center gap-3">
                 <Phone className="w-6 h-6 text-blue-400 flex-shrink-0" />
-                <span className="text-sm">+228 90 00 00 00</span>
+                <span className="text-sm text-gray-300">+228 90 00 00 00</span>
               </li>
               <li className="flex items-center justify-center gap-3">
                 <Mail className="w-6 h-6 text-blue-400 flex-shrink-0" />
-                <span className="text-sm">contact@be-market.tg</span>
+                <span className="text-sm text-gray-300">contact@be-market.tg</span>
               </li>
               <li className="flex items-center justify-center gap-3 pt-2">
                 <Globe className="w-6 h-6 text-blue-400 flex-shrink-0" />
-                <span className="text-sm">Lun-Sam: 8h - 19h</span>
+                <span className="text-sm text-gray-300">Lun-Sam: 8h - 19h</span>
               </li>
             </ul>
           </div>

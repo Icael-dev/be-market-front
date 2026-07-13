@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { login, logout, register, getCurrentUser } from '../services/auth';
+import { setAuthToken, setTokenExpiry, getTokenExpiry, getAuthToken } from '../lib/api';
 import type { AuthUser, Profile } from '../types';
 
 interface AuthContextType {
@@ -15,8 +16,7 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-
-
+type ServiceError = { error?: string };
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(null);
@@ -38,16 +38,47 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     fetchUser();
+
+    const checkTokenExpiry = () => {
+      const expiry = getTokenExpiry();
+      if (expiry && Date.now() > expiry - 60000) {
+        refreshAccessToken().catch(() => {});
+      }
+    };
+
+    const interval = setInterval(checkTokenExpiry, 30000);
+    return () => clearInterval(interval);
   }, []);
 
-type ServiceError = { error?: string };
+  const refreshAccessToken = async () => {
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/refresh`, {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${getAuthToken()}`,
+        },
+      });
 
-
-
+      if (response.ok) {
+        const data = await response.json();
+        setAuthToken(data.token);
+        setTokenExpiry(Date.now() + 3600000);
+      } else if (response.status === 401) {
+        setUser(null);
+        setProfile(null);
+        setAuthToken(null);
+      }
+    } catch {
+      // Silently fail - will be handled on next request
+    }
+  };
 
   const signIn = async (email: string, password: string) => {
     try {
-      await login({ email, password });
+      const result = await login({ email, password });
+      setTokenExpiry(Date.now() + 3600000);
       await fetchUser();
       return { error: null };
     } catch (err: unknown) {
@@ -73,6 +104,7 @@ type ServiceError = { error?: string };
     } finally {
       setUser(null);
       setProfile(null);
+      setAuthToken(null);
     }
   };
 
@@ -82,7 +114,7 @@ type ServiceError = { error?: string };
         user,
         profile,
         loading,
-        isAdmin: profile?.is_admin ?? false,
+        isAdmin: !!profile?.is_admin || !!user?.is_admin,
         signIn,
         signUp,
         signOut,

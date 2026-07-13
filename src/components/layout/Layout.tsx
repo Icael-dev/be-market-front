@@ -2,6 +2,7 @@ import { ReactNode } from 'react';
 import { Header } from './Header';
 import { Footer } from './Footer';
 import { useLocation } from 'react-router-dom';
+import { cn } from '../../lib/utils';
 
 interface LayoutProps {
   children: ReactNode;
@@ -17,7 +18,7 @@ export function Layout({ children, hideHeader, hideFooter }: LayoutProps) {
   return (
     <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-950 transition-colors duration-300">
       {!hideHeader && <Header />}
-      <main className="flex-1">
+      <main className={cn("flex-1", !isHomepage && "pb-16 lg:pb-0")}>
         {children}
       </main>
       {!hideFooter && <Footer compact={!isHomepage} />}

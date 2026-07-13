@@ -6,7 +6,21 @@ import { CartProvider } from './context/CartContext';
 import { WishlistProvider } from './context/WishlistContext';
 import { Layout } from './components/layout/Layout';
 
-const scrollPositions = new Map<string, number>();
+const SCROLL_KEY = 'be_market_scroll_positions';
+
+function getScrollPositions(): Record<string, number> {
+  try {
+    return JSON.parse(sessionStorage.getItem(SCROLL_KEY) || '{}');
+  } catch {
+    return {};
+  }
+}
+
+function setScrollPosition(key: string, position: number) {
+  const positions = getScrollPositions();
+  positions[key] = position;
+  sessionStorage.setItem(SCROLL_KEY, JSON.stringify(positions));
+}
 
 class ErrorBoundary extends Component<{ children: ReactNode }, { error: Error | null }> {
   state = { error: null };
@@ -63,6 +77,7 @@ import { AdminStatisticsPage } from './pages/admin/AdminStatisticsPage';
 import { AdminCouponsPage } from './pages/admin/AdminCouponsPage';
 import { AdminExportPage } from './pages/admin/AdminExportPage';
 import { AdminFlashSalesPage } from './pages/admin/AdminFlashSalesPage';
+import { AdminOrderDetailPage } from './pages/admin/AdminOrderDetailPage';
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();
@@ -105,8 +120,11 @@ function AppRoutes() {
   const navType = useNavigationType();
 
   useEffect(() => {
+    const scrollKey = location.key || location.pathname;
+    
     if (navType === 'POP') {
-      const savedPos = scrollPositions.get(location.key || location.pathname);
+      const positions = getScrollPositions();
+      const savedPos = positions[scrollKey];
       if (savedPos !== undefined) {
         window.scrollTo(0, savedPos);
       }
@@ -115,7 +133,7 @@ function AppRoutes() {
     }
 
     const handleScroll = () => {
-      scrollPositions.set(location.key || location.pathname, window.scrollY);
+      setScrollPosition(scrollKey, window.scrollY);
     };
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
@@ -203,6 +221,11 @@ function AppRoutes() {
         <Route path="/admin/orders" element={
           <AdminRoute>
             <AdminOrdersPage />
+          </AdminRoute>
+        } />
+        <Route path="/admin/orders/:id" element={
+          <AdminRoute>
+            <AdminOrderDetailPage />
           </AdminRoute>
         } />
         <Route path="/admin/customers" element={
