@@ -1,5 +1,5 @@
 import { api } from '../lib/api';
-import type { Payment, Order } from '../types';
+import type { Payment } from '../types';
 
 export async function initiatePayment(orderId: string, paymentMethod: string, phoneNumber?: string): Promise<Payment> {
   return api.post<Payment>('/api/payment/initiate', {

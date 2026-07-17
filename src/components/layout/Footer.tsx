@@ -9,7 +9,7 @@ export function Footer({ compact = false }: { compact?: boolean }) {
   if (compact) {
     return (
       <footer className={cn(
-        "bg-gray-900 text-gray-300 dark:bg-gray-950 dark:text-gray-400",
+        "sticky bottom-0 z-30 bg-gray-900 text-gray-300 dark:bg-gray-950 dark:text-gray-400",
         isAdmin && "lg:ml-72"
       )}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
@@ -21,18 +21,20 @@ export function Footer({ compact = false }: { compact?: boolean }) {
               <span className="text-gray-400 dark:text-gray-500">&copy; {new Date().getFullYear()} BE-Market. Tous droits reserves.</span>
             </div>
             <div className="flex items-center gap-4">
-              <a href="#" className="text-gray-400 hover:text-white transition-colors">
-                <Facebook className="w-7 h-7" />
+              <span className="hidden sm:inline text-gray-500">Suivez-nous :</span>
+              <a href="#" aria-label="Facebook" className="text-gray-400 hover:text-white transition-colors">
+                <Facebook className="w-5 h-5" />
               </a>
-              <a href="#" className="text-gray-400 hover:text-white transition-colors">
-                <Instagram className="w-7 h-7" />
+              <a href="#" aria-label="Instagram" className="text-gray-400 hover:text-white transition-colors">
+                <Instagram className="w-5 h-5" />
               </a>
-              <a href="#" className="text-gray-400 hover:text-white transition-colors">
-                <Twitter className="w-7 h-7" />
+              <a href="#" aria-label="Twitter" className="text-gray-400 hover:text-white transition-colors">
+                <Twitter className="w-5 h-5" />
               </a>
-              <a href="#" className="text-gray-400 hover:text-white transition-colors">
-                <svg className="w-7 h-7" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.88-2.88 2.89 2.89 0 0 1 2.88-2.88c.28 0 .54.04.79.1v-3.5a6.37 6.37 0 0 0-.79-.05A6.34 6.34 0 0 0 3.15 15.2a6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.34-6.34V8.73a8.16 8.16 0 0 0 4.76 1.52v-3.4a4.85 4.85 0 0 1-1-.16z"/></svg>
+              <a href="#" aria-label="TikTok" className="text-gray-400 hover:text-white transition-colors">
+                <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.88-2.88 2.89 2.89 0 0 1 2.88-2.88c.28 0 .54.04.79.1v-3.5a6.37 6.37 0 0 0-.79-.05A6.34 6.34 0 0 0 3.15 15.2a6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.34-6.34V8.73a8.16 8.16 0 0 0 4.76 1.52v-3.4a4.85 4.85 0 0 1-1-.16z"/></svg>
               </a>
+              <span className="text-gray-600">|</span>
               <Link to="/faq" className="text-gray-400 hover:text-white transition-colors">FAQ</Link>
               <Link to="/blog" className="text-gray-400 hover:text-white transition-colors">Blog</Link>
             </div>
@@ -61,22 +63,22 @@ export function Footer({ compact = false }: { compact?: boolean }) {
               Qualite, prix competitifs et service irreprochable.
             </p>
             <div className="flex items-center justify-center sm:justify-start gap-5 mb-6">
-              <a href="#" className="text-gray-400 hover:text-white transition-colors">
-                <Facebook className="w-9 h-9" />
+              <a href="#" aria-label="Facebook" className="text-gray-400 hover:text-white transition-colors">
+                <Facebook className="w-6 h-6" />
               </a>
-              <a href="#" className="text-gray-400 hover:text-white transition-colors">
-                <Instagram className="w-9 h-9" />
+              <a href="#" aria-label="Instagram" className="text-gray-400 hover:text-white transition-colors">
+                <Instagram className="w-6 h-6" />
               </a>
-              <a href="#" className="text-gray-400 hover:text-white transition-colors">
-                <Twitter className="w-9 h-9" />
+              <a href="#" aria-label="Twitter" className="text-gray-400 hover:text-white transition-colors">
+                <Twitter className="w-6 h-6" />
               </a>
-              <a href="#" className="text-gray-400 hover:text-white transition-colors">
-                <svg className="w-9 h-9" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.88-2.88 2.89 2.89 0 0 1 2.88-2.88c.28 0 .54.04.79.1v-3.5a6.37 6.37 0 0 0-.79-.05A6.34 6.34 0 0 0 3.15 15.2a6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.34-6.34V8.73a8.16 8.16 0 0 0 4.76 1.52v-3.4a4.85 4.85 0 0 1-1-.16z"/></svg>
+              <a href="#" aria-label="TikTok" className="text-gray-400 hover:text-white transition-colors">
+                <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.88-2.88 2.89 2.89 0 0 1 2.88-2.88c.28 0 .54.04.79.1v-3.5a6.37 6.37 0 0 0-.79-.05A6.34 6.34 0 0 0 3.15 15.2a6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.34-6.34V8.73a8.16 8.16 0 0 0 4.76 1.52v-3.4a4.85 4.85 0 0 1-1-.16z"/></svg>
               </a>
             </div>
           </div>
 
-          <div className="text-center">
+          <div className="text-center sm:text-left">
             <h3 className="font-semibold text-white mb-4">Service Client</h3>
             <ul className="space-y-2">
               <li><Link to="/orders" className="text-sm hover:text-white transition-colors">Suivi de commande</Link></li>
@@ -86,7 +88,7 @@ export function Footer({ compact = false }: { compact?: boolean }) {
             </ul>
           </div>
 
-          <div className="text-center">
+          <div className="text-center sm:text-left">
             <h3 className="font-semibold text-white mb-4">Informations</h3>
             <ul className="space-y-2">
               <li><Link to="/legal/cgv" className="text-sm hover:text-white transition-colors">CGV</Link></li>
@@ -96,23 +98,23 @@ export function Footer({ compact = false }: { compact?: boolean }) {
             </ul>
           </div>
 
-          <div className="text-center">
+          <div className="text-center sm:text-left">
             <h3 className="font-semibold text-white mb-4">Contact</h3>
             <ul className="space-y-3">
-              <li className="flex items-center justify-center gap-3">
-                <MapPin className="w-6 h-6 text-blue-400 flex-shrink-0" />
+              <li className="flex items-center justify-center sm:justify-start gap-3">
+                <MapPin className="w-5 h-5 text-blue-400 flex-shrink-0" />
                 <span className="text-sm">Lome, Togo</span>
               </li>
-              <li className="flex items-center justify-center gap-3">
-                <Phone className="w-6 h-6 text-blue-400 flex-shrink-0" />
+              <li className="flex items-center justify-center sm:justify-start gap-3">
+                <Phone className="w-5 h-5 text-blue-400 flex-shrink-0" />
                 <span className="text-sm">+228 90 00 00 00</span>
               </li>
-              <li className="flex items-center justify-center gap-3">
-                <Mail className="w-6 h-6 text-blue-400 flex-shrink-0" />
+              <li className="flex items-center justify-center sm:justify-start gap-3">
+                <Mail className="w-5 h-5 text-blue-400 flex-shrink-0" />
                 <span className="text-sm">contact@be-market.tg</span>
               </li>
-              <li className="flex items-center justify-center gap-3 pt-2">
-                <Globe className="w-6 h-6 text-blue-400 flex-shrink-0" />
+              <li className="flex items-center justify-center sm:justify-start gap-3">
+                <Globe className="w-5 h-5 text-blue-400 flex-shrink-0" />
                 <span className="text-sm">Lun-Sam: 8h - 19h</span>
               </li>
             </ul>

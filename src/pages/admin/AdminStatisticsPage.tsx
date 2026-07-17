@@ -29,7 +29,6 @@ export function AdminStatisticsPage() {
 
   useEffect(() => {
     void fetchStats();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [days]);
 
   const fetchStats = async () => {

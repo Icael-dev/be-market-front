@@ -16,6 +16,7 @@ import {
 import { LoadingSpinner } from '../components/LoadingSpinner';
 import { fetchAddresses, createAddress } from '../services/address';
 import { placeOrder } from '../services/orders';
+import { initiatePayment } from '../services/payments';
 
 type Step = 'shipping' | 'payment' | 'confirm';
 type PaymentMethod = 'tmoney' | 'flooz' | 'cash_on_delivery';
@@ -142,10 +143,18 @@ const handlePlaceOrder = async () => {
 
       const order = await placeOrder({
         shipping_address: shippingAddress,
-        billing_address: useNewAddress ? undefined : addresses.find(a => a.id === selectedAddressId),
+        billing_address: useNewAddress ? undefined : addresses.find(a => a.id === selectedAddressId) as Record<string, unknown> | undefined,
         payment_method: paymentMethod,
         notes,
       });
+
+      if (paymentMethod !== 'cash_on_delivery') {
+        try {
+          await initiatePayment(order.id, paymentMethod, shippingAddress.phone);
+        } catch (paymentError) {
+          console.error('Payment initiation error:', paymentError);
+        }
+      }
 
       if (useNewAddress && user) {
         await createAddress({

@@ -18,7 +18,7 @@ export function AdminCouponsPage() {
   const [editing, setEditing] = useState<Coupon | null>(null);
   const [saving, setSaving] = useState(false);
 
-  const [form, setForm] = useState({ code: '', discount_type: 'percentage' as 'percentage' | 'fixed', discount_value: 10, min_order_amount: 0, max_uses: null as number | null, expires_at: '', is_active: true });
+  const [form, setForm] = useState({ code: '', discount_type: 'percentage' as 'percentage' | 'fixed', discount_value: 10, min_order_amount: 0 as number | null, max_uses: null as number | null, expires_at: '', is_active: true });
 
   useEffect(() => { fetchCoupons(); }, []);
 

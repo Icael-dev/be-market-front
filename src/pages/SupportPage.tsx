@@ -6,6 +6,7 @@ import type { SupportTicket, SupportMessage } from '../types';
 import { MessageSquare, Send, Clock, Loader2, Plus, ArrowLeft } from 'lucide-react';
 import { format } from 'date-fns';
 import { Link, useParams } from 'react-router-dom';
+import { InputField, TextareaField } from '../components/ui/FormField';
 
 export function SupportPage() {
   const { user: authUser } = useAuth();
@@ -14,6 +15,7 @@ export function SupportPage() {
   const [showForm, setShowForm] = useState(false);
   const [subject, setSubject] = useState('');
   const [message, setMessage] = useState('');
+  const [errors, setErrors] = useState<{ subject?: string; message?: string }>({});
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
@@ -32,7 +34,13 @@ export function SupportPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!subject || !message) return;
+    const nextErrors: { subject?: string; message?: string } = {};
+    if (!subject.trim()) nextErrors.subject = 'Le sujet est requis';
+    if (!message.trim()) nextErrors.message = 'Le message est requis';
+    else if (message.trim().length < 10) nextErrors.message = 'Le message doit faire au moins 10 caracteres';
+    setErrors(nextErrors);
+    if (Object.keys(nextErrors).length > 0) return;
+
     setSubmitting(true);
 
     try {
@@ -41,6 +49,7 @@ export function SupportPage() {
       setShowForm(false);
       setSubject('');
       setMessage('');
+      setErrors({});
     } catch (error) {
       console.error('Error creating support ticket:', error);
     } finally {
@@ -93,15 +102,28 @@ export function SupportPage() {
         {showForm && (
           <motion.form initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} onSubmit={handleSubmit} className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 p-6 mb-6">
             <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-4">Nouvelle demande</h2>
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Sujet</label>
-              <input type="text" value={subject} onChange={e => setSubject(e.target.value)} className="w-full px-4 py-3 border border-gray-200 dark:border-gray-700 rounded-xl bg-white dark:bg-gray-800" placeholder="Ex: Probleme avec ma commande" />
+            <InputField
+              name="subject"
+              label="Sujet"
+              required
+              value={subject}
+              onChange={e => setSubject(e.target.value)}
+              error={errors.subject}
+              placeholder="Ex: Probleme avec ma commande"
+            />
+            <div className="mt-4">
+              <TextareaField
+                name="message"
+                label="Message"
+                required
+                rows={5}
+                value={message}
+                onChange={e => setMessage(e.target.value)}
+                error={errors.message}
+                placeholder="Decrivez votre probleme..."
+              />
             </div>
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Message</label>
-              <textarea value={message} onChange={e => setMessage(e.target.value)} rows={5} className="w-full px-4 py-3 border border-gray-200 dark:border-gray-700 rounded-xl bg-white dark:bg-gray-800" placeholder="Decrivez votre probleme..." />
-            </div>
-            <div className="flex gap-3">
+            <div className="flex gap-3 mt-2">
               <button type="submit" disabled={submitting} className="flex items-center gap-2 bg-blue-600 text-white px-6 py-2.5 rounded-xl font-medium disabled:opacity-50">
                 {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
                 Envoyer

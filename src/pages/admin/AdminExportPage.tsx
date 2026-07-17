@@ -19,28 +19,17 @@ export function AdminExportPage() {
   const handleExport = async (type: string) => {
     setExporting(type); setSuccess(null);
     try {
-      const rows = await fetchAdminExport(type);
-      let data: Record<string, unknown>[] = [];
-      switch (type) {
-        case 'orders':
-          data = rows.map(o => ({ 'Numero': o.order_number, 'Statut': o.status, 'Paiement': o.payment_status, 'Total': o.total, 'Date': format(new Date(String(o.created_at)), 'dd/MM/yyyy') }));
-          break;
-        case 'customers':
-          data = rows.map(p => ({ 'Nom': p.full_name || '', 'Email': p.email || '', 'Telephone': p.phone || '', 'Inscrit': format(new Date(String(p.created_at)), 'dd/MM/yyyy') }));
-          break;
-        case 'products':
-          data = rows.map(p => ({ 'Nom': p.name, 'Prix': p.price, 'Stock': p.stock, 'Actif': p.is_active ? 'Oui' : 'Non' }));
-          break;
-        case 'newsletter':
-          data = rows.map(s => ({ 'Email': s.email, 'Actif': s.is_active ? 'Oui' : 'Non', 'Date': s.subscribed_at ? format(new Date(String(s.subscribed_at)), 'dd/MM/yyyy') : '' }));
-          break;
-      }
-      if (data.length > 0) {
-        const csv = [Object.keys(data[0]).join(';'), ...data.map(r => Object.values(r).map(v => `"${v}"`).join(';'))].join('\n');
-        const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8' });
-        const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `${type}_${format(new Date(), 'yyyy-MM-dd')}.csv`; a.click();
-        setSuccess(type);
-      }
+      const blob = await fetchAdminExport(type);
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${type}_${format(new Date(), 'yyyy-MM-dd')}.csv`;
+      a.click();
+      URL.revokeObjectURL(url);
+      setSuccess(type);
+    } catch (error) {
+      console.error('Export error:', error);
+      alert('Erreur lors de l\'export.');
     } finally { setExporting(null); }
   };
 

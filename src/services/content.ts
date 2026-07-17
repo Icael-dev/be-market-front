@@ -1,5 +1,5 @@
 import { api } from '../lib/api';
-import { FAQ, LegalPage, Banner, FlashSale, Review, LoyaltyPoints, LoyaltyTransaction, BlogPost } from '../types';
+import { FAQ, LegalPage, Banner, FlashSale, Review, LoyaltyPoints, LoyaltyTransaction, BlogPost, Testimonial } from '../types';
 
 export async function fetchFaqs(): Promise<FAQ[]> {
   return api.get<FAQ[]>('/api/faqs');

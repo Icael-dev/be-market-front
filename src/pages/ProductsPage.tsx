@@ -5,13 +5,13 @@ import { fetchProducts, fetchCategories, fetchPriceBounds } from '../services/pr
 import type { Product, Category, FilterOptions } from '../types';
 import { ProductCard } from '../components/ProductCard';
 import { ProductsGridSkeleton } from '../components/LoadingSpinner';
-import { SearchWithSuggestions } from '../components/SearchWithSuggestions';
 import {
   SlidersHorizontal,
   X,
   ChevronDown,
   Grid3X3,
-  LayoutList
+  LayoutList,
+  Search
 } from 'lucide-react';
 import { cn, formatPrice } from '../lib/utils';
 

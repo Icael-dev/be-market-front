@@ -118,7 +118,7 @@ export function useProductForm(categories: Category[]) {
     if (category?.specs && category.specs.length > 0) {
       return category.specs.map((s: { key: string; placeholder?: string }) => ({ key: s.key, value: '', placeholder: s.placeholder }));
     }
-    return DEFAULT_SPECS_BY_CATEGORY[categoryId] || [];
+    return (DEFAULT_SPECS_BY_CATEGORY[categoryId] || []).map(s => ({ key: s.key, value: '', placeholder: s.placeholder }));
   }, [categories]);
 
   const resetForm = useCallback(() => {

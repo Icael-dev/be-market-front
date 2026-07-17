@@ -19,7 +19,7 @@ export function SearchWithSuggestions() {
   const [showSuggestions, setShowSuggestions] = useState(false);
   const navigate = useNavigate();
   const wrapperRef = useRef<HTMLDivElement>(null);
-  const debounceRef = useRef<NodeJS.Timeout | null>(null);
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const fetchSuggestions = useCallback(async (searchQuery: string) => {
     if (!searchQuery.trim()) {

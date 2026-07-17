@@ -107,12 +107,12 @@ export function AdminCategoriesPage() {
       .map(s => ({ key: s.key.trim(), placeholder: s.placeholder || undefined }));
 
     try {
-      const data = {
+      const data: Partial<Category> = {
         name: formData.name,
         slug: formData.slug,
         description: formData.description || null,
         is_active: formData.is_active,
-        specs: specsToSend.length > 0 ? specsToSend : null
+        specs: specsToSend.length > 0 ? specsToSend : undefined
       };
 
       if (editingCategory) {

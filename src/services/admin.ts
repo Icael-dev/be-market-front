@@ -177,6 +177,22 @@ export async function fetchAdminStatistics(days?: number): Promise<AdminStats> {
 }
 
 // Export
-export async function fetchAdminExport(type: string): Promise<Record<string, unknown>[]> {
-  return unwrapList(await api.get<MaybePaginated<Record<string, unknown>>>(`/api/admin/export?type=${encodeURIComponent(type)}`));
+export async function fetchAdminExport(type: string): Promise<Blob> {
+  const API_BASE_URL = (import.meta.env.VITE_API_URL ?? '').replace(/\/$/, '');
+  const token = localStorage.getItem('be_market_jwt_token');
+  const headers: Record<string, string> = { Accept: 'text/csv' };
+  if (token) {
+    headers.Authorization = `Bearer ${token}`;
+  }
+
+  const response = await fetch(`${API_BASE_URL}/api/admin/export?type=${encodeURIComponent(type)}`, {
+    method: 'GET',
+    headers,
+  });
+
+  if (!response.ok) {
+    throw new Error('Export failed');
+  }
+
+  return response.blob();
 }
