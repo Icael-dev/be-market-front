@@ -28,6 +28,8 @@ import {
   Settings,
   Save,
   Copy,
+  Camera,
+  Square,
 } from 'lucide-react';
 
 function TabButton({ icon, label, active, onClick, badge }: {
@@ -76,7 +78,11 @@ export function AdminProductsPage() {
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
   const [uploadingImage, setUploadingImage] = useState(false);
+  const [cameraOpen, setCameraOpen] = useState(false);
+  const [cameraError, setCameraError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const streamRef = useRef<MediaStream | null>(null);
 
   const {
     formData,
@@ -137,6 +143,137 @@ export function AdminProductsPage() {
     setActiveTab('general');
   }, [populateForm, setActiveTab, setFormData]);
 
+  const stopCamera = useCallback(() => {
+    streamRef.current?.getTracks().forEach(track => track.stop());
+    streamRef.current = null;
+    setCameraOpen(false);
+    setCameraError(null);
+  }, []);
+
+  const startCamera = useCallback(async () => {
+    setCameraError(null);
+    if (!navigator.mediaDevices?.getUserMedia) {
+      setCameraError('La camera n\'est pas supportee par ce navigateur. Utilisez l\'upload.');
+      return;
+    }
+    try {
+      const isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: isMobile ? 'environment' : 'user' },
+        audio: false
+      });
+      streamRef.current = stream;
+      setCameraOpen(true);
+    } catch (err) {
+      console.error('Camera error:', err);
+      setCameraError('Impossible d\'acceder a la camera. Autorisez l\'acces ou utilisez l\'upload.');
+      setCameraOpen(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!cameraOpen) return;
+    const video = videoRef.current;
+    if (video && streamRef.current) {
+      video.srcObject = streamRef.current;
+      video.play().catch(() => {});
+    }
+  }, [cameraOpen]);
+
+  const isNetworkOrCorsError = (err: unknown): boolean => {
+    return err instanceof TypeError || (typeof err === 'object' && err !== null && !('status' in err));
+  };
+
+  const capturePhoto = useCallback(async () => {
+    const video = videoRef.current;
+    if (!video) {
+      setCameraError('Camera non disponible. Fermez et rouvrez la camera.');
+      return;
+    }
+
+    if (!video.videoWidth) {
+      try {
+        await new Promise<void>((resolve, reject) => {
+          const timeout = setTimeout(() => reject(new Error('video-timeout')), 3000);
+          const check = () => {
+            if (video.videoWidth) {
+              clearTimeout(timeout);
+              resolve();
+            } else {
+              requestAnimationFrame(check);
+            }
+          };
+          check();
+        });
+      } catch {
+        setCameraError('Flux video non pret. Patientez une seconde ou rouvrez la camera.');
+        return;
+      }
+    }
+
+    const maxDim = 1280;
+    const scale = Math.min(1, maxDim / Math.max(video.videoWidth, video.videoHeight));
+    const canvas = document.createElement('canvas');
+    canvas.width = Math.round(video.videoWidth * scale);
+    canvas.height = Math.round(video.videoHeight * scale);
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+    const dataUrl = canvas.toDataURL('image/jpeg', 0.7);
+    const blob = await (await fetch(dataUrl)).blob();
+    const file = new File([blob], `capture-${Date.now()}.jpg`, { type: 'image/jpeg' });
+
+    const MAX_RETRIES = 3;
+    let succeeded = false;
+    let isRetryable = false;
+    setUploadingImage(true);
+    for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+      try {
+        const fd = new FormData();
+        fd.append('image', file);
+        const result = await uploadProductImage(fd);
+        setFormData(prev => ({ ...prev, images: [...prev.images, result.url] }));
+        setCameraError(null);
+        succeeded = true;
+        break;
+      } catch (err) {
+        console.error(`Capture upload error (attempt ${attempt}):`, err);
+        isRetryable = isNetworkOrCorsError(err);
+        if (isRetryable && attempt < MAX_RETRIES) {
+          await new Promise(res => setTimeout(res, 800 * attempt));
+          continue;
+        }
+        if (isRetryable) {
+          setCameraError('Impossible de joindre le serveur (probleme CORS ou reseau). Verifiez que le backend est demarre et autorise cette origine, puis reessayez.');
+        } else {
+          const status = (err as { status?: number }).status;
+          if (status === 413 || status === 422) {
+            setCameraError('Photo trop lourde ou format non supporte. Utilisez une image JPEG/PNG de moins de 10 Mo.');
+          } else {
+            setCameraError('Erreur lors de l\'envoi de la photo. Reessayez.');
+          }
+        }
+        break;
+      } finally {
+        if (succeeded || !isRetryable) {
+          setUploadingImage(false);
+        }
+      }
+    }
+    if (!succeeded) {
+      setUploadingImage(false);
+    }
+  }, [uploadProductImage, setFormData]);
+
+  const handleCancel = useCallback(() => {
+    stopCamera();
+    setShowForm(false);
+    setEditingProduct(null);
+    setErrors({});
+    resetForm();
+  }, [resetForm, stopCamera]);
+
   const handleSave = useCallback(async () => {
     setSaving(true);
     setErrors({});
@@ -185,6 +322,7 @@ export function AdminProductsPage() {
       }
 
       await fetchProducts();
+      stopCamera();
       setShowForm(false);
       setEditingProduct(null);
       resetForm();
@@ -199,7 +337,7 @@ export function AdminProductsPage() {
     } finally {
       setSaving(false);
     }
-  }, [editingProduct, formData, fetchProducts, resetForm]);
+  }, [editingProduct, formData, fetchProducts, resetForm, stopCamera]);
 
   const handleDelete = useCallback((productId: string) => {
     setConfirmDeleteId(productId);
@@ -260,6 +398,17 @@ export function AdminProductsPage() {
     setFormData(prev => ({ ...prev, images: prev.images.filter(img => img !== url) }));
   }, [setFormData]);
 
+  useEffect(() => {
+    return () => {
+      streamRef.current?.getTracks().forEach(track => track.stop());
+    };
+  }, []);
+
+  const closeForm = useCallback(() => {
+    stopCamera();
+    setShowForm(false);
+  }, [stopCamera]);
+
   const getImageUrl = (url: string) => {
     if (!url) return url;
     if (url.includes('/storage/products/')) {
@@ -269,6 +418,14 @@ export function AdminProductsPage() {
   };
 
   const fieldError = (field: string) => errors[field]?.[0];
+
+  const displayImageUrl = (url: string) => {
+    if (!url) return url;
+    if (url.includes('/storage/products/')) {
+      return url.replace('/storage/products/', '/api/images/');
+    }
+    return url;
+  };
 
   const handleDuplicate = useCallback((product: Product) => {
     setEditingProduct(null);
@@ -467,7 +624,7 @@ export function AdminProductsPage() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              onClick={() => setShowForm(false)}
+              onClick={closeForm}
               className="fixed inset-0 bg-black/50 z-50"
             />
             <motion.div
@@ -481,7 +638,7 @@ export function AdminProductsPage() {
                   {editingProduct ? 'Modifier le produit' : 'Nouveau produit'}
                 </h2>
                 <button
-                  onClick={() => setShowForm(false)}
+                  onClick={closeForm}
                   className="p-2 hover:bg-gray-100 hover:dark:bg-gray-700 rounded-lg transition-colors"
                 >
                   <X className="w-5 h-5" />
@@ -556,17 +713,44 @@ export function AdminProductsPage() {
                     <motion.div key="images" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="space-y-5">
                       <div>
                         <label className="block text-sm font-medium dark:text-gray-500 mb-2">Images du produit ({formData.images.length})</label>
-                        <button type="button" onClick={() => fileInputRef.current?.click()} disabled={uploadingImage} className="w-full flex items-center justify-center gap-2 px-4 py-6 border-2 border-dashed dark:border-gray-700 rounded-xl hover:border-primary-500 dark:hover:border-primary-400 hover:bg-primary-50 dark:hover:bg-primary-900/10 transition-colors disabled:opacity-50">
-                          {uploadingImage ? <Loader2 className="w-5 h-5 animate-spin" /> : <Upload className="w-5 h-5" />}
-                          <span className="text-sm font-medium">{uploadingImage ? 'Upload en cours...' : 'Cliquer pour uploader des images'}</span>
-                        </button>
+                        <div className="flex gap-3">
+                          <button type="button" onClick={() => fileInputRef.current?.click()} disabled={uploadingImage || cameraOpen} className="flex-1 flex items-center justify-center gap-2 px-4 py-6 border-2 border-dashed dark:border-gray-700 rounded-xl hover:border-primary-500 dark:hover:border-primary-400 hover:bg-primary-50 dark:hover:bg-primary-900/10 transition-colors disabled:opacity-50">
+                            {uploadingImage ? <Loader2 className="w-5 h-5 animate-spin" /> : <Upload className="w-5 h-5" />}
+                            <span className="text-sm font-medium">{uploadingImage ? 'Upload en cours...' : 'Cliquer pour uploader'}</span>
+                          </button>
+                          <button type="button" onClick={cameraOpen ? stopCamera : startCamera} disabled={uploadingImage} className="flex-1 flex items-center justify-center gap-2 px-4 py-6 border-2 border-dashed dark:border-gray-700 rounded-xl hover:border-primary-500 dark:hover:border-primary-400 hover:bg-primary-50 dark:hover:bg-primary-900/10 transition-colors disabled:opacity-50">
+                            <Camera className="w-5 h-5" />
+                            <span className="text-sm font-medium">{cameraOpen ? 'Fermer la camera' : 'Prendre une photo'}</span>
+                          </button>
+                        </div>
                         <input ref={fileInputRef} type="file" accept="image/*" multiple className="hidden" onChange={handleFileUpload} />
+
+                        {cameraOpen && (
+                          <div className="mt-3 space-y-3">
+                            <div className="relative rounded-xl overflow-hidden bg-black aspect-video flex items-center justify-center">
+                              <video ref={videoRef} playsInline className="w-full h-full object-contain" />
+                            </div>
+                            {cameraError && (
+                              <p className="text-xs text-red-600 dark:text-red-400 flex items-center gap-1">
+                                <AlertCircle className="w-3 h-3" />
+                                {cameraError}
+                              </p>
+                            )}
+                            <button type="button" onClick={capturePhoto} disabled={uploadingImage} className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-primary-600 text-white rounded-xl font-medium hover:bg-primary-700 transition-colors disabled:opacity-50">
+                              {uploadingImage ? <Loader2 className="w-5 h-5 animate-spin" /> : <Square className="w-5 h-5" />}
+                              <span className="text-sm font-medium">{uploadingImage ? 'Envoi en cours...' : 'Capturer'}</span>
+                            </button>
+                            <button type="button" onClick={stopCamera} className="w-full flex items-center justify-center gap-2 px-4 py-3 border dark:border-gray-700 rounded-xl font-medium hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                              Terminer ({formData.images.length} photo{formData.images.length > 1 ? 's' : ''})
+                            </button>
+                          </div>
+                        )}
                       </div>
                       {formData.images.length > 0 && (
                         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                           {formData.images.map((img, i) => (
                             <div key={i} className="relative group">
-                              <img src={img} alt={`Preview ${i + 1}`} className="w-full aspect-square object-cover rounded-lg border dark:border-gray-700" onError={(e) => { (e.target as HTMLImageElement).src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="%239CA3AF" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>'; }} />
+                              <img src={displayImageUrl(img)} alt={`Preview ${i + 1}`} className="w-full aspect-square object-cover rounded-lg border dark:border-gray-700" onError={(e) => { (e.target as HTMLImageElement).src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="%239CA3AF" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>'; }} />
                               <button type="button" onClick={() => removeImage(img)} className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"><X className="w-3 h-3" /></button>
                             </div>
                           ))}
@@ -743,7 +927,7 @@ export function AdminProductsPage() {
                     {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
                     {saving ? 'Enregistrement...' : 'Enregistrer'}
                   </button>
-                  <button onClick={() => setShowForm(false)} className="px-6 py-2.5 border dark:border-gray-700 rounded-xl font-medium hover:bg-gray-100 hover:dark:bg-gray-700 transition-colors">Annuler</button>
+                  <button onClick={handleCancel} className="px-6 py-2.5 border dark:border-gray-700 rounded-xl font-medium hover:bg-gray-100 hover:dark:bg-gray-700 transition-colors">Annuler</button>
                 </div>
               </div>
             </motion.div>

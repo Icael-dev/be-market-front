@@ -174,7 +174,6 @@ export interface Banner {
   image_url: string;
   link_url: string | null;
   button_text: string | null;
-  position: string;
   is_active: boolean;
   sort_order: number;
   created_at: string;

@@ -5,13 +5,22 @@ import {
   fetchAdminBanners,
   createAdminBanner,
   updateAdminBanner,
-  deleteAdminBanner
+  deleteAdminBanner,
+  uploadProductImage
 } from '../../services/admin';
 import type { Banner } from '../../types';
-import { Plus, Edit2, Trash2, X, Save, Image as ImageIcon } from 'lucide-react';
+import { Plus, Edit2, Trash2, X, Save, Image as ImageIcon, Upload, Loader2 } from 'lucide-react';
 import { AdminLayout } from '../../components/admin/AdminLayout';
 import { PageHeader } from '../../components/admin/PageHeader';
 import { AnimatePresence } from 'framer-motion';
+
+const displayImageUrl = (url: string) => {
+  if (!url) return url;
+  if (url.includes('/storage/products/')) {
+    return url.replace('/storage/products/', '/api/images/');
+  }
+  return url;
+};
 
 export function AdminBannersPage() {
   const [banners, setBanners] = useState<Banner[]>([]);
@@ -26,10 +35,10 @@ export function AdminBannersPage() {
     image_url: '',
     link_url: '',
     button_text: '',
-    position: '',
     is_active: true,
     sort_order: 0
   });
+  const [uploadingImage, setUploadingImage] = useState(false);
 
   useEffect(() => {
     fetchBanners();
@@ -53,11 +62,29 @@ export function AdminBannersPage() {
       image_url: '',
       link_url: '',
       button_text: '',
-      position: '',
       is_active: true,
       sort_order: 0
     });
     setEditingBanner(null);
+  };
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploadingImage(true);
+    try {
+      const fd = new FormData();
+      fd.append('image', file);
+      const result = await uploadProductImage(fd);
+      setFormData(prev => ({ ...prev, image_url: result.url }));
+    } catch (err) {
+      console.error('Banner image upload error:', err);
+      toast.error('Erreur lors de l\'upload de l\'image');
+    } finally {
+      setUploadingImage(false);
+      e.target.value = '';
+    }
   };
 
   const handleEdit = (banner: Banner) => {
@@ -68,7 +95,6 @@ export function AdminBannersPage() {
       image_url: banner.image_url,
       link_url: banner.link_url || '',
       button_text: banner.button_text || '',
-      position: banner.position || '',
       is_active: banner.is_active,
       sort_order: banner.sort_order
     });
@@ -136,12 +162,12 @@ export function AdminBannersPage() {
               transition={{ delay: index * 0.05 }}
               className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 overflow-hidden"
             >
-              <div className="relative h-48">
-                <img
-                  src={banner.image_url}
-                  alt={banner.title}
-                  className="w-full h-full object-cover"
-                />
+                <div className="relative h-48">
+                  <img
+                    src={displayImageUrl(banner.image_url)}
+                    alt={banner.title}
+                    className="w-full h-full object-cover"
+                  />
                 <div className="absolute inset-0 bg-gradient-to-r from-black/60 to-transparent" />
                 <div className="absolute inset-0 flex items-center px-8">
                   <div className="text-white">
@@ -249,14 +275,43 @@ export function AdminBannersPage() {
 
                 <div>
                   <label className="block text-sm font-medium dark:text-gray-500 mb-2">
-                    URL de l'image *
+                    Image *
                   </label>
-                  <input
-                    type="text"
-                    value={formData.image_url}
-                    onChange={e => setFormData({ ...formData, image_url: e.target.value })}
-                    className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
-                  />
+                  {formData.image_url ? (
+                    <div className="relative rounded-xl overflow-hidden border dark:border-gray-700">
+                      <img
+                        src={displayImageUrl(formData.image_url)}
+                        alt="Apercu"
+                        className="w-full h-48 object-cover"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setFormData({ ...formData, image_url: '' })}
+                        className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1.5 hover:bg-red-600"
+                        aria-label="Retirer l'image"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                    </div>
+                  ) : (
+                    <label className="flex flex-col items-center justify-center gap-2 w-full px-4 py-8 border-2 border-dashed dark:border-gray-700 rounded-xl hover:border-primary-500 dark:hover:border-primary-400 hover:bg-primary-50 dark:hover:bg-primary-900/10 transition-colors cursor-pointer">
+                      {uploadingImage ? (
+                        <Loader2 className="w-6 h-6 animate-spin text-primary-600" />
+                      ) : (
+                        <Upload className="w-6 h-6 dark:text-gray-500" />
+                      )}
+                      <span className="text-sm font-medium dark:text-gray-500">
+                        {uploadingImage ? 'Upload en cours...' : 'Cliquer pour uploader une image'}
+                      </span>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={handleImageUpload}
+                        disabled={uploadingImage}
+                      />
+                    </label>
+                  )}
                 </div>
 
                 <div>
@@ -280,19 +335,6 @@ export function AdminBannersPage() {
                     value={formData.button_text}
                     onChange={e => setFormData({ ...formData, button_text: e.target.value })}
                     className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium dark:text-gray-500 mb-2">
-                    Position
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.position}
-                    onChange={e => setFormData({ ...formData, position: e.target.value })}
-                    className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
-                    placeholder="ex: hero, sidebar"
                   />
                 </div>
 

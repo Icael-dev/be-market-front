@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef, useLayoutEffect } from 'react';
 import { motion } from 'framer-motion';
 import { fetchAdminStatistics } from '../../services/admin';
 import { AdminLayout } from '../../components/admin/AdminLayout';
@@ -8,7 +8,33 @@ import { DollarSign, ShoppingCart, Users, Package, ArrowUpRight, ArrowDownRight,
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell } from 'recharts';
 import { format } from 'date-fns';
 
+function useElementWidth<T extends HTMLElement>() {
+  const ref = useRef<T>(null);
+  const [width, setWidth] = useState(0);
+
+  useLayoutEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const update = () => setWidth(el.clientWidth);
+    update();
+    const observer = new ResizeObserver(update);
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  return { ref, width };
+}
+
 const COLORS = ['#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6'];
+
+function ChartBox({ height, children }: { height: number; children: (props: { width: number }) => React.ReactNode }) {
+  const { ref, width } = useElementWidth<HTMLDivElement>();
+  return (
+    <div ref={ref} className="w-full" style={{ height }}>
+      {width > 0 && children({ width })}
+    </div>
+  );
+}
 
 type AdminStatsView = {
   totalRevenue: number;
@@ -176,87 +202,95 @@ export function AdminStatisticsPage() {
 <div className="grid lg:grid-cols-2 gap-6 min-h-0">
                  <div className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 p-6 min-h-0 flex flex-col">
                    <h3 className="text-lg font-bold dark:text-white mb-4">Revenus quotidiens</h3>
-                   <div className="h-64 flex-1 min-h-0">
-                     <ResponsiveContainer width="100%" height="100%">
-                       <AreaChart data={stats.dailyRevenue}>
-                         <CartesianGrid strokeDasharray="3 3" stroke="#F3F4F6" />
-                         <XAxis dataKey="date" tick={{ fontSize: 12 }} stroke="#9CA3AF" />
-                         <YAxis
-                           tick={{ fontSize: 12 }}
-                           stroke="#9CA3AF"
-                           tickFormatter={v => `${(v / 1000).toFixed(0)}k`}
-                         />
-                         <Tooltip
-                           formatter={(value) => formatPrice(Number(value) || 0)}
-                           contentStyle={{ background: '#1F2937', border: 'none', borderRadius: '12px', color: 'white' }}
-                         />
-                         <Area type="monotone" dataKey="revenue" stroke="#3B82F6" fill="#3B82F620" />
-                       </AreaChart>
-                     </ResponsiveContainer>
-                   </div>
+                   <ChartBox height={256}>
+                     {({ width }) => (
+                       <ResponsiveContainer width={width || '100%'} height={256}>
+                         <AreaChart data={stats.dailyRevenue}>
+                           <CartesianGrid strokeDasharray="3 3" stroke="#F3F4F6" />
+                           <XAxis dataKey="date" tick={{ fontSize: 12 }} stroke="#9CA3AF" />
+                           <YAxis
+                             tick={{ fontSize: 12 }}
+                             stroke="#9CA3AF"
+                             tickFormatter={v => `${(v / 1000).toFixed(0)}k`}
+                           />
+                           <Tooltip
+                             formatter={(value) => formatPrice(Number(value) || 0)}
+                             contentStyle={{ background: '#1F2937', border: 'none', borderRadius: '12px', color: 'white' }}
+                           />
+                           <Area type="monotone" dataKey="revenue" stroke="#3B82F6" fill="#3B82F620" />
+                         </AreaChart>
+                       </ResponsiveContainer>
+                     )}
+                   </ChartBox>
                  </div>
 
                  <div className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 p-6 min-h-0 flex flex-col">
                    <h3 className="text-lg font-bold dark:text-white mb-4">Commandes par jour</h3>
-                   <div className="h-64 flex-1 min-h-0">
-                     <ResponsiveContainer width="100%" height="100%">
-                       <BarChart data={stats.dailyRevenue}>
-                         <CartesianGrid strokeDasharray="3 3" stroke="#F3F4F6" />
-                         <XAxis dataKey="date" tick={{ fontSize: 12 }} stroke="#9CA3AF" />
-                         <YAxis tick={{ fontSize: 12 }} stroke="#9CA3AF" />
-                         <Tooltip contentStyle={{ background: '#1F2937', border: 'none', borderRadius: '12px', color: 'white' }} />
-                         <Bar dataKey="orders" fill="#3B82F6" radius={[4, 4, 0, 0]} />
-                       </BarChart>
-                     </ResponsiveContainer>
-                   </div>
+                   <ChartBox height={256}>
+                     {({ width }) => (
+                       <ResponsiveContainer width={width || '100%'} height={256}>
+                         <BarChart data={stats.dailyRevenue}>
+                           <CartesianGrid strokeDasharray="3 3" stroke="#F3F4F6" />
+                           <XAxis dataKey="date" tick={{ fontSize: 12 }} stroke="#9CA3AF" />
+                           <YAxis tick={{ fontSize: 12 }} stroke="#9CA3AF" />
+                           <Tooltip contentStyle={{ background: '#1F2937', border: 'none', borderRadius: '12px', color: 'white' }} />
+                           <Bar dataKey="orders" fill="#3B82F6" radius={[4, 4, 0, 0]} />
+                         </BarChart>
+                       </ResponsiveContainer>
+                     )}
+                   </ChartBox>
                  </div>
 
                  <div className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 p-6 min-h-0 flex flex-col">
                    <h3 className="text-lg font-bold dark:text-white mb-4">Statuts commandes</h3>
-                   <div className="h-48 flex-1 min-h-0">
-                     <ResponsiveContainer width="100%" height="100%">
-                       <PieChart>
-                         <Pie
-                           data={stats.statusData}
-                           cx="50%"
-                           cy="50%"
-                           innerRadius={50}
-                           outerRadius={70}
-                           dataKey="value"
-                           label={({ name, value }) => `${name}: ${value}`}
-                         >
-                           {stats.statusData.map((row, i) => (
-                             <Cell key={row.name} fill={COLORS[i % COLORS.length]} />
-                           ))}
-                         </Pie>
-                         <Tooltip />
-                       </PieChart>
-                     </ResponsiveContainer>
-                   </div>
+                   <ChartBox height={192}>
+                     {({ width }) => (
+                       <ResponsiveContainer width={width || '100%'} height={192}>
+                         <PieChart>
+                           <Pie
+                             data={stats.statusData}
+                             cx="50%"
+                             cy="50%"
+                             innerRadius={50}
+                             outerRadius={70}
+                             dataKey="value"
+                             label={({ name, value }) => `${name}: ${value}`}
+                           >
+                             {stats.statusData.map((row, i) => (
+                               <Cell key={row.name} fill={COLORS[i % COLORS.length]} />
+                             ))}
+                           </Pie>
+                           <Tooltip />
+                         </PieChart>
+                       </ResponsiveContainer>
+                     )}
+                   </ChartBox>
                  </div>
 
                  <div className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 p-6 min-h-0 flex flex-col">
                    <h3 className="text-lg font-bold dark:text-white mb-4">Methodes paiement</h3>
-                   <div className="h-48 flex-1 min-h-0">
-                     <ResponsiveContainer width="100%" height="100%">
-                       <PieChart>
-                         <Pie
-                           data={stats.paymentData}
-                           cx="50%"
-                           cy="50%"
-                           innerRadius={50}
-                           outerRadius={70}
-                           dataKey="value"
-                           label={({ name, value }) => `${name}: ${value}`}
-                         >
-                           {stats.paymentData.map((row, i) => (
-                             <Cell key={row.name} fill={COLORS[i % COLORS.length]} />
-                           ))}
-                         </Pie>
-                         <Tooltip />
-                       </PieChart>
-                     </ResponsiveContainer>
-                   </div>
+                   <ChartBox height={192}>
+                     {({ width }) => (
+                       <ResponsiveContainer width={width || '100%'} height={192}>
+                         <PieChart>
+                           <Pie
+                             data={stats.paymentData}
+                             cx="50%"
+                             cy="50%"
+                             innerRadius={50}
+                             outerRadius={70}
+                             dataKey="value"
+                             label={({ name, value }) => `${name}: ${value}`}
+                           >
+                             {stats.paymentData.map((row, i) => (
+                               <Cell key={row.name} fill={COLORS[i % COLORS.length]} />
+                             ))}
+                           </Pie>
+                           <Tooltip />
+                         </PieChart>
+                       </ResponsiveContainer>
+                     )}
+                   </ChartBox>
                  </div>
                </div>
             </>
