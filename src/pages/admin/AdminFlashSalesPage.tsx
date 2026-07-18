@@ -67,8 +67,8 @@ export function AdminFlashSalesPage() {
     setFormData({
       product_id: sale.product_id,
       discount_percentage: sale.discount_percentage,
-      starts_at: sale.starts_at.slice(0, 16).replace('T', ' '),
-      ends_at: sale.ends_at.slice(0, 16).replace('T', ' '),
+      starts_at: sale.starts_at.slice(0, 16),
+      ends_at: sale.ends_at.slice(0, 16),
       is_active: sale.is_active
     });
     setShowForm(true);
