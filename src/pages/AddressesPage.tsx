@@ -4,6 +4,32 @@ import { useAuth } from '../context/AuthContext';
 import type { Address } from '../types';
 import { MapPin, Plus, Edit2, Trash2, Check } from 'lucide-react';
 import { fetchAddresses, createAddress, updateAddress, deleteAddress } from '../services/address';
+import { InputField } from '../components/ui/FormField';
+
+type AddressErrors = Partial<Record<'full_name' | 'phone' | 'address_line1' | 'city', string>>;
+
+const validateAddress = (data: typeof initialForm): AddressErrors => {
+  const errors: AddressErrors = {};
+  if (!data.full_name.trim()) errors.full_name = 'Le nom complet est requis';
+  if (!data.phone.trim()) errors.phone = 'Le telephone est requis';
+  else if (!/^[+\d][\d\s()-]{7,}$/.test(data.phone.trim())) errors.phone = 'Numero de telephone invalide';
+  if (!data.address_line1.trim()) errors.address_line1 = "L'adresse est requise";
+  if (!data.city.trim()) errors.city = 'La ville est requise';
+  return errors;
+};
+
+const initialForm = {
+  label: '',
+  full_name: '',
+  phone: '',
+  address_line1: '',
+  address_line2: '',
+  city: 'Lome',
+  region: 'Maritime',
+  country: 'Togo',
+  postal_code: '',
+  is_default: false
+};
 
 export function AddressesPage() {
   const { user } = useAuth();
@@ -11,18 +37,8 @@ export function AddressesPage() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [showAddForm, setShowAddForm] = useState(false);
 
-  const [formData, setFormData] = useState({
-    label: '',
-    full_name: '',
-    phone: '',
-    address_line1: '',
-    address_line2: '',
-    city: 'Lome',
-    region: 'Maritime',
-    country: 'Togo',
-    postal_code: '',
-    is_default: false
-  });
+  const [formData, setFormData] = useState(initialForm);
+  const [errors, setErrors] = useState<AddressErrors>({});
 
   useEffect(() => {
     loadAddresses();
@@ -42,6 +58,10 @@ export function AddressesPage() {
   const handleAddAddress = async () => {
     if (!user) return;
 
+    const validationErrors = validateAddress(formData);
+    setErrors(validationErrors);
+    if (Object.keys(validationErrors).length > 0) return;
+
     try {
       await createAddress({
         user_id: user.id,
@@ -59,6 +79,10 @@ export function AddressesPage() {
 
   const handleUpdateAddress = async (addressId: string) => {
     if (!user) return;
+
+    const validationErrors = validateAddress(formData);
+    setErrors(validationErrors);
+    if (Object.keys(validationErrors).length > 0) return;
 
     try {
       await updateAddress(addressId, {
