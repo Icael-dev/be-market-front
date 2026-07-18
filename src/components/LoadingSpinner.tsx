@@ -12,7 +12,7 @@ export function LoadingSpinner({ size = 'md' }: { size?: 'sm' | 'md' | 'lg' }) {
       <motion.div
         animate={{ rotate: 360 }}
         transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
-        className={`${sizes[size]} border-2 dark:border-gray-700 border-t-blue-600 rounded-full`}
+        className={`${sizes[size]} border-2 dark:border-gray-700 border-t-primary-600 rounded-full`}
       />
     </div>
   );
@@ -23,7 +23,7 @@ export function PageLoading() {
     <div className="min-h-[60vh] flex items-center justify-center">
       <div className="text-center">
         <LoadingSpinner size="lg" />
-        <p className="mt-4 dark:text-gray-400">Chargement...</p>
+        <p className="mt-4 text-gray-500 dark:text-gray-400">Chargement...</p>
       </div>
     </div>
   );
@@ -31,19 +31,19 @@ export function PageLoading() {
 
 export function ProductCardSkeleton() {
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-2xl overflow-hidden border border-gray-100 animate-pulse">
-      <div className="aspect-square bg-gray-200 dark:bg-gray-700" />
+    <div className="bg-white dark:bg-gray-900 rounded-2xl overflow-hidden border border-gray-100 dark:border-gray-800">
+      <div className="aspect-square bg-gradient-to-r from-gray-100 via-gray-50 to-gray-100 dark:from-gray-800 dark:via-gray-700 dark:to-gray-800 shimmer" />
       <div className="p-4 space-y-3">
-        <div className="h-3 w-16 bg-gray-200 dark:bg-gray-700 rounded" />
-        <div className="h-5 w-full bg-gray-200 dark:bg-gray-700 rounded" />
+        <div className="h-3 w-16 bg-gradient-to-r from-gray-100 via-gray-50 to-gray-100 dark:from-gray-800 dark:via-gray-700 dark:to-gray-800 shimmer rounded" />
+        <div className="h-5 w-full bg-gradient-to-r from-gray-100 via-gray-50 to-gray-100 dark:from-gray-800 dark:via-gray-700 dark:to-gray-800 shimmer rounded" />
         <div className="flex gap-1">
           {[...Array(5)].map((_, i) => (
-            <div key={i} className="w-3.5 h-3.5 bg-gray-200 dark:bg-gray-700 rounded" />
+            <div key={i} className="w-3.5 h-3.5 bg-gradient-to-r from-gray-100 via-gray-50 to-gray-100 dark:from-gray-800 dark:via-gray-700 dark:to-gray-800 shimmer rounded" />
           ))}
         </div>
         <div className="flex justify-between items-center">
-          <div className="h-6 w-24 bg-gray-200 dark:bg-gray-700 rounded" />
-          <div className="h-4 w-12 bg-gray-200 dark:bg-gray-700 rounded" />
+          <div className="h-6 w-24 bg-gradient-to-r from-gray-100 via-gray-50 to-gray-100 dark:from-gray-800 dark:via-gray-700 dark:to-gray-800 shimmer rounded" />
+          <div className="h-4 w-12 bg-gradient-to-r from-gray-100 via-gray-50 to-gray-100 dark:from-gray-800 dark:via-gray-700 dark:to-gray-800 shimmer rounded" />
         </div>
       </div>
     </div>

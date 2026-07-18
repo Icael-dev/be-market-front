@@ -1,8 +1,10 @@
+import { toast } from 'react-hot-toast';
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { fetchAdminOrders, updateAdminOrder } from '../../services/admin';
 import { formatPrice, getStatusColor, getStatusLabel } from '../../lib/utils';
 import { AdminLayout } from '../../components/admin/AdminLayout';
+import { PageHeader } from '../../components/admin/PageHeader';
 import type { Order, OrderStatus } from '../../types';
 import {
   Package,
@@ -44,7 +46,7 @@ export function AdminOrdersPage() {
       }
     } catch (error) {
       console.error('Order status update error:', error);
-      alert('Erreur lors de la mise a jour du statut');
+      toast.error('Erreur lors de la mise a jour du statut');
     }
   };
 
@@ -60,14 +62,7 @@ export function AdminOrdersPage() {
   return (
     <AdminLayout>
       <div className="p-6 lg:p-8">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mb-8"
-        >
-          <h1 className="text-2xl font-bold dark:text-white">Commandes</h1>
-          <p className="dark:text-gray-500 mt-1">{orders.length} commandes</p>
-        </motion.div>
+        <PageHeader title="Commandes" subtitle={`${orders.length} commandes`} />
 
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -83,14 +78,14 @@ export function AdminOrdersPage() {
                 placeholder="Rechercher par numero..."
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-2.5 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+                className="w-full pl-10 pr-4 py-2.5 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
               />
             </div>
 
             <select
               value={statusFilter}
               onChange={e => setStatusFilter(e.target.value)}
-              className="px-4 py-2.5 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 bg-white dark:bg-gray-800 cursor-pointer"
+              className="px-4 py-2.5 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 bg-white dark:bg-gray-800 cursor-pointer"
             >
               <option value="">Tous les statuts</option>
               {statuses.map(status => (

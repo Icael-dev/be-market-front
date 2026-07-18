@@ -26,7 +26,7 @@ export function BlogPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-950 py-12">
+    <div className="min-h-screen page-bg py-12">
       <div className="max-w-7xl mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -42,7 +42,7 @@ export function BlogPage() {
         {loading ? (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {[1, 2, 3].map(i => (
-              <div key={i} className="bg-white dark:bg-gray-900 rounded-2xl overflow-hidden animate-pulse">
+              <div key={i} className="card overflow-hidden animate-pulse">
                 <div className="h-48 bg-gray-200 dark:bg-gray-800" />
                 <div className="p-6 space-y-3">
                   <div className="h-4 bg-gray-200 dark:bg-gray-800 rounded w-3/4" />
@@ -65,7 +65,7 @@ export function BlogPage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1 }}
-                className="bg-white dark:bg-gray-900 rounded-2xl overflow-hidden border border-gray-200 dark:border-gray-800 hover:shadow-xl transition-all"
+                className="card hover:shadow-premium transition-all"
               >
                 <Link to={`/blog/${post.slug}`}>
                   <div className="relative h-48 overflow-hidden">
@@ -76,7 +76,7 @@ export function BlogPage() {
                         className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
                       />
                     ) : (
-                      <div className="w-full h-full bg-gradient-to-br from-blue-600 to-cyan-500 flex items-center justify-center">
+                      <div className="w-full h-full bg-gradient-to-br from-primary-600 to-cyan-500 flex items-center justify-center">
                         <span className="text-white text-6xl font-bold">{post.title[0]}</span>
                       </div>
                     )}
@@ -98,7 +98,7 @@ export function BlogPage() {
                   </div>
 
                   <Link to={`/blog/${post.slug}`}>
-                    <h2 className="text-lg font-bold text-gray-900 dark:text-white hover:text-blue-600 transition-colors line-clamp-2 mb-2">
+                    <h2 className="text-lg font-bold text-gray-900 dark:text-white hover:text-primary-600 transition-colors line-clamp-2 mb-2">
                       {post.title}
                     </h2>
                   </Link>
@@ -111,7 +111,7 @@ export function BlogPage() {
 
                   <Link
                     to={`/blog/${post.slug}`}
-                    className="text-blue-600 font-medium text-sm hover:underline"
+                    className="text-primary-600 font-medium text-sm hover:underline"
                   >
                     Lire la suite
                   </Link>
@@ -149,18 +149,18 @@ export function BlogPostPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-950 flex items-center justify-center">
-        <div className="animate-spin w-8 h-8 border-2 border-gray-200 dark:border-gray-700 border-t-blue-600 rounded-full" />
+      <div className="min-h-screen page-bg flex items-center justify-center">
+        <div className="animate-spin w-8 h-8 border-2 border-gray-200 dark:border-gray-700 border-t-primary-600 rounded-full" />
       </div>
     );
   }
 
   if (!post) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-950 py-20">
+      <div className="min-h-screen page-bg py-20">
         <div className="max-w-7xl mx-auto px-4 text-center">
           <p className="text-gray-500 dark:text-gray-400 mb-4">Article non trouve</p>
-          <Link to="/blog" className="text-blue-600 font-medium hover:underline">
+          <Link to="/blog" className="text-primary-600 font-medium hover:underline">
             Retour au blog
           </Link>
         </div>
@@ -169,7 +169,7 @@ export function BlogPostPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-950 py-12">
+    <div className="min-h-screen page-bg py-12">
       <article className="max-w-4xl mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -177,7 +177,7 @@ export function BlogPostPage() {
         >
           <Link
             to="/blog"
-            className="inline-flex items-center gap-2 text-blue-600 font-medium hover:underline mb-6"
+            className="inline-flex items-center gap-2 text-primary-600 font-medium hover:underline mb-6"
           >
             <ArrowLeft className="w-4 h-4" />
             Retour au blog
@@ -207,7 +207,7 @@ export function BlogPostPage() {
             </div>
           )}
 
-          <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 p-6 md:p-10">
+          <div className="card p-6 md:p-10">
             <div className="prose prose-gray max-w-none">
               <p className="whitespace-pre-wrap text-gray-700 dark:text-gray-300 leading-relaxed">
                 {post.content}

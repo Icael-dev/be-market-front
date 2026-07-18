@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
-import { formatPrice } from '../lib/utils';
+import { formatPrice, FALLBACK_IMAGE } from '../lib/utils';
 import {
   ShoppingCart,
   Trash2,
@@ -25,16 +25,16 @@ export function CartPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
-        <div className="animate-spin w-8 h-8 border-2 dark:border-gray-700 border-t-blue-600 rounded-full" />
+      <div className="min-h-screen page-bg flex items-center justify-center">
+        <div className="animate-spin w-8 h-8 border-2 dark:border-gray-700 border-t-primary-600 rounded-full" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      <div className="bg-white dark:bg-gray-800 border-b dark:border-gray-700">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="min-h-screen page-bg">
+      <div className="page-header">
+        <div className="page-header-inner">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -49,7 +49,7 @@ export function CartPage() {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="page-section py-8">
         <AnimatePresence mode="wait">
           {items.length === 0 ? (
             <motion.div
@@ -57,9 +57,9 @@ export function CartPage() {
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.9 }}
-              className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 p-12 text-center"
+              className="card p-12 text-center"
             >
-              <div className="w-20 h-20 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-6">
+              <div className="w-20 h-20 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-6">
                 <ShoppingCart className="w-10 h-10 dark:text-gray-500" />
               </div>
               <h2 className="text-xl font-bold dark:text-white mb-2">
@@ -68,10 +68,7 @@ export function CartPage() {
               <p className="dark:text-gray-500 mb-8">
                 Ajoutez des articles pour commencer vos achats
               </p>
-              <Link
-                to="/products"
-                className="inline-flex items-center gap-2 bg-blue-600 text-white px-6 py-3 rounded-xl font-medium hover:bg-blue-700 transition-colors"
-              >
+              <Link to="/products" className="btn-primary">
                 <ShoppingBag className="w-5 h-5" />
                 Decouvrir nos produits
               </Link>
@@ -92,15 +89,15 @@ export function CartPage() {
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, x: -100 }}
                       transition={{ delay: index * 0.05 }}
-                      className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 dark:border-gray-800 p-4 md:p-6"
+                      className="card p-4 md:p-6"
                     >
                       <div className="flex gap-4 md:gap-6">
                         <Link
                           to={`/product/${item.product?.slug || '#'}`}
-                          className="w-24 h-24 md:w-32 md:h-32 flex-shrink-0 bg-gray-200 dark:bg-gray-700 rounded-xl overflow-hidden"
+                          className="w-24 h-24 md:w-32 md:h-32 flex-shrink-0 bg-gray-200 dark:bg-gray-800 rounded-xl overflow-hidden"
                         >
                           <img
-                            src={item.product?.images?.[0] || 'https://images.pexels.com/photos/607812/pexels-photo-607812.jpeg'}
+                            src={item.product?.images?.[0] || FALLBACK_IMAGE}
                             alt={item.product?.name || 'Produit'}
                             className="w-full h-full object-cover hover:scale-110 transition-transform"
                           />
@@ -111,7 +108,7 @@ export function CartPage() {
                             <div>
                               <Link
                                 to={`/product/${item.product?.slug || '#'}`}
-                                className="font-medium dark:text-white hover:text-blue-600 transition-colors line-clamp-2"
+                                className="font-medium dark:text-white hover:text-primary-600 transition-colors line-clamp-2"
                               >
                                 {item.product?.name || 'Produit'}
                               </Link>
@@ -123,7 +120,7 @@ export function CartPage() {
                             </div>
                             <button
                               onClick={() => removeItem(item.product_id)}
-                              className="p-2 dark:text-gray-500 hover:text-red-500 transition-colors"
+                              className="icon-btn"
                             >
                               <X className="w-5 h-5" />
                             </button>
@@ -179,19 +176,19 @@ export function CartPage() {
               </div>
 
               <div className="lg:col-span-1">
-                <div className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 dark:border-gray-800 p-6 sticky top-24">
-                  <h2 className="text-lg font-bold dark:text-white dark:text-white mb-6">
+                <div className="card p-6 sticky top-24">
+                  <h2 className="text-lg font-bold dark:text-white mb-6">
                     Recapitulatif
                   </h2>
 
                   {freeShippingRemaining > 0 && (
-                    <div className="mb-6 p-4 dark:bg-blue-900/20 rounded-xl">
-                      <p className="text-sm text-blue-800">
+                    <div className="mb-6 p-4 bg-primary-50 dark:bg-primary-900/20 rounded-xl">
+                      <p className="text-sm text-primary-700 dark:text-primary-300">
                         Plus que <strong>{freeShippingRemaining}</strong> FCFA pour la livraison gratuite !
                       </p>
-                      <div className="mt-2 h-2 bg-blue-100 rounded-full overflow-hidden">
+                      <div className="mt-2 h-2 bg-primary-100 dark:bg-primary-900/40 rounded-full overflow-hidden">
                         <div
-                          className="h-full bg-blue-600 rounded-full transition-all"
+                          className="h-full bg-primary-600 rounded-full transition-all"
                           style={{ width: `${(total / 50000) * 100}%` }}
                         />
                       </div>
@@ -216,10 +213,7 @@ export function CartPage() {
                     <span>{formatPrice(grandTotal)}</span>
                   </div>
 
-                  <Link
-                    to={user ? '/checkout' : '/login?redirect=/checkout'}
-                    className="w-full flex items-center justify-center gap-2 bg-blue-600 text-white py-3.5 rounded-xl font-medium hover:bg-blue-700 transition-colors"
-                  >
+                  <Link to={user ? '/checkout' : '/login?redirect=/checkout'} className="btn-primary w-full">
                     Passer commande
                     <ArrowRight className="w-5 h-5" />
                   </Link>

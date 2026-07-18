@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate, Outlet, useLocation, useNavigationType } from 'react-router-dom';
 import { Component, ErrorInfo, ReactNode, useEffect } from 'react';
 import { Toaster } from 'react-hot-toast';
+import { motion, AnimatePresence } from 'framer-motion';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
 import { WishlistProvider } from './context/WishlistContext';
@@ -21,7 +22,7 @@ class ErrorBoundary extends Component<{ children: ReactNode }, { error: Error | 
             <pre className="text-sm text-red-600 bg-red-50 p-4 rounded-xl text-left overflow-auto mb-4">
               {(this.state.error as Error).message}
             </pre>
-            <button onClick={() => window.location.reload()} className="px-6 py-3 bg-blue-600 text-white rounded-xl">
+            <button onClick={() => window.location.reload()} className="px-6 py-3 bg-primary-600 text-white rounded-xl">
               Recharger la page
             </button>
           </div>
@@ -32,37 +33,44 @@ class ErrorBoundary extends Component<{ children: ReactNode }, { error: Error | 
   }
 }
 
-import { HomePage } from './pages/HomePage';
-import { ProductsPage } from './pages/ProductsPage';
-import { CategoriesPage } from './pages/CategoriesPage';
-import { ProductDetailPage } from './pages/ProductDetailPage';
-import { CartPage } from './pages/CartPage';
-import { CheckoutPage } from './pages/CheckoutPage';
-import { OrderSuccessPage } from './pages/OrderSuccessPage';
-import { LoginPage } from './pages/LoginPage';
-import { RegisterPage } from './pages/RegisterPage';
-import { ProfilePage } from './pages/ProfilePage';
-import { OrdersPage, OrderDetailPage } from './pages/OrdersPage';
-import { AddressesPage } from './pages/AddressesPage';
-import { SupportPage, TicketDetailPage } from './pages/SupportPage';
-import { FAQPage } from './pages/FAQPage';
-import { LegalPage } from './pages/LegalPage';
-import { ComparePage } from './components/CompareDrawer';
-import { BlogPage, BlogPostPage } from './pages/BlogPage';
-import { LoyaltyPage } from './pages/LoyaltyPage';
+import { lazy, Suspense } from 'react';
+import { PageLoading } from './components/LoadingSpinner';
 
-import { AdminDashboardPage } from './pages/admin/AdminDashboardPage';
-import { AdminCategoriesPage } from './pages/admin/AdminCategoriesPage';
-import { AdminProductsPage } from './pages/admin/AdminProductsPage';
-import { AdminOrdersPage } from './pages/admin/AdminOrdersPage';
-import { AdminCustomersPage } from './pages/admin/AdminCustomersPage';
-import { AdminBannersPage } from './pages/admin/AdminBannersPage';
-import { AdminBlogPage } from './pages/admin/AdminBlogPage';
-import { AdminSettingsPage } from './pages/admin/AdminSettingsPage';
-import { AdminStatisticsPage } from './pages/admin/AdminStatisticsPage';
-import { AdminCouponsPage } from './pages/admin/AdminCouponsPage';
-import { AdminExportPage } from './pages/admin/AdminExportPage';
-import { AdminFlashSalesPage } from './pages/admin/AdminFlashSalesPage';
+const LazyHomePage = lazy(() => import('./pages/HomePage').then(m => ({ default: m.HomePage })));
+const LazyProductsPage = lazy(() => import('./pages/ProductsPage').then(m => ({ default: m.ProductsPage })));
+const LazyCategoriesPage = lazy(() => import('./pages/CategoriesPage').then(m => ({ default: m.CategoriesPage })));
+const LazyProductDetailPage = lazy(() => import('./pages/ProductDetailPage').then(m => ({ default: m.ProductDetailPage })));
+const LazyCartPage = lazy(() => import('./pages/CartPage').then(m => ({ default: m.CartPage })));
+const LazyCheckoutPage = lazy(() => import('./pages/CheckoutPage').then(m => ({ default: m.CheckoutPage })));
+const LazyOrderSuccessPage = lazy(() => import('./pages/OrderSuccessPage').then(m => ({ default: m.OrderSuccessPage })));
+const LazyLoginPage = lazy(() => import('./pages/LoginPage').then(m => ({ default: m.LoginPage })));
+const LazyRegisterPage = lazy(() => import('./pages/RegisterPage').then(m => ({ default: m.RegisterPage })));
+const LazyProfilePage = lazy(() => import('./pages/ProfilePage').then(m => ({ default: m.ProfilePage })));
+const LazyOrdersPage = lazy(() => import('./pages/OrdersPage').then(m => ({ default: m.OrdersPage })));
+const LazyOrderDetailPage = lazy(() => import('./pages/OrdersPage').then(m => ({ default: m.OrderDetailPage })));
+const LazyAddressesPage = lazy(() => import('./pages/AddressesPage').then(m => ({ default: m.AddressesPage })));
+const LazySupportPage = lazy(() => import('./pages/SupportPage').then(m => ({ default: m.SupportPage })));
+const LazyTicketDetailPage = lazy(() => import('./pages/SupportPage').then(m => ({ default: m.TicketDetailPage })));
+const LazyFAQPage = lazy(() => import('./pages/FAQPage').then(m => ({ default: m.FAQPage })));
+const LazyLegalPage = lazy(() => import('./pages/LegalPage').then(m => ({ default: m.LegalPage })));
+const LazyComparePage = lazy(() => import('./components/CompareDrawer').then(m => ({ default: m.ComparePage })));
+const LazyBlogPage = lazy(() => import('./pages/BlogPage').then(m => ({ default: m.BlogPage })));
+const LazyBlogPostPage = lazy(() => import('./pages/BlogPage').then(m => ({ default: m.BlogPostPage })));
+const LazyLoyaltyPage = lazy(() => import('./pages/LoyaltyPage').then(m => ({ default: m.LoyaltyPage })));
+const LazyNotFoundPage = lazy(() => import('./pages/NotFoundPage').then(m => ({ default: m.NotFoundPage })));
+
+const LazyAdminDashboardPage = lazy(() => import('./pages/admin/AdminDashboardPage').then(m => ({ default: m.AdminDashboardPage })));
+const LazyAdminCategoriesPage = lazy(() => import('./pages/admin/AdminCategoriesPage').then(m => ({ default: m.AdminCategoriesPage })));
+const LazyAdminProductsPage = lazy(() => import('./pages/admin/AdminProductsPage').then(m => ({ default: m.AdminProductsPage })));
+const LazyAdminOrdersPage = lazy(() => import('./pages/admin/AdminOrdersPage').then(m => ({ default: m.AdminOrdersPage })));
+const LazyAdminCustomersPage = lazy(() => import('./pages/admin/AdminCustomersPage').then(m => ({ default: m.AdminCustomersPage })));
+const LazyAdminBannersPage = lazy(() => import('./pages/admin/AdminBannersPage').then(m => ({ default: m.AdminBannersPage })));
+const LazyAdminBlogPage = lazy(() => import('./pages/admin/AdminBlogPage').then(m => ({ default: m.AdminBlogPage })));
+const LazyAdminSettingsPage = lazy(() => import('./pages/admin/AdminSettingsPage').then(m => ({ default: m.AdminSettingsPage })));
+const LazyAdminStatisticsPage = lazy(() => import('./pages/admin/AdminStatisticsPage').then(m => ({ default: m.AdminStatisticsPage })));
+const LazyAdminCouponsPage = lazy(() => import('./pages/admin/AdminCouponsPage').then(m => ({ default: m.AdminCouponsPage })));
+const LazyAdminExportPage = lazy(() => import('./pages/admin/AdminExportPage').then(m => ({ default: m.AdminExportPage })));
+const LazyAdminFlashSalesPage = lazy(() => import('./pages/admin/AdminFlashSalesPage').then(m => ({ default: m.AdminFlashSalesPage })));
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();
@@ -70,7 +78,7 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin w-8 h-8 border-2 border-gray-200 border-t-blue-600 rounded-full" />
+        <div className="animate-spin w-8 h-8 border-2 border-gray-200 border-t-primary-600 rounded-full" />
       </div>
     );
   }
@@ -88,7 +96,7 @@ function AdminRoute({ children }: { children: React.ReactNode }) {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin w-8 h-8 border-2 border-gray-200 border-t-blue-600 rounded-full" />
+        <div className="animate-spin w-8 h-8 border-2 border-gray-200 border-t-primary-600 rounded-full" />
       </div>
     );
   }
@@ -103,6 +111,7 @@ function AdminRoute({ children }: { children: React.ReactNode }) {
 function AppRoutes() {
   const location = useLocation();
   const navType = useNavigationType();
+  const routeKey = location.pathname.startsWith('/admin') ? 'admin' : location.pathname;
 
   useEffect(() => {
     if (navType === 'POP') {
@@ -122,131 +131,145 @@ function AppRoutes() {
   }, [location, navType]);
 
   return (
-    <Routes>
-      <Route path="/login" element={<LoginPage />} />
-      <Route path="/register" element={<RegisterPage />} />
+    <AnimatePresence mode="wait">
+      <motion.div
+        key={routeKey}
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.25, ease: 'easeOut' }}
+      >
+        <Suspense fallback={<PageLoading />}>
+          <Routes location={location}>
+      <Route path="/login" element={<LazyLoginPage />} />
+      <Route path="/register" element={<LazyRegisterPage />} />
 
       <Route element={<Layout><Outlet /></Layout>}>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/products" element={<ProductsPage />} />
-        <Route path="/categories" element={<CategoriesPage />} />
-        <Route path="/product/:slug" element={<ProductDetailPage />} />
-        <Route path="/cart" element={<CartPage />} />
-        <Route path="/compare" element={<ComparePage />} />
-        <Route path="/faq" element={<FAQPage />} />
-        <Route path="/legal/:slug?" element={<LegalPage />} />
-        <Route path="/blog" element={<BlogPage />} />
-        <Route path="/blog/:slug" element={<BlogPostPage />} />
+        <Route path="/" element={<LazyHomePage />} />
+        <Route path="/products" element={<LazyProductsPage />} />
+        <Route path="/categories" element={<LazyCategoriesPage />} />
+        <Route path="/product/:slug" element={<LazyProductDetailPage />} />
+        <Route path="/cart" element={<LazyCartPage />} />
+        <Route path="/compare" element={<LazyComparePage />} />
+        <Route path="/faq" element={<LazyFAQPage />} />
+        <Route path="/legal/:slug?" element={<LazyLegalPage />} />
+        <Route path="/blog" element={<LazyBlogPage />} />
+        <Route path="/blog/:slug" element={<LazyBlogPostPage />} />
 
         <Route path="/checkout" element={
           <ProtectedRoute>
-            <CheckoutPage />
+            <LazyCheckoutPage />
           </ProtectedRoute>
         } />
         <Route path="/order-success/:orderId" element={
           <ProtectedRoute>
-            <OrderSuccessPage />
+            <LazyOrderSuccessPage />
           </ProtectedRoute>
         } />
 
         <Route path="/profile" element={
           <ProtectedRoute>
-            <ProfilePage />
+            <LazyProfilePage />
           </ProtectedRoute>
         } />
         <Route path="/orders" element={
           <ProtectedRoute>
-            <OrdersPage />
+            <LazyOrdersPage />
           </ProtectedRoute>
         } />
         <Route path="/orders/:id" element={
           <ProtectedRoute>
-            <OrderDetailPage />
+            <LazyOrderDetailPage />
           </ProtectedRoute>
         } />
         <Route path="/addresses" element={
           <ProtectedRoute>
-            <AddressesPage />
+            <LazyAddressesPage />
           </ProtectedRoute>
         } />
         <Route path="/support" element={
           <ProtectedRoute>
-            <SupportPage />
+            <LazySupportPage />
           </ProtectedRoute>
         } />
         <Route path="/support/:id" element={
           <ProtectedRoute>
-            <TicketDetailPage />
+            <LazyTicketDetailPage />
           </ProtectedRoute>
         } />
-        <Route path="/loyalty" element={
-          <ProtectedRoute>
-            <LoyaltyPage />
-          </ProtectedRoute>
-        } />
+            <Route path="/loyalty" element={
+              <ProtectedRoute>
+                <LazyLoyaltyPage />
+              </ProtectedRoute>
+            } />
 
-        <Route path="/admin" element={
+            <Route path="*" element={<LazyNotFoundPage />} />
+
+            <Route path="/admin" element={
           <AdminRoute>
-            <AdminDashboardPage />
+            <LazyAdminDashboardPage />
           </AdminRoute>
         } />
         <Route path="/admin/categories" element={
           <AdminRoute>
-            <AdminCategoriesPage />
+            <LazyAdminCategoriesPage />
           </AdminRoute>
         } />
         <Route path="/admin/products" element={
           <AdminRoute>
-            <AdminProductsPage />
+            <LazyAdminProductsPage />
           </AdminRoute>
         } />
         <Route path="/admin/orders" element={
           <AdminRoute>
-            <AdminOrdersPage />
+            <LazyAdminOrdersPage />
           </AdminRoute>
         } />
         <Route path="/admin/customers" element={
           <AdminRoute>
-            <AdminCustomersPage />
+            <LazyAdminCustomersPage />
           </AdminRoute>
         } />
         <Route path="/admin/banners" element={
           <AdminRoute>
-            <AdminBannersPage />
+            <LazyAdminBannersPage />
           </AdminRoute>
         } />
         <Route path="/admin/blog" element={
           <AdminRoute>
-            <AdminBlogPage />
+            <LazyAdminBlogPage />
           </AdminRoute>
         } />
         <Route path="/admin/settings" element={
           <AdminRoute>
-            <AdminSettingsPage />
+            <LazyAdminSettingsPage />
           </AdminRoute>
         } />
         <Route path="/admin/statistics" element={
           <AdminRoute>
-            <AdminStatisticsPage />
+            <LazyAdminStatisticsPage />
           </AdminRoute>
         } />
         <Route path="/admin/coupons" element={
           <AdminRoute>
-            <AdminCouponsPage />
+            <LazyAdminCouponsPage />
           </AdminRoute>
         } />
         <Route path="/admin/export" element={
           <AdminRoute>
-            <AdminExportPage />
+            <LazyAdminExportPage />
           </AdminRoute>
         } />
         <Route path="/admin/flash-sales" element={
           <AdminRoute>
-            <AdminFlashSalesPage />
+            <LazyAdminFlashSalesPage />
           </AdminRoute>
         } />
-      </Route>
-    </Routes>
+          </Route>
+        </Routes>
+        </Suspense>
+      </motion.div>
+    </AnimatePresence>
   );
 }
 

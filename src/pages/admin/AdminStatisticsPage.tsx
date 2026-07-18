@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { fetchAdminStatistics } from '../../services/admin';
 import { AdminLayout } from '../../components/admin/AdminLayout';
+import { PageHeader } from '../../components/admin/PageHeader';
 import { formatPrice } from '../../lib/utils';
 import { DollarSign, ShoppingCart, Users, Package, ArrowUpRight, ArrowDownRight, Download } from 'lucide-react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell } from 'recharts';
@@ -86,7 +87,7 @@ export function AdminStatisticsPage() {
           value: stats.totalOrders.toString(),
           change: stats.ordersChange,
           icon: ShoppingCart,
-          gradient: 'from-blue-500 to-cyan-500',
+          gradient: 'from-primary-500 to-cyan-500',
         },
         {
           title: 'Nouveaux clients',
@@ -108,15 +109,10 @@ export function AdminStatisticsPage() {
   return (
     <AdminLayout>
       <div className="p-6 lg:p-8">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="flex items-center justify-between mb-8"
+        <PageHeader
+          title="Statistiques"
+          subtitle="Performances de la boutique"
         >
-          <div>
-            <h1 className="text-2xl font-bold dark:text-white">Statistiques</h1>
-            <p className="dark:text-gray-400">Performances de la boutique</p>
-          </div>
           <div className="flex gap-3">
             <select
               value={days}
@@ -134,11 +130,11 @@ export function AdminStatisticsPage() {
               <Download className="w-4 h-4" /> Exporter
             </button>
           </div>
-        </motion.div>
+        </PageHeader>
 
         {loading ? (
           <div className="flex justify-center py-20">
-            <div className="animate-spin w-8 h-8 border-2 dark:border-gray-700 border-t-blue-600 rounded-full" />
+            <div className="animate-spin w-8 h-8 border-2 dark:border-gray-700 border-t-primary-600 rounded-full" />
           </div>
         ) : (
           stats && (

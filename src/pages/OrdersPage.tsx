@@ -44,9 +44,9 @@ export function OrdersPage() {
   if (loading) return <PageLoading />;
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      <div className="bg-white dark:bg-gray-800 border-b dark:border-gray-700">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="min-h-screen page-bg">
+      <div className="page-header">
+        <div className="page-section py-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -59,13 +59,13 @@ export function OrdersPage() {
         </div>
       </div>
 
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="page-section py-8">
         {orders.length > 0 && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 p-4 mb-6"
+            className="card p-4 mb-6"
           >
             <div className="flex flex-col sm:flex-row gap-4">
               <div className="flex-1 relative">
@@ -75,7 +75,7 @@ export function OrdersPage() {
                   placeholder="Rechercher par numero..."
                   value={searchQuery}
                   onChange={e => setSearchQuery(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2.5 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+                  className="w-full pl-10 pr-4 py-2.5 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                 />
               </div>
 
@@ -83,7 +83,7 @@ export function OrdersPage() {
                 <select
                   value={statusFilter}
                   onChange={e => setStatusFilter(e.target.value)}
-                  className="appearance-none pl-4 pr-10 py-2.5 border border-gray-200 dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 bg-white dark:bg-gray-800 cursor-pointer"
+                  className="appearance-none pl-4 pr-10 py-2.5 border border-gray-200 dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 bg-white dark:bg-gray-800 cursor-pointer"
                 >
                   <option value="">Tous les statuts</option>
                   {statuses.map(status => (
@@ -105,8 +105,8 @@ export function OrdersPage() {
         >
           {filteredOrders.length === 0 ? (
             orders.length === 0 ? (
-              <div className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 p-12 text-center">
-                <div className="w-16 h-16 bg-gray-200 dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4">
+              <div className="card p-12 text-center">
+                <div className="w-16 h-16 bg-gray-200 dark:bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-4">
                   <Package className="w-8 h-8 dark:text-gray-500" />
                 </div>
                 <h2 className="text-lg font-bold dark:text-white mb-2">
@@ -117,14 +117,14 @@ export function OrdersPage() {
                 </p>
                 <Link
                   to="/products"
-                  className="inline-flex items-center gap-2 bg-blue-600 text-white px-6 py-3 rounded-xl font-medium hover:bg-blue-700 transition-colors"
+                  className="inline-flex items-center gap-2 btn-primary"
                 >
                   <ShoppingBag className="w-5 h-5" />
                   Decouvrir nos produits
                 </Link>
               </div>
             ) : (
-              <div className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 p-12 text-center">
+              <div className="card p-12 text-center">
                 <h2 className="text-lg font-bold dark:text-white mb-2">
                   Aucun resultat
                 </h2>
@@ -146,11 +146,11 @@ export function OrdersPage() {
                   >
 <Link
                         to={`/orders/${order.id}`}
-                        className="block bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 dark:border-gray-800 p-6 hover:shadow-lg transition-all"
+                        className="block card p-6 hover:shadow-premium transition-all"
                       >
                       <div className="flex items-center justify-between mb-4">
                         <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600">
+                          <div className="w-10 h-10 rounded-full bg-primary-50 dark:bg-primary-900/30 flex items-center justify-center text-primary-600 dark:text-primary-400">
                             <Package className="w-5 h-5" />
                           </div>
                           <div>
@@ -220,10 +220,10 @@ export function OrderDetailPage() {
 
   if (!order) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center p-6">
+      <div className="min-h-screen page-bg flex items-center justify-center p-6">
         <div className="text-center">
           <h2 className="text-xl font-bold dark:text-white mb-4">Commande introuvable</h2>
-          <Link to="/orders" className="text-blue-600 hover:underline">
+          <Link to="/orders" className="text-primary-600 hover:underline">
             Retour aux commandes
           </Link>
         </div>
@@ -242,13 +242,13 @@ export function OrderDetailPage() {
   const currentStepIndex = steps.findIndex(s => s.status === order.status);
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      <div className="bg-white dark:bg-gray-800 border-b dark:border-gray-700">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="min-h-screen page-bg">
+      <div className="page-header">
+        <div className="page-section py-8">
           <div className="flex items-center gap-4 mb-4">
             <Link
               to="/orders"
-              className="p-2 hover:bg-gray-50 hover:dark:bg-gray-700 rounded-lg transition-colors"
+              className="p-2 hover:bg-gray-50 hover:dark:bg-gray-800 rounded-lg transition-colors"
             >
               <ArrowLeft className="w-5 h-5 dark:text-gray-500" />
             </Link>
@@ -266,12 +266,12 @@ export function OrderDetailPage() {
         </div>
       </div>
 
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="page-section py-8">
         {order.status !== 'cancelled' && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 dark:border-gray-800 p-6 mb-6 overflow-x-auto"
+            className="card p-6 mb-6 overflow-x-auto"
           >
             <div className="flex items-center justify-between min-w-[500px]">
               {steps.map((step, index) => (
@@ -280,8 +280,8 @@ export function OrderDetailPage() {
                     <div className={cn(
                       'w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium',
                       index <= currentStepIndex
-                        ? 'bg-blue-600 text-white'
-                        : 'bg-gray-200 text-gray-500 dark:bg-gray-700 dark:text-gray-500'
+                        ? 'bg-primary-600 text-white'
+                        : 'bg-gray-200 text-gray-500 dark:bg-gray-800 dark:text-gray-500'
                     )}>
                       {index <= currentStepIndex ? (
                         <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
@@ -301,7 +301,7 @@ export function OrderDetailPage() {
                   {index < steps.length - 1 && (
                     <div className={cn(
                       'w-16 h-0.5 mx-1',
-                       index < currentStepIndex ? 'bg-blue-600' : 'bg-gray-200 dark:bg-gray-700'
+                       index < currentStepIndex ? 'bg-primary-600' : 'bg-gray-200 dark:bg-gray-800'
                     )} />
                   )}
                 </div>
@@ -315,7 +315,7 @@ export function OrderDetailPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 dark:border-gray-800 p-6"
+            className="card p-6"
           >
             <h2 className="font-bold dark:text-white mb-4">Articles commandes</h2>
             <div className="space-y-4">
@@ -351,7 +351,7 @@ export function OrderDetailPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
-              className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 dark:border-gray-800 p-6"
+              className="card p-6"
             >
               <h2 className="font-bold dark:text-white mb-4">Adresse de livraison</h2>
               <div className="dark:text-gray-500 space-y-1">
@@ -367,7 +367,7 @@ export function OrderDetailPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
-              className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 dark:border-gray-800 p-6"
+              className="card p-6"
             >
               <h2 className="font-bold dark:text-white mb-4">Paiement</h2>
               <div className="space-y-2">

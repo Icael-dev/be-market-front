@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
 import { fetchAdminOrders, fetchAdminStatistics } from '../../services/admin';
 import { formatPrice, getStatusColor, getStatusLabel } from '../../lib/utils';
 import { AdminLayout } from '../../components/admin/AdminLayout';
+import { PageHeader } from '../../components/admin/PageHeader';
 import {
   DollarSign,
   ShoppingBag,
@@ -129,14 +131,7 @@ export function AdminDashboardPage() {
   return (
     <AdminLayout>
       <div className="p-6 lg:p-8">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mb-8"
-        >
-          <h1 className="text-2xl font-bold dark:text-white">Tableau de bord</h1>
-          <p className="dark:text-gray-500 mt-1">Vue d'ensemble de votre boutique</p>
-        </motion.div>
+        <PageHeader title="Tableau de bord" subtitle="Vue d'ensemble de votre boutique" />
 
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 mb-8">
           {stats.map((stat, index) => (
@@ -179,9 +174,9 @@ export function AdminDashboardPage() {
           >
             <div className="flex items-center justify-between mb-6">
               <h2 className="font-bold dark:text-white">Commandes recentes</h2>
-              <a href="/admin/orders" className="dark:text-blue-400 text-sm font-medium hover:underline">
+              <Link to="/admin/orders" className="dark:text-blue-400 text-sm font-medium hover:underline">
                 Voir tout
-              </a>
+              </Link>
             </div>
 
             <div className="space-y-4">

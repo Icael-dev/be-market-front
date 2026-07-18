@@ -1,3 +1,4 @@
+import { toast } from 'react-hot-toast';
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -9,6 +10,7 @@ import {
 import type { Category } from '../../types';
 import { Plus, Edit2, Trash2, X, Save, Loader2, Grid3X3, Tag } from 'lucide-react';
 import { AdminLayout } from '../../components/admin/AdminLayout';
+import { PageHeader } from '../../components/admin/PageHeader';
 import { cn } from '../../lib/utils';
 
 export function AdminCategoriesPage() {
@@ -126,7 +128,7 @@ export function AdminCategoriesPage() {
       resetForm();
     } catch (error) {
       console.error('Error saving category:', error);
-      alert('Erreur lors de l\'enregistrement');
+      toast.error('Erreur lors de l\'enregistrement');
     } finally {
       setSaving(false);
     }
@@ -139,31 +141,25 @@ export function AdminCategoriesPage() {
       setCategories(prev => prev.filter(c => c.id !== id));
     } catch (error) {
       console.error('Error deleting category:', error);
-      alert('Erreur lors de la suppression');
+      toast.error('Erreur lors de la suppression');
     }
   };
 
   return (
     <AdminLayout>
       <div className="p-6 lg:p-8">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8"
+        <PageHeader
+          title="Categories"
+          subtitle={`${categories.length} categorie${categories.length > 1 ? 's' : ''}`}
         >
-          <div>
-            <h1 className="text-2xl font-bold dark:text-white">Categories</h1>
-            <p className="dark:text-gray-500 mt-1">{categories.length} categorie{categories.length > 1 ? 's' : ''}</p>
-          </div>
-
           <button
             onClick={() => { resetForm(); setShowForm(true); }}
-            className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2.5 rounded-xl font-medium hover:bg-blue-700 transition-colors"
+            className="flex items-center gap-2 bg-primary-600 text-white px-4 py-2.5 rounded-xl font-medium hover:bg-primary-700 transition-colors"
           >
             <Plus className="w-5 h-5" />
             Nouvelle categorie
           </button>
-        </motion.div>
+        </PageHeader>
 
         <div         className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 overflow-hidden">
           <table className="w-full">
@@ -278,7 +274,7 @@ export function AdminCategoriesPage() {
                     type="text"
                     value={formData.name}
                     onChange={e => handleNameChange(e.target.value)}
-                    className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+                    className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                     placeholder="Ex: Telephones"
                   />
                 </div>
@@ -305,7 +301,7 @@ export function AdminCategoriesPage() {
                     value={formData.description}
                     onChange={e => setFormData({ ...formData, description: e.target.value })}
                     rows={3}
-                    className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+                    className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                     placeholder="Description de la categorie..."
                   />
                 </div>
@@ -315,7 +311,7 @@ export function AdminCategoriesPage() {
                     type="checkbox"
                     checked={formData.is_active}
                     onChange={e => setFormData({ ...formData, is_active: e.target.checked })}
-                    className="w-4 h-4 dark:text-blue-400 border-gray-300 rounded"
+                    className="w-4 h-4 dark:text-primary-400 border-gray-300 rounded"
                   />
                   <span className="text-sm dark:text-gray-300">Categorie active</span>
                 </label>
@@ -326,7 +322,7 @@ export function AdminCategoriesPage() {
                      <button
                        type="button"
                        onClick={addSpecRow}
-                       className="text-xs text-blue-600 font-medium hover:text-blue-700"
+                       className="text-xs text-primary-600 font-medium hover:text-primary-700"
                      >
                        + Ajouter
                      </button>
@@ -341,7 +337,7 @@ export function AdminCategoriesPage() {
                            onChange={e => updateSpec(i, 'key', e.target.value)}
                            placeholder="Cle (ex: Marque)"
                            className={cn(
-                             'flex-1 px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 dark:bg-gray-800',
+                             'flex-1 px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 dark:bg-gray-800',
                              'dark:border-gray-700'
                            )}
                          />
@@ -351,7 +347,7 @@ export function AdminCategoriesPage() {
                            onChange={e => updateSpec(i, 'placeholder', e.target.value)}
                            placeholder="Placeholder (ex: Ex: Samsung)"
                            className={cn(
-                             'flex-1 px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 dark:bg-gray-800',
+                             'flex-1 px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 dark:bg-gray-800',
                              'dark:border-gray-700'
                            )}
                          />
@@ -375,7 +371,7 @@ export function AdminCategoriesPage() {
                   <button
                     onClick={handleSave}
                     disabled={saving || !formData.name || !formData.slug}
-                    className="flex items-center gap-2 bg-blue-600 text-white px-6 py-2.5 rounded-xl font-medium hover:bg-blue-700 disabled:opacity-50"
+                    className="flex items-center gap-2 bg-primary-600 text-white px-6 py-2.5 rounded-xl font-medium hover:bg-primary-700 disabled:opacity-50"
                   >
                     {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
                     {saving ? 'Enregistrement...' : 'Enregistrer'}

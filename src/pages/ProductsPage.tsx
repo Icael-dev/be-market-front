@@ -115,27 +115,27 @@ export function ProductsPage() {
     : null;
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      <div className="bg-white dark:bg-gray-800 border-b dark:border-gray-700">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="min-h-screen page-bg">
+      <div className="page-header">
+        <div className="page-header-inner">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
           >
-            <h1 className="text-3xl font-bold dark:text-white">
+            <h1 className="text-3xl font-bold dark:text-white tracking-tightest">
               {selectedCategoryName || 'Tous les produits'}
             </h1>
-            <p className="dark:text-gray-500 mt-2">
+            <p className="text-gray-500 dark:text-gray-400 mt-2">
               {loading ? 'Chargement...' : `${products.length} produits trouves`}
             </p>
           </motion.div>
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        <div className="flex flex-col lg:flex-row gap-6">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="flex flex-col lg:flex-row gap-8">
           <div className="hidden lg:block w-64 flex-shrink-0">
-            <div className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 p-6 sticky top-20">
+            <div className="card p-6 sticky top-20">
               <h3 className="font-semibold dark:text-white mb-4">Categories</h3>
               <ul className="space-y-2">
                 <li>
@@ -144,7 +144,7 @@ export function ProductsPage() {
                     className={cn(
                       'w-full text-left px-3 py-2 rounded-lg text-sm transition-colors',
                       !selectedCategory
-                        ? 'bg-blue-50 dark:bg-blue-900/30 dark:text-blue-400 font-medium'
+                        ? 'bg-primary-50 dark:bg-primary-900/30 dark:text-primary-400 font-medium'
                         : 'dark:text-gray-500 hover:bg-gray-50 hover:dark:bg-gray-900'
                     )}
                   >
@@ -158,7 +158,7 @@ export function ProductsPage() {
                       className={cn(
                         'w-full text-left px-3 py-2 rounded-lg text-sm transition-colors',
                         selectedCategory === category.slug
-                          ? 'bg-blue-50 dark:bg-blue-900/30 dark:text-blue-400 font-medium'
+                          ? 'bg-primary-50 dark:bg-primary-900/30 dark:text-primary-400 font-medium'
                           : 'dark:text-gray-500 hover:bg-gray-50 hover:dark:bg-gray-900'
                       )}
                     >
@@ -180,7 +180,7 @@ export function ProductsPage() {
                           className={cn(
                             'w-full text-left px-3 py-2 rounded-lg text-sm transition-colors',
                             selectedBrand === brand
-                              ? 'bg-blue-50 dark:bg-blue-900/30 dark:text-blue-400 font-medium'
+                              ? 'bg-primary-50 dark:bg-primary-900/30 dark:text-primary-400 font-medium'
                               : 'dark:text-gray-500 hover:bg-gray-50 hover:dark:bg-gray-900'
                           )}
                         >
@@ -195,17 +195,17 @@ export function ProductsPage() {
           </div>
 
           <div className="flex-1">
-            <div className="bg-white dark:bg-gray-800 rounded-xl border dark:border-gray-700 p-4 mb-6">
+            <div className="card p-4 mb-6">
                <div className="flex flex-wrap items-center justify-between gap-4">
                 <div className="flex items-center gap-3">
-                  <button
-                    onClick={() => setShowFilters(true)}
-                    className="lg:hidden flex items-center gap-2 px-4 py-2 border bg-white dark:border-gray-700 rounded-xl text-sm font-medium hover:bg-gray-50 hover:dark:bg-gray-900 transition-colors"
-                  >
+                   <button
+                      onClick={() => setShowFilters(true)}
+                      className="lg:hidden flex items-center gap-2 px-4 py-2 border border-gray-200 dark:border-gray-700 rounded-xl text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+                    >
                     <SlidersHorizontal className="w-4 h-4" />
                     Filtres
                     {activeFiltersCount > 0 && (
-                      <span className="w-5 h-5 bg-blue-600 text-white rounded-full text-xs flex items-center justify-center">
+                      <span className="w-5 h-5 bg-primary-600 text-white rounded-full text-xs flex items-center justify-center">
                         {activeFiltersCount}
                       </span>
                     )}
@@ -217,7 +217,7 @@ export function ProductsPage() {
                     <select
                       value={sortBy}
                       onChange={(e) => updateFilter('sort', e.target.value)}
-                      className="appearance-none pl-4 pr-10 py-2 border border-gray-200 dark:border-gray-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 bg-white dark:bg-gray-800 cursor-pointer"
+                      className="appearance-none pl-4 pr-10 py-2 border border-gray-200 dark:border-gray-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 bg-white dark:bg-gray-800 cursor-pointer"
                     >
                       {sortOptions.map(option => (
                         <option key={option.value} value={option.value}>
@@ -234,7 +234,7 @@ export function ProductsPage() {
                       className={cn(
                         'p-2 rounded-lg transition-colors',
                         view === 'grid'
-                          ? 'bg-blue-50 dark:bg-blue-900/30 dark:text-blue-400'
+                          ? 'bg-primary-50 dark:bg-primary-900/30 dark:text-primary-400'
                           : 'dark:text-gray-500 hover:dark:text-gray-500'
                       )}
                     >
@@ -245,7 +245,7 @@ export function ProductsPage() {
                       className={cn(
                         'p-2 rounded-lg transition-colors',
                         view === 'list'
-                          ? 'bg-blue-50 dark:bg-blue-900/30 dark:text-blue-400'
+                          ? 'bg-primary-50 dark:bg-primary-900/30 dark:text-primary-400'
                           : 'dark:text-gray-500 hover:dark:text-gray-500'
                       )}
                     >
@@ -258,35 +258,35 @@ export function ProductsPage() {
                <div className="mt-3 pt-3 border-t border-gray-100 dark:border-gray-700">
                 <div className="flex flex-col gap-3">
                   <div className="flex items-center gap-2">
-                    <input
-                      type="number"
-                      value={localMin}
-                      onChange={(e) => {
-                        const val = Math.max(0, parseInt(e.target.value) || 0);
-                        setLocalMin(Math.min(val, localMax - 5000));
-                      }}
-                      onBlur={() => {
-                        updateFilter('min_price', localMin > 0 ? String(localMin) : null);
-                        updateFilter('max_price', localMax < 1000000 ? String(localMax) : null);
-                      }}
-                      placeholder="Min"
-                      className="w-24 px-2 py-1.5 text-sm border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-right focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
-                    />
+                     <input
+                       type="number"
+                       value={localMin}
+                       onChange={(e) => {
+                         const val = Math.max(0, parseInt(e.target.value) || 0);
+                         setLocalMin(Math.min(val, localMax - 5000));
+                       }}
+                       onBlur={() => {
+                         updateFilter('min_price', localMin > 0 ? String(localMin) : null);
+                         updateFilter('max_price', localMax < 1000000 ? String(localMax) : null);
+                       }}
+                       placeholder="Min"
+                       className="input-premium w-24 py-1.5 text-right text-sm"
+                     />
                     <span className="text-gray-400 text-sm">—</span>
-                    <input
-                      type="number"
-                      value={localMax}
-                      onChange={(e) => {
-                        const val = Math.min(1000000, parseInt(e.target.value) || 0);
-                        setLocalMax(Math.max(val, localMin + 5000));
-                      }}
-                      onBlur={() => {
-                        updateFilter('min_price', localMin > 0 ? String(localMin) : null);
-                        updateFilter('max_price', localMax < 1000000 ? String(localMax) : null);
-                      }}
-                      placeholder="Max"
-                      className="w-24 px-2 py-1.5 text-sm border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-right focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
-                    />
+                     <input
+                       type="number"
+                       value={localMax}
+                       onChange={(e) => {
+                         const val = Math.min(1000000, parseInt(e.target.value) || 0);
+                         setLocalMax(Math.max(val, localMin + 5000));
+                       }}
+                       onBlur={() => {
+                         updateFilter('min_price', localMin > 0 ? String(localMin) : null);
+                         updateFilter('max_price', localMax < 1000000 ? String(localMax) : null);
+                       }}
+                       placeholder="Max"
+                       className="input-premium w-24 py-1.5 text-right text-sm"
+                     />
                     <span className="text-xs text-gray-400 dark:text-gray-500 whitespace-nowrap">
                       FCFA
                     </span>
@@ -299,7 +299,7 @@ export function ProductsPage() {
                       <div className="absolute inset-0 bg-gray-200 dark:bg-gray-600 rounded-full" />
                       {(priceBounds.max > priceBounds.min) && (
                         <div
-                          className="absolute h-2 bg-blue-600/30 rounded-full"
+                          className="absolute h-2 bg-primary-600/30 rounded-full"
                           style={{
                             left: `${(priceBounds.min / 1000000) * 100}%`,
                             right: `${100 - (priceBounds.max / 1000000) * 100}%`,
@@ -324,7 +324,7 @@ export function ProductsPage() {
                           updateFilter('min_price', localMin > 0 ? String(localMin) : null);
                           updateFilter('max_price', localMax < 1000000 ? String(localMax) : null);
                         }}
-                        className="absolute w-full h-2 appearance-none bg-transparent pointer-events-auto [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-600 [&::-webkit-slider-thumb]:shadow-lg [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:relative [&::-webkit-slider-thumb]:z-10"
+                        className="absolute w-full h-2 appearance-none bg-transparent pointer-events-auto [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-primary-600 [&::-webkit-slider-thumb]:shadow-lg [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:relative [&::-webkit-slider-thumb]:z-10"
                       />
                       <input
                         type="range"
@@ -344,7 +344,7 @@ export function ProductsPage() {
                           updateFilter('min_price', localMin > 0 ? String(localMin) : null);
                           updateFilter('max_price', localMax < 1000000 ? String(localMax) : null);
                         }}
-                        className="absolute w-full h-2 appearance-none bg-transparent pointer-events-auto [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-600 [&::-webkit-slider-thumb]:shadow-lg [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:relative [&::-webkit-slider-thumb]:z-10"
+                        className="absolute w-full h-2 appearance-none bg-transparent pointer-events-auto [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-primary-600 [&::-webkit-slider-thumb]:shadow-lg [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:relative [&::-webkit-slider-thumb]:z-10"
                       />
                     </div>
                   </div>
@@ -357,7 +357,7 @@ export function ProductsPage() {
                   {selectedCategory && (
                     <button
                       onClick={() => updateFilter('category', null)}
-                      className="inline-flex items-center gap-1 px-3 py-1 bg-blue-50 dark:bg-blue-900/30 dark:text-blue-400 rounded-full text-sm"
+                      className="inline-flex items-center gap-1 px-3 py-1 bg-primary-50 dark:bg-primary-900/30 dark:text-primary-400 rounded-full text-sm"
                     >
                       {selectedCategoryName}
                       <X className="w-3 h-3" />
@@ -366,7 +366,7 @@ export function ProductsPage() {
                   {searchQuery && (
                     <button
                       onClick={() => updateFilter('search', null)}
-                      className="inline-flex items-center gap-1 px-3 py-1 bg-blue-50 dark:bg-blue-900/30 dark:text-blue-400 rounded-full text-sm"
+                      className="inline-flex items-center gap-1 px-3 py-1 bg-primary-50 dark:bg-primary-900/30 dark:text-primary-400 rounded-full text-sm"
                     >
                       "{searchQuery}"
                       <X className="w-3 h-3" />
@@ -375,7 +375,7 @@ export function ProductsPage() {
                   {selectedBrand && (
                     <button
                       onClick={() => updateFilter('brand', null)}
-                      className="inline-flex items-center gap-1 px-3 py-1 bg-blue-50 dark:bg-blue-900/30 dark:text-blue-400 rounded-full text-sm"
+                      className="inline-flex items-center gap-1 px-3 py-1 bg-primary-50 dark:bg-primary-900/30 dark:text-primary-400 rounded-full text-sm"
                     >
                       {selectedBrand}
                       <X className="w-3 h-3" />
@@ -406,19 +406,19 @@ export function ProductsPage() {
             {loading ? (
               <ProductsGridSkeleton count={12} />
             ) : products.length === 0 ? (
-              <div className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 p-12 text-center">
-                <div className="w-16 h-16 bg-gray-200 dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Search className="w-8 h-8 dark:text-gray-500" />
+              <div className="card p-12 text-center">
+                <div className="w-16 h-16 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Search className="w-8 h-8 text-gray-400 dark:text-gray-500" />
                 </div>
                 <h3 className="text-lg font-medium dark:text-white mb-2">
                   Aucun produit trouve
                 </h3>
-                <p className="dark:text-gray-500 mb-6">
+                <p className="text-gray-500 dark:text-gray-400 mb-6">
                   Essayez de modifier vos criteres de recherche
                 </p>
                 <button
                   onClick={clearFilters}
-                  className="px-6 py-2 bg-blue-600 text-white rounded-xl font-medium hover:bg-blue-700 transition-colors"
+                  className="btn-primary"
                 >
                   Reinitialiser les filtres
                 </button>
@@ -441,27 +441,28 @@ export function ProductsPage() {
 
       <AnimatePresence>
         {showFilters && (
-          <>
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setShowFilters(false)}
-              className="fixed inset-0 bg-black/50 z-40 lg:hidden"
-            />
+          <motion.div
+            key="filters-overlay"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+            onClick={() => setShowFilters(false)}
+          >
             <motion.div
               initial={{ x: '-100%' }}
               animate={{ x: 0 }}
               exit={{ x: '-100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-              className="fixed left-0 top-0 bottom-0 w-80 bg-white dark:bg-gray-800 z-50 lg:hidden overflow-y-auto"
+              className="absolute left-0 top-0 bottom-0 w-80 bg-white dark:bg-gray-900 z-50 lg:hidden overflow-y-auto"
+              onClick={e => e.stopPropagation()}
             >
               <div className="p-6">
                 <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-lg font-bold">Filtres</h2>
+                  <h2 className="text-lg font-bold dark:text-white">Filtres</h2>
                   <button
                     onClick={() => setShowFilters(false)}
-                    className="p-2 hover:bg-gray-50 hover:dark:bg-gray-700 rounded-lg transition-colors"
+                    className="icon-btn"
                   >
                     <X className="w-5 h-5" />
                   </button>
@@ -478,7 +479,7 @@ export function ProductsPage() {
                       className={cn(
                         'w-full text-left px-3 py-2 rounded-lg text-sm transition-colors',
                         !selectedCategory
-                          ? 'bg-blue-50 dark:bg-blue-900/30 dark:text-blue-400 font-medium'
+                          ? 'bg-primary-50 dark:bg-primary-900/30 dark:text-primary-400 font-medium'
                           : 'dark:text-gray-500 hover:bg-gray-50 hover:dark:bg-gray-900'
                       )}
                     >
@@ -495,7 +496,7 @@ export function ProductsPage() {
                         className={cn(
                           'w-full text-left px-3 py-2 rounded-lg text-sm transition-colors',
                           selectedCategory === category.slug
-                            ? 'bg-blue-50 dark:bg-blue-900/30 dark:text-blue-400 font-medium'
+                            ? 'bg-primary-50 dark:bg-primary-900/30 dark:text-primary-400 font-medium'
                             : 'dark:text-gray-500 hover:bg-gray-50 hover:dark:bg-gray-900'
                         )}
                       >
@@ -506,7 +507,7 @@ export function ProductsPage() {
                 </ul>
               </div>
             </motion.div>
-          </>
+          </motion.div>
         )}
       </AnimatePresence>
     </div>

@@ -38,10 +38,10 @@ export function OrderSuccessPage() {
 
   if (!order) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center p-6">
+      <div className="min-h-screen page-bg flex items-center justify-center p-6">
         <div className="text-center">
           <h2 className="text-xl font-bold dark:text-white mb-4">Commande introuvable</h2>
-          <Link to="/" className="text-blue-600 hover:underline">
+          <Link to="/" className="text-primary-600 hover:underline">
             Retour a l'accueil
           </Link>
         </div>
@@ -50,12 +50,12 @@ export function OrderSuccessPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div className="min-h-screen page-bg">
+      <div className="page-section max-w-3xl py-12">
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 shadow-sm overflow-hidden"
+          className="card overflow-hidden"
         >
           <div className="bg-gradient-to-r from-green-500 to-emerald-600 p-8 text-white text-center">
             <motion.div
@@ -157,8 +157,8 @@ export function OrderSuccessPage() {
             </div>
 
             {order.payment_method !== 'cash_on_delivery' && (
-              <div className="bg-blue-50 dark:bg-blue-900/30 rounded-xl p-4 mb-6">
-                <p className="text-sm dark:text-blue-300">
+              <div className="bg-primary-50 dark:bg-primary-900/30 rounded-xl p-4 mb-6">
+                <p className="text-sm dark:text-primary-300">
                   <strong>Instructions de paiement:</strong> Vous recevrez une notification sur votre telephone pour confirmer le paiement {order.payment_method === 'tmoney' ? 'Tmoney' : 'Flooz'}.
                 </p>
               </div>
@@ -167,14 +167,14 @@ export function OrderSuccessPage() {
             <div className="flex flex-col sm:flex-row gap-4">
               <Link
                 to="/orders"
-                className="flex-1 flex items-center justify-center gap-2 bg-blue-600 text-white py-3 rounded-xl font-medium hover:bg-blue-700 transition-colors"
+                className="flex-1 flex items-center justify-center gap-2 btn-primary"
               >
                 <Package className="w-5 h-5" />
                 Voir mes commandes
               </Link>
               <Link
                 to="/products"
-                className="flex-1 flex items-center justify-center gap-2 border bg-white dark:border-gray-700 dark:text-gray-300 py-3 rounded-xl font-medium hover:bg-gray-50 hover:dark:bg-gray-900 transition-colors"
+                className="flex-1 flex items-center justify-center gap-2 btn-ghost"
               >
                 <ShoppingBag className="w-5 h-5" />
                 Continuer les achats

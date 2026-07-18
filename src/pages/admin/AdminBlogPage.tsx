@@ -1,3 +1,4 @@
+import { toast } from 'react-hot-toast';
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import {
@@ -9,6 +10,7 @@ import {
 import type { BlogPost } from '../../types';
 import { Plus, Edit2, Trash2, X, Save, FileText, Calendar, Eye } from 'lucide-react';
 import { AdminLayout } from '../../components/admin/AdminLayout';
+import { PageHeader } from '../../components/admin/PageHeader';
 import { AnimatePresence } from 'framer-motion';
 import { format } from 'date-fns';
 
@@ -94,7 +96,7 @@ export function AdminBlogPage() {
       resetForm();
     } catch (error) {
       console.error('Error saving blog post:', error);
-      alert('Erreur lors de l\'enregistrement');
+      toast.error('Erreur lors de l\'enregistrement');
     } finally {
       setSaving(false);
     }
@@ -108,34 +110,28 @@ export function AdminBlogPage() {
       setPosts(prev => prev.filter(p => p.id !== id));
     } catch (error) {
       console.error('Error deleting blog post:', error);
-      alert('Erreur lors de la suppression');
+      toast.error('Erreur lors de la suppression');
     }
   };
 
   return (
     <AdminLayout>
       <div className="p-6 lg:p-8">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8"
+        <PageHeader
+          title="Blog"
+          subtitle={`${posts.length} article${posts.length > 1 ? 's' : ''}`}
         >
-          <div>
-            <h1 className="text-2xl font-bold dark:text-white">Blog</h1>
-            <p className="dark:text-gray-500 mt-1">{posts.length} article{posts.length > 1 ? 's' : ''}</p>
-          </div>
-
           <button
             onClick={() => {
               resetForm();
               setShowForm(true);
             }}
-            className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2.5 rounded-xl font-medium hover:bg-blue-700 transition-colors"
+            className="flex items-center gap-2 bg-primary-600 text-white px-4 py-2.5 rounded-xl font-medium hover:bg-primary-700 transition-colors"
           >
             <Plus className="w-5 h-5" />
             Nouvel article
           </button>
-        </motion.div>
+        </PageHeader>
 
         <div className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 overflow-hidden">
           <table className="w-full">
@@ -260,7 +256,7 @@ export function AdminBlogPage() {
                     type="text"
                     value={formData.title}
                     onChange={e => setFormData({ ...formData, title: e.target.value })}
-                    className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+                    className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                   />
                 </div>
 
@@ -272,7 +268,7 @@ export function AdminBlogPage() {
                     value={formData.excerpt}
                     onChange={e => setFormData({ ...formData, excerpt: e.target.value })}
                     rows={2}
-                    className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+                    className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                   />
                 </div>
 
@@ -284,7 +280,7 @@ export function AdminBlogPage() {
                     value={formData.content}
                     onChange={e => setFormData({ ...formData, content: e.target.value })}
                     rows={10}
-                    className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+                    className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                   />
                 </div>
 
@@ -296,7 +292,7 @@ export function AdminBlogPage() {
                     type="text"
                     value={formData.image_url}
                     onChange={e => setFormData({ ...formData, image_url: e.target.value })}
-                    className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+                    className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                   />
                 </div>
 
@@ -305,7 +301,7 @@ export function AdminBlogPage() {
                     type="checkbox"
                     checked={formData.is_published}
                     onChange={e => setFormData({ ...formData, is_published: e.target.checked })}
-                    className="w-4 h-4 text-blue-600 border-gray-300 rounded"
+                    className="w-4 h-4 text-primary-600 border-gray-300 rounded"
                   />
                   <span className="text-sm dark:text-gray-300">Publier immediatement</span>
                 </label>
@@ -314,7 +310,7 @@ export function AdminBlogPage() {
                   <button
                     onClick={handleSave}
                     disabled={saving || !formData.title || !formData.content}
-                    className="flex items-center gap-2 bg-blue-600 text-white px-6 py-2.5 rounded-xl font-medium hover:bg-blue-700 disabled:opacity-50"
+                    className="flex items-center gap-2 bg-primary-600 text-white px-6 py-2.5 rounded-xl font-medium hover:bg-primary-700 disabled:opacity-50"
                   >
                     <Save className="w-4 h-4" />
                     {saving ? 'Enregistrement...' : 'Enregistrer'}

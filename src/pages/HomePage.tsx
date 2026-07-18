@@ -158,7 +158,7 @@ useEffect(() => {
       icon: Truck,
       title: 'Livraison Rapide',
       description: 'Dans tout le Togo sous 24-48h',
-      color: 'from-blue-500 to-cyan-500'
+      color: 'from-primary-500 to-cyan-500'
     },
     {
       icon: Shield,
@@ -183,7 +183,7 @@ useEffect(() => {
   return (
     <div className="min-h-screen">
       {/* Hero Banner with background image */}
-      <section className="relative pt-4 md:pt-6 lg:pt-8 pb-6 md:pb-8 lg:pb-10 pl-0 pr-0 overflow-hidden">
+      <section className="relative pt-4 md:pt-6 lg:pt-8 pb-6 md:pb-8 lg:pb-10 overflow-hidden">
         <div
           className="absolute inset-0 bg-cover bg-center opacity-15 -z-10"
           style={{ backgroundImage: `url(${image1})` }}
@@ -196,12 +196,12 @@ useEffect(() => {
 
         {/* Decorative images with subtle float and glow */}
         <div className="absolute left-[5%] top-[22%] w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 lg:w-36 lg:h-36 xl:w-44 xl:h-44 2xl:w-52 2xl:h-52 z-10 flex items-center justify-center">
-          <div className="w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 lg:w-24 lg:h-24 xl:w-28 xl:h-28 bg-blue-400/40 rounded-full blur-[3rem]" />
+          <div className="w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 lg:w-24 lg:h-24 xl:w-28 xl:h-28 bg-primary-400/40 rounded-full blur-[3rem]" />
         </div>
         <motion.img
           src={image3}
           alt=""
-          className="absolute left-[5%] top-[22%] w-16 h-16 sm:w-20 sm:h-20 md:w-28 md:h-28 lg:w-36 lg:h-36 xl:w-44 xl:h-44 2xl:w-52 2xl:h-52 object-cover opacity-95 z-20"
+          className="absolute left-[5%] top-[22%] w-16 h-16 sm:w-20 sm:h-20 md:w-28 md:h-28 lg:w-36 lg:h-36 xl:w-44 xl:h-44 2xl:w-52 2xl:h-52 object-cover opacity-95 z-20 rounded-3xl shadow-premium"
           animate={{ y: [0, -15, 0] }}
           transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
         />
@@ -212,14 +212,14 @@ useEffect(() => {
         <motion.img
           src={image4}
           alt=""
-          className="absolute right-[5%] bottom-[22%] w-20 h-20 sm:w-24 sm:h-24 md:w-36 md:h-36 lg:w-40 lg:h-40 xl:w-48 xl:h-48 object-cover opacity-95 z-20"
+          className="absolute right-[5%] bottom-[22%] w-20 h-20 sm:w-24 sm:h-24 md:w-36 md:h-36 lg:w-40 lg:h-40 xl:w-48 xl:h-48 object-cover opacity-95 z-20 rounded-3xl shadow-premium"
           animate={{ y: [0, 15, 0] }}
           transition={{ duration: 4.5, repeat: Infinity, ease: 'easeInOut' }}
         />
       </section>
 
       {/* Features Bar */}
-      <section className="bg-white dark:bg-gray-900 border-b border-gray-100 dark:border-gray-800">
+      <section className="page-bg border-b border-gray-100 dark:border-gray-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-10">
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
             {features.map((feature, index) => (
@@ -228,13 +228,13 @@ useEffect(() => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.1, duration: 0.5 }}
-                className="group relative flex flex-col sm:flex-row items-center sm:items-center gap-3 sm:gap-4 p-3 sm:p-4 rounded-2xl hover:bg-gray-50 dark:hover:bg-gray-800 transition-all duration-300"
+                className="group relative flex flex-col sm:flex-row items-center sm:items-center gap-3 sm:gap-4 p-3 sm:p-4 rounded-2xl hover:bg-white dark:hover:bg-gray-900 card-hover transition-all duration-300"
               >
                 <div className={`relative w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-gradient-to-br ${feature.color} flex items-center justify-center text-white shadow-lg group-hover:shadow-xl group-hover:scale-110 transition-all duration-300`}>
                   <feature.icon className="w-6 h-6 sm:w-7 sm:h-7" />
                 </div>
                 <div className="text-center sm:text-left">
-                  <h3 className="font-bold text-gray-900 dark:text-white text-xs sm:text-sm md:text-base group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                  <h3 className="font-bold text-gray-900 dark:text-white text-xs sm:text-sm md:text-base group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
                     {feature.title}
                   </h3>
                   <p className="text-[10px] sm:text-xs md:text-sm text-gray-500 dark:text-gray-400 mt-0.5">
@@ -248,7 +248,7 @@ useEffect(() => {
       </section>
 
       {/* Categories */}
-      <section className="py-16 md:py-20 bg-gray-50 dark:bg-gray-950">
+      <section className="py-16 md:py-20 page-bg">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -256,10 +256,10 @@ useEffect(() => {
             viewport={{ once: true }}
             className="text-center mb-10 md:mb-12"
           >
-            <span className="inline-block px-4 py-1.5 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-full text-sm font-semibold mb-4">
+            <span className="inline-block px-4 py-1.5 bg-primary-50 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400 rounded-full text-sm font-semibold mb-4">
               Explorer
             </span>
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-3">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-3 tracking-tightest">
               Categories populaires
             </h2>
             <p className="text-gray-500 dark:text-gray-400 max-w-2xl mx-auto">
@@ -287,9 +287,9 @@ useEffect(() => {
                       key={`${category.id}-${index}`}
                       to={`/products?category=${category.slug}`}
                       onClick={handleLinkClick}
-                      className="group flex-shrink-0 w-32 sm:w-40 md:w-44 flex flex-col items-center p-3 sm:p-4 md:p-5 bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 hover:border-blue-200 dark:hover:border-blue-800 hover:shadow-xl transition-all duration-300 no-underline"
+                      className="group flex-shrink-0 w-32 sm:w-40 md:w-44 flex flex-col items-center p-3 sm:p-4 md:p-5 bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 hover:border-primary-200 dark:hover:border-primary-800 hover:shadow-premium transition-all duration-300 no-underline"
                     >
-                      <div className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-2xl bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-blue-900/20 dark:to-cyan-900/20 flex items-center justify-center text-blue-600 dark:text-blue-400 mb-2 sm:mb-3 group-hover:scale-110 transition-transform">
+                      <div className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-2xl bg-gradient-to-br from-primary-50 to-cyan-50 dark:from-primary-900/20 dark:to-cyan-900/20 flex items-center justify-center text-primary-600 dark:text-primary-400 mb-2 sm:mb-3 group-hover:scale-110 transition-transform">
                         <Icon className="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7" />
                       </div>
                       <h3 className="font-semibold text-gray-900 dark:text-white text-center text-sm">
@@ -307,7 +307,7 @@ useEffect(() => {
           <div className="text-center mt-10">
             <Link
               to="/categories"
-              className="inline-flex items-center gap-2 text-blue-600 dark:text-blue-400 font-semibold hover:gap-3 transition-all"
+              className="inline-flex items-center gap-2 text-primary-600 dark:text-primary-400 font-semibold hover:gap-3 transition-all"
             >
               Voir toutes les categories
               <ArrowRight className="w-5 h-5" />
@@ -326,11 +326,11 @@ useEffect(() => {
             className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-10 md:mb-12"
           >
             <div>
-              <span className="inline-flex items-center gap-2 px-4 py-1.5 bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400 rounded-full text-sm font-semibold mb-4">
+              <span className="inline-flex items-center gap-2 px-4 py-1.5 bg-gold-50 dark:bg-gold-900/30 text-gold-600 dark:text-gold-400 rounded-full text-sm font-semibold mb-4">
                 <Zap className="w-4 h-4" />
                 Selection
               </span>
-              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">
+              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white tracking-tightest">
                 Produits en vedette
               </h2>
               <p className="text-gray-500 dark:text-gray-400 mt-2 max-w-lg">
@@ -339,7 +339,7 @@ useEffect(() => {
             </div>
             <Link
               to="/products"
-              className="hidden sm:inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 transition-colors shadow-lg shadow-blue-600/20 hover:shadow-blue-600/40"
+              className="hidden sm:inline-flex items-center gap-2 btn-primary"
             >
               Voir tout
               <ArrowRight className="w-5 h-5" />
@@ -358,7 +358,7 @@ useEffect(() => {
               <div className="mt-10 text-center sm:hidden">
                 <Link
                   to="/products"
-                  className="inline-flex items-center gap-2 px-8 py-3 bg-blue-600 text-white rounded-xl font-semibold"
+                  className="inline-flex items-center gap-2 btn-primary"
                 >
                   Voir tous les produits
                   <ArrowRight className="w-5 h-5" />
@@ -372,7 +372,7 @@ useEffect(() => {
       <FlashSaleSection />
 
       {/* Quality Guarantee */}
-      <section className="relative py-20 md:py-28 bg-gradient-to-br from-blue-600 via-blue-700 to-cyan-600 overflow-hidden">
+      <section className="relative py-20 md:py-28 bg-gradient-to-br from-primary-600 via-primary-700 to-cyan-600 overflow-hidden">
         <div className="absolute inset-0">
           <div className="absolute top-10 left-10 w-72 h-72 bg-white/10 rounded-full blur-3xl" />
           <div className="absolute bottom-10 right-10 w-96 h-96 bg-cyan-400/20 rounded-full blur-3xl" />
@@ -395,7 +395,7 @@ useEffect(() => {
               <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold leading-tight mb-6">
                 Garantie qualite et satisfaction
               </h2>
-              <p className="text-blue-100 text-lg md:text-xl mb-8 max-w-lg">
+              <p className="text-primary-100 text-lg md:text-xl mb-8 max-w-lg">
                 Tous nos produits sont soigneusement selectionnes et verifies pour vous garantir la meilleure qualite.
               </p>
 
@@ -438,9 +438,9 @@ useEffect(() => {
                   <p className="text-gray-500 dark:text-gray-400">Reduction exclusive pour les nouveaux clients</p>
                 </div>
 
-                <div className="relative bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-blue-900/20 dark:to-cyan-900/20 rounded-2xl p-8 text-center mb-6 overflow-hidden">
-                  <div className="absolute top-3 right-3 text-xs text-blue-400 font-medium">LIMITEE</div>
-                  <div className="text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-cyan-600 mb-2">
+                <div className="relative bg-gradient-to-br from-primary-50 to-cyan-50 dark:from-primary-900/20 dark:to-cyan-900/20 rounded-2xl p-8 text-center mb-6 overflow-hidden">
+                  <div className="absolute top-3 right-3 text-xs text-primary-400 font-medium">LIMITEE</div>
+                  <div className="text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-primary-600 to-cyan-600 mb-2">
                     -15%
                   </div>
                   <p className="text-gray-600 dark:text-gray-300 font-medium">Sur votre premiere commande</p>
@@ -462,7 +462,7 @@ useEffect(() => {
       </section>
 
       {/* Testimonials */}
-      <section className="py-16 md:py-20 bg-gray-50 dark:bg-gray-950">
+      <section className="py-16 md:py-20 page-bg">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -470,10 +470,10 @@ useEffect(() => {
             viewport={{ once: true }}
             className="text-center mb-10 md:mb-12"
           >
-            <span className="inline-block px-4 py-1.5 bg-pink-100 dark:bg-pink-900/30 text-pink-600 dark:text-pink-400 rounded-full text-sm font-semibold mb-4">
+            <span className="inline-block px-4 py-1.5 bg-purple-50 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 rounded-full text-sm font-semibold mb-4">
               Temoignages
             </span>
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-3">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-3 tracking-tightest">
               Ce que disent nos clients
             </h2>
             <p className="text-gray-500 dark:text-gray-400 max-w-2xl mx-auto">
@@ -489,9 +489,9 @@ useEffect(() => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1 }}
-                className="relative bg-white dark:bg-gray-900 rounded-3xl border border-gray-100 dark:border-gray-800 p-6 md:p-8 hover:shadow-xl hover:border-blue-100 dark:hover:border-blue-800 transition-all duration-300"
+                className="relative bg-white dark:bg-gray-900 rounded-3xl border border-gray-100 dark:border-gray-800 p-6 md:p-8 hover:shadow-premium hover:border-primary-100 dark:hover:border-primary-800 transition-all duration-300"
               >
-                <div className="absolute top-6 right-8 text-6xl text-blue-100 dark:text-blue-900/30 font-serif leading-none">
+                <div className="absolute top-6 right-8 text-6xl text-primary-100 dark:text-primary-900/30 font-serif leading-none">
                   &ldquo;
                 </div>
 
@@ -508,7 +508,7 @@ useEffect(() => {
                 </p>
 
                 <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-600 to-cyan-500 flex items-center justify-center text-white font-bold text-lg shadow-md">
+                  <div className="w-12 h-12 rounded-full brand-gradient flex items-center justify-center text-white font-bold text-lg shadow-md">
                     {review.full_name[0]}
                   </div>
                   <div>
@@ -524,8 +524,8 @@ useEffect(() => {
 
       {/* Newsletter */}
       <section className="relative py-16 md:py-20 bg-white dark:bg-gray-900 border-t border-gray-100 dark:border-gray-800 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-blue-950/30 dark:to-cyan-950/30" />
-        <div className="absolute top-0 left-1/4 w-96 h-96 bg-blue-200/30 dark:bg-blue-800/10 rounded-full blur-3xl" />
+        <div className="absolute inset-0 bg-gradient-to-br from-primary-50 to-cyan-50 dark:from-primary-950/30 dark:to-cyan-950/30" />
+        <div className="absolute top-0 left-1/4 w-96 h-96 bg-primary-200/30 dark:bg-primary-800/10 rounded-full blur-3xl" />
         <div className="absolute bottom-0 right-1/4 w-72 h-72 bg-cyan-200/30 dark:bg-cyan-800/10 rounded-full blur-3xl" />
 
         <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -534,10 +534,10 @@ useEffect(() => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
           >
-            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-600 to-cyan-500 flex items-center justify-center mx-auto mb-6 shadow-lg shadow-blue-500/30">
+            <div className="w-16 h-16 rounded-2xl brand-gradient flex items-center justify-center mx-auto mb-6 shadow-lg shadow-primary-500/30">
               <Globe className="w-8 h-8 text-white" />
             </div>
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4 tracking-tightest">
               Restez informe
             </h2>
             <p className="text-gray-500 dark:text-gray-400 mb-8 max-w-lg mx-auto">
@@ -547,11 +547,11 @@ useEffect(() => {
               <input
                 type="email"
                 placeholder="Votre adresse email"
-                className="flex-1 px-6 py-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 shadow-sm"
+                className="input-premium flex-1"
               />
               <button
                 type="submit"
-                className="px-8 py-4 bg-blue-600 text-white rounded-2xl font-semibold hover:bg-blue-700 transition-all shadow-lg shadow-blue-600/20 hover:shadow-blue-600/40 whitespace-nowrap"
+                className="btn-primary whitespace-nowrap"
               >
                 S'inscrire
               </button>

@@ -36,7 +36,7 @@ export function LoyaltyPage() {
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-950 py-20">
+      <div className="min-h-screen page-bg py-20">
         <div className="max-w-7xl mx-auto px-4 text-center">
           <Gift className="w-16 h-16 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
           <p className="text-gray-500 dark:text-gray-400">Connectez-vous pour voir vos points fidelite</p>
@@ -46,7 +46,7 @@ export function LoyaltyPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-950 py-12">
+    <div className="min-h-screen page-bg py-12">
       <div className="max-w-4xl mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -59,7 +59,7 @@ export function LoyaltyPage() {
 
         {loading ? (
           <div className="flex justify-center py-12">
-            <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+            <Loader2 className="w-8 h-8 animate-spin text-primary-600" />
           </div>
         ) : (
           <>
@@ -67,21 +67,21 @@ export function LoyaltyPage() {
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="bg-gradient-to-br from-blue-600 to-cyan-500 rounded-2xl p-6 text-white"
+                className="bg-gradient-to-br from-primary-600 to-cyan-500 rounded-2xl p-6 text-white"
               >
                 <div className="flex items-center gap-3 mb-4">
                   <Star className="w-8 h-8" />
                   <span className="font-medium">Points disponibles</span>
                 </div>
                 <p className="text-4xl font-bold">{loyalty?.points || 0}</p>
-                <p className="text-blue-100 mt-2">= {pointsValue.toLocaleString()} FCFA de reduction</p>
+                <p className="text-primary-100 mt-2">= {pointsValue.toLocaleString()} FCFA de reduction</p>
               </motion.div>
 
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1 }}
-className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 p-6"
+className="card p-6"
                >
                  <div className="flex items-center gap-3 mb-4">
                    <TrendingUp className="w-8 h-8 text-green-600 dark:text-green-400" />
@@ -95,7 +95,7 @@ className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:bor
                  initial={{ opacity: 0, y: 20 }}
                  animate={{ opacity: 1, y: 0 }}
                  transition={{ delay: 0.2 }}
-                 className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 p-6"
+                 className="card p-6"
                >
                  <div className="flex items-center gap-3 mb-4">
                    <Gift className="w-8 h-8 text-orange-500 dark:text-orange-400" />
@@ -110,7 +110,7 @@ className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:bor
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
-              className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 p-6"
+              className="card p-6"
             >
               <div className="flex items-center gap-2 mb-6">
                 <History className="w-5 h-5 text-gray-600 dark:text-gray-400" />
@@ -148,20 +148,20 @@ className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:bor
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4 }}
-              className="mt-8 bg-blue-50 dark:bg-blue-900/50 rounded-2xl p-6"
+              className="mt-8 bg-primary-50 dark:bg-primary-900/20 rounded-2xl p-6"
             >
               <h3 className="font-bold text-gray-900 dark:text-white mb-4">Comment ca marche ?</h3>
               <ul className="space-y-2 text-gray-600 dark:text-gray-300">
                 <li className="flex items-start gap-2">
-                  <Star className="w-4 h-4 text-blue-600 mt-0.5" />
+                  <Star className="w-4 h-4 text-primary-600 mt-0.5" />
                   Gagnez 1 point pour chaque 1000 FCFA d'achat
                 </li>
                 <li className="flex items-start gap-2">
-                  <Gift className="w-4 h-4 text-blue-600 mt-0.5" />
+                  <Gift className="w-4 h-4 text-primary-600 mt-0.5" />
                   1 point = 50 FCFA de reduction
                 </li>
                 <li className="flex items-start gap-2">
-                  <TrendingUp className="w-4 h-4 text-blue-600 mt-0.5" />
+                  <TrendingUp className="w-4 h-4 text-primary-600 mt-0.5" />
                   Utilisez vos points a tout moment lors du checkout
                 </li>
               </ul>

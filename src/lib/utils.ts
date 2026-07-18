@@ -1,5 +1,7 @@
 import { clsx, type ClassValue } from 'clsx';
 
+export const FALLBACK_IMAGE = 'https://images.pexels.com/photos/607812/pexels-photo-607812.jpeg?auto=compress&cs=tinysrgb&w=800';
+
 export function cn(...inputs: ClassValue[]) {
   return clsx(inputs);
 }
@@ -32,7 +34,7 @@ export function generateOrderNumber(): string {
 export function getStatusColor(status: string): string {
   const colors: Record<string, string> = {
     pending: 'bg-yellow-100 text-yellow-800',
-    confirmed: 'bg-blue-100 text-blue-800',
+    confirmed: 'bg-primary-100 text-primary-800',
     processing: 'bg-indigo-100 text-indigo-800',
     shipped: 'bg-purple-100 text-purple-800',
     delivered: 'bg-green-100 text-green-800',

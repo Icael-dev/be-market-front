@@ -2,7 +2,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, Heart } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useWishlist } from '../context/WishlistContext';
-import { formatPrice } from '../lib/utils';
+import { formatPrice, FALLBACK_IMAGE } from '../lib/utils';
 
 interface WishlistDrawerProps {
   isOpen: boolean;
@@ -28,18 +28,18 @@ export function WishlistDrawer({ isOpen, onClose }: WishlistDrawerProps) {
             animate={{ x: 0 }}
             exit={{ x: '100%' }}
             transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-            className="fixed right-0 top-0 bottom-0 w-full max-w-md bg-white dark:bg-gray-900 z-50 shadow-xl"
+            className="fixed right-0 top-0 bottom-0 w-full max-w-md bg-white dark:bg-gray-900 z-50 shadow-premium"
           >
             <div className="flex flex-col h-full">
-              <div className="flex items-center justify-between p-6 border-b dark:border-gray-700">
+              <div className="flex items-center justify-between p-6 border-b border-gray-100 dark:border-gray-800">
                 <div className="flex items-center gap-2">
                   <Heart className="w-5 h-5 text-red-500" />
                   <h2 className="text-lg font-bold dark:text-white">Mes favoris</h2>
-                  <span className="text-sm dark:text-gray-400">({items.length})</span>
+                  <span className="text-sm text-gray-400 dark:text-gray-500">({items.length})</span>
                 </div>
                 <button
                   onClick={onClose}
-                  className="p-2 hover:bg-gray-100 hover:dark:bg-gray-700 rounded-lg transition-colors"
+                  className="icon-btn"
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -48,12 +48,12 @@ export function WishlistDrawer({ isOpen, onClose }: WishlistDrawerProps) {
               <div className="flex-1 overflow-y-auto p-6">
                 {items.length === 0 ? (
                   <div className="text-center py-12">
-                    <Heart className="w-16 h-16 dark:text-gray-500 mx-auto mb-4" />
-                    <p className="dark:text-gray-400 mb-4">Aucun favori</p>
+                    <Heart className="w-16 h-16 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
+                    <p className="text-gray-500 dark:text-gray-400 mb-4">Aucun favori</p>
                     <Link
                       to="/products"
                       onClick={onClose}
-                      className="dark:text-blue-400 font-medium hover:underline"
+                      className="text-primary-400 dark:text-primary-400 font-medium hover:underline"
                     >
                       Decouvrir nos produits
                     </Link>
@@ -63,7 +63,7 @@ export function WishlistDrawer({ isOpen, onClose }: WishlistDrawerProps) {
                     {items.map(item => (
                       <div
                         key={item.id}
-                        className="flex gap-4 p-4 bg-gray-50 dark:bg-gray-700 rounded-xl"
+                        className="flex gap-4 p-4 bg-gray-50 dark:bg-gray-800 rounded-xl"
                       >
                         <Link
                           to={`/product/${item.product?.slug || item.product_id}`}
@@ -71,7 +71,7 @@ export function WishlistDrawer({ isOpen, onClose }: WishlistDrawerProps) {
                           className="w-20 h-20 bg-gray-100 dark:bg-gray-900 rounded-lg overflow-hidden flex-shrink-0"
                         >
                           <img
-                            src={item.product?.images?.[0] || 'https://images.pexels.com/photos/607812/pexels-photo-607812.jpeg'}
+                            src={item.product?.images?.[0] || FALLBACK_IMAGE}
                             alt={item.product?.name || 'Produit'}
                             className="w-full h-full object-cover"
                           />
@@ -81,7 +81,7 @@ export function WishlistDrawer({ isOpen, onClose }: WishlistDrawerProps) {
                           <Link
                             to={`/product/${item.product?.slug || item.product_id}`}
                             onClick={onClose}
-                            className="font-medium dark:text-white hover:dark:text-blue-400 line-clamp-2"
+                            className="font-medium dark:text-white hover:dark:text-primary-400 line-clamp-2"
                           >
                             {item.product?.name || 'Produit'}
                           </Link>

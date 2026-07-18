@@ -1,8 +1,10 @@
+import { toast } from 'react-hot-toast';
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { fetchAdminSettings, updateAdminSettings } from '../../services/admin';
 import { Settings, Save, Loader2 } from 'lucide-react';
 import { AdminLayout } from '../../components/admin/AdminLayout';
+import { PageHeader } from '../../components/admin/PageHeader';
 
 export function AdminSettingsPage() {
   const [settings, setSettings] = useState<Record<string, string | number>>({});
@@ -35,7 +37,7 @@ export function AdminSettingsPage() {
       setTimeout(() => setSaved(false), 2000);
     } catch (error) {
       console.error('Settings save error:', error);
-      alert('Erreur lors de la sauvegarde');
+      toast.error('Erreur lors de la sauvegarde');
     } finally {
       setSaving(false);
     }
@@ -72,20 +74,14 @@ export function AdminSettingsPage() {
   return (
     <AdminLayout>
       <div className="p-6 lg:p-8">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8"
+        <PageHeader
+          title="Configuration"
+          subtitle="Parametres de la boutique"
         >
-          <div>
-            <h1 className="text-2xl font-bold dark:text-white">Configuration</h1>
-            <p className="dark:text-gray-500 mt-1">Parametres de la boutique</p>
-          </div>
-
           <button
             onClick={handleSave}
             disabled={saving}
-            className="flex items-center gap-2 bg-blue-600 text-white px-6 py-2.5 rounded-xl font-medium hover:bg-blue-700 disabled:opacity-50"
+            className="flex items-center gap-2 bg-primary-600 text-white px-6 py-2.5 rounded-xl font-medium hover:bg-primary-700 disabled:opacity-50"
           >
             {saving ? (
               <Loader2 className="w-4 h-4 animate-spin" />
@@ -98,11 +94,11 @@ export function AdminSettingsPage() {
               </>
             )}
           </button>
-        </motion.div>
+        </PageHeader>
 
         {loading ? (
           <div className="flex items-center justify-center py-12">
-            <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+            <Loader2 className="w-8 h-8 animate-spin text-primary-600" />
           </div>
         ) : (
           <div className="space-y-6">
@@ -128,7 +124,7 @@ export function AdminSettingsPage() {
                         type={item.type}
                         value={settings[item.key] || ''}
                         onChange={e => handleChange(item.key, e.target.value)}
-                        className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+                        className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                       />
                     </div>
                   ))}

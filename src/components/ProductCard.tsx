@@ -2,17 +2,18 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ShoppingCart, Heart, Star, Sparkles } from 'lucide-react';
 import type { Product } from '../types';
-import { formatPrice, cn } from '../lib/utils';
+import { formatPrice, cn, FALLBACK_IMAGE } from '../lib/utils';
 import { useCart } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
-import { useState } from 'react';
+import { Card } from './ui/Card';
+import { memo, useState } from 'react';
 
 interface ProductCardProps {
   product: Product;
   index?: number;
 }
 
-export function ProductCard({ product, index = 0 }: ProductCardProps) {
+export const ProductCard = memo(function ProductCard({ product, index = 0 }: ProductCardProps) {
   const { addItem } = useCart();
   const { toggleItem, isInWishlist } = useWishlist();
   const [isHovered, setIsHovered] = useState(false);
@@ -38,7 +39,7 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
 
   const imageUrl = !imageError && product.images?.[0]
     ? product.images[0]
-    : 'https://images.pexels.com/photos/607812/pexels-photo-607812.jpeg?auto=compress&cs=tinysrgb&w=800';
+    : FALLBACK_IMAGE;
 
   return (
     <motion.div
@@ -54,11 +55,13 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
-        <div className="relative bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 border border-gray-100 dark:border-gray-700 h-full flex flex-col">
-          <div className="relative aspect-square overflow-hidden bg-gray-100 dark:bg-gray-700">
+        <Card hover className="relative overflow-hidden shadow-sm hover:shadow-2xl duration-500 border-gray-100 dark:border-gray-700 h-full flex flex-col">
+          <div className="relative aspect-square overflow-hidden bg-gray-100 dark:bg-gray-800">
             <motion.img
               src={imageUrl}
               alt={product.name}
+              loading="lazy"
+              decoding="async"
               onError={() => setImageError(true)}
               className="w-full h-full object-cover"
               animate={{ scale: isHovered ? 1.1 : 1 }}
@@ -83,7 +86,7 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
             )}
 
             {product.is_featured && (
-              <div className="absolute top-3 right-3 bg-blue-600 dark:bg-blue-500 text-white text-xs font-medium px-3 py-1.5 rounded-full shadow-lg">
+              <div className="absolute top-3 right-3 bg-primary-600 dark:bg-primary-500 text-white text-xs font-medium px-3 py-1.5 rounded-full shadow-lg">
                 Vedette
               </div>
             )}
@@ -96,7 +99,7 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
             >
               <button
                 onClick={handleAddToCart}
-                className="flex-1 flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl text-sm font-medium transition-colors shadow-lg"
+                className="flex-1 flex items-center justify-center gap-2 bg-primary-600 hover:bg-primary-700 text-white py-3 rounded-xl text-sm font-medium transition-colors shadow-lg"
               >
                 <ShoppingCart className="w-4 h-4" />
                 Ajouter
@@ -118,11 +121,11 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
 
           <div className="p-4 flex-1 flex flex-col">
             {product.specs?.brand && (
-              <p className="text-xs text-blue-600 dark:text-blue-400 font-medium mb-1">
+              <p className="text-xs text-primary-600 dark:text-primary-400 font-medium mb-1">
                 {product.specs.brand}
               </p>
             )}
-            <h3 className="font-semibold text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors line-clamp-2 flex-1">
+            <h3 className="font-semibold text-gray-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors line-clamp-2 flex-1">
               {product.name}
             </h3>
 
@@ -161,8 +164,8 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
               )}
             </div>
           </div>
-        </div>
+        </Card>
       </Link>
     </motion.div>
   );
-}
+});

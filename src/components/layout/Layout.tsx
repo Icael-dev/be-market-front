@@ -15,7 +15,7 @@ export function Layout({ children, hideHeader, hideFooter }: LayoutProps) {
   const isHomepage = location.pathname === '/';
 
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-950 transition-colors duration-300">
+    <div className="min-h-screen flex flex-col page-bg">
       {!hideHeader && <Header />}
       <main className="flex-1">
         {children}

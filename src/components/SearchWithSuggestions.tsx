@@ -102,7 +102,7 @@ export function SearchWithSuggestions() {
           onChange={(e) => setQuery(e.target.value)}
           onFocus={() => setShowSuggestions(true)}
           placeholder="Rechercher un produit..."
-          className="w-full pl-10 pr-10 py-2.5 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+          className="input-premium pl-10 pr-10"
         />
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 dark:text-gray-500" />
         {query && (
@@ -117,10 +117,10 @@ export function SearchWithSuggestions() {
       </form>
 
       {showSuggestions && (query || loading) && (
-        <div className="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-gray-800 border dark:border-gray-700 rounded-xl shadow-lg z-50 max-h-96 overflow-y-auto">
+        <div className="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 rounded-xl shadow-premium z-50 max-h-96 overflow-y-auto">
           {loading ? (
             <div className="p-4 text-center">
-              <div className="animate-spin w-5 h-5 border-2 border-blue-600 border-t-transparent rounded-full mx-auto" />
+              <div className="animate-spin w-5 h-5 border-2 border-primary-600 border-t-transparent rounded-full mx-auto" />
             </div>
           ) : suggestions.length > 0 ? (
             <div className="py-2">
@@ -131,7 +131,7 @@ export function SearchWithSuggestions() {
                   onClick={() => handleSelectSuggestion(product.slug)}
                   className="w-full px-4 py-3 flex items-center gap-3 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
                 >
-                  <div className="w-12 h-12 rounded-lg bg-gray-100 dark:bg-gray-700 overflow-hidden flex-shrink-0">
+                  <div className="w-12 h-12 rounded-lg bg-gray-100 dark:bg-gray-800 overflow-hidden flex-shrink-0">
                     {product.images?.[0] ? (
                       <img
                         src={getImageUrl(product.images[0])}
@@ -150,7 +150,7 @@ export function SearchWithSuggestions() {
                       {product.sku && (
                         <span className="text-gray-500 dark:text-gray-400">SKU: {product.sku}</span>
                       )}
-                      <span className="font-semibold text-blue-600 dark:text-blue-400">
+                      <span className="font-semibold text-primary-600 dark:text-primary-400">
                         {formatPrice(product.price)}
                       </span>
                     </div>

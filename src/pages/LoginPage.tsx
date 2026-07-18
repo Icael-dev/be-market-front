@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { Mail, Lock, Eye, EyeOff, ArrowRight } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { LoadingSpinner } from '../components/LoadingSpinner';
+import { InputField } from '../components/ui/FormField';
 
 export function LoginPage() {
   const navigate = useNavigate();
@@ -31,7 +32,7 @@ export function LoginPage() {
 
   return (
     <div className="min-h-screen flex">
-      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-blue-600 via-blue-700 to-cyan-600 relative overflow-hidden">
+      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-primary-600 via-primary-700 to-cyan-600 relative overflow-hidden">
         <div className="absolute inset-0">
           <div className="absolute top-20 left-20 w-72 h-72 bg-white/10 rounded-full blur-3xl" />
           <div className="absolute bottom-20 right-20 w-96 h-96 bg-cyan-400/20 rounded-full blur-3xl" />
@@ -45,7 +46,7 @@ export function LoginPage() {
             className="max-w-md text-center"
           >
             <h1 className="text-4xl font-bold mb-4">Bienvenue sur BE-Market</h1>
-            <p className="text-blue-100 text-lg">
+            <p className="text-primary-100 text-lg">
               Votre destination pour les meilleurs accessoires electroniques au Togo.
             </p>
           </motion.div>
@@ -58,11 +59,11 @@ export function LoginPage() {
           >
             <div>
               <div className="text-4xl font-bold">500+</div>
-              <div className="text-blue-200 text-sm">Produits</div>
+              <div className="text-primary-200 text-sm">Produits</div>
             </div>
             <div>
               <div className="text-4xl font-bold">10K+</div>
-              <div className="text-blue-200 text-sm">Clients</div>
+              <div className="text-primary-200 text-sm">Clients</div>
             </div>
           </motion.div>
         </div>
@@ -75,7 +76,7 @@ export function LoginPage() {
           className="w-full max-w-md"
         >
           <div className="lg:hidden flex items-center justify-center mb-8">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-600 to-cyan-500 flex items-center justify-center">
+            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary-600 to-cyan-500 flex items-center justify-center">
               <span className="text-white font-bold text-xl">B</span>
             </div>
           </div>
@@ -98,56 +99,44 @@ export function LoginPage() {
               </motion.div>
             )}
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Email
-              </label>
-              <div className="relative">
-                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 dark:text-gray-500" />
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="w-full pl-12 pr-4 py-3 border border-gray-200 dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 bg-white dark:bg-gray-800 transition-all"
-                  placeholder="vous@exemple.com"
-                  required
-                />
-              </div>
-            </div>
+            <InputField
+              label="Email"
+              type="email"
+              icon={<Mail className="w-5 h-5" />}
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="vous@exemple.com"
+              required
+            />
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Mot de passe
-              </label>
-              <div className="relative">
-                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 dark:text-gray-500" />
-                <input
-                  type={showPassword ? 'text' : 'password'}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="w-full pl-12 pr-12 py-3 border border-gray-200 dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 bg-white dark:bg-gray-800 transition-all"
-                  placeholder="Mot de passe"
-                  required
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300"
-                >
-                  {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                </button>
-              </div>
+            <div className="relative">
+              <InputField
+                label="Mot de passe"
+                type={showPassword ? 'text' : 'password'}
+                icon={<Lock className="w-5 h-5" />}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Mot de passe"
+                required
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-4 top-[3.4rem] -translate-y-1/2 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300"
+              >
+                {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+              </button>
             </div>
 
             <div className="flex items-center justify-between">
               <label className="flex items-center gap-2 cursor-pointer">
                 <input
                   type="checkbox"
-                  className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                  className="w-4 h-4 text-primary-600 border-gray-300 rounded focus:ring-primary-500"
                 />
                 <span className="text-sm text-gray-600">Se souvenir de moi</span>
               </label>
-              <a href="#" className="text-sm text-blue-600 hover:underline">
+              <a href="#" className="text-sm text-primary-600 hover:underline">
                 Mot de passe oublie ?
               </a>
             </div>
@@ -155,7 +144,7 @@ export function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full flex items-center justify-center gap-2 bg-blue-600 text-white py-3 rounded-xl font-medium hover:bg-blue-700 transition-colors disabled:opacity-50"
+              className="btn-primary w-full"
             >
               {loading ? (
                 <LoadingSpinner size="sm" />
@@ -170,7 +159,7 @@ export function LoginPage() {
 
           <p className="text-center mt-8 text-gray-600 dark:text-gray-300">
             Pas encore de compte ?{' '}
-            <Link to="/register" className="text-blue-600 font-medium hover:underline">
+            <Link to="/register" className="text-primary-600 font-medium hover:underline">
               Creer un compte
             </Link>
           </p>

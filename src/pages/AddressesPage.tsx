@@ -109,22 +109,13 @@ export function AddressesPage() {
   };
 
   const resetForm = () => {
-    setFormData({
-      label: '',
-      full_name: '',
-      phone: '',
-      address_line1: '',
-      address_line2: '',
-      city: 'Lome',
-      region: 'Maritime',
-      country: 'Togo',
-      postal_code: '',
-      is_default: false
-    });
+    setFormData(initialForm);
+    setErrors({});
   };
 
   const startEditing = (address: Address) => {
     setEditingId(address.id);
+    setErrors({});
     setFormData({
       label: address.label || '',
       full_name: address.full_name,
@@ -140,9 +131,9 @@ export function AddressesPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      <div className="bg-white dark:bg-gray-800 border-b dark:border-gray-700">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="min-h-screen page-bg">
+      <div className="page-header">
+        <div className="page-section py-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -155,7 +146,7 @@ export function AddressesPage() {
         </div>
       </div>
 
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="page-section py-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -167,7 +158,7 @@ export function AddressesPage() {
               resetForm();
               setShowAddForm(true);
             }}
-            className="flex items-center gap-2 bg-blue-600 text-white px-6 py-3 rounded-xl font-medium hover:bg-blue-700 transition-colors"
+            className="flex items-center gap-2 btn-primary"
           >
             <Plus className="w-5 h-5" />
             Ajouter une adresse
@@ -179,9 +170,9 @@ export function AddressesPage() {
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 p-12 text-center"
+              className="card p-12 text-center"
             >
-              <div className="w-16 h-16 bg-gray-200 dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4">
+              <div className="w-16 h-16 bg-gray-200 dark:bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-4">
                 <MapPin className="w-8 h-8 dark:text-gray-500" />
               </div>
               <h2 className="text-lg font-bold dark:text-white mb-2">
@@ -201,76 +192,65 @@ export function AddressesPage() {
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, x: -100 }}
                     transition={{ delay: index * 0.05 }}
-                    className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 p-6"
+                    className="card p-6"
                   >
                     {editingId === address.id ? (
                       <div className="space-y-4">
                         <div className="grid sm:grid-cols-2 gap-4">
-                          <div>
-                            <label className="block text-sm font-medium dark:text-gray-300 mb-2">
-                              Nom complet
-                            </label>
-                            <input
-                              type="text"
-                              value={formData.full_name}
-                              onChange={e => setFormData({ ...formData, full_name: e.target.value })}
-                              className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
-                            />
-                          </div>
-                          <div>
-                            <label className="block text-sm font-medium dark:text-gray-300 mb-2">
-                              Telephone
-                            </label>
-                            <input
-                              type="tel"
-                              value={formData.phone}
-                              onChange={e => setFormData({ ...formData, phone: e.target.value })}
-                              className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
-                            />
-                          </div>
-                        </div>
-
-                        <div>
-                          <label className="block text-sm font-medium dark:text-gray-300 mb-2">
-                            Adresse
-                          </label>
-                          <input
-                            type="text"
-                            value={formData.address_line1}
-                            onChange={e => setFormData({ ...formData, address_line1: e.target.value })}
-                            className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+                          <InputField
+                            name="edit_full_name"
+                            label="Nom complet"
+                            required
+                            autoComplete="name"
+                            value={formData.full_name}
+                            onChange={e => setFormData({ ...formData, full_name: e.target.value })}
+                            error={errors.full_name}
+                          />
+                          <InputField
+                            name="edit_phone"
+                            label="Telephone"
+                            required
+                            type="tel"
+                            autoComplete="tel"
+                            value={formData.phone}
+                            onChange={e => setFormData({ ...formData, phone: e.target.value })}
+                            error={errors.phone}
                           />
                         </div>
 
+                        <InputField
+                          name="edit_address_line1"
+                          label="Adresse"
+                          required
+                          autoComplete="street-address"
+                          value={formData.address_line1}
+                          onChange={e => setFormData({ ...formData, address_line1: e.target.value })}
+                          error={errors.address_line1}
+                          placeholder="Quartier, Rue, Numero"
+                        />
+
                         <div className="grid sm:grid-cols-2 gap-4">
-                          <div>
-                            <label className="block text-sm font-medium dark:text-gray-300 mb-2">
-                              Ville
-                            </label>
-                            <input
-                              type="text"
-                              value={formData.city}
-                              onChange={e => setFormData({ ...formData, city: e.target.value })}
-                              className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
-                            />
-                          </div>
-                          <div>
-                            <label className="block text-sm font-medium dark:text-gray-300 mb-2">
-                              Region
-                            </label>
-                            <input
-                              type="text"
-                              value={formData.region}
-                              onChange={e => setFormData({ ...formData, region: e.target.value })}
-                              className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
-                            />
-                          </div>
+                          <InputField
+                            name="edit_city"
+                            label="Ville"
+                            required
+                            autoComplete="address-level2"
+                            value={formData.city}
+                            onChange={e => setFormData({ ...formData, city: e.target.value })}
+                            error={errors.city}
+                          />
+                          <InputField
+                            name="edit_region"
+                            label="Region"
+                            value={formData.region}
+                            onChange={e => setFormData({ ...formData, region: e.target.value })}
+                          />
                         </div>
 
                         <div className="flex gap-3 pt-4">
                           <button
                             onClick={() => handleUpdateAddress(address.id)}
-                            className="flex items-center gap-2 bg-blue-600 text-white px-6 py-2.5 rounded-xl font-medium hover:bg-blue-700 transition-colors"
+                            className="flex items-center gap-2 btn-primary"
                           >
                             <Check className="w-4 h-4" />
                             Enregistrer
@@ -289,14 +269,14 @@ export function AddressesPage() {
                     ) : (
                       <div className="flex items-start justify-between">
                         <div className="flex items-start gap-4">
-                          <div className="w-10 h-10 rounded-full bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center dark:text-blue-400 mt-1">
+                          <div className="w-10 h-10 rounded-full bg-primary-50 dark:bg-primary-900/30 flex items-center justify-center dark:text-primary-400 mt-1">
                             <MapPin className="w-5 h-5" />
                           </div>
                           <div>
                             <div className="flex items-center gap-2">
                               <p className="font-bold dark:text-white">{address.full_name}</p>
                               {address.is_default && (
-                                <span className="px-2 py-0.5 bg-blue-50 dark:bg-blue-900/30 dark:text-blue-400 text-xs font-medium rounded-full">
+                                <span className="px-2 py-0.5 bg-primary-50 dark:bg-primary-900/30 dark:text-primary-400 text-xs font-medium rounded-full">
                                   Defaut
                                 </span>
                               )}
@@ -315,7 +295,7 @@ export function AddressesPage() {
                         <div className="flex items-center gap-2">
                           <button
                             onClick={() => startEditing(address)}
-                            className="p-2 hover:bg-gray-50 hover:dark:bg-gray-700 rounded-lg transition-colors"
+                            className="p-2 hover:bg-gray-50 hover:dark:bg-gray-800 rounded-lg transition-colors"
                           >
                             <Edit2 className="w-4 h-4 dark:text-gray-500" />
                           </button>
@@ -340,75 +320,60 @@ export function AddressesPage() {
                     initial={{ opacity: 0, height: 0 }}
                     animate={{ opacity: 1, height: 'auto' }}
                     exit={{ opacity: 0, height: 0 }}
-                    className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 p-6"
+                    className="card p-6"
                   >
                     <h3 className="font-bold dark:text-white mb-4">Nouvelle adresse</h3>
 
                     <div className="space-y-4">
                       <div className="grid sm:grid-cols-2 gap-4">
-                        <div>
-                          <label className="block text-sm font-medium dark:text-gray-300 mb-2">
-                            Nom complet
-                          </label>
-                          <input
-                            type="text"
-                            value={formData.full_name}
-                            onChange={e => setFormData({ ...formData, full_name: e.target.value })}
-                            className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
-                            required
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-sm font-medium dark:text-gray-300 mb-2">
-                            Telephone
-                          </label>
-                          <input
-                            type="tel"
-                            value={formData.phone}
-                            onChange={e => setFormData({ ...formData, phone: e.target.value })}
-                            className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
-                            required
-                          />
-                        </div>
-                      </div>
-
-                      <div>
-                        <label className="block text-sm font-medium dark:text-gray-300 mb-2">
-                          Adresse
-                        </label>
-                        <input
-                          type="text"
-                          value={formData.address_line1}
-                          onChange={e => setFormData({ ...formData, address_line1: e.target.value })}
-                          className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
-                          placeholder="Quartier, Rue, Numero"
+                        <InputField
+                          name="add_full_name"
+                          label="Nom complet"
                           required
+                          autoComplete="name"
+                          value={formData.full_name}
+                          onChange={e => setFormData({ ...formData, full_name: e.target.value })}
+                          error={errors.full_name}
+                        />
+                        <InputField
+                          name="add_phone"
+                          label="Telephone"
+                          required
+                          type="tel"
+                          autoComplete="tel"
+                          value={formData.phone}
+                          onChange={e => setFormData({ ...formData, phone: e.target.value })}
+                          error={errors.phone}
                         />
                       </div>
 
+                      <InputField
+                        name="add_address_line1"
+                        label="Adresse"
+                        required
+                        autoComplete="street-address"
+                        value={formData.address_line1}
+                        onChange={e => setFormData({ ...formData, address_line1: e.target.value })}
+                        error={errors.address_line1}
+                        placeholder="Quartier, Rue, Numero"
+                      />
+
                       <div className="grid sm:grid-cols-2 gap-4">
-                        <div>
-                          <label className="block text-sm font-medium dark:text-gray-300 mb-2">
-                            Ville
-                          </label>
-                          <input
-                            type="text"
-                            value={formData.city}
-                            onChange={e => setFormData({ ...formData, city: e.target.value })}
-                            className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-sm font-medium dark:text-gray-300 mb-2">
-                            Region
-                          </label>
-                          <input
-                            type="text"
-                            value={formData.region}
-                            onChange={e => setFormData({ ...formData, region: e.target.value })}
-                            className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
-                          />
-                        </div>
+                        <InputField
+                          name="add_city"
+                          label="Ville"
+                          required
+                          autoComplete="address-level2"
+                          value={formData.city}
+                          onChange={e => setFormData({ ...formData, city: e.target.value })}
+                          error={errors.city}
+                        />
+                        <InputField
+                          name="add_region"
+                          label="Region"
+                          value={formData.region}
+                          onChange={e => setFormData({ ...formData, region: e.target.value })}
+                        />
                       </div>
 
                       <label className="flex items-center gap-2 cursor-pointer">
@@ -416,7 +381,7 @@ export function AddressesPage() {
                           type="checkbox"
                           checked={formData.is_default}
                           onChange={e => setFormData({ ...formData, is_default: e.target.checked })}
-                          className="w-4 h-4 dark:text-blue-400 border-gray-300 rounded focus:ring-blue-500"
+                          className="w-4 h-4 dark:text-primary-400 border-gray-300 rounded focus:ring-primary-500"
                         />
                         <span className="text-sm dark:text-gray-500">
                           Definir comme adresse par defaut
@@ -426,7 +391,7 @@ export function AddressesPage() {
                       <div className="flex gap-3 pt-4">
                         <button
                           onClick={handleAddAddress}
-                          className="flex items-center gap-2 bg-blue-600 text-white px-6 py-2.5 rounded-xl font-medium hover:bg-blue-700 transition-colors"
+                          className="flex items-center gap-2 btn-primary"
                         >
                           <Check className="w-4 h-4" />
                           Enregistrer

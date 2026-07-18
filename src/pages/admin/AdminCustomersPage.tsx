@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { fetchAdminCustomers, type AdminCustomer } from '../../services/admin';
 import { formatPrice } from '../../lib/utils';
 import { AdminLayout } from '../../components/admin/AdminLayout';
+import { PageHeader } from '../../components/admin/PageHeader';
 import { Search, Users, Mail, Phone, ShoppingBag } from 'lucide-react';
 
 export function AdminCustomersPage() {
@@ -31,14 +32,7 @@ export function AdminCustomersPage() {
   return (
     <AdminLayout>
       <div className="p-6 lg:p-8">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mb-8"
-        >
-          <h1 className="text-2xl font-bold dark:text-white">Clients</h1>
-          <p className="dark:text-gray-500 mt-1">{customers.length} clients inscrits</p>
-        </motion.div>
+        <PageHeader title="Clients" subtitle={`${customers.length} clients inscrits`} />
 
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -53,7 +47,7 @@ export function AdminCustomersPage() {
               placeholder="Rechercher par nom, email ou telephone..."
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2.5 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+              className="w-full pl-10 pr-4 py-2.5 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
             />
           </div>
         </motion.div>
@@ -86,7 +80,7 @@ export function AdminCustomersPage() {
                   >
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-600 to-cyan-500 flex items-center justify-center text-white font-medium">
+                        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary-600 to-cyan-500 flex items-center justify-center text-white font-medium">
                           {customer.full_name?.[0] || customer.email?.[0] || 'U'}
                         </div>
                         <div>

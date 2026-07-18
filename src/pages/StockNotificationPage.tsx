@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
 import type { Product } from '../types';
 import { createStockNotification } from '../services/content';
+import { InputField } from '../components/ui/FormField';
 
 interface StockNotificationProps {
   product: Product;
@@ -15,17 +16,27 @@ export function StockNotificationButton({ product }: StockNotificationProps) {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [showForm, setShowForm] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleSubscribe = async () => {
-    if (!email && !user) return;
+    if (!user && !email) return;
 
+    if (!user) {
+      const valid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+      if (!valid) {
+        setError('Veuillez saisir une adresse email valide');
+        return;
+      }
+    }
+    setError(null);
     setLoading(true);
 
     try {
       await createStockNotification(product.id, email || user?.email || '');
       setSuccess(true);
-    } catch (error) {
-      console.error('Failed to create stock notification:', error);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Une erreur est survenue';
+      setError(message);
     } finally {
       setLoading(false);
     }
@@ -50,7 +61,7 @@ export function StockNotificationButton({ product }: StockNotificationProps) {
     <div className="space-y-3">
       <button
         onClick={() => setShowForm(!showForm)}
-        className="flex items-center gap-2 text-blue-600 font-medium hover:text-blue-700"
+        className="flex items-center gap-2 text-primary-600 font-medium hover:text-primary-700"
       >
         <Bell className="w-5 h-5" />
         Me prevenir quand disponible
@@ -60,21 +71,25 @@ export function StockNotificationButton({ product }: StockNotificationProps) {
         <motion.div
           initial={{ opacity: 0, height: 0 }}
           animate={{ opacity: 1, height: 'auto' }}
-          className="flex gap-2"
+          className="space-y-2"
         >
           {!user && (
-            <input
+            <InputField
+              name="stock_notify_email"
               type="email"
               value={email}
               onChange={e => setEmail(e.target.value)}
+              error={error || undefined}
               placeholder="Votre email"
-              className="flex-1 px-3 py-2 border border-gray-200 rounded-lg text-sm"
             />
+          )}
+          {user && error && (
+            <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
           )}
           <button
             onClick={handleSubscribe}
             disabled={loading || (!user && !email)}
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 disabled:opacity-50"
+            className="btn-primary-sm disabled:opacity-50"
           >
             {loading ? '...' : 'S\'inscrire'}
           </button>

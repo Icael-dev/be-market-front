@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
+import { toast } from 'react-hot-toast';
 import { formatPrice, cn } from '../lib/utils';
 import type { Address } from '../types';
 import {
@@ -14,6 +15,7 @@ import {
   ArrowLeft
 } from 'lucide-react';
 import { LoadingSpinner } from '../components/LoadingSpinner';
+import { InputField } from '../components/ui/FormField';
 import { fetchAddresses, createAddress } from '../services/address';
 import { placeOrder } from '../services/orders';
 import { initiatePayment } from '../services/payments';
@@ -170,7 +172,7 @@ const handlePlaceOrder = async () => {
       navigate(`/order-success/${order.id}`);
     } catch (error) {
       console.error('Order error:', error);
-      alert('Erreur lors de la commande. Veuillez reessayer.');
+      toast.error('Erreur lors de la commande. Veuillez reessayer.');
     } finally {
       setLoading(false);
     }
@@ -185,9 +187,9 @@ const handlePlaceOrder = async () => {
   const currentStepIndex = steps.findIndex(s => s.id === step);
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      <div className="bg-white dark:bg-gray-800 border-b dark:border-gray-700">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="min-h-screen page-bg">
+      <div className="page-header">
+        <div className="page-section py-8">
           <div className="flex items-center justify-between mb-8">
             <Link to="/cart" className="flex items-center gap-2 dark:text-gray-500 hover:dark:text-white transition-colors">
               <ArrowLeft className="w-5 h-5" />
@@ -203,10 +205,10 @@ const handlePlaceOrder = async () => {
                 <div className={cn(
                   'flex items-center justify-center w-8 h-8 rounded-full text-sm font-medium transition-colors',
                   index < currentStepIndex
-                    ? 'dark:bg-green-900/300 text-white'
+                    ? 'dark:bg-green-900/30 text-white'
                     : index === currentStepIndex
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-gray-200 text-gray-500 dark:bg-gray-700 dark:text-gray-500'
+                    ? 'bg-primary-600 text-white'
+                    : 'bg-gray-200 text-gray-500 dark:bg-gray-800 dark:text-gray-500'
                 )}>
                   {index < currentStepIndex ? (
                     <Check className="w-4 h-4" />
@@ -223,7 +225,7 @@ const handlePlaceOrder = async () => {
                 {index < steps.length - 1 && (
                   <div className={cn(
                     'w-8 sm:w-16 lg:w-24 h-0.5 mx-2',
-                    index < currentStepIndex ? 'bg-green-600 dark:bg-green-900/30' : 'bg-gray-200 dark:bg-gray-700'
+                    index < currentStepIndex ? 'bg-green-600 dark:bg-green-900/30' : 'bg-gray-200 dark:bg-gray-800'
                   )} />
                 )}
               </div>
@@ -232,7 +234,7 @@ const handlePlaceOrder = async () => {
         </div>
       </div>
 
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="page-section py-8">
         <div className="grid lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2">
             <AnimatePresence mode="wait">
@@ -242,7 +244,7 @@ const handlePlaceOrder = async () => {
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: 20 }}
-                  className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 dark:border-gray-800 p-6"
+                  className="card p-6"
                 >
                   <h2 className="text-lg font-bold dark:text-white mb-6">
                     Adresse de livraison
@@ -260,7 +262,7 @@ const handlePlaceOrder = async () => {
                           className={cn(
                             'w-full text-left p-4 rounded-xl border-2 transition-all',
                             !useNewAddress && selectedAddressId === address.id
-                              ? 'border-blue-600 bg-blue-50 dark:bg-blue-900/30'
+                              ? 'border-primary-600 bg-primary-50 dark:bg-primary-900/30'
                               : 'dark:border-gray-700 dark:hover:border-gray-600'
                           )}
                         >
@@ -277,7 +279,7 @@ const handlePlaceOrder = async () => {
                               </p>
                             </div>
                             {address.is_default && (
-                              <span className="text-xs bg-blue-100 text-blue-600 px-2 py-1 rounded-full">
+                              <span className="text-xs bg-primary-100 text-primary-600 px-2 py-1 rounded-full">
                                 Defaut
                               </span>
                             )}
@@ -293,7 +295,7 @@ const handlePlaceOrder = async () => {
                       className={cn(
                         'w-full text-left p-4 rounded-xl border-2 transition-all',
                         useNewAddress
-                          ? 'border-blue-600 bg-blue-50 dark:bg-blue-900/30'
+                          ? 'border-primary-600 bg-primary-50 dark:bg-primary-900/30'
                           : 'dark:border-gray-700 dark:hover:border-gray-600'
                       )}
                     >
@@ -308,70 +310,50 @@ const handlePlaceOrder = async () => {
                       className="space-y-4 mt-4"
                     >
                       <div className="grid sm:grid-cols-2 gap-4">
-                        <div>
-                          <label className="block text-sm font-medium dark:text-gray-300 mb-2">
-                            Nom complet *
-                          </label>
-                          <input
-                            type="text"
-                            value={newAddress.full_name}
-                            onChange={e => setNewAddress({ ...newAddress, full_name: e.target.value })}
-                            className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
-                            required
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-sm font-medium dark:text-gray-300 mb-2">
-                            Telephone *
-                          </label>
-                          <input
-                            type="tel"
-                            value={newAddress.phone}
-                            onChange={e => setNewAddress({ ...newAddress, phone: e.target.value })}
-                            className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
-                            placeholder="+228 XX XX XX XX"
-                            required
-                          />
-                        </div>
-                      </div>
-
-                      <div>
-                        <label className="block text-sm font-medium dark:text-gray-300 mb-2">
-                          Adresse *
-                        </label>
-                        <input
-                          type="text"
-                          value={newAddress.address_line1}
-                          onChange={e => setNewAddress({ ...newAddress, address_line1: e.target.value })}
-                          className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
-                          placeholder="Quartier, Rue, Numero"
+                        <InputField
+                          name="checkout_full_name"
+                          label="Nom complet"
                           required
+                          autoComplete="name"
+                          value={newAddress.full_name}
+                          onChange={e => setNewAddress({ ...newAddress, full_name: e.target.value })}
+                        />
+                        <InputField
+                          name="checkout_phone"
+                          label="Telephone"
+                          required
+                          type="tel"
+                          autoComplete="tel"
+                          value={newAddress.phone}
+                          onChange={e => setNewAddress({ ...newAddress, phone: e.target.value })}
+                          placeholder="+228 XX XX XX XX"
                         />
                       </div>
 
+                      <InputField
+                        name="checkout_address_line1"
+                        label="Adresse"
+                        required
+                        autoComplete="street-address"
+                        value={newAddress.address_line1}
+                        onChange={e => setNewAddress({ ...newAddress, address_line1: e.target.value })}
+                        placeholder="Quartier, Rue, Numero"
+                      />
+
                       <div className="grid sm:grid-cols-2 gap-4">
-                        <div>
-                          <label className="block text-sm font-medium dark:text-gray-300 mb-2">
-                            Ville
-                          </label>
-                          <input
-                            type="text"
-                            value={newAddress.city}
-                            onChange={e => setNewAddress({ ...newAddress, city: e.target.value })}
-                            className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-sm font-medium dark:text-gray-300 mb-2">
-                            Region
-                          </label>
-                          <input
-                            type="text"
-                            value={newAddress.region}
-                            onChange={e => setNewAddress({ ...newAddress, region: e.target.value })}
-                            className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
-                          />
-                        </div>
+                        <InputField
+                          name="checkout_city"
+                          label="Ville"
+                          autoComplete="address-level2"
+                          value={newAddress.city}
+                          onChange={e => setNewAddress({ ...newAddress, city: e.target.value })}
+                        />
+                        <InputField
+                          name="checkout_region"
+                          label="Region"
+                          value={newAddress.region}
+                          onChange={e => setNewAddress({ ...newAddress, region: e.target.value })}
+                        />
                       </div>
                     </motion.div>
                   )}
@@ -380,7 +362,7 @@ const handlePlaceOrder = async () => {
                     <button
                       onClick={() => setStep('payment')}
                       disabled={(!useNewAddress && !selectedAddressId) || (useNewAddress && !newAddress.address_line1)}
-                      className="flex items-center gap-2 bg-blue-600 text-white px-6 py-3 rounded-xl font-medium hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="flex items-center gap-2 btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       Continuer
                       <ChevronRight className="w-4 h-4" />
@@ -395,7 +377,7 @@ const handlePlaceOrder = async () => {
                   initial={{ opacity: 0, x: 20 }}
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: -20 }}
-                  className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 dark:border-gray-800 p-6"
+                  className="card p-6"
                 >
                   <h2 className="text-lg font-bold dark:text-white mb-6">
                     Mode de paiement
@@ -409,14 +391,14 @@ const handlePlaceOrder = async () => {
                         className={cn(
                           'w-full flex items-center gap-4 p-4 rounded-xl border-2 transition-all',
                           paymentMethod === method.id
-                            ? 'border-blue-600 dark:bg-blue-900/30'
+                            ? 'border-primary-600 dark:bg-primary-900/30'
                             : 'dark:border-gray-700 dark:hover:border-gray-600'
                         )}
                       >
                         <div className={cn(
                           'w-12 h-12 rounded-xl flex items-center justify-center',
                           method.color === 'yellow' && 'bg-yellow-100 text-yellow-700',
-                          method.color === 'blue' && 'bg-blue-100 text-blue-700',
+                          method.color === 'blue' && 'bg-primary-100 text-primary-700',
                           method.color === 'green' && 'bg-green-100 text-green-700'
                         )}>
                           <method.icon className="w-6 h-6" />
@@ -428,7 +410,7 @@ const handlePlaceOrder = async () => {
                         <div className={cn(
                           'w-5 h-5 rounded-full border-2 flex items-center justify-center',
                           paymentMethod === method.id
-                            ? 'border-blue-600 bg-blue-600'
+                            ? 'border-primary-600 bg-primary-600'
                             : 'border-gray-300'
                         )}>
                           {paymentMethod === method.id && (
@@ -445,14 +427,13 @@ const handlePlaceOrder = async () => {
                       animate={{ opacity: 1, height: 'auto' }}
                       className="mt-6"
                     >
-                      <label className="block text-sm font-medium dark:text-gray-300 mb-2">
-                        Numero de telephone {paymentMethod === 'tmoney' ? 'Tmoney' : 'Flooz'}
-                      </label>
-                      <input
+                      <InputField
+                        name="checkout_payment_phone"
+                        label={`Numero de telephone ${paymentMethod === 'tmoney' ? 'Tmoney' : 'Flooz'}`}
                         type="tel"
+                        autoComplete="tel"
                         value={phoneNumber}
                         onChange={e => setPhoneNumber(e.target.value)}
-                        className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
                         placeholder="+228 XX XX XX XX"
                       />
                     </motion.div>
@@ -466,7 +447,7 @@ const handlePlaceOrder = async () => {
                       value={notes}
                       onChange={e => setNotes(e.target.value)}
                       rows={3}
-                      className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+                      className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                       placeholder="Instructions speciales pour la livraison..."
                     />
                   </div>
@@ -481,7 +462,7 @@ const handlePlaceOrder = async () => {
                     </button>
                     <button
                       onClick={() => setStep('confirm')}
-                      className="flex items-center gap-2 bg-blue-600 text-white px-6 py-3 rounded-xl font-medium hover:bg-blue-700 transition-colors"
+                      className="flex items-center gap-2 btn-primary"
                     >
                       Continuer
                       <ChevronRight className="w-4 h-4" />
@@ -496,7 +477,7 @@ const handlePlaceOrder = async () => {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -20 }}
-                  className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 dark:border-gray-800 p-6"
+                  className="card p-6"
                 >
                   <h2 className="text-lg font-bold dark:text-white mb-6">
                     Confirmation de la commande
@@ -534,7 +515,7 @@ const handlePlaceOrder = async () => {
                       <div className="space-y-2">
                         {items.map(item => (
                           <div key={item.id} className="flex items-center gap-3">
-                            <div className="w-12 h-12 bg-gray-200 dark:bg-gray-700 rounded-lg overflow-hidden">
+                            <div className="w-12 h-12 bg-gray-200 dark:bg-gray-800 rounded-lg overflow-hidden">
                               <img
                                 src={item.product?.images?.[0]}
                                 alt={item.product?.name}
@@ -567,7 +548,7 @@ const handlePlaceOrder = async () => {
                     <button
                       onClick={handlePlaceOrder}
                       disabled={loading}
-                      className="flex items-center gap-2 bg-blue-600 text-white px-8 py-3 rounded-xl font-medium hover:bg-blue-700 transition-colors disabled:opacity-50"
+                      className="flex items-center gap-2 btn-primary disabled:opacity-50"
                     >
                       {loading ? (
                         <>
@@ -588,7 +569,7 @@ const handlePlaceOrder = async () => {
           </div>
 
           <div className="lg:col-span-1">
-            <div className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 dark:border-gray-800 p-6 sticky top-24">
+            <div className="card p-6 sticky top-24">
               <h2 className="text-lg font-bold dark:text-white mb-6">
                 recapitulatif
               </h2>
@@ -596,7 +577,7 @@ const handlePlaceOrder = async () => {
               <div className="space-y-3">
                 {items.map(item => (
                   <div key={item.id} className="flex gap-3">
-                    <div className="w-16 h-16 bg-gray-200 dark:bg-gray-700 rounded-lg overflow-hidden flex-shrink-0">
+                    <div className="w-16 h-16 bg-gray-200 dark:bg-gray-800 rounded-lg overflow-hidden flex-shrink-0">
                       <img
                         src={item.product?.images?.[0]}
                         alt={item.product?.name}

@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { fetchFlashSales as fetchFlashSalesService } from '../services/content';
 import type { FlashSale, Product } from '../types';
-import { formatPrice } from '../lib/utils';
+import { formatPrice, FALLBACK_IMAGE } from '../lib/utils';
 import { useCart } from '../context/CartContext';
 import { Flame, Clock, Zap, ShoppingCart, Heart } from 'lucide-react';
 import { useWishlist } from '../context/WishlistContext';
@@ -125,7 +125,7 @@ export function FlashSaleSection() {
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1 }}
                 whileHover={{ y: -5 }}
-                className="relative bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-xl"
+                className="relative bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-card hover:shadow-hover transition-all duration-300"
               >
                 <motion.div
                   animate={{ scale: [1, 1.1, 1] }}
@@ -136,23 +136,25 @@ export function FlashSaleSection() {
                   -{sale.discount_percentage}%
                 </motion.div>
 
-                <div className="absolute top-3 right-3 z-10 bg-white/90 dark:bg-gray-700/90 backdrop-blur-sm rounded-lg px-2 py-1">
+                <div className="absolute top-3 right-3 z-10 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-lg px-2 py-1">
                   <CountdownTimer endsAt={sale.ends_at} />
                 </div>
 
                 <Link to={`/product/${sale.product.slug}`}>
                   <div className="aspect-square overflow-hidden">
-                    <img
-                      src={sale.product.images?.[0] || 'https://images.pexels.com/photos/607812/pexels-photo-607812.jpeg'}
-                      alt={sale.product.name}
-                      className="w-full h-full object-cover hover:scale-110 transition-transform duration-500"
-                    />
+                  <img
+                    src={sale.product.images?.[0] || FALLBACK_IMAGE}
+                    alt={sale.product.name}
+                    loading="lazy"
+                    decoding="async"
+                    className="w-full h-full object-cover hover:scale-110 transition-transform duration-500"
+                  />
                   </div>
                 </Link>
 
                 <div className="p-3">
                   <Link to={`/product/${sale.product.slug}`}>
-                    <h3 className="font-semibold dark:text-white text-sm line-clamp-2 mb-1 hover:text-blue-600 transition-colors">
+                    <h3 className="font-semibold dark:text-white text-sm line-clamp-2 mb-1 hover:text-primary-600 transition-colors">
                       {sale.product.name}
                     </h3>
                   </Link>
@@ -179,7 +181,7 @@ export function FlashSaleSection() {
                       className={`p-2 rounded-lg transition-colors ${
                         isInWishlist(sale.product.id)
                           ? 'bg-red-500 text-white'
-                          : 'bg-gray-100 dark:bg-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:text-red-400'
+                          : 'bg-gray-100 dark:bg-gray-800 dark:text-gray-300 hover:bg-gray-200 dark:hover:text-red-400'
                       }`}
                     >
                       <Heart className={`w-4 h-4 ${isInWishlist(sale.product.id) ? 'fill-current' : ''}`} />
@@ -194,7 +196,7 @@ export function FlashSaleSection() {
         <div className="text-center mt-8">
           <Link
             to="/products?flash_sale=true"
-            className="inline-flex items-center gap-2 bg-red-50 dark:bg-gray-800 text-red-600 dark:text-red-400 px-8 py-3 rounded-xl font-semibold hover:bg-red-100 hover:dark:bg-gray-700 transition-all hover:scale-105 shadow-lg"
+            className="inline-flex items-center gap-2 bg-red-50 dark:bg-gray-800 text-red-600 dark:text-red-400 px-8 py-3 rounded-xl font-semibold hover:bg-red-100 hover:dark:bg-gray-800 transition-all hover:scale-105 shadow-lg"
           >
             Voir toutes les offres
             <Flame className="w-5 h-5" />

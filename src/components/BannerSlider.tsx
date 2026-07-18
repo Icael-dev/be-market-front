@@ -72,7 +72,7 @@ export function BannerSlider() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="text-3xl md:text-5xl font-bold mb-4"
+            className="text-3xl md:text-5xl font-bold mb-4 tracking-tightest"
           >
             Bienvenue chez BE-Market
           </motion.h2>
@@ -84,9 +84,9 @@ export function BannerSlider() {
           >
             Decouvrez les meilleurs accessoires electroniques au Togo
           </motion.p>
-          <Link to="/products" className="inline-flex items-center gap-2 bg-white text-blue-600 px-6 py-3 rounded-xl font-semibold dark:hover:bg-gray-700 transition-colors">
+          <Link to="/products" className="btn-gold group/cta">
             Voir les produits
-            <ChevronRight className="w-5 h-5" />
+            <ChevronRight className="w-5 h-5 group-hover/cta:translate-x-1 transition-transform" />
           </Link>
         </div>
       </div>
@@ -94,12 +94,12 @@ export function BannerSlider() {
   );
 
   return (
-    <div
-      className="relative w-full h-[36rem] sm:h-[40rem] md:h-[44rem] lg:h-[48rem] xl:h-[56rem] overflow-hidden group"
-      onMouseEnter={() => setIsAutoPlaying(false)}
-      onMouseLeave={() => setIsAutoPlaying(true)}
-    >
-      <div className="absolute inset-0 bg-gradient-to-br from-blue-600/80 via-blue-700/80 to-cyan-600/80" />
+      <div
+        className="relative w-full h-[36rem] sm:h-[40rem] md:h-[44rem] lg:h-[48rem] xl:h-[52rem] overflow-hidden group"
+        onMouseEnter={() => setIsAutoPlaying(false)}
+        onMouseLeave={() => setIsAutoPlaying(true)}
+      >
+             <div className="absolute inset-0 bg-gradient-to-br from-primary-600/80 via-primary-700/80 to-cyan-600/80" />
 
       <AnimatePresence mode="wait">
         <motion.div
@@ -159,7 +159,7 @@ export function BannerSlider() {
                   >
                     <Link
                       to={banners[currentIndex].link_url!}
-                      className="inline-flex items-center gap-2 bg-white dark:text-white px-6 py-3 font-semibold dark:hover:bg-gray-700 transition-all hover:scale-105 shadow-lg"
+                       className="inline-flex items-center gap-2 bg-white text-gray-900 dark:bg-gray-800 dark:text-white px-6 py-3 font-semibold dark:hover:bg-gray-700 transition-all hover:scale-105 shadow-lg"
                     >
                       {banners[currentIndex].button_text}
                       <ChevronRight className="w-5 h-5" />
@@ -180,9 +180,10 @@ export function BannerSlider() {
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
             onClick={goToPrev}
-            className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 hover:bg-white  flex items-center justify-center shadow-lg opacity-0 group-hover:opacity-100 transition-opacity"
-          >
-            <ChevronLeft className="w-6 h-6 dark:text-gray-300" />
+             aria-label="Bannière précédente"
+             className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 hover:bg-white  flex items-center justify-center shadow-lg opacity-0 group-hover:opacity-100 transition-opacity"
+           >
+             <ChevronLeft className="w-6 h-6 dark:text-gray-300" />
           </motion.button>
           <motion.button
             initial={{ opacity: 0 }}
@@ -190,16 +191,18 @@ export function BannerSlider() {
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
             onClick={goToNext}
-            className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 hover:bg-white  flex items-center justify-center shadow-lg opacity-0 group-hover:opacity-100 transition-opacity"
-          >
-            <ChevronRight className="w-6 h-6 dark:text-gray-300" />
+             aria-label="Bannière suivante"
+             className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 hover:bg-white  flex items-center justify-center shadow-lg opacity-0 group-hover:opacity-100 transition-opacity"
+           >
+             <ChevronRight className="w-6 h-6 dark:text-gray-300" />
           </motion.button>
 
           <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2">
             {banners.map((_, index) => (
-              <button
-                key={index}
-                onClick={() => goTo(index)}
+               <button
+                 key={index}
+                 aria-label={`Aller à la bannière ${index + 1}`}
+                 onClick={() => goTo(index)}
                 className={`h-2 rounded-full transition-all duration-300 ${
                   index === currentIndex
                     ? 'w-8 bg-white'

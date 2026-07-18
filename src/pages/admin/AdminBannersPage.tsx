@@ -1,3 +1,4 @@
+import { toast } from 'react-hot-toast';
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import {
@@ -9,6 +10,7 @@ import {
 import type { Banner } from '../../types';
 import { Plus, Edit2, Trash2, X, Save, Image as ImageIcon } from 'lucide-react';
 import { AdminLayout } from '../../components/admin/AdminLayout';
+import { PageHeader } from '../../components/admin/PageHeader';
 import { AnimatePresence } from 'framer-motion';
 
 export function AdminBannersPage() {
@@ -88,7 +90,7 @@ export function AdminBannersPage() {
       resetForm();
     } catch (error) {
       console.error('Error saving banner:', error);
-      alert('Erreur lors de l\'enregistrement');
+      toast.error('Erreur lors de l\'enregistrement');
     } finally {
       setSaving(false);
     }
@@ -102,34 +104,28 @@ export function AdminBannersPage() {
       setBanners(prev => prev.filter(b => b.id !== id));
     } catch (error) {
       console.error('Error deleting banner:', error);
-      alert('Erreur lors de la suppression');
+      toast.error('Erreur lors de la suppression');
     }
   };
 
   return (
     <AdminLayout>
       <div className="p-6 lg:p-8">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8"
+        <PageHeader
+          title="Bannieres"
+          subtitle={`${banners.length} banniere${banners.length > 1 ? 's' : ''}`}
         >
-          <div>
-            <h1 className="text-2xl font-bold dark:text-white">Bannieres</h1>
-            <p className="dark:text-gray-500 mt-1">{banners.length} banniere{banners.length > 1 ? 's' : ''}</p>
-          </div>
-
           <button
             onClick={() => {
               resetForm();
               setShowForm(true);
             }}
-            className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2.5 rounded-xl font-medium hover:bg-blue-700 transition-colors"
+            className="flex items-center gap-2 bg-primary-600 text-white px-4 py-2.5 rounded-xl font-medium hover:bg-primary-700 transition-colors"
           >
             <Plus className="w-5 h-5" />
             Ajouter une banniere
           </button>
-        </motion.div>
+        </PageHeader>
 
         <div className="grid gap-6">
           {banners.map((banner, index) => (
@@ -235,7 +231,7 @@ export function AdminBannersPage() {
                     type="text"
                     value={formData.title}
                     onChange={e => setFormData({ ...formData, title: e.target.value })}
-                    className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+                    className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                   />
                 </div>
 
@@ -247,7 +243,7 @@ export function AdminBannersPage() {
                     type="text"
                     value={formData.subtitle}
                     onChange={e => setFormData({ ...formData, subtitle: e.target.value })}
-                    className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+                    className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                   />
                 </div>
 
@@ -259,7 +255,7 @@ export function AdminBannersPage() {
                     type="text"
                     value={formData.image_url}
                     onChange={e => setFormData({ ...formData, image_url: e.target.value })}
-                    className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+                    className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                   />
                 </div>
 
@@ -271,7 +267,7 @@ export function AdminBannersPage() {
                     type="text"
                     value={formData.link_url}
                     onChange={e => setFormData({ ...formData, link_url: e.target.value })}
-                    className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+                    className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                   />
                 </div>
 
@@ -283,7 +279,7 @@ export function AdminBannersPage() {
                     type="text"
                     value={formData.button_text}
                     onChange={e => setFormData({ ...formData, button_text: e.target.value })}
-                    className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+                    className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                   />
                 </div>
 
@@ -295,7 +291,7 @@ export function AdminBannersPage() {
                     type="text"
                     value={formData.position}
                     onChange={e => setFormData({ ...formData, position: e.target.value })}
-                    className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+                    className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                     placeholder="ex: hero, sidebar"
                   />
                 </div>
@@ -308,7 +304,7 @@ export function AdminBannersPage() {
                     type="number"
                     value={formData.sort_order}
                     onChange={e => setFormData({ ...formData, sort_order: parseInt(e.target.value) || 0 })}
-                    className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+                    className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                   />
                 </div>
 
@@ -317,7 +313,7 @@ export function AdminBannersPage() {
                     type="checkbox"
                     checked={formData.is_active}
                     onChange={e => setFormData({ ...formData, is_active: e.target.checked })}
-                    className="w-4 h-4 text-blue-600 border-gray-300 rounded"
+                    className="w-4 h-4 text-primary-600 border-gray-300 rounded"
                   />
                   <span className="text-sm dark:text-gray-500">Banniere active</span>
                 </label>
@@ -326,7 +322,7 @@ export function AdminBannersPage() {
                   <button
                     onClick={handleSave}
                     disabled={saving || !formData.title || !formData.image_url}
-                    className="flex items-center gap-2 bg-blue-600 text-white px-6 py-2.5 rounded-xl font-medium hover:bg-blue-700 disabled:opacity-50"
+                    className="flex items-center gap-2 bg-primary-600 text-white px-6 py-2.5 rounded-xl font-medium hover:bg-primary-700 disabled:opacity-50"
                   >
                     <Save className="w-4 h-4" />
                     {saving ? 'Enregistrement...' : 'Enregistrer'}

@@ -72,8 +72,8 @@ export function AdminLayout({ children }: AdminLayoutProps) {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      <div className="lg:hidden fixed top-0 left-0 right-0 h-20 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 z-50 flex items-center px-4 justify-between">
+    <div className="min-h-screen page-bg">
+      <div className="lg:hidden fixed top-0 left-0 right-0 h-20 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 z-50 flex items-center px-4 justify-between">
         <button
           onClick={() => setSidebarOpen(true)}
           className="p-2 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg"
@@ -84,7 +84,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
         <div className="flex items-center gap-1">
           <button
             onClick={toggleTheme}
-            className="p-2 text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+            className="p-2 text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
             title={theme === 'light' ? 'Mode sombre' : 'Mode clair'}
           >
             {theme === 'light' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
@@ -103,19 +103,19 @@ export function AdminLayout({ children }: AdminLayoutProps) {
           </Link>
           <Link
             to="/cart"
-          className="relative p-2 text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+          className="relative p-2 text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
           title="Panier"
           >
             <ShoppingCart className="w-5 h-5" />
             {count > 0 && (
-              <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-blue-600 text-white text-[10px] font-bold rounded-full flex items-center justify-center">
+              <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-primary-600 text-white text-[10px] font-bold rounded-full flex items-center justify-center">
                 {count}
               </span>
             )}
           </Link>
           <Link
             to="/"
-          className="p-2 text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+          className="p-2 text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
           title="Voir le site"
           >
             <Home className="w-5 h-5" />
@@ -131,14 +131,14 @@ export function AdminLayout({ children }: AdminLayoutProps) {
       </div>
 
       <div className={cn(
-        'fixed inset-y-0 left-0 w-72 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 z-50 transform transition-transform duration-200 ease-in-out lg:translate-x-0 shadow-xl lg:shadow-none',
+        'fixed inset-y-0 left-0 w-72 bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 z-50 transform transition-transform duration-200 ease-in-out lg:translate-x-0 shadow-xl lg:shadow-none',
         sidebarOpen ? 'translate-x-0' : '-translate-x-full'
       )}>
         <div className="h-full flex flex-col">
-          <div className="p-5 border-b border-gray-200 dark:border-gray-700">
+          <div className="p-5 border-b border-gray-200 dark:border-gray-800">
             <div className="flex items-center justify-between">
               <Link to="/" className="flex items-center gap-3 group">
-                <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-blue-600 to-cyan-500 flex items-center justify-center shadow-lg shadow-blue-500/30 group-hover:shadow-blue-500/50 transition-shadow">
+                <div className="w-11 h-11 rounded-xl brand-gradient flex items-center justify-center shadow-lg shadow-primary-500/30 group-hover:shadow-primary-500/50 transition-shadow">
                   <span className="text-white font-bold text-lg">B</span>
                 </div>
                 <div>
@@ -175,20 +175,20 @@ export function AdminLayout({ children }: AdminLayoutProps) {
                           className={cn(
                             'flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 group relative',
                             isActive
-                              ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 font-semibold shadow-sm shadow-blue-100'
-                              : 'text-gray-700 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-900 hover:text-gray-900 dark:hover:text-white'
+                              ? 'bg-primary-50 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400 font-semibold shadow-sm shadow-primary-100 dark:shadow-primary-900/20'
+                              : 'text-gray-700 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white'
                           )}
                         >
                           {isActive && (
-                            <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-blue-600 rounded-r-full" />
+                            <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-primary-600 rounded-r-full" />
                           )}
                           <item.icon className={cn(
                             'w-5 h-5 transition-colors',
-                            isActive ? 'text-blue-600 dark:text-blue-400' : 'text-gray-500 dark:text-gray-500 group-hover:text-gray-700 dark:group-hover:text-gray-400'
+                            isActive ? 'text-primary-600 dark:text-primary-400' : 'text-gray-500 dark:text-gray-500 group-hover:text-gray-700 dark:group-hover:text-gray-400'
                           )} />
                           <span className="text-sm font-medium">{item.label}</span>
-                          {isActive && (
-                            <ChevronRight className="w-4 h-4 ml-auto text-blue-600 dark:text-blue-400" />
+                           {isActive && (
+                            <ChevronRight className="w-4 h-4 ml-auto text-primary-600 dark:text-primary-400" />
                           )}
                         </Link>
                       );
@@ -198,9 +198,9 @@ export function AdminLayout({ children }: AdminLayoutProps) {
             ))}
           </nav>
 
-          <div className="p-4 border-t border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-900/50">
+          <div className="p-4 border-t border-gray-200 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-900/50">
             <div className="flex items-center gap-3 mb-3 px-2">
-              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-600 to-cyan-500 flex items-center justify-center text-white font-semibold shadow-md">
+              <div className="w-10 h-10 rounded-full brand-gradient flex items-center justify-center text-white font-semibold shadow-md">
                 {profile?.full_name?.[0] || 'A'}
               </div>
               <div className="flex-1 min-w-0">
@@ -239,7 +239,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
         />
       )}
 
-      <main className="lg:ml-72 pt-16 lg:pt-0 min-h-screen">
+      <main className="lg:ml-72 pt-20 lg:pt-0 min-h-screen">
         {children}
       </main>
     </div>

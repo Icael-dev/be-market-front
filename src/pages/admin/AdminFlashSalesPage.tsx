@@ -1,3 +1,4 @@
+import { toast } from 'react-hot-toast';
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import {
@@ -10,6 +11,7 @@ import {
 import type { FlashSale, Product } from '../../types';
 import { Plus, Edit2, Trash2, X, Save, Zap, Loader2 } from 'lucide-react';
 import { AdminLayout } from '../../components/admin/AdminLayout';
+import { PageHeader } from '../../components/admin/PageHeader';
 import { AnimatePresence } from 'framer-motion';
 import { format } from 'date-fns';
 
@@ -102,7 +104,7 @@ export function AdminFlashSalesPage() {
       resetForm();
     } catch (error) {
       console.error('Flash sale save error:', error);
-      alert('Erreur lors de l\'enregistrement');
+      toast.error('Erreur lors de l\'enregistrement');
     } finally {
       setSaving(false);
     }
@@ -115,23 +117,17 @@ export function AdminFlashSalesPage() {
       setFlashSales(prev => prev.filter(s => s.id !== id));
     } catch (error) {
       console.error('Flash sale delete error:', error);
-      alert('Erreur lors de la suppression');
+      toast.error('Erreur lors de la suppression');
     }
   };
 
   return (
     <AdminLayout>
       <div className="p-6 lg:p-8">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8"
+        <PageHeader
+          title="Flash Sales"
+          subtitle={`${flashSales.length} vente${flashSales.length > 1 ? 's' : ''} eclair`}
         >
-          <div>
-            <h1 className="text-2xl font-bold dark:text-white">Flash Sales</h1>
-            <p className="dark:text-gray-500 mt-1">{flashSales.length} vente{flashSales.length > 1 ? 's' : ''} eclair</p>
-          </div>
-
           <button
             onClick={() => { resetForm(); setShowForm(true); }}
             className="flex items-center gap-2 bg-orange-500 text-white px-4 py-2.5 rounded-xl font-medium hover:bg-orange-600"
@@ -139,7 +135,7 @@ export function AdminFlashSalesPage() {
             <Plus className="w-5 h-5" />
             Nouveau Flash Sale
           </button>
-        </motion.div>
+        </PageHeader>
 
         <div className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 overflow-hidden">
           <table className="w-full">

@@ -9,6 +9,7 @@ import { fetchRecentOrders } from '../services/orders';
 import { updateProfile } from '../services/profile';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
+import { InputField } from '../components/ui/FormField';
 
 export function ProfilePage() {
   const { user, profile, refreshProfile } = useAuth();
@@ -76,9 +77,9 @@ export function ProfilePage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      <div className="bg-white dark:bg-gray-800 border-b dark:border-gray-700">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="min-h-screen page-bg">
+      <div className="page-header">
+        <div className="page-section py-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -89,18 +90,18 @@ export function ProfilePage() {
         </div>
       </div>
 
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="page-section py-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 p-6 md:p-8 mb-6"
+          className="card p-6 md:p-8 mb-6"
         >
           <div className="flex items-start justify-between mb-6">
             <h2 className="text-lg font-bold dark:text-white">Informations personnelles</h2>
             {!isEditing && (
               <button
                 onClick={() => setIsEditing(true)}
-                className="flex items-center gap-2 dark:text-blue-400 hover:dark:text-blue-300 font-medium transition-colors"
+                className="flex items-center gap-2 dark:text-primary-400 hover:dark:text-primary-300 font-medium transition-colors"
               >
                 <Edit2 className="w-4 h-4" />
                 Modifier
@@ -116,7 +117,7 @@ export function ProfilePage() {
                 className="w-20 h-20 rounded-full object-cover"
               />
             ) : (
-              <div className="w-20 h-20 rounded-full bg-gradient-to-br from-blue-600 to-cyan-500 flex items-center justify-center text-white text-2xl font-bold">
+              <div className="w-20 h-20 rounded-full bg-gradient-to-br from-primary-600 to-cyan-500 flex items-center justify-center text-white text-2xl font-bold">
                 {profile?.full_name?.[0] || user?.email?.[0] || 'U'}
               </div>
             )}
@@ -131,45 +132,38 @@ export function ProfilePage() {
           {isEditing ? (
             <div className="space-y-4">
               {error && (
-                <div className="p-4 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm">
+                <div className="p-4 bg-red-50 dark:bg-red-900/50 border border-red-200 dark:border-red-800 rounded-xl text-red-700 dark:text-red-300 text-sm">
                   {error}
                 </div>
               )}
 
-              <div>
-                <label className="block text-sm font-medium dark:text-gray-300 mb-2">
-                  Nom complet
-                </label>
-                <input
-                  type="text"
-                  value={formData.full_name}
-                  onChange={e => setFormData({ ...formData, full_name: e.target.value })}
-                  className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
-                />
-              </div>
+              <InputField
+                name="profile_full_name"
+                label="Nom complet"
+                autoComplete="name"
+                icon={<User className="w-5 h-5" />}
+                value={formData.full_name}
+                onChange={e => setFormData({ ...formData, full_name: e.target.value })}
+              />
 
-              <div>
-                <label className="block text-sm font-medium dark:text-gray-300 mb-2">
-                  Telephone
-                </label>
-                <input
-                  type="tel"
-                  value={formData.phone}
-                  onChange={e => setFormData({ ...formData, phone: e.target.value })}
-                  onBlur={e => validatePhone(e.target.value)}
-                  className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 ${phoneError ? 'border-red-300' : 'dark:border-gray-700'}`}
-                  placeholder="Ex: 90000000"
-                />
-                {phoneError && (
-                  <p className="text-red-500 text-xs mt-1">{phoneError}</p>
-                )}
-              </div>
+              <InputField
+                name="profile_phone"
+                label="Telephone"
+                type="tel"
+                autoComplete="tel"
+                icon={<Phone className="w-5 h-5" />}
+                value={formData.phone}
+                onChange={e => setFormData({ ...formData, phone: e.target.value })}
+                onBlur={e => validatePhone(e.target.value)}
+                error={phoneError || undefined}
+                placeholder="Ex: 90000000"
+              />
 
               <div className="flex gap-3 pt-4">
                 <button
                   onClick={handleSave}
                   disabled={loading}
-                  className="flex items-center gap-2 bg-blue-600 text-white px-6 py-2.5 rounded-xl font-medium hover:bg-blue-700 transition-colors disabled:opacity-50"
+                  className="flex items-center gap-2 btn-primary disabled:opacity-50"
                 >
                   {loading ? (
                     <Loader2 className="w-4 h-4 animate-spin" />
@@ -189,7 +183,7 @@ export function ProfilePage() {
           ) : (
             <div className="grid sm:grid-cols-2 gap-6">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-gray-500 dark:text-gray-500">
+                <div className="w-10 h-10 rounded-xl bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-gray-500 dark:text-gray-500">
                   <User className="w-5 h-5" />
                 </div>
                 <div>
@@ -201,7 +195,7 @@ export function ProfilePage() {
               </div>
 
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-gray-500 dark:text-gray-500">
+                <div className="w-10 h-10 rounded-xl bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-gray-500 dark:text-gray-500">
                   <Mail className="w-5 h-5" />
                 </div>
                 <div>
@@ -211,7 +205,7 @@ export function ProfilePage() {
               </div>
 
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-gray-500 dark:text-gray-500">
+                <div className="w-10 h-10 rounded-xl bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-gray-500 dark:text-gray-500">
                   <Phone className="w-5 h-5" />
                 </div>
                 <div>
@@ -223,7 +217,7 @@ export function ProfilePage() {
               </div>
 
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-gray-500 dark:text-gray-500">
+                <div className="w-10 h-10 rounded-xl bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-gray-500 dark:text-gray-500">
                   <Calendar className="w-5 h-5" />
                 </div>
                 <div>
@@ -247,9 +241,9 @@ export function ProfilePage() {
           <div className="grid sm:grid-cols-3 gap-4 mb-6">
             <Link
               to="/orders"
-              className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 p-6 hover:shadow-lg transition-all"
+              className="card p-6 hover:shadow-premium transition-all"
             >
-              <div className="w-12 h-12 rounded-xl bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center dark:text-blue-400 mb-4">
+              <div className="w-12 h-12 rounded-xl bg-primary-50 dark:bg-primary-900/30 flex items-center justify-center dark:text-primary-400 mb-4">
                 <Package className="w-6 h-6" />
               </div>
               <h3 className="font-semibold dark:text-white">Mes commandes</h3>
@@ -260,7 +254,7 @@ export function ProfilePage() {
 
             <Link
               to="/addresses"
-              className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 p-6 hover:shadow-lg transition-all"
+              className="card p-6 hover:shadow-premium transition-all"
             >
               <div className="w-12 h-12 rounded-xl bg-green-50 dark:bg-green-900/30 flex items-center justify-center dark:text-green-400 mb-4">
                 <MapPin className="w-6 h-6" />
@@ -273,7 +267,7 @@ export function ProfilePage() {
 
             <Link
               to="/products"
-              className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 p-6 hover:shadow-lg transition-all"
+              className="card p-6 hover:shadow-premium transition-all"
             >
               <div className="w-12 h-12 rounded-xl bg-orange-50 dark:bg-orange-900/20 flex items-center justify-center dark:text-orange-400 mb-4">
                 <ShoppingBag className="w-6 h-6" />
@@ -291,13 +285,13 @@ export function ProfilePage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 p-6 md:p-8"
+            className="card p-6 md:p-8"
           >
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-lg font-bold dark:text-white">Commandes recentes</h2>
               <Link
                 to="/orders"
-                className="dark:text-blue-400 font-medium hover:dark:text-blue-300 transition-colors"
+                className="dark:text-primary-400 font-medium hover:dark:text-primary-300 transition-colors"
               >
                 Voir tout
               </Link>
@@ -308,10 +302,10 @@ export function ProfilePage() {
                 <Link
                   key={order.id}
                   to={`/orders/${order.id}`}
-                  className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-900 rounded-xl hover:bg-gray-100 hover:dark:bg-gray-700 transition-colors"
+                  className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-900 rounded-xl hover:bg-gray-100 hover:dark:bg-gray-800 transition-colors"
                 >
                   <div className="flex items-center gap-4">
-                    <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center dark:text-blue-400">
+                    <div className="w-10 h-10 rounded-full bg-primary-100 flex items-center justify-center dark:text-primary-400">
                       <Package className="w-5 h-5" />
                     </div>
                     <div>

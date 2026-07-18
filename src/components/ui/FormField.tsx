@@ -1,14 +1,14 @@
-import { forwardRef, type InputHTMLAttributes, type ReactNode, type TextareaHTMLAttributes } from 'react';
+import { forwardRef, useId, type InputHTMLAttributes, type ReactNode, type TextareaHTMLAttributes } from 'react';
 import { AlertCircle } from 'lucide-react';
-import { cn } from '../lib/utils';
+import { cn } from '../../lib/utils';
 
 const baseField =
-  'w-full px-4 py-3 border rounded-xl bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 transition-all focus:outline-none focus:ring-2 focus:ring-blue-500/20 disabled:opacity-50 disabled:cursor-not-allowed';
+  'w-full px-4 py-3 border rounded-xl bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 transition-all focus:outline-none focus:ring-2 focus:ring-primary-500/20 disabled:opacity-50 disabled:cursor-not-allowed';
 
 const stateClasses = (error?: string) =>
   error
     ? 'border-red-400 dark:border-red-600 focus:border-red-500 focus:ring-red-500/20'
-    : 'border-gray-200 dark:border-gray-700 focus:border-blue-500';
+    : 'border-gray-200 dark:border-gray-700 focus:border-primary-500';
 
 interface FieldWrapperProps {
   id: string;
@@ -48,7 +48,8 @@ interface InputFieldProps extends InputHTMLAttributes<HTMLInputElement> {
 
 export const InputField = forwardRef<HTMLInputElement, InputFieldProps>(
   ({ label, error, icon, wrapperClassName, className, id, required, ...props }, ref) => {
-    const fieldId = id || props.name;
+    const autoId = useId();
+    const fieldId = id || props.name || autoId;
     return (
       <FieldWrapper id={fieldId} label={label} error={error} required={required} className={wrapperClassName}>
         <div className="relative">
@@ -86,7 +87,8 @@ interface TextareaFieldProps extends TextareaHTMLAttributes<HTMLTextAreaElement>
 
 export const TextareaField = forwardRef<HTMLTextAreaElement, TextareaFieldProps>(
   ({ label, error, wrapperClassName, className, id, required, ...props }, ref) => {
-    const fieldId = id || props.name;
+    const autoId = useId();
+    const fieldId = id || props.name || autoId;
     return (
       <FieldWrapper id={fieldId} label={label} error={error} required={required} className={wrapperClassName}>
         <textarea
