@@ -30,6 +30,7 @@ import {
   Copy,
   Camera,
   Square,
+  Power,
 } from 'lucide-react';
 
 function TabButton({ icon, label, active, onClick, badge }: {
@@ -77,6 +78,7 @@ export function AdminProductsPage() {
   const [errors, setErrors] = useState<Record<string, string[]>>({});
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
+  const [togglingId, setTogglingId] = useState<string | null>(null);
   const [uploadingImage, setUploadingImage] = useState(false);
   const [cameraOpen, setCameraOpen] = useState(false);
   const [cameraError, setCameraError] = useState<string | null>(null);
@@ -359,6 +361,23 @@ export function AdminProductsPage() {
     }
   }, [confirmDeleteId]);
 
+  const handleToggleActive = useCallback(async (product: Product) => {
+    const nextActive = !product.is_active;
+    setTogglingId(product.id);
+    // Optimistic update
+    setProducts(prev => prev.map(p => (p.id === product.id ? { ...p, is_active: nextActive } : p)));
+
+    try {
+      await updateAdminProduct(product.id, { is_active: nextActive });
+    } catch (error) {
+      console.error('Error toggling product status:', error);
+      // Revert on failure
+      setProducts(prev => prev.map(p => (p.id === product.id ? { ...p, is_active: product.is_active } : p)));
+    } finally {
+      setTogglingId(null);
+    }
+  }, []);
+
   const handleFileUpload = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files || files.length === 0) return;
@@ -559,10 +578,10 @@ export function AdminProductsPage() {
                     </td>
                     <td className="px-6 py-4">
                       <span className={cn(
-                        'inline-flex px-2 py-1 rounded-full text-xs font-medium',
+                        'inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium',
                         product.is_active
-                          ? 'bg-green-100 text-green-700'
-                          : 'dark:bg-gray-700 dark:text-gray-400'
+                          ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
+                          : 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-400'
                       )}>
                         {product.is_active ? 'Actif' : 'Inactif'}
                       </span>
@@ -573,31 +592,48 @@ export function AdminProductsPage() {
                       )}
                     </td>
                     <td className="px-6 py-4">
-                      <div className="flex items-center justify-end gap-1">
+                      <div className="flex items-center justify-end gap-2">
                         <button
                           onClick={() => handleDuplicate(product)}
-                          className="p-2 hover:bg-gray-100 hover:dark:bg-gray-700 rounded-lg transition-colors"
+                          className="p-3 bg-gray-100 hover:bg-gray-200 text-gray-700 border border-gray-200 rounded-lg transition-colors dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600 dark:hover:bg-gray-600"
                           title="Dupliquer"
                         >
-                          <Copy className="w-4 h-4 dark:text-gray-500" />
+                          <Copy className="w-6 h-6" />
+                        </button>
+                        <button
+                          onClick={() => handleToggleActive(product)}
+                          disabled={togglingId === product.id}
+                          className={cn(
+                            'p-3 rounded-lg border transition-colors disabled:opacity-50',
+                            product.is_active
+                              ? 'bg-green-100 text-green-700 border-green-300 hover:bg-green-200 dark:bg-green-900/40 dark:text-green-300 dark:border-green-700 dark:hover:bg-green-900/60'
+                              : 'bg-gray-100 text-gray-600 border-gray-300 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-600'
+                          )}
+                          title={product.is_active ? 'Désactiver' : 'Activer'}
+                        >
+                          {togglingId === product.id ? (
+                            <Loader2 className="w-6 h-6 animate-spin" />
+                          ) : (
+                            <Power className="w-6 h-6" />
+                          )}
                         </button>
                         <button
                           onClick={() => handleEdit(product)}
-                          className="p-2 hover:bg-gray-100 hover:dark:bg-gray-700 rounded-lg transition-colors"
+                          className="p-3 bg-gray-100 hover:bg-gray-200 text-gray-700 border border-gray-200 rounded-lg transition-colors dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600 dark:hover:bg-gray-600"
                           title="Modifier"
                         >
-                          <Edit2 className="w-4 h-4 dark:text-gray-500" />
+                          <Edit2 className="w-6 h-6" />
                         </button>
                         <button
                           onClick={() => handleDelete(product.id)}
                           disabled={deletingId === product.id}
-                          className="p-2 rounded-lg transition-colors dark:hover:bg-red-900/30 disabled:opacity-50"
+                          className="p-3 bg-red-100 hover:bg-red-200 text-red-700 border border-red-300 rounded-lg transition-colors disabled:opacity-50 dark:bg-red-900/40 dark:text-red-300 dark:border-red-700 dark:hover:bg-red-900/60"
                           title="Supprimer"
                         >
                           {deletingId === product.id ? (
-                            <Loader2 className="w-4 h-4 dark:text-red-400 animate-spin" />
+                            <Loader2 className="w-6 h-6 animate-spin" />
                           ) : (
-                            <Trash2 className="w-4 h-4 dark:text-red-400" />
+                            <Trash2 className="w-6 h-6" />
                           )}
                         </button>
                       </div>

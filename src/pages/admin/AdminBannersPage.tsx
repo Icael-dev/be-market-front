@@ -9,7 +9,7 @@ import {
   uploadProductImage
 } from '../../services/admin';
 import type { Banner } from '../../types';
-import { Plus, Edit2, Trash2, X, Save, Image as ImageIcon, Upload, Loader2 } from 'lucide-react';
+import { Plus, Edit2, Trash2, X, Save, Image as ImageIcon, Upload, Loader2, Power } from 'lucide-react';
 import { AdminLayout } from '../../components/admin/AdminLayout';
 import { PageHeader } from '../../components/admin/PageHeader';
 import { AnimatePresence } from 'framer-motion';
@@ -28,6 +28,7 @@ export function AdminBannersPage() {
   const [showForm, setShowForm] = useState(false);
   const [editingBanner, setEditingBanner] = useState<Banner | null>(null);
   const [saving, setSaving] = useState(false);
+  const [togglingId, setTogglingId] = useState<string | null>(null);
 
   const [formData, setFormData] = useState({
     title: '',
@@ -134,6 +135,21 @@ export function AdminBannersPage() {
     }
   };
 
+  const handleToggleActive = async (banner: Banner) => {
+    const nextActive = !banner.is_active;
+    setTogglingId(banner.id);
+    setBanners(prev => prev.map(b => (b.id === banner.id ? { ...b, is_active: nextActive } : b)));
+    try {
+      await updateAdminBanner(banner.id, { is_active: nextActive });
+    } catch (error) {
+      console.error('Error toggling banner status:', error);
+      setBanners(prev => prev.map(b => (b.id === banner.id ? { ...b, is_active: banner.is_active } : b)));
+      toast.error('Erreur lors du changement de statut');
+    } finally {
+      setTogglingId(null);
+    }
+  };
+
   return (
     <AdminLayout>
       <div className="p-6 lg:p-8">
@@ -195,16 +211,28 @@ export function AdminBannersPage() {
                 </div>
                 <div className="flex gap-2">
                   <button
-                    onClick={() => handleEdit(banner)}
-                    className="p-2 hover:bg-gray-100 hover:dark:bg-gray-700 rounded-lg"
+                    onClick={() => handleToggleActive(banner)}
+                    disabled={togglingId === banner.id}
+                    className={`p-3 rounded-lg border transition-colors disabled:opacity-50 ${banner.is_active ? 'bg-green-100 text-green-700 border-green-300 hover:bg-green-200 dark:bg-green-900/40 dark:text-green-300 dark:border-green-700 dark:hover:bg-green-900/60' : 'bg-gray-100 text-gray-600 border-gray-300 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-600'}`}
+                    title={banner.is_active ? 'Désactiver' : 'Activer'}
                   >
-                    <Edit2 className="w-4 h-4 dark:text-gray-500" />
+                    {togglingId === banner.id ? (
+                      <Loader2 className="w-6 h-6 animate-spin" />
+                    ) : (
+                      <Power className="w-6 h-6" />
+                    )}
+                  </button>
+                  <button
+                    onClick={() => handleEdit(banner)}
+                    className="p-3 bg-gray-100 hover:bg-gray-200 text-gray-700 border border-gray-200 rounded-lg transition-colors dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600 dark:hover:bg-gray-600"
+                  >
+                    <Edit2 className="w-6 h-6" />
                   </button>
                   <button
                     onClick={() => handleDelete(banner.id)}
-                    className="p-2 hover:bg-red-50 rounded-lg"
+                    className="p-3 bg-red-100 hover:bg-red-200 text-red-700 border border-red-300 rounded-lg transition-colors dark:bg-red-900/40 dark:text-red-300 dark:border-red-700 dark:hover:bg-red-900/60"
                   >
-                    <Trash2 className="w-4 h-4 dark:text-red-400" />
+                    <Trash2 className="w-6 h-6" />
                   </button>
                 </div>
               </div>

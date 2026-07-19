@@ -8,7 +8,7 @@ import {
   deleteAdminBlogPost
 } from '../../services/admin';
 import type { BlogPost } from '../../types';
-import { Plus, Edit2, Trash2, X, Save, FileText, Calendar, Eye } from 'lucide-react';
+import { Plus, Edit2, Trash2, X, Save, FileText, Calendar, Eye, Loader2, Power } from 'lucide-react';
 import { AdminLayout } from '../../components/admin/AdminLayout';
 import { PageHeader } from '../../components/admin/PageHeader';
 import { AnimatePresence } from 'framer-motion';
@@ -20,6 +20,7 @@ export function AdminBlogPage() {
   const [showForm, setShowForm] = useState(false);
   const [editingPost, setEditingPost] = useState<BlogPost | null>(null);
   const [saving, setSaving] = useState(false);
+  const [togglingId, setTogglingId] = useState<string | null>(null);
 
   const [formData, setFormData] = useState({
     title: '',
@@ -114,6 +115,26 @@ export function AdminBlogPage() {
     }
   };
 
+  const handleTogglePublished = async (post: BlogPost) => {
+    const nextPublished = !post.is_published;
+    // Set published_at the first time an article is published; keep existing otherwise.
+    const nextPublishedAt = nextPublished
+      ? (post.published_at || new Date().toISOString())
+      : post.published_at;
+
+    setTogglingId(post.id);
+    setPosts(prev => prev.map(p => (p.id === post.id ? { ...p, is_published: nextPublished, published_at: nextPublishedAt } : p)));
+    try {
+      await updateAdminBlogPost(post.id, { is_published: nextPublished, published_at: nextPublishedAt });
+    } catch (error) {
+      console.error('Error toggling blog post status:', error);
+      setPosts(prev => prev.map(p => (p.id === post.id ? { ...p, is_published: post.is_published, published_at: post.published_at } : p)));
+      toast.error('Erreur lors du changement de statut');
+    } finally {
+      setTogglingId(null);
+    }
+  };
+
   return (
     <AdminLayout>
       <div className="p-6 lg:p-8">
@@ -176,8 +197,8 @@ export function AdminBlogPage() {
                   <td className="px-6 py-4">
                     <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${
                       post.is_published
-                        ? 'bg-green-100 text-green-700'
-                        : 'bg-yellow-100 text-yellow-700'
+                        ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
+                        : 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400'
                     }`}>
                       <Eye className="w-3 h-3" />
                       {post.is_published ? 'Publie' : 'Brouillon'}
@@ -192,16 +213,28 @@ export function AdminBlogPage() {
                   <td className="px-6 py-4">
                     <div className="flex items-center justify-end gap-2">
                       <button
-                        onClick={() => handleEdit(post)}
-                        className="p-2 hover:bg-gray-100 hover:dark:bg-gray-700 rounded-lg"
+                        onClick={() => handleTogglePublished(post)}
+                        disabled={togglingId === post.id}
+                        className={`p-3 rounded-lg border transition-colors disabled:opacity-50 ${post.is_published ? 'bg-green-100 text-green-700 border-green-300 hover:bg-green-200 dark:bg-green-900/40 dark:text-green-300 dark:border-green-700 dark:hover:bg-green-900/60' : 'bg-gray-100 text-gray-600 border-gray-300 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-600'}`}
+                        title={post.is_published ? 'Repasser en brouillon' : 'Publier'}
                       >
-                        <Edit2 className="w-4 h-4 dark:text-gray-500" />
+                        {togglingId === post.id ? (
+                          <Loader2 className="w-6 h-6 animate-spin" />
+                        ) : (
+                          <Power className="w-6 h-6" />
+                        )}
+                      </button>
+                      <button
+                        onClick={() => handleEdit(post)}
+                        className="p-3 bg-gray-100 hover:bg-gray-200 text-gray-700 border border-gray-200 rounded-lg transition-colors dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600 dark:hover:bg-gray-600"
+                      >
+                        <Edit2 className="w-6 h-6" />
                       </button>
                       <button
                         onClick={() => handleDelete(post.id)}
-                        className="p-2 hover:bg-red-50 rounded-lg"
+                        className="p-3 bg-red-100 hover:bg-red-200 text-red-700 border border-red-300 rounded-lg transition-colors dark:bg-red-900/40 dark:text-red-300 dark:border-red-700 dark:hover:bg-red-900/60"
                       >
-                        <Trash2 className="w-4 h-4 text-red-500" />
+                        <Trash2 className="w-6 h-6" />
                       </button>
                     </div>
                   </td>

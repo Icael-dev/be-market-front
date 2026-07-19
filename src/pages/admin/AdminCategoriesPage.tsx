@@ -8,7 +8,7 @@ import {
   deleteAdminCategory
 } from '../../services/admin';
 import type { Category } from '../../types';
-import { Plus, Edit2, Trash2, X, Save, Loader2, Grid3X3, Tag } from 'lucide-react';
+import { Plus, Edit2, Trash2, X, Save, Loader2, Grid3X3, Tag, Power } from 'lucide-react';
 import { AdminLayout } from '../../components/admin/AdminLayout';
 import { PageHeader } from '../../components/admin/PageHeader';
 import { cn } from '../../lib/utils';
@@ -19,6 +19,7 @@ export function AdminCategoriesPage() {
   const [showForm, setShowForm] = useState(false);
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
   const [saving, setSaving] = useState(false);
+  const [togglingId, setTogglingId] = useState<string | null>(null);
 
   const [formData, setFormData] = useState({
     name: '',
@@ -145,6 +146,21 @@ export function AdminCategoriesPage() {
     }
   };
 
+  const handleToggleActive = async (category: Category) => {
+    const nextActive = !category.is_active;
+    setTogglingId(category.id);
+    setCategories(prev => prev.map(c => (c.id === category.id ? { ...c, is_active: nextActive } : c)));
+    try {
+      await updateAdminCategory(category.id, { is_active: nextActive });
+    } catch (error) {
+      console.error('Error toggling category status:', error);
+      setCategories(prev => prev.map(c => (c.id === category.id ? { ...c, is_active: category.is_active } : c)));
+      toast.error('Erreur lors du changement de statut');
+    } finally {
+      setTogglingId(null);
+    }
+  };
+
   return (
     <AdminLayout>
       <div className="p-6 lg:p-8">
@@ -201,26 +217,46 @@ export function AdminCategoriesPage() {
                     {category.slug}
                   </td>
                   <td className="px-6 py-4">
-                    <span className={`inline-flex px-2 py-1 rounded-full text-xs font-medium ${
-                      category.is_active ? 'bg-green-100 text-green-700' : 'dark:bg-gray-700 dark:text-gray-500'
-                    }`}>
+                    <span className={cn(
+                      'inline-flex px-2 py-1 rounded-full text-xs font-medium',
+                      category.is_active
+                        ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
+                        : 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-400'
+                    )}>
                       {category.is_active ? 'Active' : 'Inactive'}
                     </span>
                   </td>
                   <td className="px-6 py-4">
                     <div className="flex items-center justify-end gap-2">
-                      <button
-                        onClick={() => handleEdit(category)}
-                        className="p-2 hover:bg-gray-100 hover:dark:bg-gray-700 rounded-lg transition-colors"
-                      >
-                        <Edit2 className="w-4 h-4 dark:text-gray-500" />
-                      </button>
-                      <button
-                        onClick={() => handleDelete(category.id)}
-                        className="p-2 hover:bg-red-50 rounded-lg transition-colors"
-                      >
-                        <Trash2 className="w-4 h-4 text-red-500" />
-                      </button>
+                        <button
+                          onClick={() => handleToggleActive(category)}
+                          disabled={togglingId === category.id}
+                          className={cn(
+                            'p-3 rounded-lg border transition-colors disabled:opacity-50',
+                            category.is_active
+                              ? 'bg-green-100 text-green-700 border-green-300 hover:bg-green-200 dark:bg-green-900/40 dark:text-green-300 dark:border-green-700 dark:hover:bg-green-900/60'
+                              : 'bg-gray-100 text-gray-600 border-gray-300 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-600'
+                          )}
+                          title={category.is_active ? 'Désactiver' : 'Activer'}
+                        >
+                          {togglingId === category.id ? (
+                            <Loader2 className="w-6 h-6 animate-spin" />
+                          ) : (
+                            <Power className="w-6 h-6" />
+                          )}
+                        </button>
+                        <button
+                          onClick={() => handleEdit(category)}
+                          className="p-3 bg-gray-100 hover:bg-gray-200 text-gray-700 border border-gray-200 rounded-lg transition-colors dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600 dark:hover:bg-gray-600"
+                        >
+                          <Edit2 className="w-6 h-6" />
+                        </button>
+                        <button
+                          onClick={() => handleDelete(category.id)}
+                          className="p-3 bg-red-100 hover:bg-red-200 text-red-700 border border-red-300 rounded-lg transition-colors dark:bg-red-900/40 dark:text-red-300 dark:border-red-700 dark:hover:bg-red-900/60"
+                        >
+                          <Trash2 className="w-6 h-6" />
+                        </button>
                     </div>
                   </td>
                 </motion.tr>

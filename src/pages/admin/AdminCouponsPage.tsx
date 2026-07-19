@@ -8,7 +8,7 @@ import {
   deleteAdminCoupon
 } from '../../services/admin';
 import type { Coupon } from '../../types';
-import { Plus, Edit2, Trash2, X, Save, Tag, Percent, DollarSign, Loader2 } from 'lucide-react';
+import { Plus, Edit2, Trash2, X, Save, Tag, Percent, DollarSign, Loader2, Power } from 'lucide-react';
 import { AdminLayout } from '../../components/admin/AdminLayout';
 import { PageHeader } from '../../components/admin/PageHeader';
 import { AnimatePresence } from 'framer-motion';
@@ -19,6 +19,7 @@ export function AdminCouponsPage() {
   const [showForm, setShowForm] = useState(false);
   const [editing, setEditing] = useState<Coupon | null>(null);
   const [saving, setSaving] = useState(false);
+  const [togglingId, setTogglingId] = useState<string | null>(null);
 
   const [form, setForm] = useState({ code: '', discount_type: 'percentage' as 'percentage' | 'fixed', discount_value: 10, min_order_amount: 0 as number | null, max_uses: null as number | null, expires_at: '', is_active: true });
 
@@ -71,6 +72,21 @@ export function AdminCouponsPage() {
     }
   };
 
+  const handleToggleActive = async (coupon: Coupon) => {
+    const nextActive = !coupon.is_active;
+    setTogglingId(coupon.id);
+    setCoupons(prev => prev.map(c => (c.id === coupon.id ? { ...c, is_active: nextActive } : c)));
+    try {
+      await updateAdminCoupon(coupon.id, { is_active: nextActive });
+    } catch (error) {
+      console.error('Error toggling coupon status:', error);
+      setCoupons(prev => prev.map(c => (c.id === coupon.id ? { ...c, is_active: coupon.is_active } : c)));
+      toast.error('Erreur lors du changement de statut');
+    } finally {
+      setTogglingId(null);
+    }
+  };
+
   return (
     <AdminLayout>
       <div className="p-6 lg:p-8">
@@ -83,7 +99,7 @@ export function AdminCouponsPage() {
 
         <div className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 overflow-hidden">
           <table className="w-full"><thead className="bg-gray-50 dark:bg-gray-800 border-b"><tr><th className="text-left px-6 py-4 text-sm font-medium dark:text-gray-500">Code</th><th className="text-left px-6 py-4 text-sm font-medium dark:text-gray-500">Reduction</th><th className="text-left px-6 py-4 text-sm font-medium dark:text-gray-500">Utilisations</th><th className="text-left px-6 py-4 text-sm font-medium dark:text-gray-500">Statut</th><th className="text-right px-6 py-4 text-sm font-medium dark:text-gray-500">Actions</th></tr></thead>
-            <tbody className="divide-y">{coupons.map((c, i) => (<motion.tr key={c.id} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: i * 0.02 }} className="dark:hover:bg-gray-700"><td className="px-6 py-4"><span className="font-mono font-bold dark:text-white">{c.code}</span></td><td className="px-6 py-4"><span className="dark:text-white">{c.discount_type === 'percentage' ? `${c.discount_value}%` : `${c.discount_value} FCFA`}</span></td><td className="px-6 py-4 dark:text-gray-500">{c.uses_count}{c.max_uses ? ` / ${c.max_uses}` : ''}</td><td className="px-6 py-4"><span className={`px-2 py-1 rounded-full text-xs font-medium ${c.is_active ? 'dark:bg-green-900/30 dark:text-green-400' : 'dark:bg-gray-700 dark:text-gray-500'}`}>{c.is_active ? 'Actif' : 'Inactif'}</span></td><td className="px-6 py-4"><div className="flex justify-end gap-2"><button onClick={() => handleEdit(c)} className="p-2 hover:dark:bg-gray-700 rounded-lg"><Edit2 className="w-4 h-4 dark:text-gray-500" /></button><button onClick={() => handleDelete(c.id)} className="p-2 hover:bg-red-50 rounded-lg"><Trash2 className="w-4 h-4 text-red-500" /></button></div></td></motion.tr>))}</tbody>
+            <tbody className="divide-y">{coupons.map((c, i) => (<motion.tr key={c.id} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: i * 0.02 }} className="dark:hover:bg-gray-700"><td className="px-6 py-4"><span className="font-mono font-bold dark:text-white">{c.code}</span></td><td className="px-6 py-4"><span className="dark:text-white">{c.discount_type === 'percentage' ? `${c.discount_value}%` : `${c.discount_value} FCFA`}</span></td><td className="px-6 py-4 dark:text-gray-500">{c.uses_count}{c.max_uses ? ` / ${c.max_uses}` : ''}</td><td className="px-6 py-4"><span className={`px-2 py-1 rounded-full text-xs font-medium ${c.is_active ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' : 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-400'}`}>{c.is_active ? 'Actif' : 'Inactif'}</span></td><td className="px-6 py-4"><div className="flex justify-end gap-2"><button onClick={() => handleToggleActive(c)} disabled={togglingId === c.id} className={`p-3 rounded-lg border transition-colors disabled:opacity-50 ${c.is_active ? 'bg-green-100 text-green-700 border-green-300 hover:bg-green-200 dark:bg-green-900/40 dark:text-green-300 dark:border-green-700 dark:hover:bg-green-900/60' : 'bg-gray-100 text-gray-600 border-gray-300 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-600'}`} title={c.is_active ? 'Desactiver' : 'Activer'}>{togglingId === c.id ? <Loader2 className="w-6 h-6 animate-spin" /> : <Power className="w-6 h-6" />}</button><button onClick={() => handleEdit(c)} className="p-3 bg-gray-100 hover:bg-gray-200 text-gray-700 border border-gray-200 rounded-lg transition-colors dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600 dark:hover:bg-gray-600"><Edit2 className="w-6 h-6" /></button><button onClick={() => handleDelete(c.id)} className="p-3 bg-red-100 hover:bg-red-200 text-red-700 border border-red-300 rounded-lg transition-colors dark:bg-red-900/40 dark:text-red-300 dark:border-red-700 dark:hover:bg-red-900/60"><Trash2 className="w-6 h-6" /></button></div></td></motion.tr>))}</tbody>
           </table>
           {coupons.length === 0 && !loading && <div className="text-center py-12"><Tag className="w-12 h-12 dark:text-gray-500 mx-auto mb-4" /><p className="dark:text-gray-500">Aucun code promo</p></div>}
         </div>
