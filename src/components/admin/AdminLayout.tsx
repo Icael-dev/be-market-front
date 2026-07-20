@@ -26,7 +26,10 @@ import {
   ShoppingCart,
   Sun,
   Moon,
-  UserCog
+  UserCog,
+  CreditCard,
+  Gift,
+  Headphones
 } from 'lucide-react';
 import { cn } from '../../lib/utils';
 
@@ -52,7 +55,10 @@ const navItems: NavItem[] = [
   { path: '/admin/coupons', label: 'Codes promo', icon: Tag, section: 'Catalogue' },
   { path: '/admin/blog', label: 'Blog', icon: FileText, section: 'Catalogue' },
   { path: '/admin/orders', label: 'Commandes', icon: Package, section: 'Ventes' },
+  { path: '/admin/payments', label: 'Paiements', icon: CreditCard, section: 'Ventes' },
   { path: '/admin/customers', label: 'Clients', icon: Users, section: 'Ventes' },
+  { path: '/admin/loyalty', label: 'Fidelite', icon: Gift, section: 'Ventes' },
+  { path: '/admin/support', label: 'Support', icon: Headphones, section: 'Ventes' },
   { path: '/admin/export', label: 'Export', icon: Download, section: 'Outils' },
   { path: '/admin/users', label: 'Utilisateurs', icon: UserCog, section: 'Outils', adminOnly: true },
   { path: '/admin/settings', label: 'Parametres', icon: Settings, section: 'Outils', adminOnly: true },

@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
 import { formatPrice, getStatusColor, getStatusLabel } from '../lib/utils';
 import type { Order } from '../types';
-import { User, Mail, Phone, Package, MapPin, Edit2, Save, Loader2, ShoppingBag, Calendar } from 'lucide-react';
+import { User, Mail, Phone, Package, MapPin, Edit2, Save, Loader2, ShoppingBag, Calendar, CreditCard, Gift } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { fetchRecentOrders } from '../services/orders';
 import { updateProfile } from '../services/profile';
@@ -238,7 +238,7 @@ export function ProfilePage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
         >
-          <div className="grid sm:grid-cols-3 gap-4 mb-6">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
             <Link
               to="/orders"
               className="card p-6 hover:shadow-premium transition-all"
@@ -275,6 +275,32 @@ export function ProfilePage() {
               <h3 className="font-semibold dark:text-white">Acheter</h3>
               <p className="text-sm dark:text-gray-500 mt-1">
                 Parcourir les produits
+              </p>
+            </Link>
+
+            <Link
+              to="/loyalty"
+              className="card p-6 hover:shadow-premium transition-all"
+            >
+              <div className="w-12 h-12 rounded-xl bg-gold-50 dark:bg-gold-900/20 flex items-center justify-center dark:text-gold-400 mb-4">
+                <Gift className="w-6 h-6" />
+              </div>
+              <h3 className="font-semibold dark:text-white">Mes points</h3>
+              <p className="text-sm dark:text-gray-500 mt-1">
+                Programme fidelite
+              </p>
+            </Link>
+
+            <Link
+              to="/payments"
+              className="card p-6 hover:shadow-premium transition-all"
+            >
+              <div className="w-12 h-12 rounded-xl bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center dark:text-blue-400 mb-4">
+                <CreditCard className="w-6 h-6" />
+              </div>
+              <h3 className="font-semibold dark:text-white">Mes paiements</h3>
+              <p className="text-sm dark:text-gray-500 mt-1">
+                Historique des transactions
               </p>
             </Link>
           </div>

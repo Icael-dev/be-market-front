@@ -263,13 +263,13 @@ useEffect(() => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.1, duration: 0.5 }}
-                className="group relative flex flex-col sm:flex-row items-center sm:items-center gap-3 sm:gap-4 p-3 sm:p-4 rounded-2xl hover:bg-white dark:hover:bg-gray-900 card-hover transition-all duration-300"
+                className="group relative flex flex-col sm:flex-row items-center sm:items-center gap-3 sm:gap-4 p-3 sm:p-4 rounded-2xl hover:bg-white dark:hover:bg-gray-900 active:bg-white dark:active:bg-gray-900 focus-visible:bg-white dark:focus-visible:bg-gray-900 card-hover transition-all duration-300"
               >
-                <div className={`relative w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-gradient-to-br ${feature.color} flex items-center justify-center text-white shadow-lg group-hover:shadow-xl group-hover:scale-110 transition-all duration-300`}>
+                <div className={`relative w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-gradient-to-br ${feature.color} flex items-center justify-center text-white shadow-lg group-hover:shadow-xl group-hover:scale-110 group-active:scale-110 group-focus-visible:scale-110 transition-all duration-300`}>
                   <feature.icon className="w-6 h-6 sm:w-7 sm:h-7" />
                 </div>
                 <div className="text-center sm:text-left">
-                  <h3 className="font-bold text-gray-900 dark:text-white text-xs sm:text-sm md:text-base group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
+                  <h3 className="font-bold text-gray-900 dark:text-white text-xs sm:text-sm md:text-base group-hover:text-primary-600 dark:group-hover:text-primary-400 group-active:text-primary-600 dark:group-active:text-primary-400 group-focus-visible:text-primary-600 dark:group-focus-visible:text-primary-400 transition-colors">
                     {feature.title}
                   </h3>
                   <p className="text-[10px] sm:text-xs md:text-sm text-gray-500 dark:text-gray-400 mt-0.5">

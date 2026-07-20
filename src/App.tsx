@@ -57,6 +57,7 @@ const LazyComparePage = lazy(() => import('./components/CompareDrawer').then(m =
 const LazyBlogPage = lazy(() => import('./pages/BlogPage').then(m => ({ default: m.BlogPage })));
 const LazyBlogPostPage = lazy(() => import('./pages/BlogPage').then(m => ({ default: m.BlogPostPage })));
 const LazyLoyaltyPage = lazy(() => import('./pages/LoyaltyPage').then(m => ({ default: m.LoyaltyPage })));
+const LazyPaymentsPage = lazy(() => import('./pages/PaymentsPage').then(m => ({ default: m.PaymentsPage })));
 const LazyNotFoundPage = lazy(() => import('./pages/NotFoundPage').then(m => ({ default: m.NotFoundPage })));
 
 const LazyAdminDashboardPage = lazy(() => import('./pages/admin/AdminDashboardPage').then(m => ({ default: m.AdminDashboardPage })));
@@ -72,6 +73,11 @@ const LazyAdminCouponsPage = lazy(() => import('./pages/admin/AdminCouponsPage')
 const LazyAdminExportPage = lazy(() => import('./pages/admin/AdminExportPage').then(m => ({ default: m.AdminExportPage })));
 const LazyAdminFlashSalesPage = lazy(() => import('./pages/admin/AdminFlashSalesPage').then(m => ({ default: m.AdminFlashSalesPage })));
 const LazyAdminUsersPage = lazy(() => import('./pages/admin/AdminUsersPage').then(m => ({ default: m.AdminUsersPage })));
+const LazyAdminCustomerDetailPage = lazy(() => import('./pages/admin/AdminCustomerDetailPage').then(m => ({ default: m.AdminCustomerDetailPage })));
+const LazyAdminPaymentsPage = lazy(() => import('./pages/admin/AdminPaymentsPage').then(m => ({ default: m.AdminPaymentsPage })));
+const LazyAdminLoyaltyPage = lazy(() => import('./pages/admin/AdminLoyaltyPage').then(m => ({ default: m.AdminLoyaltyPage })));
+const LazyAdminSupportPage = lazy(() => import('./pages/admin/AdminSupportPage').then(m => ({ default: m.AdminSupportPage })));
+const LazyAdminSupportDetailPage = lazy(() => import('./pages/admin/AdminSupportDetailPage').then(m => ({ default: m.AdminSupportDetailPage })));
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();
@@ -216,6 +222,11 @@ function AppRoutes() {
                 <LazyLoyaltyPage />
               </ProtectedRoute>
             } />
+            <Route path="/payments" element={
+              <ProtectedRoute>
+                <LazyPaymentsPage />
+              </ProtectedRoute>
+            } />
 
             <Route path="*" element={<LazyNotFoundPage />} />
 
@@ -242,6 +253,31 @@ function AppRoutes() {
         <Route path="/admin/customers" element={
           <AdminRoute>
             <LazyAdminCustomersPage />
+          </AdminRoute>
+        } />
+        <Route path="/admin/customers/:id" element={
+          <AdminRoute>
+            <LazyAdminCustomerDetailPage />
+          </AdminRoute>
+        } />
+        <Route path="/admin/payments" element={
+          <AdminRoute>
+            <LazyAdminPaymentsPage />
+          </AdminRoute>
+        } />
+        <Route path="/admin/loyalty" element={
+          <AdminRoute>
+            <LazyAdminLoyaltyPage />
+          </AdminRoute>
+        } />
+        <Route path="/admin/support" element={
+          <AdminRoute>
+            <LazyAdminSupportPage />
+          </AdminRoute>
+        } />
+        <Route path="/admin/support/:id" element={
+          <AdminRoute>
+            <LazyAdminSupportDetailPage />
           </AdminRoute>
         } />
         <Route path="/admin/banners" element={

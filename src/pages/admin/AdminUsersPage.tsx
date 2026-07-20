@@ -6,13 +6,14 @@ import {
   createAdminUser,
   updateAdminUser,
   deleteAdminUser,
+  restoreAdminUser,
   type StaffUserInput
 } from '../../services/admin';
 import type { StaffUser, UserRole } from '../../types';
 import { AdminLayout } from '../../components/admin/AdminLayout';
 import { PageHeader } from '../../components/admin/PageHeader';
 import { useAuth } from '../../context/AuthContext';
-import { Plus, Edit2, Trash2, X, Save, Loader2, UserCog, Mail, Phone, ShieldCheck, User as UserIcon } from 'lucide-react';
+import { Plus, Edit2, Trash2, X, Save, Loader2, UserCog, Mail, Phone, ShieldCheck, User as UserIcon, RotateCcw } from 'lucide-react';
 
 const ROLE_LABELS: Record<UserRole, string> = {
   admin: 'Administrateur',
@@ -36,6 +37,7 @@ export function AdminUsersPage() {
   const [editing, setEditing] = useState<StaffUser | null>(null);
   const [saving, setSaving] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [restoringId, setRestoringId] = useState<string | null>(null);
   const [errors, setErrors] = useState<Record<string, string[]>>({});
   const [form, setForm] = useState({ ...emptyForm });
 
@@ -121,17 +123,35 @@ export function AdminUsersPage() {
   };
 
   const handleDelete = async (user: StaffUser) => {
+    if (isSelf(user)) {
+      toast.error('Vous ne pouvez pas supprimer votre propre compte');
+      return;
+    }
     if (!window.confirm(`Supprimer le compte de ${user.full_name || user.email} ?`)) return;
     setDeletingId(user.id);
     try {
       await deleteAdminUser(user.id);
-      setUsers(prev => prev.filter(u => u.id !== user.id));
-      toast.success('Utilisateur supprime');
+      setUsers(prev => prev.map(u => (u.id === user.id ? { ...u, deleted_at: new Date().toISOString() } : u)));
+      toast.success('Utilisateur supprime (masque)');
     } catch (err: unknown) {
       const e = err as { message?: string };
       toast.error(e?.message || 'Erreur lors de la suppression');
     } finally {
       setDeletingId(null);
+    }
+  };
+
+  const handleRestoreUser = async (userId: string) => {
+    setRestoringId(userId);
+    try {
+      const restored = await restoreAdminUser(userId);
+      setUsers(prev => prev.map(u => (u.id === userId ? { ...u, ...restored, deleted_at: null } : u)));
+      toast.success('Utilisateur restaure');
+    } catch (err: unknown) {
+      const e = err as { message?: string };
+      toast.error(e?.message || 'Erreur lors de la restauration');
+    } finally {
+      setRestoringId(null);
     }
   };
 
@@ -188,7 +208,11 @@ export function AdminUsersPage() {
                         </div>
                         <div>
                           <p className="font-medium dark:text-white">{user.full_name || 'Sans nom'}</p>
-                          {isSelf(user) && (
+                          {user.deleted_at ? (
+                            <span className="inline-flex mt-0.5 px-2 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400">
+                              Supprime
+                            </span>
+                          ) : isSelf(user) && (
                             <span className="text-xs text-primary-600 dark:text-primary-400">Vous</span>
                           )}
                         </div>
@@ -220,25 +244,42 @@ export function AdminUsersPage() {
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center justify-end gap-2">
-                        <button
-                          onClick={() => openEdit(user)}
-                          className="p-3 bg-gray-100 hover:bg-gray-200 text-gray-700 border border-gray-200 rounded-lg transition-colors dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600 dark:hover:bg-gray-600"
-                          title="Modifier"
-                        >
-                          <Edit2 className="w-6 h-6" />
-                        </button>
-                        <button
-                          onClick={() => handleDelete(user)}
-                          disabled={deletingId === user.id || isSelf(user)}
-                          className="p-3 bg-red-100 hover:bg-red-200 text-red-700 border border-red-300 rounded-lg transition-colors disabled:opacity-40 disabled:cursor-not-allowed dark:bg-red-900/40 dark:text-red-300 dark:border-red-700 dark:hover:bg-red-900/60"
-                          title={isSelf(user) ? 'Vous ne pouvez pas supprimer votre compte' : 'Supprimer'}
-                        >
-                          {deletingId === user.id ? (
-                            <Loader2 className="w-6 h-6 animate-spin" />
-                          ) : (
-                            <Trash2 className="w-6 h-6" />
-                          )}
-                        </button>
+                        {user.deleted_at ? (
+                          <button
+                            onClick={() => handleRestoreUser(user.id)}
+                            disabled={restoringId === user.id}
+                            className="flex items-center gap-1 bg-blue-100 hover:bg-blue-200 text-blue-700 border border-blue-300 rounded-lg px-3 py-2 transition-colors dark:bg-blue-900/40 dark:text-blue-300 dark:border-blue-700 dark:hover:bg-blue-900/60 disabled:opacity-50"
+                          >
+                            {restoringId === user.id ? (
+                              <Loader2 className="w-4 h-4 animate-spin" />
+                            ) : (
+                              <RotateCcw className="w-4 h-4" />
+                            )}
+                            Restaurer
+                          </button>
+                        ) : (
+                          <>
+                            <button
+                              onClick={() => openEdit(user)}
+                              className="p-3 bg-gray-100 hover:bg-gray-200 text-gray-700 border border-gray-200 rounded-lg transition-colors dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600 dark:hover:bg-gray-600"
+                              title="Modifier"
+                            >
+                              <Edit2 className="w-6 h-6" />
+                            </button>
+                            <button
+                              onClick={() => handleDelete(user)}
+                              disabled={deletingId === user.id || isSelf(user)}
+                              className="p-3 bg-red-100 hover:bg-red-200 text-red-700 border border-red-300 rounded-lg transition-colors disabled:opacity-40 disabled:cursor-not-allowed dark:bg-red-900/40 dark:text-red-300 dark:border-red-700 dark:hover:bg-red-900/60"
+                              title={isSelf(user) ? 'Vous ne pouvez pas supprimer votre compte' : 'Supprimer'}
+                            >
+                              {deletingId === user.id ? (
+                                <Loader2 className="w-6 h-6 animate-spin" />
+                              ) : (
+                                <Trash2 className="w-6 h-6" />
+                              )}
+                            </button>
+                          </>
+                        )}
                       </div>
                     </td>
                   </motion.tr>

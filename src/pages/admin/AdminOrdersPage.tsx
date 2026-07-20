@@ -1,7 +1,7 @@
 import { toast } from 'react-hot-toast';
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { fetchAdminOrders, updateAdminOrder } from '../../services/admin';
+import { fetchAdminOrders, updateAdminOrder, restoreAdminOrder } from '../../services/admin';
 import { formatPrice, getStatusColor, getStatusLabel } from '../../lib/utils';
 import { AdminLayout } from '../../components/admin/AdminLayout';
 import { PageHeader } from '../../components/admin/PageHeader';
@@ -13,7 +13,9 @@ import {
   X,
   MapPin,
   CreditCard,
-  Calendar
+  Calendar,
+  RotateCcw,
+  Loader2
 } from 'lucide-react';
 import { cn } from '../../lib/utils';
 
@@ -22,6 +24,7 @@ export function AdminOrdersPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+  const [restoringId, setRestoringId] = useState<string | null>(null);
 
   useEffect(() => {
     fetchOrders();
@@ -32,6 +35,20 @@ export function AdminOrdersPage() {
       setOrders(await fetchAdminOrders());
     } catch (err) {
       console.error('Orders fetch error:', err);
+    }
+  };
+
+  const handleRestoreOrder = async (orderId: string) => {
+    setRestoringId(orderId);
+    try {
+      const restored = await restoreAdminOrder(orderId);
+      setOrders(prev => prev.map(o => (o.id === orderId ? { ...o, ...restored, deleted_at: null } : o)));
+      toast.success('Commande restauree');
+    } catch (error) {
+      console.error('Order restore error:', error);
+      toast.error('Erreur lors de la restauration');
+    } finally {
+      setRestoringId(null);
     }
   };
 
@@ -131,6 +148,11 @@ export function AdminOrdersPage() {
                       <p className="text-xs dark:text-gray-500">
                         {new Date(order.created_at).toLocaleDateString('fr-FR')}
                       </p>
+                      {order.deleted_at && (
+                        <span className="inline-flex mt-1 px-2 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400">
+                          Supprime
+                        </span>
+                      )}
                     </td>
                     <td className="px-6 py-4">
                       <p className="font-medium dark:text-white">
@@ -168,10 +190,25 @@ export function AdminOrdersPage() {
                       </span>
                     </td>
                     <td className="px-6 py-4">
-                      <div className="flex items-center justify-end">
+                      <div className="flex items-center justify-end gap-2">
+                        {order.deleted_at && (
+                          <button
+                            onClick={() => handleRestoreOrder(order.id)}
+                            disabled={restoringId === order.id}
+                            className="flex items-center gap-1 bg-blue-100 hover:bg-blue-200 text-blue-700 rounded-lg px-3 py-2 text-sm font-medium transition-colors dark:bg-blue-900/40 dark:text-blue-300 dark:hover:bg-blue-900/60 disabled:opacity-50"
+                          >
+                            {restoringId === order.id ? (
+                              <Loader2 className="w-4 h-4 animate-spin" />
+                            ) : (
+                              <RotateCcw className="w-4 h-4" />
+                            )}
+                            Restaurer
+                          </button>
+                        )}
                         <button
                           onClick={() => setSelectedOrder(order)}
-                          className="p-2 hover:bg-gray-100 hover:dark:bg-gray-700 rounded-lg transition-colors"
+                          disabled={!!order.deleted_at}
+                          className="p-2 hover:bg-gray-100 hover:dark:bg-gray-700 rounded-lg transition-colors disabled:opacity-40"
                         >
                           <Eye className="w-4 h-4 dark:text-gray-500" />
                         </button>

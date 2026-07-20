@@ -6,6 +6,7 @@ export interface Category {
   image_url: string | null;
   is_active: boolean;
   created_at: string;
+  deleted_at?: string | null;
   specs?: { key: string; placeholder?: string }[];
 }
 
@@ -17,6 +18,8 @@ export interface Product {
   description: string | null;
   price: number;
   compare_price: number | null;
+  effective_price?: number;
+  flash_discount_percentage?: number;
   stock: number;
   category_id: string | null;
   images: string[];
@@ -34,6 +37,7 @@ export interface Product {
   variants: { sizes: string[]; colors: { name: string; hex: string }[] } | null;
   created_at: string;
   updated_at: string;
+  deleted_at?: string | null;
   category?: Category;
 }
 
@@ -61,6 +65,7 @@ export interface StaffUser {
   is_admin: boolean;
   created_at: string;
   updated_at: string;
+  deleted_at?: string | null;
 }
 
 export interface AuthUser {
@@ -120,6 +125,7 @@ export interface Order {
   notes: string | null;
   created_at: string;
   updated_at: string;
+  deleted_at?: string | null;
   items?: OrderItem[];
 }
 
@@ -137,6 +143,7 @@ export interface OrderItem {
 export interface Payment {
   id: string;
   order_id: string;
+  user_id?: string | null;
   payment_method: PaymentMethod;
   amount: number;
   status: PaymentStatus;
@@ -145,6 +152,7 @@ export interface Payment {
   provider_response: Record<string, unknown> | null;
   paid_at: string | null;
   created_at: string;
+  order?: Order;
 }
 
 export interface Review {
@@ -261,6 +269,11 @@ export interface SupportTicket {
   updated_at: string;
   messages?: SupportMessage[];
   profile?: Profile;
+  user?: {
+    id: string;
+    email: string;
+    profile?: Profile;
+  };
 }
 
 export interface SupportMessage {
@@ -314,10 +327,13 @@ export interface LoyaltyPoints {
 export interface LoyaltyTransaction {
   id: string;
   user_id: string;
+  order_id?: string | null;
   type: 'earned' | 'redeemed' | 'expired';
   points: number;
   description: string | null;
+  reference?: string | null;
   created_at: string;
+  order?: Order;
 }
 
 export interface ShippingAddress {

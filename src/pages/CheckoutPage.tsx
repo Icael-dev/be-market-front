@@ -19,6 +19,8 @@ import { InputField } from '../components/ui/FormField';
 import { fetchAddresses, createAddress } from '../services/address';
 import { placeOrder } from '../services/orders';
 import { initiatePayment } from '../services/payments';
+import { fetchLoyaltyPoints } from '../services/content';
+import type { LoyaltyPoints } from '../types';
 
 type Step = 'shipping' | 'payment' | 'confirm';
 type PaymentMethod = 'tmoney' | 'flooz' | 'cash_on_delivery';
@@ -60,6 +62,8 @@ export function CheckoutPage() {
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('tmoney');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [notes, setNotes] = useState('');
+  const [loyaltyPoints, setLoyaltyPoints] = useState<LoyaltyPoints | null>(null);
+  const [loyaltyPointsToRedeem, setLoyaltyPointsToRedeem] = useState(0);
 
   const [newAddress, setNewAddress] = useState({
     full_name: profile?.full_name || '',
@@ -77,7 +81,12 @@ export function CheckoutPage() {
   const [useNewAddress, setUseNewAddress] = useState(true);
 
   const shippingFee = total > 50000 ? 0 : 2500;
-  const grandTotal = total + shippingFee;
+  const maxLoyaltyDiscount = Math.min(
+    loyaltyPoints?.points || 0,
+    Math.floor((total - (total > 50000 ? 0 : 2500)) / 50)
+  );
+  const loyaltyDiscount = Math.min(loyaltyPointsToRedeem * 50, total);
+  const grandTotal = total + shippingFee - loyaltyDiscount;
 
   useEffect(() => {
     if (!user) {
@@ -92,7 +101,18 @@ export function CheckoutPage() {
     }
 
     loadAddresses();
+    loadLoyaltyPoints();
   }, [user, items]);
+
+  const loadLoyaltyPoints = async () => {
+    if (!user) return;
+    try {
+      const data = await fetchLoyaltyPoints();
+      setLoyaltyPoints(data);
+    } catch (error) {
+      console.error('Failed to load loyalty points:', error);
+    }
+  };
 
   const loadAddresses = async () => {
     if (!user) return;
@@ -148,6 +168,7 @@ const handlePlaceOrder = async () => {
         billing_address: useNewAddress ? undefined : addresses.find(a => a.id === selectedAddressId) as Record<string, unknown> | undefined,
         payment_method: paymentMethod,
         notes,
+        loyalty_points_to_redeem: loyaltyPointsToRedeem || undefined,
       });
 
       if (paymentMethod !== 'cash_on_delivery') {
@@ -531,7 +552,7 @@ const handlePlaceOrder = async () => {
                               <p className="text-xs dark:text-gray-500">x{item.quantity}</p>
                             </div>
                             <p className="text-sm font-medium">
-                              {formatPrice((item.product?.price || 0) * item.quantity)}
+                              {formatPrice((item.product?.effective_price ?? item.product?.price ?? 0) * item.quantity)}
                             </p>
                           </div>
                         ))}
@@ -593,7 +614,7 @@ const handlePlaceOrder = async () => {
                       <p className="text-xs dark:text-gray-500">x{item.quantity}</p>
                     </div>
                     <p className="text-sm font-medium">
-                      {formatPrice((item.product?.price || 0) * item.quantity)}
+                      {formatPrice((item.product?.effective_price ?? item.product?.price ?? 0) * item.quantity)}
                     </p>
                   </div>
                 ))}
@@ -610,6 +631,28 @@ const handlePlaceOrder = async () => {
                     {shippingFee === 0 ? 'Gratuite' : formatPrice(shippingFee)}
                   </span>
                 </div>
+
+                {loyaltyPoints && loyaltyPoints.points > 0 && (
+                  <div className="pt-3 border-t border-dashed dark:border-gray-700">
+                    <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      Points de fidelite disponibles : {loyaltyPoints.points} ({formatPrice(loyaltyPoints.points * 50)} de reduction)
+                    </p>
+                    <div className="flex items-center gap-3">
+                      <input
+                        type="number"
+                        min="0"
+                        max={maxLoyaltyDiscount}
+                        value={loyaltyPointsToRedeem}
+                        onChange={e => setLoyaltyPointsToRedeem(Math.max(0, Math.min(maxLoyaltyDiscount, parseInt(e.target.value || '0'))))}
+                        className="w-24 px-3 py-2 border dark:border-gray-700 rounded-lg text-sm dark:bg-gray-800 dark:text-white"
+                        placeholder="0"
+                      />
+                      <span className="text-sm text-gray-500 dark:text-gray-400">
+                        = {formatPrice(loyaltyPointsToRedeem * 50)} de reduction
+                      </span>
+                    </div>
+                  </div>
+                )}
               </div>
 
               <div className="mt-4 pt-4 border-t dark:border-gray-700 flex justify-between text-lg font-bold dark:text-white">

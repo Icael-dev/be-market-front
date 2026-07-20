@@ -110,10 +110,13 @@ export function FlashSaleSection() {
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {flashSales.map((sale, index) => {
-            const discountedPrice = sale.product.price * (1 - sale.discount_percentage / 100);
+            const basePrice = sale.product.price;
+            const discountedPrice =
+              sale.product.effective_price ??
+              basePrice * (1 - sale.discount_percentage / 100);
             const productWithDiscount = {
               ...sale.product,
-              compare_price: sale.product.price,
+              compare_price: basePrice,
               price: discountedPrice
             };
 

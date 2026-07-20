@@ -16,7 +16,8 @@ import {
   Moon,
   Gift,
   LifeBuoy,
-  ShieldCheck
+  ShieldCheck,
+  CreditCard
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useCart } from '../../context/CartContext';
@@ -246,6 +247,11 @@ export function Header() {
                             Mes Commandes
                           </Link>
 
+                          <Link to="/payments" role="menuitem" onClick={() => setIsUserMenuOpen(false)} className="flex items-center gap-3 px-3 py-2.5 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl transition-colors">
+                            <CreditCard className="w-4 h-4" />
+                            Mes Paiements
+                          </Link>
+
                           <Link to="/support" role="menuitem" onClick={() => setIsUserMenuOpen(false)} className="flex items-center gap-3 px-3 py-2.5 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl transition-colors">
                             <LifeBuoy className="w-4 h-4" />
                             Support
@@ -396,6 +402,10 @@ export function Header() {
                         <Link to="/orders" onClick={() => setIsMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
                           <Package className="w-4 h-4" />
                           Mes Commandes
+                        </Link>
+                        <Link to="/payments" onClick={() => setIsMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+                          <CreditCard className="w-4 h-4" />
+                          Mes Paiements
                         </Link>
                         <Link to="/support" onClick={() => setIsMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
                           <LifeBuoy className="w-4 h-4" />

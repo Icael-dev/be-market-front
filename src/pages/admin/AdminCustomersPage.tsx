@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
 import { fetchAdminCustomers, type AdminCustomer } from '../../services/admin';
 import { formatPrice } from '../../lib/utils';
 import { AdminLayout } from '../../components/admin/AdminLayout';
@@ -86,9 +87,9 @@ export function AdminCustomersPage() {
                           {customer.full_name?.[0] || customer.email?.[0] || 'U'}
                         </div>
                         <div>
-                          <p className="font-medium dark:text-white">
+                          <Link to={`/admin/customers/${customer.user_id}`} className="font-medium dark:text-white hover:text-primary-600 dark:hover:text-primary-400 transition-colors">
                             {customer.full_name || 'Sans nom'}
-                          </p>
+                          </Link>
                         </div>
                       </div>
                     </td>

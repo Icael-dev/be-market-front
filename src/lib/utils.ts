@@ -59,7 +59,11 @@ export function getStatusLabel(status: string): string {
     refunded: 'Remboursé',
     cash_on_delivery: 'Paiement à la livraison',
     tmoney: 'Tmoney',
-    flooz: 'Flooz'
+    flooz: 'Flooz',
+    open: 'Ouvert',
+    in_progress: 'En cours',
+    resolved: 'Résolu',
+    closed: 'Fermé'
   };
   return labels[status] || status;
 }

@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { fetchLoyaltyPoints, fetchLoyaltyTransactions } from '../services/content';
-import { Gift, Star, TrendingUp, History, Loader2 } from 'lucide-react';
+import { Gift, Star, TrendingUp, History, Loader2, Package } from 'lucide-react';
 import type { LoyaltyPoints, LoyaltyTransaction } from '../types';
 import { format } from 'date-fns';
 
@@ -133,11 +134,25 @@ className="card p-6"
                         <p className="font-medium text-gray-900 dark:text-white">
                           {trans.type === 'earned' ? 'Points gagnes' : trans.type === 'redeemed' ? 'Points utilises' : 'Points expires'}
                         </p>
+                        {trans.description && (
+                          <p className="text-sm text-gray-500 dark:text-gray-400">{trans.description}</p>
+                        )}
                         <p className="text-sm text-gray-500 dark:text-gray-400">{format(new Date(trans.created_at), 'dd MMM yyyy HH:mm')}</p>
                       </div>
-                      <span className={`font-bold ${trans.type === 'earned' ? 'text-green-600 dark:text-green-400' : 'text-red-500 dark:text-red-400'}`}>
-                        {trans.type === 'earned' ? '+' : '-'}{Math.abs(trans.points)}
-                      </span>
+                      <div className="flex flex-col items-end gap-1">
+                        <span className={`font-bold ${trans.type === 'earned' ? 'text-green-600 dark:text-green-400' : 'text-red-500 dark:text-red-400'}`}>
+                          {trans.type === 'earned' ? '+' : '-'}{Math.abs(trans.points)}
+                        </span>
+                        {trans.order_id && (
+                          <Link
+                            to={`/orders/${trans.order_id}`}
+                            className="inline-flex items-center gap-1 text-xs text-primary-600 dark:text-primary-400 hover:underline"
+                          >
+                            <Package className="w-3 h-3" />
+                            Commande
+                          </Link>
+                        )}
+                      </div>
                     </motion.div>
                   ))}
                 </div>

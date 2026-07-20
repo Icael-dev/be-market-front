@@ -335,9 +335,19 @@ export function OrderDetailPage() {
                 <span>Sous-total</span>
                 <span>{formatPrice(order.subtotal)}</span>
               </div>
+              {order.discount > 0 && (
+                <div className="flex justify-between text-green-600 dark:text-green-400">
+                  <span>Remise</span>
+                  <span>-{formatPrice(order.discount)}</span>
+                </div>
+              )}
               <div className="flex justify-between dark:text-gray-500">
                 <span>Livraison</span>
                 <span>{order.shipping_fee === 0 ? 'Gratuite' : formatPrice(order.shipping_fee)}</span>
+              </div>
+              <div className="flex justify-between dark:text-gray-500">
+                <span>Taxe (TVA 10%)</span>
+                <span>{formatPrice(order.tax)}</span>
               </div>
               <div className="flex justify-between text-lg font-bold dark:text-white pt-2">
                 <span>Total</span>
@@ -362,6 +372,62 @@ export function OrderDetailPage() {
                 <p>{order.shipping_address?.city}, {order.shipping_address?.region}</p>
               </div>
             </motion.div>
+
+            {order.billing_address && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.25 }}
+                className="card p-6"
+              >
+                <h2 className="font-bold dark:text-white mb-4">Adresse de facturation</h2>
+                <div className="dark:text-gray-500 space-y-1">
+                  <p className="font-medium dark:text-white">{order.billing_address?.full_name}</p>
+                  <p>{order.billing_address?.phone}</p>
+                  <p>{order.billing_address?.address_line1}</p>
+                  {order.billing_address?.address_line2 && <p>{order.billing_address.address_line2}</p>}
+                  <p>{order.billing_address?.city}, {order.billing_address?.region}</p>
+                </div>
+              </motion.div>
+            )}
+
+            {order.notes && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.27 }}
+                className="card p-6"
+              >
+                <h2 className="font-bold dark:text-white mb-2">Note de commande</h2>
+                <p className="text-sm dark:text-gray-400">{order.notes}</p>
+              </motion.div>
+            )}
+
+            {order.payments && order.payments.length > 0 && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3 }}
+                className="card p-6"
+              >
+                <h2 className="font-bold dark:text-white mb-4">Paiements</h2>
+                <div className="space-y-3">
+                  {order.payments.map(p => (
+                    <div key={p.id} className="flex items-center justify-between border-b border-gray-100 dark:border-gray-800 pb-3 last:border-0">
+                      <div>
+                        <p className="font-medium dark:text-white">{formatPrice(p.amount)}</p>
+                        <p className="text-sm dark:text-gray-500">
+                          {getStatusLabel(p.payment_method || '')} · Ref: {p.reference || '—'}
+                        </p>
+                      </div>
+                      <span className={`inline-flex px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(p.status)}`}>
+                        {getStatusLabel(p.status)}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </motion.div>
+            )}
 
             <motion.div
               initial={{ opacity: 0, y: 20 }}

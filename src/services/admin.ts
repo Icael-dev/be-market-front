@@ -32,6 +32,7 @@ export interface AdminStats {
 export interface AdminCustomer extends Profile {
   orders_count?: number;
   total_spent?: number;
+  user_id?: string;
 }
 
 type MaybePaginated<T> = T[] | { data: T[] };
@@ -61,6 +62,10 @@ export async function deleteAdminProduct(id: string): Promise<void> {
   await api.delete(`/api/admin/products/${id}`);
 }
 
+export async function restoreAdminProduct(id: string): Promise<Product> {
+  return api.post<Product>(`/api/admin/products/${id}/restore`);
+}
+
 // Categories
 export async function fetchAdminCategories(): Promise<Category[]> {
   try {
@@ -80,6 +85,10 @@ export async function updateAdminCategory(id: string, category: Partial<Category
 
 export async function deleteAdminCategory(id: string): Promise<void> {
   await api.delete(`/api/admin/categories/${id}`);
+}
+
+export async function restoreAdminCategory(id: string): Promise<Category> {
+  return api.post<Category>(`/api/admin/categories/${id}/restore`);
 }
 
 // Banners
@@ -168,9 +177,77 @@ export async function updateAdminOrder(id: string, order: Partial<Order>): Promi
   return api.put<Order>(`/api/admin/orders/${id}`, order);
 }
 
+export async function restoreAdminOrder(id: string): Promise<Order> {
+  return api.post<Order>(`/api/admin/orders/${id}/restore`);
+}
+
 // Customers
 export async function fetchAdminCustomers(): Promise<AdminCustomer[]> {
   return unwrapList(await api.get<MaybePaginated<AdminCustomer>>('/api/admin/customers'));
+}
+
+// Customers (history per customer)
+export async function fetchAdminCustomer(id: string): Promise<AdminCustomer> {
+  return api.get<AdminCustomer>(`/api/admin/customers/${id}`);
+}
+
+export async function fetchAdminCustomerOrders(id: string): Promise<Order[]> {
+  return unwrapList(await api.get<MaybePaginated<Order>>(`/api/admin/customers/${id}/orders`));
+}
+
+export async function fetchAdminCustomerLoyalty(id: string): Promise<{
+  points: LoyaltyPoints | null;
+  transactions: LoyaltyTransaction[];
+}> {
+  return api.get(`/api/admin/customers/${id}/loyalty`);
+}
+
+export async function fetchAdminCustomerPayments(id: string): Promise<Payment[]> {
+  return api.get<Payment[]>(`/api/admin/customers/${id}/payments`);
+}
+
+// Payments (global admin)
+export async function fetchAdminPayments(params?: { status?: string; payment_method?: string; user_id?: string }): Promise<Payment[]> {
+  const search = new URLSearchParams();
+  if (params?.status) search.set('status', params.status);
+  if (params?.payment_method) search.set('payment_method', params.payment_method);
+  if (params?.user_id) search.set('user_id', params.user_id);
+  const qs = search.toString();
+  return api.get<Payment[]>(`/api/admin/payments${qs ? `?${qs}` : ''}`);
+}
+
+// Loyalty (global admin)
+export async function fetchAdminLoyaltyTransactions(params?: { user_id?: string; type?: string }): Promise<LoyaltyTransaction[]> {
+  const search = new URLSearchParams();
+  if (params?.user_id) search.set('user_id', params.user_id);
+  if (params?.type) search.set('type', params.type);
+  const qs = search.toString();
+  return api.get<LoyaltyTransaction[]>(`/api/admin/loyalty/transactions${qs ? `?${qs}` : ''}`);
+}
+
+export async function fetchAdminLoyaltyPoints(): Promise<LoyaltyPoints[]> {
+  return api.get<LoyaltyPoints[]>('/api/admin/loyalty/points');
+}
+
+// Support
+export async function fetchAdminSupportTickets(params?: { status?: string; priority?: string }): Promise<SupportTicket[]> {
+  const search = new URLSearchParams();
+  if (params?.status) search.set('status', params.status);
+  if (params?.priority) search.set('priority', params.priority);
+  const qs = search.toString();
+  return api.get<SupportTicket[]>(`/api/admin/support/tickets${qs ? `?${qs}` : ''}`);
+}
+
+export async function fetchAdminSupportTicket(id: string): Promise<SupportTicket> {
+  return api.get<SupportTicket>(`/api/admin/support/tickets/${id}`);
+}
+
+export async function updateAdminSupportTicket(id: string, data: { status?: string; priority?: string }): Promise<SupportTicket> {
+  return api.put<SupportTicket>(`/api/admin/support/tickets/${id}`, data);
+}
+
+export async function sendAdminSupportMessage(ticketId: string, message: string): Promise<SupportMessage> {
+  return api.post<SupportMessage>(`/api/admin/support/tickets/${ticketId}/messages`, { message });
 }
 
 // Staff / Users (super-admin only)
@@ -196,6 +273,10 @@ export async function updateAdminUser(id: string, user: Partial<StaffUserInput>)
 
 export async function deleteAdminUser(id: string): Promise<void> {
   await api.delete(`/api/admin/users/${id}`);
+}
+
+export async function restoreAdminUser(id: string): Promise<StaffUser> {
+  return api.post<StaffUser>(`/api/admin/users/${id}/restore`);
 }
 
 // Statistics

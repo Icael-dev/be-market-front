@@ -149,11 +149,11 @@ export function CartPage() {
 
                             <div className="text-right">
                               <p className="font-bold dark:text-white">
-                                {formatPrice((item.product?.price || 0) * item.quantity)}
+                                {formatPrice((item.product?.effective_price ?? item.product?.price ?? 0) * item.quantity)}
                               </p>
                               {item.quantity > 1 && (
                                 <p className="text-sm dark:text-gray-500">
-                                  {formatPrice(item.product?.price || 0)} / unite
+                                  {formatPrice(item.product?.effective_price ?? item.product?.price ?? 0)} / unite
                                 </p>
                               )}
                             </div>

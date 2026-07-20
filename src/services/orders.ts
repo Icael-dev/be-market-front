@@ -19,6 +19,7 @@ export async function placeOrder(payload: {
   payment_method?: string;
   notes?: string;
   coupon_code?: string;
+  loyalty_points_to_redeem?: number;
 }): Promise<Order> {
   return api.post<Order>('/api/checkout', payload);
 }
