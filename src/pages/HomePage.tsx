@@ -2,9 +2,9 @@ import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { fetchCategories, fetchFeaturedProducts } from '../services/products';
- import { fetchTestimonials } from '../services/content';
+ import { fetchTestimonials, subscribeNewsletter } from '../services/content';
  import type { Product, Category, Testimonial } from '../types';
-import { ProductCard } from '../components/ProductCard';
+ import { ProductCard } from '../components/ProductCard';
 import { ProductsGridSkeleton } from '../components/LoadingSpinner';
 import { BannerSlider } from '../components/BannerSlider';
 import { FlashSaleSection } from '../components/FlashSaleSection';
@@ -43,8 +43,10 @@ export function HomePage() {
    const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
    const [categories, setCategories] = useState<Category[]>([]);
    const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
-   const [loading, setLoading] = useState(true);
-  const trackRef = useRef<HTMLDivElement>(null);
+    const [loading, setLoading] = useState(true);
+    const [newsletterEmail, setNewsletterEmail] = useState('');
+    const [newsletterLoading, setNewsletterLoading] = useState(false);
+   const trackRef = useRef<HTMLDivElement>(null);
   const rafRef = useRef<number>(0);
   const posRef = useRef(0);
   const pausedRef = useRef(false);
@@ -585,19 +587,22 @@ useEffect(() => {
             <p className="text-gray-500 dark:text-gray-400 mb-8 max-w-lg mx-auto">
               Recevez nos offres exclusives et les dernieres nouveautes directement dans votre boite mail
             </p>
-            <form className="flex flex-col sm:flex-row gap-3 max-w-lg mx-auto">
-              <input
-                type="email"
-                placeholder="Votre adresse email"
-                className="input-premium flex-1"
-              />
-              <button
-                type="submit"
-                className="btn-primary whitespace-nowrap"
-              >
-                S'inscrire
-              </button>
-            </form>
+             <form onSubmit={async (e) => { e.preventDefault(); if (!newsletterEmail.trim()) return; setNewsletterLoading(true); try { await subscribeNewsletter(newsletterEmail.trim()); setNewsletterEmail(''); } catch (err) { console.error(err); } finally { setNewsletterLoading(false); } }} className="flex flex-col sm:flex-row gap-3 max-w-lg mx-auto">
+               <input
+                 type="email"
+                 value={newsletterEmail}
+                 onChange={e => setNewsletterEmail(e.target.value)}
+                 placeholder="Votre adresse email"
+                 className="input-premium flex-1"
+               />
+               <button
+                 type="submit"
+                 disabled={newsletterLoading}
+                 className="btn-primary whitespace-nowrap disabled:opacity-50"
+               >
+                 {newsletterLoading ? '...' : "S'inscrire"}
+               </button>
+             </form>
           </motion.div>
         </div>
       </section>

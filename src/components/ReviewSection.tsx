@@ -7,6 +7,7 @@ import type { Review } from '../types';
 
 import { Star, MessageSquare, Send, User } from 'lucide-react';
 import { InputField, TextareaField } from './ui/FormField';
+import { useEscape } from '../hooks/useKeyPress';
 
 interface ReviewSectionProps {
   productId: string;
@@ -16,6 +17,7 @@ export function ReviewSection({ productId }: ReviewSectionProps) {
   const { user } = useAuth();
   const [reviews, setReviews] = useState<Review[]>([]);
   const [showForm, setShowForm] = useState(false);
+  useEscape(() => setShowForm(false), showForm);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [commentError, setCommentError] = useState<string | null>(null);

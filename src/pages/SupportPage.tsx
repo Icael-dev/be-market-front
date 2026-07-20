@@ -7,12 +7,14 @@ import { MessageSquare, Send, Clock, Loader2, Plus, ArrowLeft } from 'lucide-rea
 import { format } from 'date-fns';
 import { Link, useParams } from 'react-router-dom';
 import { InputField, TextareaField } from '../components/ui/FormField';
+import { useEscape } from '../hooks/useKeyPress';
 
 export function SupportPage() {
   const { user: authUser } = useAuth();
 
   const [tickets, setTickets] = useState<SupportTicket[]>([]);
   const [showForm, setShowForm] = useState(false);
+  useEscape(() => setShowForm(false), showForm);
   const [subject, setSubject] = useState('');
   const [message, setMessage] = useState('');
   const [errors, setErrors] = useState<{ subject?: string; message?: string }>({});

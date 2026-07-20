@@ -2,6 +2,7 @@ import { useState, useRef, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Search, X, Package } from 'lucide-react';
 import { formatPrice } from '../lib/utils';
+import { useEscape } from '../hooks/useKeyPress';
 
 interface SuggestionProduct {
   id: string;
@@ -20,6 +21,8 @@ export function SearchWithSuggestions() {
   const navigate = useNavigate();
   const wrapperRef = useRef<HTMLDivElement>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEscape(() => setShowSuggestions(false), showSuggestions);
 
   const fetchSuggestions = useCallback(async (searchQuery: string) => {
     if (!searchQuery.trim()) {

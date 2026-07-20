@@ -3,6 +3,9 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import { formatPrice, FALLBACK_IMAGE } from '../lib/utils';
+import { validateCoupon, type CouponValidation } from '../services/content';
+import { useEnter } from '../hooks/useKeyPress';
+import { useState } from 'react';
 import {
   ShoppingCart,
   Trash2,
@@ -22,6 +25,26 @@ export function CartPage() {
   const grandTotal = total + shippingFee + tax;
 
   const freeShippingRemaining = Math.max(0, 50000 - total);
+
+  const [couponCode, setCouponCode] = useState('');
+  const [couponValidation, setCouponValidation] = useState<CouponValidation | null>(null);
+  const [couponLoading, setCouponLoading] = useState(false);
+
+  useEnter(() => { if (couponCode.trim()) handleApplyCoupon(); }, couponCode.trim().length > 0);
+
+  const handleApplyCoupon = async () => {
+    if (!couponCode.trim()) return;
+    setCouponLoading(true);
+    setCouponValidation(null);
+    try {
+      const result = await validateCoupon(couponCode.trim(), total);
+      setCouponValidation(result);
+    } catch (error) {
+      setCouponValidation({ valid: false, message: error instanceof Error ? error.message : 'Erreur lors de la validation du coupon' });
+    } finally {
+      setCouponLoading(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -206,6 +229,32 @@ export function CartPage() {
                         {shippingFee === 0 ? 'Gratuite' : formatPrice(shippingFee)}
                       </span>
                     </div>
+
+                    <div className="pt-3 border-t border-dashed dark:border-gray-700">
+                      <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Code promo</p>
+                      <div className="flex gap-2">
+                        <input
+                          type="text"
+                          value={couponCode}
+                          onChange={e => setCouponCode(e.target.value.toUpperCase())}
+                          placeholder="Entrez votre code"
+                          className="flex-1 px-3 py-2 border dark:border-gray-700 rounded-lg text-sm dark:bg-gray-800 dark:text-white uppercase tracking-wider"
+                        />
+                        <button
+                          onClick={handleApplyCoupon}
+                          disabled={couponLoading || !couponCode.trim()}
+                          className="px-4 py-2 bg-primary-600 text-white rounded-lg text-sm font-medium hover:bg-primary-700 disabled:opacity-50 transition-colors"
+                        >
+                          {couponLoading ? '...' : 'Appliquer'}
+                        </button>
+                      </div>
+                      {couponValidation && (
+                        <p className={`text-xs mt-2 ${couponValidation.valid ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
+                          {couponValidation.message}
+                        </p>
+                      )}
+                    </div>
+
                   </div>
 
                   <div className="flex justify-between py-6 text-lg font-bold dark:text-white">
@@ -213,7 +262,10 @@ export function CartPage() {
                     <span>{formatPrice(grandTotal)}</span>
                   </div>
 
-                  <Link to={user ? '/checkout' : '/login?redirect=/checkout'} className="btn-primary w-full">
+                  <Link
+                    to={user ? `/checkout?coupon=${encodeURIComponent(couponCode)}` : `/login?redirect=/checkout`}
+                    className="btn-primary w-full"
+                  >
                     Passer commande
                     <ArrowRight className="w-5 h-5" />
                   </Link>

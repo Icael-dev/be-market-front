@@ -6,6 +6,7 @@ import type { Product } from '../types';
 import { formatPrice, cn, FALLBACK_IMAGE } from '../lib/utils';
 import { useCart } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
+import { useEscape } from '../hooks/useKeyPress';
 
 interface QuickViewModalProps {
   product: Product | null;
@@ -18,6 +19,7 @@ export function QuickViewModal({ product, isOpen, onClose }: QuickViewModalProps
   const { toggleItem, isInWishlist } = useWishlist();
   const [quantity, setQuantity] = useState(1);
   const [selectedImage, setSelectedImage] = useState(0);
+  useEscape(onClose, isOpen);
 
   if (!product) return null;
 

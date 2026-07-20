@@ -3,6 +3,7 @@ import { X, Heart } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useWishlist } from '../context/WishlistContext';
 import { formatPrice, FALLBACK_IMAGE } from '../lib/utils';
+import { useEscape } from '../hooks/useKeyPress';
 
 interface WishlistDrawerProps {
   isOpen: boolean;
@@ -11,6 +12,7 @@ interface WishlistDrawerProps {
 
 export function WishlistDrawer({ isOpen, onClose }: WishlistDrawerProps) {
   const { items, toggleItem } = useWishlist();
+  useEscape(onClose, isOpen);
 
   return (
     <AnimatePresence>

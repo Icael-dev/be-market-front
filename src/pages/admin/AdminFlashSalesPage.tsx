@@ -14,12 +14,14 @@ import { AdminLayout } from '../../components/admin/AdminLayout';
 import { PageHeader } from '../../components/admin/PageHeader';
 import { AnimatePresence } from 'framer-motion';
 import { format } from 'date-fns';
+import { useEscape } from '../../hooks/useKeyPress';
 
 export function AdminFlashSalesPage() {
   const [flashSales, setFlashSales] = useState<FlashSale[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
+  useEscape(() => setShowForm(false), showForm);
   const [editingSale, setEditingSale] = useState<FlashSale | null>(null);
   const [saving, setSaving] = useState(false);
   const [togglingId, setTogglingId] = useState<string | null>(null);

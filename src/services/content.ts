@@ -52,3 +52,16 @@ export async function subscribeNewsletter(email: string): Promise<void> {
 export async function createStockNotification(productId: string, email: string): Promise<void> {
   await api.post('/api/stock-notifications', { product_id: productId, email });
 }
+
+export interface CouponValidation {
+  valid: boolean;
+  code?: string;
+  discount_type?: string;
+  discount_value?: number;
+  discount_amount?: number;
+  message: string;
+}
+
+export async function validateCoupon(code: string, subtotal: number): Promise<CouponValidation> {
+  return api.post<CouponValidation>('/api/coupons/validate', { code, subtotal });
+}

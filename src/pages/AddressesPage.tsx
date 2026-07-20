@@ -5,6 +5,7 @@ import type { Address } from '../types';
 import { MapPin, Plus, Edit2, Trash2, Check } from 'lucide-react';
 import { fetchAddresses, createAddress, updateAddress, deleteAddress } from '../services/address';
 import { InputField } from '../components/ui/FormField';
+import { useEscape, useEnter } from '../hooks/useKeyPress';
 
 type AddressErrors = Partial<Record<'full_name' | 'phone' | 'address_line1' | 'city', string>>;
 
@@ -39,6 +40,9 @@ export function AddressesPage() {
 
   const [formData, setFormData] = useState(initialForm);
   const [errors, setErrors] = useState<AddressErrors>({});
+
+  useEscape(() => { setShowAddForm(false); setEditingId(null); }, showAddForm || !!editingId);
+  useEnter(() => { if (showAddForm) handleAddAddress(); }, showAddForm);
 
   useEffect(() => {
     loadAddresses();

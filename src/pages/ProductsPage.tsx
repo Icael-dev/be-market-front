@@ -14,6 +14,7 @@ import {
   Search
 } from 'lucide-react';
 import { cn, formatPrice } from '../lib/utils';
+import { useEscape } from '../hooks/useKeyPress';
 
 const sortOptions = [
   { value: 'newest', label: 'Plus recent' },
@@ -30,6 +31,7 @@ export function ProductsPage() {
   const [brands, setBrands] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [showFilters, setShowFilters] = useState(false);
+  useEscape(() => setShowFilters(false), showFilters);
   const [view, setView] = useState<'grid' | 'list'>('grid');
 
   const selectedCategory = searchParams.get('category') || '';

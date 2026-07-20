@@ -13,11 +13,13 @@ import { Plus, Edit2, Trash2, X, Save, Loader2, Grid3X3, Tag, Power, RotateCcw }
 import { AdminLayout } from '../../components/admin/AdminLayout';
 import { PageHeader } from '../../components/admin/PageHeader';
 import { cn } from '../../lib/utils';
+import { useEscape } from '../../hooks/useKeyPress';
 
 export function AdminCategoriesPage() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
+  useEscape(() => setShowForm(false), showForm);
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
   const [saving, setSaving] = useState(false);
   const [togglingId, setTogglingId] = useState<string | null>(null);

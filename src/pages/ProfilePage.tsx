@@ -10,6 +10,7 @@ import { updateProfile } from '../services/profile';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { InputField } from '../components/ui/FormField';
+import { useEscape, useEnter } from '../hooks/useKeyPress';
 
 export function ProfilePage() {
   const { user, profile, refreshProfile } = useAuth();
@@ -25,6 +26,9 @@ export function ProfilePage() {
   });
 
   const [phoneError, setPhoneError] = useState<string | null>(null);
+
+  useEscape(() => setIsEditing(false), isEditing);
+  useEnter(() => { if (isEditing) handleSave(); }, isEditing);
 
   useEffect(() => {
     if (!profile) return;

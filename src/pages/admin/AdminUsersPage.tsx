@@ -14,6 +14,7 @@ import { AdminLayout } from '../../components/admin/AdminLayout';
 import { PageHeader } from '../../components/admin/PageHeader';
 import { useAuth } from '../../context/AuthContext';
 import { Plus, Edit2, Trash2, X, Save, Loader2, UserCog, Mail, Phone, ShieldCheck, User as UserIcon, RotateCcw } from 'lucide-react';
+import { useEscape } from '../../hooks/useKeyPress';
 
 const ROLE_LABELS: Record<UserRole, string> = {
   admin: 'Administrateur',
@@ -34,6 +35,7 @@ export function AdminUsersPage() {
   const [users, setUsers] = useState<StaffUser[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
+  useEscape(() => setShowForm(false), showForm);
   const [editing, setEditing] = useState<StaffUser | null>(null);
   const [saving, setSaving] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);

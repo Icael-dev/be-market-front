@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -25,6 +25,7 @@ import { useWishlist } from '../../context/WishlistContext';
 import { useTheme } from '../../context/ThemeContext';
 import { cn } from '../../lib/utils';
 import { WishlistDrawer } from '../WishlistDrawer';
+import { useEscape } from '../../hooks/useKeyPress';
 
 export function Header() {
   const { user, profile, isAdmin, isSuperAdmin, signOut } = useAuth();
@@ -38,26 +39,8 @@ export function Header() {
   const [showWishlist, setShowWishlist] = useState(false);
   const userMenuRef = useRef<HTMLDivElement>(null);
 
-  // Ferme le menu profil au clic exterieur ou touche Echap.
-  useEffect(() => {
-    if (!isUserMenuOpen) return;
-
-    const handlePointerDown = (event: MouseEvent) => {
-      if (userMenuRef.current && !userMenuRef.current.contains(event.target as Node)) {
-        setIsUserMenuOpen(false);
-      }
-    };
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') setIsUserMenuOpen(false);
-    };
-
-    document.addEventListener('mousedown', handlePointerDown);
-    document.addEventListener('keydown', handleKeyDown);
-    return () => {
-      document.removeEventListener('mousedown', handlePointerDown);
-      document.removeEventListener('keydown', handleKeyDown);
-    };
-  }, [isUserMenuOpen]);
+  useEscape(() => setIsUserMenuOpen(false), isUserMenuOpen);
+  useEscape(() => setIsMenuOpen(false), isMenuOpen);
 
   const navLinks = [
     { path: '/', label: 'Accueil' },

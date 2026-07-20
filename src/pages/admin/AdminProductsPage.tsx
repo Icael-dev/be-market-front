@@ -14,6 +14,7 @@ import { AdminLayout } from '../../components/admin/AdminLayout';
 import { PageHeader } from '../../components/admin/PageHeader';
 import { useProductForm } from '../../hooks/useProductForm';
 import type { Product, Category } from '../../types';
+import { useEscape } from '../../hooks/useKeyPress';
 import {
   Plus,
   Search,
@@ -75,6 +76,7 @@ export function AdminProductsPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('');
   const [showForm, setShowForm] = useState(false);
+  useEscape(() => setShowForm(false), showForm);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [saving, setSaving] = useState(false);
   const [errors, setErrors] = useState<Record<string, string[]>>({});

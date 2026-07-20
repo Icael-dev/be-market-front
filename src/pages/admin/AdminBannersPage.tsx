@@ -13,6 +13,7 @@ import { Plus, Edit2, Trash2, X, Save, Image as ImageIcon, Upload, Loader2, Powe
 import { AdminLayout } from '../../components/admin/AdminLayout';
 import { PageHeader } from '../../components/admin/PageHeader';
 import { AnimatePresence } from 'framer-motion';
+import { useEscape } from '../../hooks/useKeyPress';
 
 const displayImageUrl = (url: string) => {
   if (!url) return url;
@@ -26,6 +27,7 @@ export function AdminBannersPage() {
   const [banners, setBanners] = useState<Banner[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
+  useEscape(() => setShowForm(false), showForm);
   const [editingBanner, setEditingBanner] = useState<Banner | null>(null);
   const [saving, setSaving] = useState(false);
   const [togglingId, setTogglingId] = useState<string | null>(null);

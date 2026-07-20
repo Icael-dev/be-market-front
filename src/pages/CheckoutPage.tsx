@@ -19,7 +19,8 @@ import { InputField } from '../components/ui/FormField';
 import { fetchAddresses, createAddress } from '../services/address';
 import { placeOrder } from '../services/orders';
 import { initiatePayment } from '../services/payments';
-import { fetchLoyaltyPoints } from '../services/content';
+import { fetchLoyaltyPoints, validateCoupon, type CouponValidation } from '../services/content';
+import { useEnter } from '../hooks/useKeyPress';
 import type { LoyaltyPoints } from '../types';
 
 type Step = 'shipping' | 'payment' | 'confirm';
@@ -64,6 +65,18 @@ export function CheckoutPage() {
   const [notes, setNotes] = useState('');
   const [loyaltyPoints, setLoyaltyPoints] = useState<LoyaltyPoints | null>(null);
   const [loyaltyPointsToRedeem, setLoyaltyPointsToRedeem] = useState(0);
+  const [couponCode, setCouponCode] = useState('');
+  const [couponValidation, setCouponValidation] = useState<CouponValidation | null>(null);
+  const [couponLoading, setCouponLoading] = useState(false);
+
+  useEnter(() => { if (couponCode.trim()) handleApplyCoupon(); }, couponCode.trim().length > 0);
+
+  useEffect(() => {
+    const urlCoupon = searchParams.get('coupon');
+    if (urlCoupon) {
+      setCouponCode(urlCoupon);
+    }
+  }, [searchParams]);
 
   const [newAddress, setNewAddress] = useState({
     full_name: profile?.full_name || '',
@@ -86,7 +99,8 @@ export function CheckoutPage() {
     Math.floor((total - (total > 50000 ? 0 : 2500)) / 50)
   );
   const loyaltyDiscount = Math.min(loyaltyPointsToRedeem * 50, total);
-  const grandTotal = total + shippingFee - loyaltyDiscount;
+  const couponDiscount = couponValidation?.valid ? (couponValidation.discount_amount || 0) : 0;
+  const grandTotal = Math.max(0, total + shippingFee - couponDiscount - loyaltyDiscount);
 
   useEffect(() => {
     if (!user) {
@@ -111,6 +125,20 @@ export function CheckoutPage() {
       setLoyaltyPoints(data);
     } catch (error) {
       console.error('Failed to load loyalty points:', error);
+    }
+  };
+
+  const handleApplyCoupon = async () => {
+    if (!couponCode.trim()) return;
+    setCouponLoading(true);
+    setCouponValidation(null);
+    try {
+      const result = await validateCoupon(couponCode.trim(), total);
+      setCouponValidation(result);
+    } catch (error) {
+      setCouponValidation({ valid: false, message: error instanceof Error ? error.message : 'Erreur lors de la validation du coupon' });
+    } finally {
+      setCouponLoading(false);
     }
   };
 
@@ -168,6 +196,7 @@ const handlePlaceOrder = async () => {
         billing_address: useNewAddress ? undefined : addresses.find(a => a.id === selectedAddressId) as Record<string, unknown> | undefined,
         payment_method: paymentMethod,
         notes,
+        coupon_code: couponCode.trim() || undefined,
         loyalty_points_to_redeem: loyaltyPointsToRedeem || undefined,
       });
 
@@ -630,6 +659,36 @@ const handlePlaceOrder = async () => {
                   <span className={shippingFee === 0 ? 'text-green-600 font-medium' : ''}>
                     {shippingFee === 0 ? 'Gratuite' : formatPrice(shippingFee)}
                   </span>
+                </div>
+
+                <div className="pt-3 border-t border-dashed dark:border-gray-700">
+                  <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Code promo</p>
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      value={couponCode}
+                      onChange={e => setCouponCode(e.target.value.toUpperCase())}
+                      placeholder="Entrez votre code"
+                      className="flex-1 px-3 py-2 border dark:border-gray-700 rounded-lg text-sm dark:bg-gray-800 dark:text-white uppercase tracking-wider"
+                    />
+                    <button
+                      onClick={handleApplyCoupon}
+                      disabled={couponLoading || !couponCode.trim()}
+                      className="px-4 py-2 bg-primary-600 text-white rounded-lg text-sm font-medium hover:bg-primary-700 disabled:opacity-50 transition-colors"
+                    >
+                      {couponLoading ? '...' : 'Appliquer'}
+                    </button>
+                  </div>
+                  {couponValidation && (
+                    <p className={`text-xs mt-2 ${couponValidation.valid ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
+                      {couponValidation.message}
+                    </p>
+                  )}
+                  {couponValidation?.valid && (
+                    <p className="text-xs text-green-600 dark:text-green-400 mt-1">
+                      Reduction de {formatPrice(couponValidation.discount_amount || 0)}
+                    </p>
+                  )}
                 </div>
 
                 {loyaltyPoints && loyaltyPoints.points > 0 && (

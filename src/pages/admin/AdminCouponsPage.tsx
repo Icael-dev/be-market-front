@@ -12,11 +12,13 @@ import { Plus, Edit2, Trash2, X, Save, Tag, Percent, DollarSign, Loader2, Power 
 import { AdminLayout } from '../../components/admin/AdminLayout';
 import { PageHeader } from '../../components/admin/PageHeader';
 import { AnimatePresence } from 'framer-motion';
+import { useEscape } from '../../hooks/useKeyPress';
 
 export function AdminCouponsPage() {
   const [coupons, setCoupons] = useState<Coupon[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
+  useEscape(() => setShowForm(false), showForm);
   const [editing, setEditing] = useState<Coupon | null>(null);
   const [saving, setSaving] = useState(false);
   const [togglingId, setTogglingId] = useState<string | null>(null);

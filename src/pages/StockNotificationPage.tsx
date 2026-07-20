@@ -5,6 +5,7 @@ import { useAuth } from '../context/AuthContext';
 import type { Product } from '../types';
 import { createStockNotification } from '../services/content';
 import { InputField } from '../components/ui/FormField';
+import { useEscape, useEnter } from '../hooks/useKeyPress';
 
 interface StockNotificationProps {
   product: Product;
@@ -17,6 +18,9 @@ export function StockNotificationButton({ product }: StockNotificationProps) {
   const [success, setSuccess] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  useEscape(() => setShowForm(false), showForm);
+  useEnter(() => { if (showForm) handleSubscribe(); }, showForm);
 
   const handleSubscribe = async () => {
     if (!user && !email) return;
