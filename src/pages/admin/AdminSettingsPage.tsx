@@ -121,6 +121,8 @@ export function AdminSettingsPage() {
                         {item.label}
                       </label>
                       <input
+                        id={`setting-${item.key}`}
+                        name={item.key}
                         type={item.type}
                         value={settings[item.key] || ''}
                         onChange={e => handleChange(item.key, e.target.value)}

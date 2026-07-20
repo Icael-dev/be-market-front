@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -8,14 +8,15 @@ import {
   User,
   Search,
   LogOut,
-  Settings,
   Menu,
   X,
   ChevronDown,
   Heart,
   Sun,
   Moon,
-  Gift
+  Gift,
+  LifeBuoy,
+  ShieldCheck
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useCart } from '../../context/CartContext';
@@ -25,7 +26,7 @@ import { cn } from '../../lib/utils';
 import { WishlistDrawer } from '../WishlistDrawer';
 
 export function Header() {
-  const { user, profile, isAdmin, signOut } = useAuth();
+  const { user, profile, isAdmin, isSuperAdmin, signOut } = useAuth();
   const { count } = useCart();
   const { items: wishlistItems } = useWishlist();
   const { theme, toggleTheme } = useTheme();
@@ -34,6 +35,28 @@ export function Header() {
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [showWishlist, setShowWishlist] = useState(false);
+  const userMenuRef = useRef<HTMLDivElement>(null);
+
+  // Ferme le menu profil au clic exterieur ou touche Echap.
+  useEffect(() => {
+    if (!isUserMenuOpen) return;
+
+    const handlePointerDown = (event: MouseEvent) => {
+      if (userMenuRef.current && !userMenuRef.current.contains(event.target as Node)) {
+        setIsUserMenuOpen(false);
+      }
+    };
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setIsUserMenuOpen(false);
+    };
+
+    document.addEventListener('mousedown', handlePointerDown);
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('mousedown', handlePointerDown);
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isUserMenuOpen]);
 
   const navLinks = [
     { path: '/', label: 'Accueil' },
@@ -101,6 +124,9 @@ export function Header() {
                   <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 group-focus-within:text-primary-500 transition-colors" />
                   <input
                     type="text"
+                    id="header-search-desktop"
+                    name="search"
+                    aria-label="Rechercher des produits"
                     placeholder="Rechercher des produits..."
                     value={searchQuery}
                     onChange={e => setSearchQuery(e.target.value)}
@@ -152,9 +178,12 @@ export function Header() {
               </Link>
 
               {user ? (
-                <div className="relative">
+                <div className="relative hidden lg:block" ref={userMenuRef}>
                   <button
                     onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
+                    aria-label="Menu du compte"
+                    aria-haspopup="menu"
+                    aria-expanded={isUserMenuOpen}
                     className="flex items-center gap-2 p-1.5 rounded-xl transition-all duration-200 hover:bg-gray-100 dark:hover:bg-gray-800"
                   >
                     <div className="w-8 h-8 rounded-full brand-gradient flex items-center justify-center text-white text-sm font-semibold shadow-sm">
@@ -165,65 +194,71 @@ export function Header() {
 
                   <AnimatePresence>
                     {isUserMenuOpen && (
-                      <>
-                        <motion.div
-                          initial={{ opacity: 0 }}
-                          animate={{ opacity: 1 }}
-                          exit={{ opacity: 0 }}
-                          onClick={() => setIsUserMenuOpen(false)}
-                          className="fixed inset-0 z-40"
-                        />
-                        <motion.div
-                          initial={{ opacity: 0, y: 8, scale: 0.96 }}
-                          animate={{ opacity: 1, y: 0, scale: 1 }}
-                          exit={{ opacity: 0, y: 8, scale: 0.96 }}
-                          transition={{ duration: 0.15 }}
-                          className="absolute right-0 mt-2 w-60 bg-white dark:bg-gray-900 rounded-2xl shadow-premium border border-gray-100 dark:border-gray-800 py-2 z-50 overflow-hidden"
-                        >
-                          <div className="px-4 py-3 border-b border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-800/50">
-                            <p className="font-semibold text-gray-900 dark:text-white text-sm truncate">
-                              {profile?.full_name || 'Utilisateur'}
-                            </p>
-                            <p className="text-xs text-gray-500 dark:text-gray-400 truncate mt-0.5">{user.email}</p>
-                          </div>
+                      <motion.div
+                        role="menu"
+                        aria-label="Menu du compte"
+                        initial={{ opacity: 0, y: 8, scale: 0.96 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: 8, scale: 0.96 }}
+                        transition={{ duration: 0.15 }}
+                        className="absolute right-0 mt-2 w-60 bg-white dark:bg-gray-900 rounded-2xl shadow-premium border border-gray-100 dark:border-gray-800 py-2 z-50 overflow-hidden"
+                      >
+                        <div className="px-4 py-3 border-b border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-800/50">
+                          <p className="font-semibold text-gray-900 dark:text-white text-sm truncate">
+                            {profile?.full_name || 'Utilisateur'}
+                          </p>
+                          <p className="text-xs text-gray-500 dark:text-gray-400 truncate mt-0.5">{user.email}</p>
+                          {isAdmin && (
+                            <span
+                              className={cn(
+                                'inline-flex items-center gap-1 mt-2 px-2 py-0.5 rounded-full text-[11px] font-medium',
+                                isSuperAdmin
+                                  ? 'bg-primary-100 text-primary-700 dark:bg-primary-900/30 dark:text-primary-300'
+                                  : 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300'
+                              )}
+                            >
+                              <ShieldCheck className="w-3 h-3" />
+                              {isSuperAdmin ? 'Administrateur' : 'Staff'}
+                            </span>
+                          )}
+                        </div>
 
-                          <div className="p-2">
-                            {isAdmin && (
-                              <Link to="/admin" onClick={() => setIsUserMenuOpen(false)} className="flex items-center gap-3 px-3 py-2.5 text-sm text-gray-700 dark:text-gray-200 hover:bg-primary-50 dark:hover:bg-primary-900/20 hover:text-primary-600 rounded-xl transition-colors">
-                                <LayoutDashboard className="w-4 h-4 text-primary-600" />
-                                Admin Dashboard
-                              </Link>
-                            )}
-
-                            <Link to="/loyalty" onClick={() => setIsUserMenuOpen(false)} className="flex items-center gap-3 px-3 py-2.5 text-sm text-gray-700 dark:text-gray-200 hover:bg-gold-50 dark:hover:bg-gold-900/20 hover:text-gold-600 rounded-xl transition-colors">
-                              <Gift className="w-4 h-4 text-gold-500" />
-                              Mes Points
+                        <div className="p-2">
+                          {isAdmin && (
+                            <Link to="/admin" role="menuitem" onClick={() => setIsUserMenuOpen(false)} className="flex items-center gap-3 px-3 py-2.5 text-sm text-gray-700 dark:text-gray-200 hover:bg-primary-50 dark:hover:bg-primary-900/20 hover:text-primary-600 rounded-xl transition-colors">
+                              <LayoutDashboard className="w-4 h-4 text-primary-600" />
+                              Admin Dashboard
                             </Link>
+                          )}
 
-                            <Link to="/profile" onClick={() => setIsUserMenuOpen(false)} className="flex items-center gap-3 px-3 py-2.5 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl transition-colors">
-                              <User className="w-4 h-4" />
-                              Mon Profil
-                            </Link>
+                          <Link to="/loyalty" role="menuitem" onClick={() => setIsUserMenuOpen(false)} className="flex items-center gap-3 px-3 py-2.5 text-sm text-gray-700 dark:text-gray-200 hover:bg-gold-50 dark:hover:bg-gold-900/20 hover:text-gold-600 rounded-xl transition-colors">
+                            <Gift className="w-4 h-4 text-gold-500" />
+                            Mes Points
+                          </Link>
 
-                            <Link to="/orders" onClick={() => setIsUserMenuOpen(false)} className="flex items-center gap-3 px-3 py-2.5 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl transition-colors">
-                              <Package className="w-4 h-4" />
-                              Mes Commandes
-                            </Link>
+                          <Link to="/profile" role="menuitem" onClick={() => setIsUserMenuOpen(false)} className="flex items-center gap-3 px-3 py-2.5 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl transition-colors">
+                            <User className="w-4 h-4" />
+                            Mon Profil
+                          </Link>
 
-                            <Link to="/support" onClick={() => setIsUserMenuOpen(false)} className="flex items-center gap-3 px-3 py-2.5 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl transition-colors">
-                              <Settings className="w-4 h-4" />
-                              Support
-                            </Link>
-                          </div>
+                          <Link to="/orders" role="menuitem" onClick={() => setIsUserMenuOpen(false)} className="flex items-center gap-3 px-3 py-2.5 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl transition-colors">
+                            <Package className="w-4 h-4" />
+                            Mes Commandes
+                          </Link>
 
-                          <div className="border-t border-gray-100 dark:border-gray-800 p-2">
-                            <button onClick={() => { setIsUserMenuOpen(false); signOut(); }} className="flex items-center gap-3 px-3 py-2.5 text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-xl transition-colors w-full">
-                              <LogOut className="w-4 h-4" />
-                              Deconnexion
-                            </button>
-                          </div>
-                        </motion.div>
-                      </>
+                          <Link to="/support" role="menuitem" onClick={() => setIsUserMenuOpen(false)} className="flex items-center gap-3 px-3 py-2.5 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl transition-colors">
+                            <LifeBuoy className="w-4 h-4" />
+                            Support
+                          </Link>
+                        </div>
+
+                        <div className="border-t border-gray-100 dark:border-gray-800 p-2">
+                          <button role="menuitem" onClick={() => { setIsUserMenuOpen(false); signOut(); }} className="flex items-center gap-3 px-3 py-2.5 text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-xl transition-colors w-full">
+                            <LogOut className="w-4 h-4" />
+                            Deconnexion
+                          </button>
+                        </div>
+                      </motion.div>
                     )}
                   </AnimatePresence>
                 </div>
@@ -239,6 +274,9 @@ export function Header() {
 
               <button
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
+                aria-label={isMenuOpen ? 'Fermer le menu' : 'Ouvrir le menu'}
+                aria-expanded={isMenuOpen}
+                aria-controls="mobile-menu"
                 className={cn(
                   'lg:hidden p-2.5 rounded-xl transition-all duration-200',
                   isMenuOpen
@@ -254,6 +292,7 @@ export function Header() {
           <AnimatePresence>
             {isMenuOpen && (
               <motion.div
+                id="mobile-menu"
                 initial={{ opacity: 0, height: 0 }}
                 animate={{ opacity: 1, height: 'auto' }}
                 exit={{ opacity: 0, height: 0 }}
@@ -266,6 +305,9 @@ export function Header() {
                       <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                       <input
                         type="text"
+                        id="header-search-mobile"
+                        name="search"
+                        aria-label="Rechercher"
                         placeholder="Rechercher..."
                         value={searchQuery}
                         onChange={e => setSearchQuery(e.target.value)}
@@ -304,6 +346,66 @@ export function Header() {
                         <User className="w-4 h-4" />
                         Connexion
                       </Link>
+                    </div>
+                  )}
+
+                  {user && (
+                    <div className="mt-4 border-t border-gray-100 dark:border-gray-800 pt-3">
+                      <div className="px-4 pb-2">
+                        <div className="flex items-center gap-3">
+                          <div className="w-9 h-9 rounded-full brand-gradient flex items-center justify-center text-white text-sm font-semibold shadow-sm">
+                            {profile?.full_name?.[0] || user.email?.[0] || 'U'}
+                          </div>
+                          <div className="min-w-0">
+                            <p className="font-semibold text-gray-900 dark:text-white text-sm truncate">
+                              {profile?.full_name || 'Utilisateur'}
+                            </p>
+                            <p className="text-xs text-gray-500 dark:text-gray-400 truncate">{user.email}</p>
+                          </div>
+                        </div>
+                        {isAdmin && (
+                          <span
+                            className={cn(
+                              'inline-flex items-center gap-1 mt-2 px-2 py-0.5 rounded-full text-[11px] font-medium',
+                              isSuperAdmin
+                                ? 'bg-primary-100 text-primary-700 dark:bg-primary-900/30 dark:text-primary-300'
+                                : 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300'
+                            )}
+                          >
+                            <ShieldCheck className="w-3 h-3" />
+                            {isSuperAdmin ? 'Administrateur' : 'Staff'}
+                          </span>
+                        )}
+                      </div>
+
+                      <nav className="flex flex-col gap-1 px-3" aria-label="Menu du compte">
+                        {isAdmin && (
+                          <Link to="/admin" onClick={() => setIsMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-primary-50 dark:hover:bg-primary-900/20 hover:text-primary-600 transition-colors">
+                            <LayoutDashboard className="w-4 h-4 text-primary-600" />
+                            Admin Dashboard
+                          </Link>
+                        )}
+                        <Link to="/loyalty" onClick={() => setIsMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gold-50 dark:hover:bg-gold-900/20 hover:text-gold-600 transition-colors">
+                          <Gift className="w-4 h-4 text-gold-500" />
+                          Mes Points
+                        </Link>
+                        <Link to="/profile" onClick={() => setIsMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+                          <User className="w-4 h-4" />
+                          Mon Profil
+                        </Link>
+                        <Link to="/orders" onClick={() => setIsMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+                          <Package className="w-4 h-4" />
+                          Mes Commandes
+                        </Link>
+                        <Link to="/support" onClick={() => setIsMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+                          <LifeBuoy className="w-4 h-4" />
+                          Support
+                        </Link>
+                        <button onClick={() => { setIsMenuOpen(false); signOut(); }} className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors w-full text-left">
+                          <LogOut className="w-4 h-4" />
+                          Deconnexion
+                        </button>
+                      </nav>
                     </div>
                   )}
                 </div>

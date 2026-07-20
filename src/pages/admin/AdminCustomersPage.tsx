@@ -43,6 +43,8 @@ export function AdminCustomersPage() {
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 dark:text-gray-500" />
             <input
+              id="customer-search"
+              name="customer-search"
               type="text"
               placeholder="Rechercher par nom, email ou telephone..."
               value={searchQuery}

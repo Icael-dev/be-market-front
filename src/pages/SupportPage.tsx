@@ -235,7 +235,7 @@ if (loading) return <div className="min-h-screen page-bg flex items-center justi
           </div>
           <div className="p-4 border-t border-gray-200 dark:border-gray-800">
             <div className="flex gap-3">
-              <input type="text" value={newMessage} onChange={e => setNewMessage(e.target.value)} placeholder="Repondre..." className="flex-1 px-4 py-3 border border-gray-200 dark:border-gray-700 rounded-xl bg-white dark:bg-gray-800" onKeyPress={e => e.key === 'Enter' && handleSend()} />
+              <input type="text" id="ticket-reply" name="reply" aria-label="Repondre au ticket" value={newMessage} onChange={e => setNewMessage(e.target.value)} placeholder="Repondre..." className="flex-1 px-4 py-3 border border-gray-200 dark:border-gray-700 rounded-xl bg-white dark:bg-gray-800" onKeyPress={e => e.key === 'Enter' && handleSend()} />
               <button onClick={handleSend} disabled={sending || !newMessage} className="p-3 btn-primary disabled:opacity-50"><Send className="w-5 h-5" /></button>
             </div>
             {replyError && (

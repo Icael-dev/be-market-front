@@ -19,6 +19,8 @@ import {
   ArrowRight,
   Truck,
   Shield,
+  Sparkles,
+  ChevronRight,
   CreditCard,
   Headset,
   Zap,
@@ -183,16 +185,16 @@ useEffect(() => {
   return (
     <div className="min-h-screen">
       {/* Hero Banner with background image */}
-      <section className="relative pt-4 md:pt-6 lg:pt-8 pb-6 md:pb-8 lg:pb-10 overflow-hidden">
+      <section className="relative pt-4 md:pt-6 lg:pt-8 pb-10 md:pb-14 lg:pb-20 min-h-[30rem] sm:min-h-[38rem] md:min-h-[46rem] lg:min-h-[54rem] overflow-hidden">
         <div
-          className="absolute inset-0 bg-cover bg-center opacity-15 -z-10"
-          style={{ backgroundImage: `url(${image1})` }}
-        />
-        <div
-          className="absolute inset-0 bg-cover bg-center block"
+          className="absolute inset-0 bg-cover bg-center z-0"
           style={{ backgroundImage: `url(${image2})` }}
         />
-        <BannerSlider />
+        <div
+          className="absolute inset-0 bg-cover bg-center z-0"
+          style={{ backgroundImage: `url(${image1})` }}
+        />
+        <div className="absolute inset-0 z-[5] bg-black/45" />
 
         {/* Decorative images with subtle float and glow */}
         <div className="absolute left-[5%] top-[22%] w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 lg:w-36 lg:h-36 xl:w-44 xl:h-44 2xl:w-52 2xl:h-52 z-10 flex items-center justify-center">
@@ -201,7 +203,7 @@ useEffect(() => {
         <motion.img
           src={image3}
           alt=""
-          className="absolute left-[5%] top-[22%] w-16 h-16 sm:w-20 sm:h-20 md:w-28 md:h-28 lg:w-36 lg:h-36 xl:w-44 xl:h-44 2xl:w-52 2xl:h-52 object-cover opacity-95 z-20 rounded-3xl shadow-premium"
+          className="absolute left-[5%] top-[22%] w-16 h-16 sm:w-20 sm:h-20 md:w-28 md:h-28 lg:w-36 lg:h-36 xl:w-44 xl:h-44 2xl:w-52 2xl:h-52 object-cover opacity-95 z-20 rounded-3xl"
           animate={{ y: [0, -15, 0] }}
           transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
         />
@@ -212,10 +214,43 @@ useEffect(() => {
         <motion.img
           src={image4}
           alt=""
-          className="absolute right-[5%] bottom-[22%] w-20 h-20 sm:w-24 sm:h-24 md:w-36 md:h-36 lg:w-40 lg:h-40 xl:w-48 xl:h-48 object-cover opacity-95 z-20 rounded-3xl shadow-premium"
+          className="absolute right-[5%] bottom-[22%] w-20 h-20 sm:w-24 sm:h-24 md:w-36 md:h-36 lg:w-40 lg:h-40 xl:w-48 xl:h-48 object-cover opacity-95 z-20 rounded-3xl"
           animate={{ y: [0, 15, 0] }}
           transition={{ duration: 4.5, repeat: Infinity, ease: 'easeInOut' }}
         />
+
+        <div className="absolute inset-0 z-30 flex items-center justify-center">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center w-full">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="inline-flex items-center gap-2 bg-white/15 backdrop-blur-sm px-4 py-2 mb-4"
+            >
+              <Sparkles className="w-4 h-4 text-white" />
+              <span className="text-white">Offres exclusives</span>
+            </motion.div>
+            <motion.h1
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+              className="text-3xl md:text-5xl font-bold mb-4 tracking-tightest text-white"
+            >
+              Bienvenue chez BE-Market
+            </motion.h1>
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+              className="text-lg md:text-xl text-white/80 mb-6"
+            >
+              Decouvrez les meilleurs accessoires electroniques au Togo
+            </motion.p>
+            <Link to="/products" className="btn-gold group/cta">
+              Voir les produits
+              <ChevronRight className="w-5 h-5 group-hover/cta:translate-x-1 transition-transform" />
+            </Link>
+          </div>
+        </div>
       </section>
 
       {/* Features Bar */}
@@ -244,6 +279,13 @@ useEffect(() => {
               </motion.div>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* Banners */}
+      <section className="page-bg">
+        <div className="max-w-[100rem] mx-auto px-4 sm:px-6 lg:px-8 pt-10 md:pt-14">
+          <BannerSlider />
         </div>
       </section>
 

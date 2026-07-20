@@ -9,7 +9,7 @@ import {
   updateAdminFlashSale
 } from '../../services/admin';
 import type { FlashSale, Product } from '../../types';
-import { Plus, Edit2, Trash2, X, Save, Zap, Loader2 } from 'lucide-react';
+import { Plus, Edit2, Trash2, X, Save, Zap, Loader2, Power } from 'lucide-react';
 import { AdminLayout } from '../../components/admin/AdminLayout';
 import { PageHeader } from '../../components/admin/PageHeader';
 import { AnimatePresence } from 'framer-motion';
@@ -22,6 +22,7 @@ export function AdminFlashSalesPage() {
   const [showForm, setShowForm] = useState(false);
   const [editingSale, setEditingSale] = useState<FlashSale | null>(null);
   const [saving, setSaving] = useState(false);
+  const [togglingId, setTogglingId] = useState<string | null>(null);
 
   const [formData, setFormData] = useState({
     product_id: '',
@@ -67,8 +68,8 @@ export function AdminFlashSalesPage() {
     setFormData({
       product_id: sale.product_id,
       discount_percentage: sale.discount_percentage,
-      starts_at: sale.starts_at.slice(0, 16).replace('T', ' '),
-      ends_at: sale.ends_at.slice(0, 16).replace('T', ' '),
+      starts_at: sale.starts_at.slice(0, 16),
+      ends_at: sale.ends_at.slice(0, 16),
       is_active: sale.is_active
     });
     setShowForm(true);
@@ -121,6 +122,21 @@ export function AdminFlashSalesPage() {
     }
   };
 
+  const handleToggleActive = async (sale: FlashSale) => {
+    const nextActive = !sale.is_active;
+    setTogglingId(sale.id);
+    setFlashSales(prev => prev.map(s => (s.id === sale.id ? { ...s, is_active: nextActive } : s)));
+    try {
+      await updateAdminFlashSale(sale.id, { is_active: nextActive });
+    } catch (error) {
+      console.error('Flash sale toggle error:', error);
+      setFlashSales(prev => prev.map(s => (s.id === sale.id ? { ...s, is_active: sale.is_active } : s)));
+      toast.error('Erreur lors du changement de statut');
+    } finally {
+      setTogglingId(null);
+    }
+  };
+
   return (
     <AdminLayout>
       <div className="p-6 lg:p-8">
@@ -167,17 +183,27 @@ export function AdminFlashSalesPage() {
                       <div className="dark:text-gray-500">au {format(new Date(sale.ends_at), 'dd MMM HH:mm')}</div>
                     </td>
                     <td className="px-6 py-4">
-                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${isActive ? 'dark:bg-green-900/30 dark:text-green-400' : 'dark:bg-gray-700 dark:text-gray-500'}`}>
-                        {isActive ? 'Actif' : 'Inactif'}
-                      </span>
+                      <div className="flex items-center gap-2">
+                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${sale.is_active ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' : 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-400'}`}>
+                          {sale.is_active ? 'Actif' : 'Inactif'}
+                        </span>
+                        {isActive && (
+                          <span className="inline-flex px-2 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400">
+                            En cours
+                          </span>
+                        )}
+                      </div>
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center justify-end gap-2">
-                        <button onClick={() => handleEdit(sale)} className="p-2 hover:bg-gray-100 hover:dark:bg-gray-700 rounded-lg">
-                          <Edit2 className="w-4 h-4 dark:text-gray-500" />
+                        <button onClick={() => handleToggleActive(sale)} disabled={togglingId === sale.id} className={`p-3 rounded-lg border transition-colors disabled:opacity-50 ${sale.is_active ? 'bg-green-100 text-green-700 border-green-300 hover:bg-green-200 dark:bg-green-900/40 dark:text-green-300 dark:border-green-700 dark:hover:bg-green-900/60' : 'bg-gray-100 text-gray-600 border-gray-300 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-600'}`} title={sale.is_active ? 'Desactiver' : 'Activer'}>
+                          {togglingId === sale.id ? <Loader2 className="w-6 h-6 animate-spin" /> : <Power className="w-6 h-6" />}
                         </button>
-                        <button onClick={() => handleDelete(sale.id)} className="p-2 hover:bg-red-50 rounded-lg">
-                          <Trash2 className="w-4 h-4 dark:text-red-400" />
+                        <button onClick={() => handleEdit(sale)} className="p-3 bg-gray-100 hover:bg-gray-200 text-gray-700 border border-gray-200 rounded-lg transition-colors dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600 dark:hover:bg-gray-600">
+                          <Edit2 className="w-6 h-6" />
+                        </button>
+                        <button onClick={() => handleDelete(sale.id)} className="p-3 bg-red-100 hover:bg-red-200 text-red-700 border border-red-300 rounded-lg transition-colors dark:bg-red-900/40 dark:text-red-300 dark:border-red-700 dark:hover:bg-red-900/60">
+                          <Trash2 className="w-6 h-6" />
                         </button>
                       </div>
                     </td>
@@ -210,6 +236,8 @@ export function AdminFlashSalesPage() {
                 <div>
                   <label className="block text-sm font-medium dark:text-gray-500 mb-2">Produit *</label>
                   <select
+                    id="flash-product_id"
+                    name="product_id"
                     value={formData.product_id}
                     onChange={e => setFormData({ ...formData, product_id: e.target.value })}
                     className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500/20"
@@ -225,6 +253,8 @@ export function AdminFlashSalesPage() {
                   <label className="block text-sm font-medium dark:text-gray-500 mb-2">Reduction (%) *</label>
                   <input
                     type="number"
+                    id="flash-discount_percentage"
+                    name="discount_percentage"
                     min="1"
                     max="99"
                     value={formData.discount_percentage}
@@ -238,6 +268,8 @@ export function AdminFlashSalesPage() {
                     <label className="block text-sm font-medium dark:text-gray-500 mb-2">Date debut *</label>
                     <input
                       type="datetime-local"
+                      id="flash-starts_at"
+                      name="starts_at"
                       value={formData.starts_at}
                       onChange={e => setFormData({ ...formData, starts_at: e.target.value })}
                       className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500/20"
@@ -247,6 +279,8 @@ export function AdminFlashSalesPage() {
                     <label className="block text-sm font-medium dark:text-gray-500 mb-2">Date fin *</label>
                     <input
                       type="datetime-local"
+                      id="flash-ends_at"
+                      name="ends_at"
                       value={formData.ends_at}
                       onChange={e => setFormData({ ...formData, ends_at: e.target.value })}
                       className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500/20"
@@ -255,7 +289,7 @@ export function AdminFlashSalesPage() {
                 </div>
 
                 <label className="flex items-center gap-2 cursor-pointer">
-                  <input type="checkbox" checked={formData.is_active} onChange={e => setFormData({ ...formData, is_active: e.target.checked })} className="w-4 h-4 text-orange-500 border-gray-300 rounded" />
+                  <input type="checkbox" id="flash-is_active" name="is_active" checked={formData.is_active} onChange={e => setFormData({ ...formData, is_active: e.target.checked })} className="w-4 h-4 text-orange-500 border-gray-300 rounded" />
                   <span className="text-sm dark:text-gray-500">Flash sale actif</span>
                 </label>
 

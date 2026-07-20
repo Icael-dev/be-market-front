@@ -8,7 +8,9 @@ import type {
   FlashSale,
   Order,
   Profile,
-  Settings
+  Settings,
+  StaffUser,
+  UserRole
 } from '../types';
 
 export interface AdminStats {
@@ -169,6 +171,31 @@ export async function updateAdminOrder(id: string, order: Partial<Order>): Promi
 // Customers
 export async function fetchAdminCustomers(): Promise<AdminCustomer[]> {
   return unwrapList(await api.get<MaybePaginated<AdminCustomer>>('/api/admin/customers'));
+}
+
+// Staff / Users (super-admin only)
+export interface StaffUserInput {
+  full_name: string;
+  email: string;
+  password?: string;
+  phone?: string | null;
+  role: UserRole;
+}
+
+export async function fetchAdminUsers(): Promise<StaffUser[]> {
+  return unwrapList(await api.get<MaybePaginated<StaffUser>>('/api/admin/users'));
+}
+
+export async function createAdminUser(user: StaffUserInput): Promise<StaffUser> {
+  return api.post<StaffUser>('/api/admin/users', user);
+}
+
+export async function updateAdminUser(id: string, user: Partial<StaffUserInput>): Promise<StaffUser> {
+  return api.put<StaffUser>(`/api/admin/users/${id}`, user);
+}
+
+export async function deleteAdminUser(id: string): Promise<void> {
+  await api.delete(`/api/admin/users/${id}`);
 }
 
 // Statistics

@@ -4,12 +4,10 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { fetchBanners as fetchBannersService } from '../services/content';
 import type { Banner } from '../types';
 import { ChevronLeft, ChevronRight, Sparkles } from 'lucide-react';
-import image1 from '../assets/images/image1.jpg';
 
 export function BannerSlider() {
   const [banners, setBanners] = useState<Banner[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [isAutoPlaying, setIsAutoPlaying] = useState(true);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -17,13 +15,13 @@ export function BannerSlider() {
   }, []);
 
   useEffect(() => {
-    if (banners.length > 1 && isAutoPlaying) {
+    if (banners.length > 1) {
       const interval = setInterval(() => {
         setCurrentIndex(prev => (prev + 1) % banners.length);
       }, 5000);
       return () => clearInterval(interval);
     }
-  }, [banners, isAutoPlaying]);
+  }, [banners]);
 
   const loadBanners = async () => {
     try {
@@ -37,9 +35,7 @@ export function BannerSlider() {
   };
 
   const goTo = useCallback((index: number) => {
-    setIsAutoPlaying(false);
     setCurrentIndex(index);
-    setTimeout(() => setIsAutoPlaying(true), 10000);
   }, []);
 
   const goToPrev = useCallback(() => {
@@ -51,123 +47,90 @@ export function BannerSlider() {
   }, [currentIndex, banners.length, goTo]);
 
   if (loading) return (
-    <div className="w-full h-[36rem] sm:h-[40rem] md:h-[44rem] lg:h-[48rem] xl:h-[56rem] bg-gray-100 dark:bg-gray-800 animate-pulse" />
+    <div className="w-full h-[32rem] sm:h-[36rem] md:h-[40rem] lg:h-[46rem] rounded-3xl bg-gray-100 dark:bg-gray-800 animate-pulse" />
   );
 
-  if (banners.length === 0) return (
-    <div className="w-full h-[36rem] sm:h-[40rem] md:h-[44rem] lg:h-[48rem] xl:h-[56rem] overflow-hidden relative">
-      <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url(${image1})` }} />
-      <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-transparent" />
-      <div className="absolute inset-0 flex items-center justify-center text-white text-center px-8 z-30">
-        <div>
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="inline-flex items-center gap-2 bg-white/15 backdrop-blur-sm px-4 py-2 mb-4"
-          >
-            <Sparkles className="w-4 h-4" />
-            Offres exclusives
-          </motion.div>
-          <motion.h2
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="text-3xl md:text-5xl font-bold mb-4 tracking-tightest"
-          >
-            Bienvenue chez BE-Market
-          </motion.h2>
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="text-lg md:text-xl text-white/80 mb-6"
-          >
-            Decouvrez les meilleurs accessoires electroniques au Togo
-          </motion.p>
-          <Link to="/products" className="btn-gold group/cta">
-            Voir les produits
-            <ChevronRight className="w-5 h-5 group-hover/cta:translate-x-1 transition-transform" />
-          </Link>
-        </div>
-      </div>
-    </div>
-  );
+  if (banners.length === 0) return null;
+
+  const banner = banners[currentIndex];
 
   return (
-      <div
-        className="relative w-full h-[36rem] sm:h-[40rem] md:h-[44rem] lg:h-[48rem] xl:h-[52rem] overflow-hidden group"
-        onMouseEnter={() => setIsAutoPlaying(false)}
-        onMouseLeave={() => setIsAutoPlaying(true)}
-      >
-             <div className="absolute inset-0 bg-gradient-to-br from-primary-600/80 via-primary-700/80 to-cyan-600/80" />
-
-      <AnimatePresence mode="wait">
+    <div
+      className="relative w-full h-[32rem] sm:h-[36rem] md:h-[40rem] lg:h-[46rem] overflow-hidden rounded-3xl shadow-premium group"
+    >
+      <AnimatePresence mode="popLayout" initial={false}>
         <motion.div
-          key={banners[currentIndex].id}
-          initial={{ opacity: 0, scale: 1.1 }}
-          animate={{ opacity: 1, scale: 1 }}
-          exit={{ opacity: 0, scale: 0.95 }}
-          transition={{ duration: 0.7 }}
+          key={banner.id}
+          initial={{ x: '100%' }}
+          animate={{ x: '0%' }}
+          exit={{ x: '-100%' }}
+          transition={{ duration: 1.1, ease: [0.22, 1, 0.36, 1] }}
           className="absolute inset-0"
         >
-          <div className="relative w-full h-full">
-            <img
-              src={banners[currentIndex].image_url}
-              alt={banners[currentIndex].title}
-              className="w-full h-full object-cover"
-            />
-            <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-transparent" />
-            <div className="absolute inset-0 flex items-center px-8 md:px-16 z-30">
-              <motion.div
-                initial={{ opacity: 0, x: -50 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.3, duration: 0.5 }}
-                className="max-w-xl text-white"
+          <motion.img
+            src={banner.image_url}
+            alt={banner.title}
+            initial={{ scale: 1.12 }}
+            animate={{ scale: 1 }}
+            transition={{ duration: 6, ease: 'linear' }}
+            className="w-full h-full object-cover"
+            onError={(e) => {
+              (e.currentTarget as HTMLImageElement).style.display = 'none';
+            }}
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-gray-950/85 via-gray-900/55 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-gray-950/40 via-transparent to-transparent" />
+
+          <div className="absolute inset-0 flex items-center pl-12 md:pl-24 lg:pl-32 pr-8 md:pr-16 z-30">
+            <motion.div
+              initial={{ opacity: 0, x: -40 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.35, duration: 0.6, ease: 'easeOut' }}
+              className="max-w-xl text-white"
+            >
+              <motion.span
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.45, duration: 0.5 }}
+                className="inline-flex items-center gap-2 border border-white/30 bg-white/10 backdrop-blur-md px-4 py-1.5 rounded-full text-sm font-medium mb-5 shadow-sm"
               >
-                <motion.span
-                  initial={{ opacity: 0, y: 10 }}
+                <Sparkles className="w-4 h-4 text-amber-300" />
+                Offre speciale
+              </motion.span>
+              <motion.h2
+                initial={{ opacity: 0, y: 22 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.55, duration: 0.55 }}
+                className="text-2xl md:text-4xl lg:text-5xl font-bold mb-4 leading-tight tracking-tight"
+              >
+                {banner.title}
+              </motion.h2>
+              {banner.subtitle && (
+                <motion.p
+                  initial={{ opacity: 0, y: 22 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.4 }}
-                  className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-1.5 rounded-full text-sm mb-4"
+                  transition={{ delay: 0.65, duration: 0.55 }}
+                  className="text-lg md:text-xl mb-7 text-gray-100/90 font-light"
                 >
-                  <Sparkles className="w-4 h-4" />
-                  Offre speciale
-                </motion.span>
-                <motion.h2
-                  initial={{ opacity: 0, y: 20 }}
+                  {banner.subtitle}
+                </motion.p>
+              )}
+              {banner.link_url && banner.button_text && (
+                <motion.div
+                  initial={{ opacity: 0, y: 22 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.5 }}
-                  className="text-2xl md:text-4xl lg:text-5xl font-bold mb-4 leading-tight"
+                  transition={{ delay: 0.75, duration: 0.55 }}
                 >
-                  {banners[currentIndex].title}
-                </motion.h2>
-                {banners[currentIndex].subtitle && (
-                  <motion.p
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.6 }}
-                    className="text-lg md:text-xl mb-6 text-gray-200"
+                  <Link
+                    to={banner.link_url}
+                    className="group/cta inline-flex items-center gap-2 bg-white text-gray-900 px-7 py-3.5 font-semibold rounded-full transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-primary-500/30"
                   >
-                    {banners[currentIndex].subtitle}
-                  </motion.p>
-                )}
-                {banners[currentIndex].link_url && banners[currentIndex].button_text && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.7 }}
-                  >
-                    <Link
-                      to={banners[currentIndex].link_url!}
-                       className="inline-flex items-center gap-2 bg-white text-gray-900 dark:bg-gray-800 dark:text-white px-6 py-3 font-semibold dark:hover:bg-gray-700 transition-all hover:scale-105 shadow-lg"
-                    >
-                      {banners[currentIndex].button_text}
-                      <ChevronRight className="w-5 h-5" />
-                    </Link>
-                  </motion.div>
-                )}
-              </motion.div>
-            </div>
+                    {banner.button_text}
+                    <ChevronRight className="w-5 h-5 transition-transform duration-300 group-hover/cta:translate-x-1" />
+                  </Link>
+                </motion.div>
+              )}
+            </motion.div>
           </div>
         </motion.div>
       </AnimatePresence>
@@ -175,38 +138,40 @@ export function BannerSlider() {
       {banners.length > 1 && (
         <>
           <motion.button
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
+            initial={{ opacity: 0, y: '-50%' }}
+            animate={{ opacity: 1, y: '-50%' }}
+            whileHover={{ scale: 1.12, y: '-50%' }}
+            whileTap={{ scale: 0.92, y: '-50%' }}
             onClick={goToPrev}
-             aria-label="Bannière précédente"
-             className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 hover:bg-white  flex items-center justify-center shadow-lg opacity-0 group-hover:opacity-100 transition-opacity"
-           >
-             <ChevronLeft className="w-6 h-6 dark:text-gray-300" />
+            aria-label="Bannière précédente"
+            style={{ top: '50%' }}
+            className="absolute left-5 w-12 h-12 rounded-full bg-white/70 hover:bg-white border border-white/40 backdrop-blur-md flex items-center justify-center shadow-lg shadow-black/10 z-40"
+          >
+            <ChevronLeft className="w-6 h-6 text-gray-900" />
           </motion.button>
           <motion.button
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
+            initial={{ opacity: 0, y: '-50%' }}
+            animate={{ opacity: 1, y: '-50%' }}
+            whileHover={{ scale: 1.12, y: '-50%' }}
+            whileTap={{ scale: 0.92, y: '-50%' }}
             onClick={goToNext}
-             aria-label="Bannière suivante"
-             className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 hover:bg-white  flex items-center justify-center shadow-lg opacity-0 group-hover:opacity-100 transition-opacity"
-           >
-             <ChevronRight className="w-6 h-6 dark:text-gray-300" />
+            aria-label="Bannière suivante"
+            style={{ top: '50%' }}
+            className="absolute right-5 w-12 h-12 rounded-full bg-white/70 hover:bg-white border border-white/40 backdrop-blur-md flex items-center justify-center shadow-lg shadow-black/10 z-40"
+          >
+            <ChevronRight className="w-6 h-6 text-gray-900" />
           </motion.button>
 
-          <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2">
+          <div className="absolute bottom-7 left-1/2 -translate-x-1/2 flex items-center gap-2.5 z-40">
             {banners.map((_, index) => (
-               <button
-                 key={index}
-                 aria-label={`Aller à la bannière ${index + 1}`}
-                 onClick={() => goTo(index)}
-                className={`h-2 rounded-full transition-all duration-300 ${
+              <button
+                key={index}
+                aria-label={`Aller à la bannière ${index + 1}`}
+                onClick={() => goTo(index)}
+                className={`h-2 rounded-full transition-all duration-300 ease-out ${
                   index === currentIndex
-                    ? 'w-8 bg-white'
-                    : 'w-2 bg-white/50 hover:bg-white/70'
+                    ? 'w-9 bg-white shadow-[0_0_10px_rgba(255,255,255,0.7)]'
+                    : 'w-2 bg-white/40 hover:bg-white/70'
                 }`}
               />
             ))}

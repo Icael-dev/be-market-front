@@ -71,6 +71,7 @@ const LazyAdminStatisticsPage = lazy(() => import('./pages/admin/AdminStatistics
 const LazyAdminCouponsPage = lazy(() => import('./pages/admin/AdminCouponsPage').then(m => ({ default: m.AdminCouponsPage })));
 const LazyAdminExportPage = lazy(() => import('./pages/admin/AdminExportPage').then(m => ({ default: m.AdminExportPage })));
 const LazyAdminFlashSalesPage = lazy(() => import('./pages/admin/AdminFlashSalesPage').then(m => ({ default: m.AdminFlashSalesPage })));
+const LazyAdminUsersPage = lazy(() => import('./pages/admin/AdminUsersPage').then(m => ({ default: m.AdminUsersPage })));
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();
@@ -90,8 +91,8 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
   return <>{children}</>;
 }
 
-function AdminRoute({ children }: { children: React.ReactNode }) {
-  const { isAdmin, loading } = useAuth();
+function AdminRoute({ children, superAdmin = false }: { children: React.ReactNode; superAdmin?: boolean }) {
+  const { isAdmin, isSuperAdmin, loading } = useAuth();
 
   if (loading) {
     return (
@@ -105,7 +106,20 @@ function AdminRoute({ children }: { children: React.ReactNode }) {
     return <Navigate to="/" replace />;
   }
 
+  if (superAdmin && !isSuperAdmin) {
+    return <Navigate to="/admin" replace />;
+  }
+
   return <>{children}</>;
+}
+
+function AdminIndexRoute() {
+  const { isSuperAdmin } = useAuth();
+  // Staff members do not have access to the dashboard; send them to Orders.
+  if (!isSuperAdmin) {
+    return <Navigate to="/admin/orders" replace />;
+  }
+  return <LazyAdminDashboardPage />;
 }
 
 function AppRoutes() {
@@ -207,7 +221,7 @@ function AppRoutes() {
 
             <Route path="/admin" element={
           <AdminRoute>
-            <LazyAdminDashboardPage />
+            <AdminIndexRoute />
           </AdminRoute>
         } />
         <Route path="/admin/categories" element={
@@ -241,12 +255,17 @@ function AppRoutes() {
           </AdminRoute>
         } />
         <Route path="/admin/settings" element={
-          <AdminRoute>
+          <AdminRoute superAdmin>
             <LazyAdminSettingsPage />
           </AdminRoute>
         } />
+        <Route path="/admin/users" element={
+          <AdminRoute superAdmin>
+            <LazyAdminUsersPage />
+          </AdminRoute>
+        } />
         <Route path="/admin/statistics" element={
-          <AdminRoute>
+          <AdminRoute superAdmin>
             <LazyAdminStatisticsPage />
           </AdminRoute>
         } />

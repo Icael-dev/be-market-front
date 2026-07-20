@@ -379,6 +379,8 @@ export function AddressesPage() {
                       <label className="flex items-center gap-2 cursor-pointer">
                         <input
                           type="checkbox"
+                          id="address-is-default"
+                          name="is_default"
                           checked={formData.is_default}
                           onChange={e => setFormData({ ...formData, is_default: e.target.checked })}
                           className="w-4 h-4 dark:text-primary-400 border-gray-300 rounded focus:ring-primary-500"
