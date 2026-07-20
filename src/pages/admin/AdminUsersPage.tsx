@@ -1,0 +1,390 @@
+import { useEffect, useState } from 'react';
+import { toast } from 'react-hot-toast';
+import { motion, AnimatePresence } from 'framer-motion';
+import {
+  fetchAdminUsers,
+  createAdminUser,
+  updateAdminUser,
+  deleteAdminUser,
+  type StaffUserInput
+} from '../../services/admin';
+import type { StaffUser, UserRole } from '../../types';
+import { AdminLayout } from '../../components/admin/AdminLayout';
+import { PageHeader } from '../../components/admin/PageHeader';
+import { useAuth } from '../../context/AuthContext';
+import { Plus, Edit2, Trash2, X, Save, Loader2, UserCog, Mail, Phone, ShieldCheck, User as UserIcon } from 'lucide-react';
+
+const ROLE_LABELS: Record<UserRole, string> = {
+  admin: 'Administrateur',
+  staff: 'Staff / Secretaire',
+  client: 'Client'
+};
+
+const emptyForm = {
+  full_name: '',
+  email: '',
+  password: '',
+  phone: '',
+  role: 'staff' as UserRole
+};
+
+export function AdminUsersPage() {
+  const { profile } = useAuth();
+  const [users, setUsers] = useState<StaffUser[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [showForm, setShowForm] = useState(false);
+  const [editing, setEditing] = useState<StaffUser | null>(null);
+  const [saving, setSaving] = useState(false);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [errors, setErrors] = useState<Record<string, string[]>>({});
+  const [form, setForm] = useState({ ...emptyForm });
+
+  useEffect(() => {
+    loadUsers();
+  }, []);
+
+  const loadUsers = async () => {
+    try {
+      setUsers(await fetchAdminUsers());
+    } catch (error) {
+      console.error('Error fetching users:', error);
+      toast.error('Erreur lors du chargement des utilisateurs');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const openCreate = () => {
+    setEditing(null);
+    setForm({ ...emptyForm });
+    setErrors({});
+    setShowForm(true);
+  };
+
+  const openEdit = (user: StaffUser) => {
+    setEditing(user);
+    setForm({
+      full_name: user.full_name || '',
+      email: user.email,
+      password: '',
+      phone: user.phone || '',
+      // On preserve le role reel du compte. On ne force jamais un client
+      // vers staff : sinon un simple enregistrement promouvrait le compte.
+      role: user.role
+    });
+    setErrors({});
+    setShowForm(true);
+  };
+
+  const handleSave = async () => {
+    if (!form.full_name || !form.email) return;
+    if (!editing && !form.password) {
+      setErrors({ password: ['Le mot de passe est requis'] });
+      return;
+    }
+    setSaving(true);
+    setErrors({});
+
+    try {
+      if (editing) {
+        const payload: Partial<StaffUserInput> = {
+          full_name: form.full_name,
+          email: form.email,
+          phone: form.phone || null,
+          role: form.role
+        };
+        if (form.password) payload.password = form.password;
+        await updateAdminUser(editing.id, payload);
+        toast.success('Utilisateur mis a jour');
+      } else {
+        await createAdminUser({
+          full_name: form.full_name,
+          email: form.email,
+          password: form.password,
+          phone: form.phone || null,
+          role: form.role
+        });
+        toast.success('Utilisateur cree');
+      }
+      await loadUsers();
+      setShowForm(false);
+    } catch (err: unknown) {
+      const e = err as { errors?: Record<string, string[]>; message?: string };
+      if (e?.errors) {
+        setErrors(e.errors);
+      } else {
+        toast.error(e?.message || 'Erreur lors de l\'enregistrement');
+      }
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleDelete = async (user: StaffUser) => {
+    if (!window.confirm(`Supprimer le compte de ${user.full_name || user.email} ?`)) return;
+    setDeletingId(user.id);
+    try {
+      await deleteAdminUser(user.id);
+      setUsers(prev => prev.filter(u => u.id !== user.id));
+      toast.success('Utilisateur supprime');
+    } catch (err: unknown) {
+      const e = err as { message?: string };
+      toast.error(e?.message || 'Erreur lors de la suppression');
+    } finally {
+      setDeletingId(null);
+    }
+  };
+
+  const fieldError = (field: string) => errors[field]?.[0];
+
+  // Detecte le compte de l'utilisateur connecte. On compare a la fois par id
+  // (selon la semantique backend, StaffUser.id peut valoir user_id ou un id
+  // de profil) et par email, identifiant naturel unique et stable, pour que
+  // le garde anti-auto-suppression fonctionne quel que soit le schema d'id.
+  const isSelf = (user: StaffUser) =>
+    (!!profile?.user_id && profile.user_id === user.id) ||
+    (!!profile?.email && profile.email.toLowerCase() === user.email.toLowerCase());
+
+  return (
+    <AdminLayout>
+      <div className="p-6 lg:p-8">
+        <PageHeader
+          title="Utilisateurs"
+          subtitle={`${users.length} membre${users.length > 1 ? 's' : ''} de l'equipe`}
+        >
+          <button
+            onClick={openCreate}
+            className="flex items-center gap-2 bg-primary-600 text-white px-4 py-2.5 rounded-xl font-medium hover:bg-primary-700 transition-colors"
+          >
+            <Plus className="w-5 h-5" />
+            Ajouter un utilisateur
+          </button>
+        </PageHeader>
+
+        <div className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead className="bg-gray-50 dark:bg-gray-800 border-b dark:border-gray-700">
+                <tr>
+                  <th className="text-left px-6 py-4 text-sm font-medium dark:text-gray-500">Utilisateur</th>
+                  <th className="text-left px-6 py-4 text-sm font-medium dark:text-gray-500">Contact</th>
+                  <th className="text-left px-6 py-4 text-sm font-medium dark:text-gray-500">Role</th>
+                  <th className="text-right px-6 py-4 text-sm font-medium dark:text-gray-500">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
+                {users.map((user, index) => (
+                  <motion.tr
+                    key={user.id}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.02 }}
+                    className="dark:hover:bg-gray-700 hover:bg-gray-100 transition-colors"
+                  >
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary-600 to-cyan-500 flex items-center justify-center text-white font-medium">
+                          {user.full_name?.[0] || user.email[0]}
+                        </div>
+                        <div>
+                          <p className="font-medium dark:text-white">{user.full_name || 'Sans nom'}</p>
+                          {isSelf(user) && (
+                            <span className="text-xs text-primary-600 dark:text-primary-400">Vous</span>
+                          )}
+                        </div>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="space-y-1">
+                        <div className="flex items-center gap-2 text-sm dark:text-gray-400">
+                          <Mail className="w-4 h-4" />
+                          {user.email}
+                        </div>
+                        {user.phone && (
+                          <div className="flex items-center gap-2 text-sm dark:text-gray-400">
+                            <Phone className="w-4 h-4" />
+                            {user.phone}
+                          </div>
+                        )}
+                      </div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium ${
+                        user.role === 'admin'
+                          ? 'bg-primary-100 text-primary-700 dark:bg-primary-900/30 dark:text-primary-400'
+                          : 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400'
+                      }`}>
+                        {user.role === 'admin' ? <ShieldCheck className="w-3.5 h-3.5" /> : <UserIcon className="w-3.5 h-3.5" />}
+                        {ROLE_LABELS[user.role]}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="flex items-center justify-end gap-2">
+                        <button
+                          onClick={() => openEdit(user)}
+                          className="p-3 bg-gray-100 hover:bg-gray-200 text-gray-700 border border-gray-200 rounded-lg transition-colors dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600 dark:hover:bg-gray-600"
+                          title="Modifier"
+                        >
+                          <Edit2 className="w-6 h-6" />
+                        </button>
+                        <button
+                          onClick={() => handleDelete(user)}
+                          disabled={deletingId === user.id || isSelf(user)}
+                          className="p-3 bg-red-100 hover:bg-red-200 text-red-700 border border-red-300 rounded-lg transition-colors disabled:opacity-40 disabled:cursor-not-allowed dark:bg-red-900/40 dark:text-red-300 dark:border-red-700 dark:hover:bg-red-900/60"
+                          title={isSelf(user) ? 'Vous ne pouvez pas supprimer votre compte' : 'Supprimer'}
+                        >
+                          {deletingId === user.id ? (
+                            <Loader2 className="w-6 h-6 animate-spin" />
+                          ) : (
+                            <Trash2 className="w-6 h-6" />
+                          )}
+                        </button>
+                      </div>
+                    </td>
+                  </motion.tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          {users.length === 0 && !loading && (
+            <div className="text-center py-12">
+              <UserCog className="w-12 h-12 dark:text-gray-500 mx-auto mb-4" />
+              <p className="dark:text-gray-500">Aucun utilisateur</p>
+            </div>
+          )}
+        </div>
+      </div>
+
+      <AnimatePresence>
+        {showForm && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setShowForm(false)}
+              className="fixed inset-0 bg-black/50 z-50"
+            />
+            <motion.div
+              initial={{ opacity: 0, x: '100%' }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: '100%' }}
+              className="fixed right-0 top-0 bottom-0 w-full max-w-lg bg-white dark:bg-gray-800 z-50 overflow-y-auto"
+            >
+              <div className="p-6 border-b dark:border-gray-700 flex items-center justify-between sticky top-0 bg-white dark:bg-gray-800">
+                <h2 className="text-xl font-bold dark:text-white">
+                  {editing ? 'Modifier l\'utilisateur' : 'Nouvel utilisateur'}
+                </h2>
+                <button
+                  onClick={() => setShowForm(false)}
+                  className="p-2 hover:bg-gray-100 hover:dark:bg-gray-700 rounded-lg transition-colors"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              <div className="p-6 space-y-5">
+                <div>
+                  <label className="block text-sm font-medium dark:text-gray-300 mb-2">Nom complet *</label>
+                  <input
+                    type="text"
+                    id="user-full_name"
+                    name="full_name"
+                    value={form.full_name}
+                    onChange={e => setForm({ ...form, full_name: e.target.value })}
+                    className="w-full px-4 py-3 border dark:border-gray-700 dark:bg-gray-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                    placeholder="Ex: Awa Diop"
+                  />
+                  {fieldError('full_name') && <p className="text-xs text-red-500 mt-1">{fieldError('full_name')}</p>}
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium dark:text-gray-300 mb-2">Email *</label>
+                  <input
+                    type="email"
+                    id="user-email"
+                    name="email"
+                    value={form.email}
+                    onChange={e => setForm({ ...form, email: e.target.value })}
+                    className="w-full px-4 py-3 border dark:border-gray-700 dark:bg-gray-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                    placeholder="secretaire@example.com"
+                  />
+                  {fieldError('email') && <p className="text-xs text-red-500 mt-1">{fieldError('email')}</p>}
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium dark:text-gray-300 mb-2">Telephone</label>
+                  <input
+                    type="text"
+                    id="user-phone"
+                    name="phone"
+                    value={form.phone}
+                    onChange={e => setForm({ ...form, phone: e.target.value })}
+                    className="w-full px-4 py-3 border dark:border-gray-700 dark:bg-gray-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                    placeholder="+221 ..."
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium dark:text-gray-300 mb-2">
+                    {editing ? 'Nouveau mot de passe (laisser vide pour ne pas changer)' : 'Mot de passe *'}
+                  </label>
+                  <input
+                    type="password"
+                    id="user-password"
+                    name="password"
+                    value={form.password}
+                    onChange={e => setForm({ ...form, password: e.target.value })}
+                    className="w-full px-4 py-3 border dark:border-gray-700 dark:bg-gray-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                    placeholder="Minimum 8 caracteres"
+                    autoComplete="new-password"
+                  />
+                  {fieldError('password') && <p className="text-xs text-red-500 mt-1">{fieldError('password')}</p>}
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium dark:text-gray-300 mb-2">Role *</label>
+                  <select
+                    id="user-role"
+                    name="role"
+                    value={form.role}
+                    onChange={e => setForm({ ...form, role: e.target.value as UserRole })}
+                    className="w-full px-4 py-3 border dark:border-gray-700 dark:bg-gray-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                  >
+                    {editing?.role === 'client' && (
+                      <option value="client">Client (compte boutique)</option>
+                    )}
+                    <option value="staff">Staff / Secretaire (acces restreint)</option>
+                    <option value="admin">Administrateur (acces complet)</option>
+                  </select>
+                  <p className="text-xs dark:text-gray-500 mt-1">
+                    Le staff n'a pas acces aux parametres ni a la gestion des utilisateurs.
+                  </p>
+                  {fieldError('role') && <p className="text-xs text-red-500 mt-1">{fieldError('role')}</p>}
+                </div>
+
+                <div className="flex gap-3 pt-4 border-t dark:border-gray-700">
+                  <button
+                    onClick={handleSave}
+                    disabled={saving || !form.full_name || !form.email}
+                    className="flex items-center gap-2 bg-primary-600 text-white px-6 py-2.5 rounded-xl font-medium hover:bg-primary-700 disabled:opacity-50"
+                  >
+                    {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+                    {saving ? 'Enregistrement...' : 'Enregistrer'}
+                  </button>
+                  <button
+                    onClick={() => setShowForm(false)}
+                    className="px-6 py-2.5 border dark:border-gray-700 rounded-xl font-medium hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                  >
+                    Annuler
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+    </AdminLayout>
+  );
+}

@@ -215,12 +215,19 @@ export function ProductsPage() {
                 <div className="flex items-center gap-3">
                   <div className="relative">
                     <select
+                      id="product-sort"
+                      name="sort"
+                      aria-label="Trier les produits"
                       value={sortBy}
                       onChange={(e) => updateFilter('sort', e.target.value)}
-                      className="appearance-none pl-4 pr-10 py-2 border border-gray-200 dark:border-gray-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 bg-white dark:bg-gray-800 cursor-pointer"
+                      className="appearance-none pl-4 pr-10 py-2 border border-gray-200 dark:border-gray-700 rounded-xl text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 bg-white dark:bg-gray-800 cursor-pointer"
                     >
                       {sortOptions.map(option => (
-                        <option key={option.value} value={option.value}>
+                        <option
+                          key={option.value}
+                          value={option.value}
+                          className="bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100"
+                        >
                           {option.label}
                         </option>
                       ))}

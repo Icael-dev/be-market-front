@@ -444,6 +444,8 @@ const handlePlaceOrder = async () => {
                       Notes (optionnel)
                     </label>
                     <textarea
+                      id="checkout_notes"
+                      name="checkout_notes"
                       value={notes}
                       onChange={e => setNotes(e.target.value)}
                       rows={3}

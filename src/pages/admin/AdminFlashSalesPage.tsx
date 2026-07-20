@@ -236,6 +236,8 @@ export function AdminFlashSalesPage() {
                 <div>
                   <label className="block text-sm font-medium dark:text-gray-500 mb-2">Produit *</label>
                   <select
+                    id="flash-product_id"
+                    name="product_id"
                     value={formData.product_id}
                     onChange={e => setFormData({ ...formData, product_id: e.target.value })}
                     className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500/20"
@@ -251,6 +253,8 @@ export function AdminFlashSalesPage() {
                   <label className="block text-sm font-medium dark:text-gray-500 mb-2">Reduction (%) *</label>
                   <input
                     type="number"
+                    id="flash-discount_percentage"
+                    name="discount_percentage"
                     min="1"
                     max="99"
                     value={formData.discount_percentage}
@@ -264,6 +268,8 @@ export function AdminFlashSalesPage() {
                     <label className="block text-sm font-medium dark:text-gray-500 mb-2">Date debut *</label>
                     <input
                       type="datetime-local"
+                      id="flash-starts_at"
+                      name="starts_at"
                       value={formData.starts_at}
                       onChange={e => setFormData({ ...formData, starts_at: e.target.value })}
                       className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500/20"
@@ -273,6 +279,8 @@ export function AdminFlashSalesPage() {
                     <label className="block text-sm font-medium dark:text-gray-500 mb-2">Date fin *</label>
                     <input
                       type="datetime-local"
+                      id="flash-ends_at"
+                      name="ends_at"
                       value={formData.ends_at}
                       onChange={e => setFormData({ ...formData, ends_at: e.target.value })}
                       className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500/20"
@@ -281,7 +289,7 @@ export function AdminFlashSalesPage() {
                 </div>
 
                 <label className="flex items-center gap-2 cursor-pointer">
-                  <input type="checkbox" checked={formData.is_active} onChange={e => setFormData({ ...formData, is_active: e.target.checked })} className="w-4 h-4 text-orange-500 border-gray-300 rounded" />
+                  <input type="checkbox" id="flash-is_active" name="is_active" checked={formData.is_active} onChange={e => setFormData({ ...formData, is_active: e.target.checked })} className="w-4 h-4 text-orange-500 border-gray-300 rounded" />
                   <span className="text-sm dark:text-gray-500">Flash sale actif</span>
                 </label>
 

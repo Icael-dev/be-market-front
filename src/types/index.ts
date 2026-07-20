@@ -37,6 +37,8 @@ export interface Product {
   category?: Category;
 }
 
+export type UserRole = 'admin' | 'staff' | 'client';
+
 export interface Profile {
   id: string;
   user_id: string;
@@ -44,6 +46,18 @@ export interface Profile {
   full_name: string | null;
   phone: string | null;
   avatar_url: string | null;
+  is_admin: boolean;
+  role?: UserRole;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface StaffUser {
+  id: string;
+  full_name: string | null;
+  email: string;
+  phone: string | null;
+  role: UserRole;
   is_admin: boolean;
   created_at: string;
   updated_at: string;

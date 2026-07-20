@@ -308,6 +308,8 @@ export function AdminCategoriesPage() {
                   </label>
                   <input
                     type="text"
+                    id="category-name"
+                    name="name"
                     value={formData.name}
                     onChange={e => handleNameChange(e.target.value)}
                     className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
@@ -321,6 +323,8 @@ export function AdminCategoriesPage() {
                   </label>
                   <input
                     type="text"
+                    id="category-slug"
+                    name="slug"
                     value={formData.slug}
                     onChange={e => setFormData({ ...formData, slug: e.target.value })}
                     disabled
@@ -334,6 +338,8 @@ export function AdminCategoriesPage() {
                     Description
                   </label>
                   <textarea
+                    id="category-description"
+                    name="description"
                     value={formData.description}
                     onChange={e => setFormData({ ...formData, description: e.target.value })}
                     rows={3}
@@ -345,6 +351,8 @@ export function AdminCategoriesPage() {
                 <label className="flex items-center gap-2 cursor-pointer">
                   <input
                     type="checkbox"
+                    id="category-is_active"
+                    name="is_active"
                     checked={formData.is_active}
                     onChange={e => setFormData({ ...formData, is_active: e.target.checked })}
                     className="w-4 h-4 dark:text-primary-400 border-gray-300 rounded"
@@ -367,21 +375,25 @@ export function AdminCategoriesPage() {
                      {formData.specs.map((spec, i) => (
                        <div key={i} className="flex gap-2 items-center">
                          <Tag className="w-4 h-4 text-gray-400 flex-shrink-0" />
-                         <input
-                           type="text"
-                           value={spec.key}
-                           onChange={e => updateSpec(i, 'key', e.target.value)}
-                           placeholder="Cle (ex: Marque)"
+                          <input
+                            type="text"
+                            id={`category-spec-key-${i}`}
+                            name={`spec_key_${i}`}
+                            value={spec.key}
+                            onChange={e => updateSpec(i, 'key', e.target.value)}
+                            placeholder="Cle (ex: Marque)"
                            className={cn(
                              'flex-1 px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 dark:bg-gray-800',
                              'dark:border-gray-700'
                            )}
                          />
-                         <input
-                           type="text"
-                           value={spec.placeholder}
-                           onChange={e => updateSpec(i, 'placeholder', e.target.value)}
-                           placeholder="Placeholder (ex: Ex: Samsung)"
+                          <input
+                            type="text"
+                            id={`category-spec-placeholder-${i}`}
+                            name={`spec_placeholder_${i}`}
+                            value={spec.placeholder}
+                            onChange={e => updateSpec(i, 'placeholder', e.target.value)}
+                            placeholder="Placeholder (ex: Ex: Samsung)"
                            className={cn(
                              'flex-1 px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 dark:bg-gray-800',
                              'dark:border-gray-700'

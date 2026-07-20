@@ -287,6 +287,8 @@ export function AdminBlogPage() {
                   </label>
                   <input
                     type="text"
+                    id="blog-title"
+                    name="title"
                     value={formData.title}
                     onChange={e => setFormData({ ...formData, title: e.target.value })}
                     className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
@@ -298,6 +300,8 @@ export function AdminBlogPage() {
                     Extrait
                   </label>
                   <textarea
+                    id="blog-excerpt"
+                    name="excerpt"
                     value={formData.excerpt}
                     onChange={e => setFormData({ ...formData, excerpt: e.target.value })}
                     rows={2}
@@ -310,6 +314,8 @@ export function AdminBlogPage() {
                     Contenu *
                   </label>
                   <textarea
+                    id="blog-content"
+                    name="content"
                     value={formData.content}
                     onChange={e => setFormData({ ...formData, content: e.target.value })}
                     rows={10}
@@ -323,6 +329,8 @@ export function AdminBlogPage() {
                   </label>
                   <input
                     type="text"
+                    id="blog-image_url"
+                    name="image_url"
                     value={formData.image_url}
                     onChange={e => setFormData({ ...formData, image_url: e.target.value })}
                     className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
@@ -332,6 +340,8 @@ export function AdminBlogPage() {
                 <label className="flex items-center gap-2 cursor-pointer">
                   <input
                     type="checkbox"
+                    id="blog-is_published"
+                    name="is_published"
                     checked={formData.is_published}
                     onChange={e => setFormData({ ...formData, is_published: e.target.checked })}
                     className="w-4 h-4 text-primary-600 border-gray-300 rounded"

@@ -25,7 +25,8 @@ import {
   Heart,
   ShoppingCart,
   Sun,
-  Moon
+  Moon,
+  UserCog
 } from 'lucide-react';
 import { cn } from '../../lib/utils';
 
@@ -38,11 +39,12 @@ interface NavItem {
   label: string;
   icon: typeof LayoutDashboard;
   section?: string;
+  adminOnly?: boolean;
 }
 
 const navItems: NavItem[] = [
-  { path: '/admin', label: 'Tableau de bord', icon: LayoutDashboard, section: 'Principal' },
-  { path: '/admin/statistics', label: 'Statistiques', icon: BarChart3, section: 'Principal' },
+  { path: '/admin', label: 'Tableau de bord', icon: LayoutDashboard, section: 'Principal', adminOnly: true },
+  { path: '/admin/statistics', label: 'Statistiques', icon: BarChart3, section: 'Principal', adminOnly: true },
   { path: '/admin/categories', label: 'Categories', icon: Grid3X3, section: 'Catalogue' },
   { path: '/admin/products', label: 'Produits', icon: ShoppingBag, section: 'Catalogue' },
   { path: '/admin/banners', label: 'Bannieres', icon: Image, section: 'Catalogue' },
@@ -52,13 +54,14 @@ const navItems: NavItem[] = [
   { path: '/admin/orders', label: 'Commandes', icon: Package, section: 'Ventes' },
   { path: '/admin/customers', label: 'Clients', icon: Users, section: 'Ventes' },
   { path: '/admin/export', label: 'Export', icon: Download, section: 'Outils' },
-  { path: '/admin/settings', label: 'Parametres', icon: Settings, section: 'Outils' },
+  { path: '/admin/users', label: 'Utilisateurs', icon: UserCog, section: 'Outils', adminOnly: true },
+  { path: '/admin/settings', label: 'Parametres', icon: Settings, section: 'Outils', adminOnly: true },
 ];
 
 const sections = [...new Set(navItems.map(item => item.section).filter(Boolean))] as string[];
 
 export function AdminLayout({ children }: AdminLayoutProps) {
-  const { isAdmin, signOut, profile } = useAuth();
+  const { isAdmin, isSuperAdmin, signOut, profile } = useAuth();
   const { count } = useCart();
   const { items: wishlistItems } = useWishlist();
   const { theme, toggleTheme } = useTheme();
@@ -70,6 +73,11 @@ export function AdminLayout({ children }: AdminLayoutProps) {
     navigate('/');
     return null;
   }
+
+  const visibleItems = navItems.filter(item => isSuperAdmin || !item.adminOnly);
+  const visibleSections = sections.filter(section =>
+    visibleItems.some(item => item.section === section)
+  );
 
   return (
     <div className="min-h-screen page-bg">
@@ -156,13 +164,13 @@ export function AdminLayout({ children }: AdminLayoutProps) {
           </div>
 
           <nav className="flex-1 overflow-y-auto p-4">
-            {sections.map(section => (
+            {visibleSections.map(section => (
               <div key={section} className="mb-6">
                 <p className="px-4 mb-2 text-xs font-semibold text-gray-500 dark:text-gray-500 uppercase tracking-wider">
                   {section}
                 </p>
                 <div className="space-y-1">
-                  {navItems
+                  {visibleItems
                     .filter(item => item.section === section)
                     .map(item => {
                       const isActive = location.pathname === item.path ||
@@ -207,7 +215,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
                 <p className="font-semibold text-gray-900 dark:text-white text-sm truncate">
                   {profile?.full_name || 'Admin'}
                 </p>
-                <p className="text-xs text-gray-500 dark:text-gray-500 truncate">Administrateur</p>
+                <p className="text-xs text-gray-500 dark:text-gray-500 truncate">{isSuperAdmin ? 'Administrateur' : 'Staff'}</p>
               </div>
             </div>
 

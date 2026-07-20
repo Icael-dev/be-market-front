@@ -74,6 +74,8 @@ export function AdminOrdersPage() {
             <div className="flex-1 relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 dark:text-gray-500" />
               <input
+                id="order-search"
+                name="order-search"
                 type="text"
                 placeholder="Rechercher par numero..."
                 value={searchQuery}
@@ -83,6 +85,8 @@ export function AdminOrdersPage() {
             </div>
 
             <select
+              id="order-status-filter"
+              name="order-status-filter"
               value={statusFilter}
               onChange={e => setStatusFilter(e.target.value)}
               className="px-4 py-2.5 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 bg-white dark:bg-gray-800 cursor-pointer"
@@ -141,6 +145,8 @@ export function AdminOrdersPage() {
                     </td>
                     <td className="px-6 py-4">
                       <select
+                        id={`order-status-${order.id}`}
+                        name={`order-status-${order.id}`}
                         value={order.status}
                         onChange={e => updateOrderStatus(order.id, e.target.value as OrderStatus)}
                         className={cn(

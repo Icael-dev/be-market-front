@@ -1,12 +1,15 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { login, logout, register, getCurrentUser } from '../services/auth';
-import type { AuthUser, Profile } from '../types';
+import type { AuthUser, Profile, UserRole } from '../types';
 
 interface AuthContextType {
   user: AuthUser | null;
   profile: Profile | null;
   loading: boolean;
   isAdmin: boolean;
+  isSuperAdmin: boolean;
+  isStaff: boolean;
+  role: UserRole;
   signIn: (email: string, password: string) => Promise<{ error: Error | null }>;
   signUp: (email: string, password: string, fullName?: string) => Promise<{ error: Error | null }>;
   signOut: () => Promise<void>;
@@ -76,13 +79,27 @@ type ServiceError = { error?: string };
     }
   };
 
+  // `role` decrit uniquement le niveau d'acces au back-office.
+  // Il ne conditionne jamais l'acces boutique : un admin/staff reste un
+  // utilisateur normal qui peut commander (panier, wishlist, commandes).
+  // Source de verite unique : le champ `role` du backend. `is_admin` n'est
+  // utilise qu'en repli legacy quand `role` est absent, pour ne pas creer
+  // d'etat incoherent entre role / isAdmin / isSuperAdmin.
+  const role: UserRole = profile?.role ?? (profile?.is_admin ? 'admin' : 'client');
+  const isSuperAdmin = role === 'admin';
+  const isStaff = role === 'staff';
+  const isAdmin = isSuperAdmin || isStaff;
+
   return (
     <AuthContext.Provider
       value={{
         user,
         profile,
         loading,
-        isAdmin: profile?.is_admin ?? false,
+        isAdmin,
+        isSuperAdmin,
+        isStaff,
+        role,
         signIn,
         signUp,
         signOut,

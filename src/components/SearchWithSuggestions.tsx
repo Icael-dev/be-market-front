@@ -98,6 +98,9 @@ export function SearchWithSuggestions() {
       <form onSubmit={handleSearch} className="relative">
         <input
           type="text"
+          id="product-search"
+          name="search"
+          aria-label="Rechercher un produit"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           onFocus={() => setShowSuggestions(true)}

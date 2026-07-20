@@ -283,6 +283,8 @@ export function AdminBannersPage() {
                   </label>
                   <input
                     type="text"
+                    id="banner-title"
+                    name="title"
                     value={formData.title}
                     onChange={e => setFormData({ ...formData, title: e.target.value })}
                     className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
@@ -295,6 +297,8 @@ export function AdminBannersPage() {
                   </label>
                   <input
                     type="text"
+                    id="banner-subtitle"
+                    name="subtitle"
                     value={formData.subtitle}
                     onChange={e => setFormData({ ...formData, subtitle: e.target.value })}
                     className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
@@ -333,6 +337,8 @@ export function AdminBannersPage() {
                       </span>
                       <input
                         type="file"
+                        id="banner-image"
+                        name="image"
                         accept="image/*"
                         className="hidden"
                         onChange={handleImageUpload}
@@ -348,6 +354,8 @@ export function AdminBannersPage() {
                   </label>
                   <input
                     type="text"
+                    id="banner-link-url"
+                    name="link_url"
                     value={formData.link_url}
                     onChange={e => setFormData({ ...formData, link_url: e.target.value })}
                     className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
@@ -360,6 +368,8 @@ export function AdminBannersPage() {
                   </label>
                   <input
                     type="text"
+                    id="banner-button-text"
+                    name="button_text"
                     value={formData.button_text}
                     onChange={e => setFormData({ ...formData, button_text: e.target.value })}
                     className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
@@ -372,6 +382,8 @@ export function AdminBannersPage() {
                   </label>
                   <input
                     type="number"
+                    id="banner-sort-order"
+                    name="sort_order"
                     value={formData.sort_order}
                     onChange={e => setFormData({ ...formData, sort_order: parseInt(e.target.value) || 0 })}
                     className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
@@ -381,6 +393,8 @@ export function AdminBannersPage() {
                 <label className="flex items-center gap-2 cursor-pointer">
                   <input
                     type="checkbox"
+                    id="banner-is-active"
+                    name="is_active"
                     checked={formData.is_active}
                     onChange={e => setFormData({ ...formData, is_active: e.target.checked })}
                     className="w-4 h-4 text-primary-600 border-gray-300 rounded"

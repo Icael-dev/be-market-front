@@ -141,6 +141,8 @@ export function AdminStatisticsPage() {
         >
           <div className="flex gap-3">
             <select
+              id="stats-days"
+              name="stats-days"
               value={days}
               onChange={e => setDays(e.target.value as '7' | '30' | '90')}
               className="px-4 py-2 border dark:border-gray-700 rounded-xl"

@@ -487,6 +487,8 @@ export function AdminProductsPage() {
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 dark:text-gray-500" />
               <input
                 type="text"
+                id="product-search"
+                name="search"
                 placeholder="Rechercher un produit..."
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
@@ -495,6 +497,8 @@ export function AdminProductsPage() {
             </div>
 
             <select
+              id="product-category-filter"
+              name="category_filter"
               value={selectedCategory}
               onChange={e => setSelectedCategory(e.target.value)}
               className="px-4 py-2.5 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 bg-white dark:bg-gray-800 cursor-pointer"
@@ -694,22 +698,22 @@ export function AdminProductsPage() {
                     <motion.div key="general" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="space-y-4">
                       <div>
                         <label className="block text-sm font-medium dark:text-gray-500 mb-2">Nom du produit <span className="text-red-500">*</span></label>
-                        <input type="text" value={formData.name} onChange={e => setFormData({ ...formData, name: e.target.value })} className={cn('w-full px-3 py-2.5 sm:px-4 sm:py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 dark:bg-gray-800', fieldError('name') ? 'border-red-500' : 'dark:border-gray-700')} />
+                        <input type="text" id="product-name" name="name" value={formData.name} onChange={e => setFormData({ ...formData, name: e.target.value })} className={cn('w-full px-3 py-2.5 sm:px-4 sm:py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 dark:bg-gray-800', fieldError('name') ? 'border-red-500' : 'dark:border-gray-700')} />
                         {fieldError('name') && <p className="text-red-500 text-xs mt-1 flex items-center gap-1"><AlertCircle className="w-3 h-3" /> {fieldError('name')}</p>}
                       </div>
 
                       <div>
                         <label className="block text-sm font-medium dark:text-gray-500 mb-2">SKU (reference)</label>
-                        <input type="text" value={formData.sku} onChange={e => setFormData({ ...formData, sku: e.target.value })} placeholder="Ex: SAM-S24-128" className="w-full px-3 py-2.5 sm:px-4 sm:py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 dark:bg-gray-800 dark:border-gray-700" />
+                        <input type="text" id="product-sku" name="sku" value={formData.sku} onChange={e => setFormData({ ...formData, sku: e.target.value })} placeholder="Ex: SAM-S24-128" className="w-full px-3 py-2.5 sm:px-4 sm:py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 dark:bg-gray-800 dark:border-gray-700" />
                       </div>
                       <div>
                         <label className="block text-sm font-medium dark:text-gray-500 mb-2">Description</label>
-                        <textarea value={formData.description} onChange={e => setFormData({ ...formData, description: e.target.value })} rows={4} className={cn('w-full px-3 py-2.5 sm:px-4 sm:py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 dark:bg-gray-800', fieldError('description') ? 'border-red-500' : 'dark:border-gray-700')} />
+                        <textarea id="product-description" name="description" value={formData.description} onChange={e => setFormData({ ...formData, description: e.target.value })} rows={4} className={cn('w-full px-3 py-2.5 sm:px-4 sm:py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 dark:bg-gray-800', fieldError('description') ? 'border-red-500' : 'dark:border-gray-700')} />
                       </div>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
                           <label className="block text-sm font-medium dark:text-gray-500 mb-2">Categorie</label>
-                          <select value={formData.category_id} onChange={e => setFormData({ ...formData, category_id: e.target.value })} className={cn('w-full px-3 py-2.5 sm:px-4 sm:py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 dark:bg-gray-800', fieldError('category_id') ? 'border-red-500' : 'dark:border-gray-700')}>
+                          <select id="product-category" name="category_id" value={formData.category_id} onChange={e => setFormData({ ...formData, category_id: e.target.value })} className={cn('w-full px-3 py-2.5 sm:px-4 sm:py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 dark:bg-gray-800', fieldError('category_id') ? 'border-red-500' : 'dark:border-gray-700')}>
                             <option value="">Selectionner</option>
                             {categories.map(cat => <option key={cat.id} value={cat.id}>{cat.name}</option>)}
                           </select>
@@ -718,27 +722,27 @@ export function AdminProductsPage() {
                       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                         <div>
                           <label className="block text-sm font-medium dark:text-gray-500 mb-2">Prix (FCFA) <span className="text-red-500">*</span></label>
-                          <input type="number" value={formData.price} onChange={e => setFormData({ ...formData, price: e.target.value })} className={cn('w-full px-3 py-2.5 sm:px-4 sm:py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 dark:bg-gray-800', fieldError('price') ? 'border-red-500' : 'dark:border-gray-700')} />
+                          <input type="number" id="product-price" name="price" value={formData.price} onChange={e => setFormData({ ...formData, price: e.target.value })} className={cn('w-full px-3 py-2.5 sm:px-4 sm:py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 dark:bg-gray-800', fieldError('price') ? 'border-red-500' : 'dark:border-gray-700')} />
                           {fieldError('price') && <p className="text-red-500 text-xs mt-1 flex items-center gap-1"><AlertCircle className="w-3 h-3" /> {fieldError('price')}</p>}
                         </div>
                         <div>
                           <label className="block text-sm font-medium dark:text-gray-500 mb-2">Prix compare (FCFA)</label>
-                          <input type="number" value={formData.compare_price} onChange={e => setFormData({ ...formData, compare_price: e.target.value })} className={cn('w-full px-3 py-2.5 sm:px-4 sm:py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 dark:bg-gray-800', fieldError('compare_price') ? 'border-red-500' : 'dark:border-gray-700')} />
+                          <input type="number" id="product-compare-price" name="compare_price" value={formData.compare_price} onChange={e => setFormData({ ...formData, compare_price: e.target.value })} className={cn('w-full px-3 py-2.5 sm:px-4 sm:py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 dark:bg-gray-800', fieldError('compare_price') ? 'border-red-500' : 'dark:border-gray-700')} />
                           {fieldError('compare_price') && <p className="text-red-500 text-xs mt-1 flex items-center gap-1"><AlertCircle className="w-3 h-3" /> {fieldError('compare_price')}</p>}
                         </div>
                         <div>
                           <label className="block text-sm font-medium dark:text-gray-500 mb-2">Stock <span className="text-red-500">*</span></label>
-                          <input type="number" value={formData.stock} onChange={e => setFormData({ ...formData, stock: e.target.value })} className={cn('w-full px-3 py-2.5 sm:px-4 sm:py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 dark:bg-gray-800', fieldError('stock') ? 'border-red-500' : 'dark:border-gray-700')} />
+                          <input type="number" id="product-stock" name="stock" value={formData.stock} onChange={e => setFormData({ ...formData, stock: e.target.value })} className={cn('w-full px-3 py-2.5 sm:px-4 sm:py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 dark:bg-gray-800', fieldError('stock') ? 'border-red-500' : 'dark:border-gray-700')} />
                           {fieldError('stock') && <p className="text-red-500 text-xs mt-1 flex items-center gap-1"><AlertCircle className="w-3 h-3" /> {fieldError('stock')}</p>}
                         </div>
                       </div>
                       <div className="flex flex-col sm:flex-row sm:flex-wrap gap-4 sm:gap-6">
                         <label className="flex items-center gap-2 cursor-pointer">
-                          <input type="checkbox" checked={formData.is_active} onChange={e => setFormData({ ...formData, is_active: e.target.checked })} className="w-4 h-4 text-primary-600 border-gray-300 rounded focus:ring-primary-500" />
+                          <input type="checkbox" id="product-is-active" name="is_active" checked={formData.is_active} onChange={e => setFormData({ ...formData, is_active: e.target.checked })} className="w-4 h-4 text-primary-600 border-gray-300 rounded focus:ring-primary-500" />
                           <span className="text-sm dark:text-gray-500">Produit actif</span>
                         </label>
                         <label className="flex items-center gap-2 cursor-pointer">
-                          <input type="checkbox" checked={formData.is_featured} onChange={e => setFormData({ ...formData, is_featured: e.target.checked })} className="w-4 h-4 text-primary-600 border-gray-300 rounded focus:ring-primary-500" />
+                          <input type="checkbox" id="product-is-featured" name="is_featured" checked={formData.is_featured} onChange={e => setFormData({ ...formData, is_featured: e.target.checked })} className="w-4 h-4 text-primary-600 border-gray-300 rounded focus:ring-primary-500" />
                           <span className="text-sm dark:text-gray-500">Produit vedette</span>
                         </label>
                       </div>
@@ -759,7 +763,7 @@ export function AdminProductsPage() {
                             <span className="text-sm font-medium">{cameraOpen ? 'Fermer la camera' : 'Prendre une photo'}</span>
                           </button>
                         </div>
-                        <input ref={fileInputRef} type="file" accept="image/*" multiple className="hidden" onChange={handleFileUpload} />
+                        <input ref={fileInputRef} id="product-image-upload" name="images" type="file" accept="image/*" multiple className="hidden" onChange={handleFileUpload} />
 
                         {cameraOpen && (
                           <div className="mt-3 space-y-3">
@@ -831,6 +835,8 @@ export function AdminProductsPage() {
                               <div key={i} className="flex gap-2 items-center">
                                 <input
                                   type="text"
+                                  id={`product-spec-key-${i}`}
+                                  name={`spec_key_${i}`}
                                   value={spec.key}
                                   onChange={e => updateSpec(i, 'key', e.target.value)}
                                   placeholder="Cle"
@@ -841,6 +847,8 @@ export function AdminProductsPage() {
                                 />
                                 <input
                                   type="text"
+                                  id={`product-spec-value-${i}`}
+                                  name={`spec_value_${i}`}
                                   value={spec.value}
                                   onChange={e => updateSpec(i, 'value', e.target.value)}
                                   placeholder={spec.placeholder || 'Valeur'}
@@ -870,24 +878,24 @@ export function AdminProductsPage() {
                         <div className="space-y-4">
                           <div>
                             <label className="block text-sm font-medium dark:text-gray-500 mb-2">Poids (kg)</label>
-                            <input type="number" step="0.01" value={formData.weight} onChange={e => setFormData({ ...formData, weight: e.target.value })} placeholder="0.00" className={cn('w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 dark:bg-gray-800', fieldError('weight') ? 'border-red-500' : 'dark:border-gray-700')} />
+                            <input type="number" id="product-weight" name="weight" step="0.01" value={formData.weight} onChange={e => setFormData({ ...formData, weight: e.target.value })} placeholder="0.00" className={cn('w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 dark:bg-gray-800', fieldError('weight') ? 'border-red-500' : 'dark:border-gray-700')} />
                             {fieldError('weight') && <p className="text-red-500 text-xs mt-1 flex items-center gap-1"><AlertCircle className="w-3 h-3" /> {fieldError('weight')}</p>}
                           </div>
                           <div>
                             <label className="block text-sm font-medium dark:text-gray-500 mb-2">Dimensions (cm)</label>
                             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                               {(['length', 'width', 'height'] as const).map((dim) => (
-                                <input key={dim} type="number" step="0.1" value={formData.dimensions[dim]} onChange={e => handleDimensionChange(dim, e.target.value)} placeholder={dim === 'length' ? 'Longueur' : dim === 'width' ? 'Largeur' : 'Hauteur'} className="px-3 py-2 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 dark:bg-gray-800 dark:border-gray-700" />
+                                <input key={dim} id={`product-dimension-${dim}`} name={`dimension_${dim}`} type="number" step="0.1" value={formData.dimensions[dim]} onChange={e => handleDimensionChange(dim, e.target.value)} placeholder={dim === 'length' ? 'Longueur' : dim === 'width' ? 'Largeur' : 'Hauteur'} className="px-3 py-2 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 dark:bg-gray-800 dark:border-gray-700" />
                               ))}
                             </div>
                           </div>
                           <div>
                             <label className="block text-sm font-medium dark:text-gray-500 mb-2">Prix coûtant (FCFA)</label>
-                            <input type="number" value={formData.cost_price} onChange={e => setFormData({ ...formData, cost_price: e.target.value })} className="w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 dark:bg-gray-800 dark:border-gray-700" />
+                            <input type="number" id="product-cost-price" name="cost_price" value={formData.cost_price} onChange={e => setFormData({ ...formData, cost_price: e.target.value })} className="w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 dark:bg-gray-800 dark:border-gray-700" />
                           </div>
                           <div>
                             <label className="block text-sm font-medium dark:text-gray-500 mb-2">Alerte stock minimum</label>
-                            <input type="number" value={formData.min_stock_alert} onChange={e => setFormData({ ...formData, min_stock_alert: e.target.value })} placeholder="Ex: 5" className="w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 dark:bg-gray-800 dark:border-gray-700" />
+                            <input type="number" id="product-min-stock-alert" name="min_stock_alert" value={formData.min_stock_alert} onChange={e => setFormData({ ...formData, min_stock_alert: e.target.value })} placeholder="Ex: 5" className="w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 dark:bg-gray-800 dark:border-gray-700" />
                           </div>
                         </div>
                       </div>
@@ -897,15 +905,15 @@ export function AdminProductsPage() {
                         <div className="space-y-4">
                           <div>
                             <label className="block text-sm font-medium dark:text-gray-500 mb-2">Meta titre</label>
-                            <input type="text" value={formData.meta_title} onChange={e => setFormData({ ...formData, meta_title: e.target.value })} placeholder="Titre pour les moteurs de recherche" className="w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 dark:bg-gray-800 dark:border-gray-700" />
+                            <input type="text" id="product-meta-title" name="meta_title" value={formData.meta_title} onChange={e => setFormData({ ...formData, meta_title: e.target.value })} placeholder="Titre pour les moteurs de recherche" className="w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 dark:bg-gray-800 dark:border-gray-700" />
                           </div>
                           <div>
                             <label className="block text-sm font-medium dark:text-gray-500 mb-2">Meta description</label>
-                            <textarea value={formData.meta_description} onChange={e => setFormData({ ...formData, meta_description: e.target.value })} rows={3} placeholder="Description pour les moteurs de recherche" className="w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 dark:bg-gray-800 dark:border-gray-700" />
+                            <textarea id="product-meta-description" name="meta_description" value={formData.meta_description} onChange={e => setFormData({ ...formData, meta_description: e.target.value })} rows={3} placeholder="Description pour les moteurs de recherche" className="w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 dark:bg-gray-800 dark:border-gray-700" />
                           </div>
                           <div>
                             <label className="block text-sm font-medium dark:text-gray-500 mb-2">Meta keywords</label>
-                            <input type="text" value={formData.meta_keywords} onChange={e => setFormData({ ...formData, meta_keywords: e.target.value })} placeholder="Mot-cles separes par des virgules" className="w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 dark:bg-gray-800 dark:border-gray-700" />
+                            <input type="text" id="product-meta-keywords" name="meta_keywords" value={formData.meta_keywords} onChange={e => setFormData({ ...formData, meta_keywords: e.target.value })} placeholder="Mot-cles separes par des virgules" className="w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 dark:bg-gray-800 dark:border-gray-700" />
                           </div>
                         </div>
                       </div>
@@ -922,7 +930,7 @@ export function AdminProductsPage() {
                         <div className="flex flex-wrap gap-2">
                           {formData.variant_sizes.map((size, i) => (
                             <div key={i} className="flex items-center gap-1 bg-gray-100 dark:bg-gray-700 rounded-lg px-3 py-1.5">
-                              <input type="text" value={size} onChange={e => updateVariantSize(i, e.target.value)} placeholder="Ex: S, M, L" className="bg-transparent border-none outline-none text-sm w-16 dark:text-white" />
+                              <input type="text" id={`product-variant-size-${i}`} name={`variant_size_${i}`} value={size} onChange={e => updateVariantSize(i, e.target.value)} placeholder="Ex: S, M, L" className="bg-transparent border-none outline-none text-sm w-16 dark:text-white" />
                               <button type="button" onClick={() => removeVariantSize(i)} className="text-red-500 hover:text-red-700"><X className="w-3 h-3" /></button>
                             </div>
                           ))}
@@ -937,8 +945,8 @@ export function AdminProductsPage() {
                         <div className="space-y-2">
                           {formData.variant_colors.map((color, i) => (
                             <div key={i} className="flex items-center gap-2">
-                              <input type="color" value={color.hex} onChange={e => updateVariantColor(i, 'hex', e.target.value)} className="w-8 h-8 rounded cursor-pointer border dark:border-gray-700" />
-                              <input type="text" value={color.name} onChange={e => updateVariantColor(i, 'name', e.target.value)} placeholder="Nom (ex: Rouge)" className="flex-1 px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 dark:bg-gray-800 dark:border-gray-700" />
+                              <input type="color" id={`product-variant-color-hex-${i}`} name={`variant_color_hex_${i}`} value={color.hex} onChange={e => updateVariantColor(i, 'hex', e.target.value)} className="w-8 h-8 rounded cursor-pointer border dark:border-gray-700" />
+                              <input type="text" id={`product-variant-color-name-${i}`} name={`variant_color_name_${i}`} value={color.name} onChange={e => updateVariantColor(i, 'name', e.target.value)} placeholder="Nom (ex: Rouge)" className="flex-1 px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 dark:bg-gray-800 dark:border-gray-700" />
                               <button type="button" onClick={() => removeVariantColor(i)} className="p-1.5 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg"><X className="w-4 h-4" /></button>
                             </div>
                           ))}

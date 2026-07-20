@@ -147,6 +147,8 @@ export function RegisterPage() {
             <div className="flex items-start gap-2">
               <input
                 type="checkbox"
+                id="accept-terms"
+                name="terms"
                 className="mt-1 w-4 h-4 text-primary-600 border-gray-300 dark:border-gray-600 rounded focus:ring-primary-500"
                 required
               />
