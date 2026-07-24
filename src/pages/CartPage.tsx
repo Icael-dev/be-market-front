@@ -238,7 +238,7 @@ export function CartPage() {
                           value={couponCode}
                           onChange={e => setCouponCode(e.target.value.toUpperCase())}
                           placeholder="Entrez votre code"
-                          className="flex-1 px-3 py-2 border dark:border-gray-700 rounded-lg text-sm dark:bg-gray-800 dark:text-white uppercase tracking-wider"
+                           className="flex-1 px-3 py-2 border dark:border-gray-700 rounded-lg text-sm dark:bg-gray-800 dark:text-white dark:placeholder-gray-500 uppercase tracking-wider"
                         />
                         <button
                           onClick={handleApplyCoupon}

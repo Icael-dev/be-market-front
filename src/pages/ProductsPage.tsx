@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { fetchProducts, fetchCategories, fetchPriceBounds } from '../services/products';
@@ -40,18 +40,28 @@ export function ProductsPage() {
   const selectedBrand = searchParams.get('brand') || '';
   const minPriceParam = searchParams.get('min_price');
   const maxPriceParam = searchParams.get('max_price');
+  const flashSaleFilter = searchParams.get('flash_sale') === 'true';
+  const isFeaturedFilter = searchParams.get('featured') === 'true';
+  const conditionFilter = searchParams.get('condition') || '';
+  const inStockFilter = searchParams.get('in_stock') === 'true';
+  const onSaleFilter = searchParams.get('on_sale') === 'true';
 
   const [priceBounds, setPriceBounds] = useState<{ min: number; max: number }>({ min: 0, max: 500000 });
+  const priceBoundsRef = useRef(priceBounds);
   const [localMin, setLocalMin] = useState(minPriceParam ? parseInt(minPriceParam) : 0);
   const [localMax, setLocalMax] = useState(maxPriceParam ? parseInt(maxPriceParam) : 500000);
 
   const minPrice = minPriceParam ? parseInt(minPriceParam) : 0;
-  const maxPrice = maxPriceParam ? parseInt(maxPriceParam) : priceBounds.max;
+  const maxPrice = maxPriceParam ? parseInt(maxPriceParam) : priceBoundsRef.current.max;
 
   useEffect(() => {
-    setLocalMin(minPriceParam ? parseInt(minPriceParam) : priceBounds.min);
-    setLocalMax(maxPriceParam ? parseInt(maxPriceParam) : priceBounds.max);
-  }, [minPriceParam, maxPriceParam, priceBounds.min, priceBounds.max]);
+    priceBoundsRef.current = priceBounds;
+  }, [priceBounds]);
+
+  useEffect(() => {
+    setLocalMin(minPriceParam ? parseInt(minPriceParam) : priceBoundsRef.current.min);
+    setLocalMax(maxPriceParam ? parseInt(maxPriceParam) : priceBoundsRef.current.max);
+  }, [minPriceParam, maxPriceParam]);
 
   useEffect(() => {
     async function fetchData() {
@@ -67,13 +77,20 @@ export function ProductsPage() {
         );
         setPriceBounds(bounds);
 
+        const effectiveMin = minPriceParam ? parseInt(minPriceParam) : priceBoundsRef.current.min;
+        const effectiveMax = maxPriceParam ? parseInt(maxPriceParam) : priceBoundsRef.current.max;
+
         const filters: FilterOptions = {
           category: selectedCategory || undefined,
           search: searchQuery || undefined,
           sort: sortBy as FilterOptions['sort'] | undefined,
           brand: selectedBrand || undefined,
-          minPrice: minPrice > priceBounds.min ? minPrice : undefined,
-          maxPrice: maxPrice < priceBounds.max ? maxPrice : undefined,
+          flash_sale: flashSaleFilter || undefined,
+          condition: conditionFilter || undefined,
+          in_stock: inStockFilter || undefined,
+          on_sale: onSaleFilter || undefined,
+          minPrice: effectiveMin > priceBoundsRef.current.min ? effectiveMin : undefined,
+          maxPrice: effectiveMax < priceBoundsRef.current.max ? effectiveMax : undefined,
         };
 
         const productsData = await fetchProducts(filters);
@@ -94,7 +111,7 @@ export function ProductsPage() {
     }
 
     fetchData();
-  }, [selectedCategory, searchQuery, sortBy, selectedBrand]);
+  }, [selectedCategory, searchQuery, sortBy, selectedBrand, minPriceParam, maxPriceParam, flashSaleFilter, isFeaturedFilter, conditionFilter, inStockFilter, onSaleFilter]);
 
   const updateFilter = (key: string, value: string | null) => {
     const params = new URLSearchParams(searchParams);
@@ -106,11 +123,21 @@ export function ProductsPage() {
     setSearchParams(params);
   };
 
+  const toggleFilter = (key: string) => {
+    const params = new URLSearchParams(searchParams);
+    if (params.has(key)) {
+      params.delete(key);
+    } else {
+      params.set(key, 'true');
+    }
+    setSearchParams(params);
+  };
+
   const clearFilters = () => {
     setSearchParams(new URLSearchParams());
   };
 
-  const activeFiltersCount = [selectedCategory, searchQuery, selectedBrand, minPrice > priceBounds.min, maxPrice < priceBounds.max].filter(Boolean).length;
+  const activeFiltersCount = [selectedCategory, searchQuery, selectedBrand, minPrice > priceBounds.min, maxPrice < priceBounds.max, flashSaleFilter, isFeaturedFilter, conditionFilter, inStockFilter, onSaleFilter].filter(Boolean).length;
 
   const selectedCategoryName = selectedCategory
     ? categories.find(c => c.id === selectedCategory || c.slug === selectedCategory)?.name
@@ -139,7 +166,7 @@ export function ProductsPage() {
           <div className="hidden lg:block w-64 flex-shrink-0">
             <div className="card p-6 sticky top-20">
               <h3 className="font-semibold dark:text-white mb-4">Categories</h3>
-              <ul className="space-y-2">
+              <ul className="space-y-2 max-h-[36rem] overflow-y-auto">
                 <li>
                   <button
                     onClick={() => updateFilter('category', null)}
@@ -237,6 +264,46 @@ export function ProductsPage() {
                     <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 dark:text-gray-500 pointer-events-none" />
                   </div>
 
+                  <div className="relative">
+                    <select
+                      id="product-filter"
+                      name="filter"
+                      aria-label="Filtrer les produits"
+                      value={isFeaturedFilter ? 'featured' : flashSaleFilter ? 'flash_sale' : conditionFilter === 'used' ? 'used' : inStockFilter ? 'in_stock' : onSaleFilter ? 'on_sale' : ''}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        if (val === 'featured') {
+                          toggleFilter('featured');
+                        } else if (val === 'flash_sale') {
+                          toggleFilter('flash_sale');
+                        } else if (val === 'used') {
+                          toggleFilter('condition');
+                        } else if (val === 'in_stock') {
+                          toggleFilter('in_stock');
+                        } else if (val === 'on_sale') {
+                          toggleFilter('on_sale');
+                        } else {
+                          const params = new URLSearchParams(searchParams);
+                          params.delete('featured');
+                          params.delete('flash_sale');
+                          params.delete('condition');
+                          params.delete('in_stock');
+                          params.delete('on_sale');
+                          setSearchParams(params);
+                        }
+                      }}
+                      className="appearance-none pl-4 pr-10 py-2 border border-gray-200 dark:border-gray-700 rounded-xl text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 bg-white dark:bg-gray-800 cursor-pointer"
+                    >
+                      <option value="">Tous les produits</option>
+                      <option value="featured">Vedettes</option>
+                      <option value="flash_sale">Promos Flash</option>
+                      <option value="on_sale">En promotion</option>
+                      <option value="in_stock">En stock</option>
+                      <option value="used">Occasion</option>
+                    </select>
+                    <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 dark:text-gray-500 pointer-events-none" />
+                  </div>
+
                   <div className="hidden sm:flex items-center gap-2">
                     <button
                       onClick={() => setView('grid')}
@@ -281,7 +348,7 @@ export function ProductsPage() {
                        placeholder="Min"
                        className="input-premium w-24 py-1.5 text-right text-sm"
                      />
-                    <span className="text-gray-400 text-sm">—</span>
+                    <span className="text-gray-400 dark:text-gray-500 text-sm">—</span>
                      <input
                        type="number"
                        value={localMax}
@@ -439,10 +506,10 @@ export function ProductsPage() {
                   ? 'grid-cols-2 md:grid-cols-3'
                   : 'grid-cols-1'
               )}>
-                {products.map((product, index) => (
-                  <ProductCard key={product.id} product={product} index={index} />
-                ))}
-              </div>
+                 {products.map((product, index) => (
+                   <ProductCard key={product.id} product={product} index={index} />
+                 ))}
+               </div>
             )}
           </div>
         </div>

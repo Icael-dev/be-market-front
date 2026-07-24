@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
+import { createContext, useContext, useEffect, useState, useCallback, ReactNode } from 'react';
 import { useAuth } from './AuthContext';
 import type { Product, CartItem } from '../types';
 import { fetchCart, addCartItem, updateCartItem, deleteCartItem, clearCart as clearCartService } from '../services/cart';
@@ -27,7 +27,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     return acc + price * item.quantity;
   }, 0);
 
-  const loadCart = async () => {
+  const loadCart = useCallback(async () => {
     try {
       if (user) {
         const cartItems = await fetchCart();
@@ -42,12 +42,12 @@ export function CartProvider({ children }: { children: ReactNode }) {
     } finally {
       setLoading(false);
     }
-  };
+  }, [user]);
 
   useEffect(() => {
     setLoading(true);
     loadCart();
-  }, [user]);
+  }, [loadCart]);
 
   useEffect(() => {
     if (!user) {

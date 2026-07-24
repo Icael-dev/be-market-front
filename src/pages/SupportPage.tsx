@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
 import { fetchSupportTickets, createSupportTicket, fetchSupportTicket, createSupportMessage } from '../services/support';
@@ -170,11 +170,7 @@ export function TicketDetailPage() {
   const [sending, setSending] = useState(false);
   const [replyError, setReplyError] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (id) fetchTicket();
-  }, [id]);
-
-  const fetchTicket = async () => {
+  const fetchTicket = useCallback(async () => {
     try {
       if (!id) return;
       const ticketData = await fetchSupportTicket(id);
@@ -185,7 +181,11 @@ export function TicketDetailPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [id]);
+
+  useEffect(() => {
+    if (id) fetchTicket();
+  }, [id, fetchTicket]);
 
   const handleSend = async () => {
     if (!newMessage.trim() || !ticket) return;
@@ -237,7 +237,7 @@ if (loading) return <div className="min-h-screen page-bg flex items-center justi
           </div>
           <div className="p-4 border-t border-gray-200 dark:border-gray-800">
             <div className="flex gap-3">
-              <input type="text" id="ticket-reply" name="reply" aria-label="Repondre au ticket" value={newMessage} onChange={e => setNewMessage(e.target.value)} placeholder="Repondre..." className="flex-1 px-4 py-3 border border-gray-200 dark:border-gray-700 rounded-xl bg-white dark:bg-gray-800" onKeyPress={e => e.key === 'Enter' && handleSend()} />
+              <input type="text" id="ticket-reply" name="reply" aria-label="Repondre au ticket" value={newMessage} onChange={e => setNewMessage(e.target.value)} placeholder="Repondre..."               className="flex-1 px-4 py-3 border border-gray-200 dark:border-gray-700 rounded-xl bg-white dark:bg-gray-800 dark:text-white dark:placeholder-gray-500" onKeyPress={e => e.key === 'Enter' && handleSend()} />
               <button onClick={handleSend} disabled={sending || !newMessage} className="p-3 btn-primary disabled:opacity-50"><Send className="w-5 h-5" /></button>
             </div>
             {replyError && (

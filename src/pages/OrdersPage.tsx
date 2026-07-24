@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
@@ -16,11 +16,7 @@ export function OrdersPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('');
 
-  useEffect(() => {
-    fetchOrders();
-  }, [user]);
-
-  const fetchOrders = async () => {
+  const fetchOrders = useCallback(async () => {
     if (!user) return;
 
     try {
@@ -31,7 +27,11 @@ export function OrdersPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [user]);
+
+  useEffect(() => {
+    fetchOrders();
+  }, [fetchOrders]);
 
   const filteredOrders = orders.filter(order => {
     const matchesSearch = !searchQuery || order.order_number.toLowerCase().includes(searchQuery.toLowerCase());
@@ -75,7 +75,7 @@ export function OrdersPage() {
                   placeholder="Rechercher par numero..."
                   value={searchQuery}
                   onChange={e => setSearchQuery(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2.5 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                  className="w-full pl-10 pr-4 py-2.5 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 bg-white dark:bg-gray-800 dark:text-white dark:placeholder-gray-500"
                 />
               </div>
 
@@ -83,7 +83,7 @@ export function OrdersPage() {
                 <select
                   value={statusFilter}
                   onChange={e => setStatusFilter(e.target.value)}
-                  className="appearance-none pl-4 pr-10 py-2.5 border border-gray-200 dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 bg-white dark:bg-gray-800 cursor-pointer"
+                   className="appearance-none pl-4 pr-10 py-2.5 border border-gray-200 dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 bg-white dark:bg-gray-800 dark:text-white cursor-pointer"
                 >
                   <option value="">Tous les statuts</option>
                   {statuses.map(status => (
@@ -144,45 +144,45 @@ export function OrdersPage() {
                     exit={{ opacity: 0, x: -100 }}
                     transition={{ delay: index * 0.05 }}
                   >
-<Link
-                        to={`/orders/${order.id}`}
-                        className="block card p-6 hover:shadow-premium transition-all"
-                      >
-                      <div className="flex items-center justify-between mb-4">
-                        <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-full bg-primary-50 dark:bg-primary-900/30 flex items-center justify-center text-primary-600 dark:text-primary-400">
-                            <Package className="w-5 h-5" />
-                          </div>
-                          <div>
-                            <p className="font-medium dark:text-white">{order.order_number}</p>
-                            <p className="text-sm dark:text-gray-500">
-                              {new Date(order.created_at).toLocaleDateString('fr-FR', {
-                                day: 'numeric',
-                                month: 'long',
-                                year: 'numeric'
-                              })}
-                            </p>
-                          </div>
+                    <Link
+                      to={`/orders/${order.id}`}
+                      className="block card p-6 hover:shadow-premium transition-all"
+                    >
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-full bg-primary-50 dark:bg-primary-900/30 flex items-center justify-center text-primary-600 dark:text-primary-400">
+                          <Package className="w-5 h-5" />
                         </div>
-
-                        <ChevronRight className="w-5 h-5 dark:text-gray-500" />
+                        <div>
+                          <p className="font-medium dark:text-white">{order.order_number}</p>
+                          <p className="text-sm dark:text-gray-500">
+                            {new Date(order.created_at).toLocaleDateString('fr-FR', {
+                              day: 'numeric',
+                              month: 'long',
+                              year: 'numeric'
+                            })}
+                          </p>
+                        </div>
                       </div>
 
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          <span className={`inline-flex px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(order.status)}`}>
-                            {getStatusLabel(order.status)}
-                          </span>
-                          <span className={`inline-flex px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(order.payment_status)}`}>
-                            {getStatusLabel(order.payment_status)}
-                          </span>
-                        </div>
+                      <ChevronRight className="w-5 h-5 dark:text-gray-500" />
+                    </div>
 
-                        <p className="font-bold dark:text-white">
-                          {formatPrice(order.total)}
-                        </p>
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <span className={`inline-flex px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(order.status)}`}>
+                          {getStatusLabel(order.status)}
+                        </span>
+                        <span className={`inline-flex px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(order.payment_status)}`}>
+                          {getStatusLabel(order.payment_status)}
+                        </span>
                       </div>
-                    </Link>
+
+                      <p className="font-bold dark:text-white">
+                        {formatPrice(order.total)}
+                      </p>
+                    </div>
+                  </Link>
                   </motion.div>
                 ))}
               </AnimatePresence>
@@ -200,11 +200,7 @@ export function OrderDetailPage() {
   const [order, setOrder] = useState<Order | null>(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    fetchOrder();
-  }, [id, user]);
-
-  const fetchOrder = async () => {
+  const fetchOrder = useCallback(async () => {
     if (!id || !user) return;
     try {
       const orderData = await fetchOrderById(id);
@@ -214,7 +210,11 @@ export function OrderDetailPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [id, user]);
+
+  useEffect(() => {
+    fetchOrder();
+  }, [fetchOrder]);
 
   if (loading) return <PageLoading />;
 

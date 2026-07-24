@@ -1,13 +1,19 @@
+export interface CategorySpec {
+  id: string;
+  category_id: string;
+  key: string;
+  placeholder: string | null;
+}
+
 export interface Category {
   id: string;
   name: string;
   slug: string;
   description: string | null;
-  image_url: string | null;
+  sort_order: number;
   is_active: boolean;
-  created_at: string;
   deleted_at?: string | null;
-  specs?: { key: string; placeholder?: string }[];
+  specs?: CategorySpec[];
 }
 
 export interface Product {
@@ -26,6 +32,7 @@ export interface Product {
   specs: Record<string, string>;
   is_featured: boolean;
   is_active: boolean;
+  condition?: string;
   weight: number | null;
   short_description: string | null;
   cost_price: number | null;
@@ -39,6 +46,7 @@ export interface Product {
   updated_at: string;
   deleted_at?: string | null;
   category?: Category;
+  reviews_count?: number;
 }
 
 export type UserRole = 'admin' | 'staff' | 'client';
@@ -127,6 +135,12 @@ export interface Order {
   updated_at: string;
   deleted_at?: string | null;
   items?: OrderItem[];
+  payments?: Payment[];
+  user?: {
+    id: string;
+    email: string;
+    profile?: Profile;
+  };
 }
 
 export interface OrderItem {
@@ -153,6 +167,11 @@ export interface Payment {
   paid_at: string | null;
   created_at: string;
   order?: Order;
+  user?: {
+    id: string;
+    email: string;
+    profile?: Profile;
+  };
 }
 
 export interface Review {
@@ -197,7 +216,7 @@ export interface Banner {
   link_url: string | null;
   button_text: string | null;
   is_active: boolean;
-  sort_order: number;
+  sort_order: number | null;
   created_at: string;
   updated_at: string;
 }
@@ -214,6 +233,8 @@ export interface BlogPost {
   published_at: string | null;
   created_at: string;
   updated_at: string;
+  related_product_ids?: string[];
+  related_products?: Product[];
 }
 
 export interface Settings {
@@ -231,7 +252,7 @@ export interface Coupon {
   id: string;
   code: string;
   discount_type: 'percentage' | 'fixed';
-  discount_value: number;
+  discount_value: number | null;
   min_order_amount: number | null;
   max_uses: number | null;
   uses_count: number;
@@ -284,6 +305,11 @@ export interface SupportMessage {
   is_from_admin: boolean;
   created_at: string;
   profile?: Profile;
+  user?: {
+    id: string;
+    email: string;
+    profile?: Profile;
+  };
 }
 
 export interface FAQ {
@@ -307,7 +333,7 @@ export interface LegalPage {
 export interface FlashSale {
   id: string;
   product_id: string;
-  discount_percentage: number;
+  discount_percentage: number | null;
   starts_at: string;
   ends_at: string;
   is_active: boolean;
@@ -334,6 +360,11 @@ export interface LoyaltyTransaction {
   reference?: string | null;
   created_at: string;
   order?: Order;
+  user?: {
+    id: string;
+    email: string;
+    profile?: Profile;
+  };
 }
 
 export interface ShippingAddress {
@@ -356,5 +387,9 @@ export interface FilterOptions {
   maxPrice?: number;
   search?: string;
   brand?: string;
+  flash_sale?: boolean;
+  condition?: string;
+  in_stock?: boolean;
+  on_sale?: boolean;
   sort?: 'price_asc' | 'price_desc' | 'newest' | 'name_asc' | 'name_desc';
 }

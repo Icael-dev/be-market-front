@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ShoppingCart, Heart, Star, Sparkles } from 'lucide-react';
+import { ShoppingCart, Heart, Star, Sparkles, Zap } from 'lucide-react';
 import type { Product } from '../types';
 import { formatPrice, cn, FALLBACK_IMAGE } from '../lib/utils';
 import { useCart } from '../context/CartContext';
@@ -22,6 +22,9 @@ export const ProductCard = memo(function ProductCard({ product, index = 0 }: Pro
   const discount = product.compare_price
     ? Math.round(((product.compare_price - product.price) / product.compare_price) * 100)
     : 0;
+
+  const flashDiscount = product.flash_discount_percentage || 0;
+  const displayDiscount = flashDiscount > 0 ? flashDiscount : discount;
 
   const isWishlisted = isInWishlist(product.id);
 
@@ -74,14 +77,14 @@ export const ProductCard = memo(function ProductCard({ product, index = 0 }: Pro
               className="absolute inset-0 bg-gradient-to-t from-black/50 dark:from-black/70 via-transparent to-transparent"
             />
 
-            {discount > 0 && (
+            {displayDiscount > 0 && (
               <motion.div
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
-                className="absolute top-3 left-3 bg-gradient-to-r from-red-500 to-orange-500 text-white text-xs font-bold px-3 py-1.5 rounded-full flex items-center gap-1 shadow-lg"
+                className={`absolute top-3 left-3 text-white text-xs font-bold px-3 py-1.5 rounded-full flex items-center gap-1 shadow-lg ${flashDiscount > 0 ? 'bg-gradient-to-r from-purple-500 to-pink-500' : 'bg-gradient-to-r from-red-500 to-orange-500'}`}
               >
-                <Sparkles className="w-3 h-3" />
-                -{discount}%
+                {flashDiscount > 0 ? <Zap className="w-3 h-3" /> : <Sparkles className="w-3 h-3" />}
+                -{displayDiscount}%
               </motion.div>
             )}
 
@@ -139,7 +142,7 @@ export const ProductCard = memo(function ProductCard({ product, index = 0 }: Pro
                   )}
                 />
               ))}
-              <span className="text-xs text-gray-500 dark:text-gray-400 ml-1">(24)</span>
+              <span className="text-xs text-gray-500 dark:text-gray-400 ml-1">({product.reviews_count ?? 0})</span>
             </div>
 
             <div className="flex flex-col items-start mt-3 pt-3 border-t border-gray-100 dark:border-gray-700">

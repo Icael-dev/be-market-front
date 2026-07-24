@@ -19,10 +19,7 @@ export default tseslint.config(
     },
     rules: {
       ...reactHooks.configs.recommended.rules,
-      // Context files intentionally export both a Provider component and a hook.
       'react-refresh/only-export-components': 'off',
-      // Many effects fetch data once on mount; missing deps are intentional.
-      'react-hooks/exhaustive-deps': 'off',
     },
   }
 );

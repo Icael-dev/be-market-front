@@ -1,4 +1,4 @@
-import { ReactNode, useState } from 'react';
+import { ReactNode, useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useCart } from '../../context/CartContext';
@@ -67,7 +67,7 @@ const navItems: NavItem[] = [
 const sections = [...new Set(navItems.map(item => item.section).filter(Boolean))] as string[];
 
 export function AdminLayout({ children }: AdminLayoutProps) {
-  const { isAdmin, isSuperAdmin, signOut, profile } = useAuth();
+  const { isAdmin, isSuperAdmin, signOut, profile, loading } = useAuth();
   const { count } = useCart();
   const { items: wishlistItems } = useWishlist();
   const { theme, toggleTheme } = useTheme();
@@ -75,8 +75,21 @@ export function AdminLayout({ children }: AdminLayoutProps) {
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
+  useEffect(() => {
+    if (!loading && !isAdmin) {
+      navigate('/');
+    }
+  }, [loading, isAdmin, navigate]);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-spin w-10 h-10 border-2 border-gray-200 border-t-primary-600 rounded-full" />
+      </div>
+    );
+  }
+
   if (!isAdmin) {
-    navigate('/');
     return null;
   }
 
@@ -90,7 +103,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
       <div className="lg:hidden fixed top-0 left-0 right-0 h-20 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 z-50 flex items-center px-4 justify-between">
         <button
           onClick={() => setSidebarOpen(true)}
-          className="p-2 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg"
+          className="p-3 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg"
         >
           <Menu className="w-6 h-6" />
         </button>
@@ -98,14 +111,14 @@ export function AdminLayout({ children }: AdminLayoutProps) {
         <div className="flex items-center gap-1">
           <button
             onClick={toggleTheme}
-            className="p-2 text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+          className="p-3 text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
             title={theme === 'light' ? 'Mode sombre' : 'Mode clair'}
           >
             {theme === 'light' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
           </button>
           <Link
             to="/wishlist"
-          className="relative p-2 text-gray-600 dark:text-gray-400 hover:text-red-500 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+           className="relative p-3 text-gray-600 dark:text-gray-400 hover:text-red-500 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
           title="Favoris"
           >
             <Heart className="w-5 h-5" />
@@ -117,7 +130,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
           </Link>
           <Link
             to="/cart"
-          className="relative p-2 text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+           className="relative p-3 text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
           title="Panier"
           >
             <ShoppingCart className="w-5 h-5" />
@@ -129,14 +142,14 @@ export function AdminLayout({ children }: AdminLayoutProps) {
           </Link>
           <Link
             to="/"
-          className="p-2 text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+          className="p-3 text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
           title="Voir le site"
           >
             <Home className="w-5 h-5" />
           </Link>
           <button
             onClick={signOut}
-            className="p-2 text-gray-600 dark:text-gray-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg transition-colors"
+            className="p-3 text-gray-600 dark:text-gray-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg transition-colors"
             title="Deconnexion"
           >
             <LogOut className="w-5 h-5" />
@@ -162,7 +175,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
               </Link>
               <button
                 onClick={() => setSidebarOpen(false)}
-                className="lg:hidden p-2 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+                className="lg:hidden p-3 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>

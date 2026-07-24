@@ -1,12 +1,14 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { fetchAdminPayments } from '../../services/admin';
 import { AdminLayout } from '../../components/admin/AdminLayout';
 import { PageHeader } from '../../components/admin/PageHeader';
+import { MobileNotOptimizedBanner } from '../../components/admin/MobileNotOptimizedBanner';
+import { StatusBadge } from '../../components/admin/StatusBadge';
 import { Search, Loader2 } from 'lucide-react';
 import type { Payment } from '../../types';
-import { formatPrice, cn, getStatusColor } from '../../lib/utils';
+import { formatPrice } from '../../lib/utils';
 import { format } from 'date-fns';
 
 export function AdminPaymentsPage() {
@@ -16,7 +18,7 @@ export function AdminPaymentsPage() {
   const [methodFilter, setMethodFilter] = useState('');
   const [search, setSearch] = useState('');
 
-  const load = async () => {
+  const load = useCallback(async () => {
     setLoading(true);
     try {
       const data = await fetchAdminPayments({
@@ -29,11 +31,11 @@ export function AdminPaymentsPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [statusFilter, methodFilter]);
 
   useEffect(() => {
     load();
-  }, [statusFilter, methodFilter]);
+  }, [load]);
 
   const filtered = payments.filter(p => {
     const matchesSearch = !search ||
@@ -44,6 +46,7 @@ export function AdminPaymentsPage() {
 
   return (
     <AdminLayout>
+      <MobileNotOptimizedBanner />
       <div className="p-6 lg:p-8">
         <PageHeader title="Paiements" subtitle={`${filtered.length} transaction${filtered.length > 1 ? 's' : ''}`} />
 
@@ -56,13 +59,13 @@ export function AdminPaymentsPage() {
                 placeholder="Rechercher par reference ou commande..."
                 value={search}
                 onChange={e => setSearch(e.target.value)}
-                className="w-full pl-10 pr-4 py-2.5 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                className="w-full pl-10 pr-4 py-2.5 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 bg-white dark:bg-gray-800 dark:text-white dark:placeholder-gray-500"
               />
             </div>
             <select
               value={statusFilter}
               onChange={e => setStatusFilter(e.target.value)}
-              className="px-3 py-2.5 border dark:border-gray-700 rounded-xl text-sm"
+              className="px-3 py-2.5 border dark:border-gray-700 rounded-xl text-sm bg-white dark:bg-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 cursor-pointer"
             >
               <option value="">Tous les statuts</option>
               <option value="paid">Paye</option>
@@ -73,7 +76,7 @@ export function AdminPaymentsPage() {
             <select
               value={methodFilter}
               onChange={e => setMethodFilter(e.target.value)}
-              className="px-3 py-2.5 border dark:border-gray-700 rounded-xl text-sm"
+              className="px-3 py-2.5 border dark:border-gray-700 rounded-xl text-sm bg-white dark:bg-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 cursor-pointer"
             >
               <option value="">Toutes les methodes</option>
               <option value="tmoney">Tmoney</option>
@@ -106,22 +109,23 @@ export function AdminPaymentsPage() {
                   ) : filtered.map((p) => (
                     <tr key={p.id} className="hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
                       <td className="px-6 py-4 font-mono text-sm dark:text-white">{p.reference || '—'}</td>
-                      <td className="px-6 py-4 text-sm dark:text-gray-500">{p.user?.name || p.order?.user?.name || '—'}</td>
+                      <td className="px-6 py-4 text-sm dark:text-gray-500">{p.user?.profile?.full_name || p.order?.user?.profile?.full_name || '—'}</td>
                       <td className="px-6 py-4">
                         {p.order ? (
                           <Link to={`/admin/customers/${p.order.user_id}`} className="text-sm text-primary-600 dark:text-primary-400 hover:underline">
                             {p.order.order_number}
                           </Link>
                         ) : (
-                          <span className="text-sm text-gray-500">—</span>
+                          <span className="text-sm text-gray-500 dark:text-gray-400">—</span>
                         )}
                       </td>
                       <td className="px-6 py-4 text-sm dark:text-gray-500">{p.payment_method}</td>
                       <td className="px-6 py-4 text-sm font-medium dark:text-white">{formatPrice(p.amount)}</td>
                       <td className="px-6 py-4">
-                        <span className={cn('inline-flex px-2 py-1 rounded-full text-xs font-medium', getStatusColor(p.status))}>
-                          {p.status}
-                        </span>
+                        <StatusBadge
+                          label={p.status}
+                          variant={p.status === 'paid' ? 'success' : p.status === 'failed' || p.status === 'refunded' ? 'danger' : 'warning'}
+                        />
                       </td>
                       <td className="px-6 py-4 text-sm text-gray-500 dark:text-gray-500">{format(new Date(p.created_at), 'dd/MM/yyyy HH:mm')}</td>
                     </tr>

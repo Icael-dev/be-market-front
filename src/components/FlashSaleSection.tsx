@@ -113,7 +113,7 @@ export function FlashSaleSection() {
             const basePrice = sale.product.price;
             const discountedPrice =
               sale.product.effective_price ??
-              basePrice * (1 - sale.discount_percentage / 100);
+              (sale.discount_percentage != null ? basePrice * (1 - sale.discount_percentage / 100) : basePrice);
             const productWithDiscount = {
               ...sale.product,
               compare_price: basePrice,

@@ -5,6 +5,7 @@ import { fetchAdminOrders, updateAdminOrder, restoreAdminOrder } from '../../ser
 import { formatPrice, getStatusColor, getStatusLabel } from '../../lib/utils';
 import { AdminLayout } from '../../components/admin/AdminLayout';
 import { PageHeader } from '../../components/admin/PageHeader';
+import { MobileNotOptimizedBanner } from '../../components/admin/MobileNotOptimizedBanner';
 import type { Order, OrderStatus } from '../../types';
 import {
   Package,
@@ -78,6 +79,7 @@ export function AdminOrdersPage() {
 
   return (
     <AdminLayout>
+      <MobileNotOptimizedBanner />
       <div className="p-6 lg:p-8">
         <PageHeader title="Commandes" subtitle={`${orders.length} commandes`} />
 
@@ -97,7 +99,7 @@ export function AdminOrdersPage() {
                 placeholder="Rechercher par numero..."
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-2.5 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                className="w-full pl-10 pr-4 py-2.5 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 bg-white dark:bg-gray-800 dark:text-white dark:placeholder-gray-500"
               />
             </div>
 
@@ -334,7 +336,7 @@ export function AdminOrdersPage() {
                     <span>{formatPrice(selectedOrder.subtotal)}</span>
                   </div>
                   {selectedOrder.discount > 0 && (
-                    <div className="flex justify-between text-green-600">
+                    <div className="flex justify-between text-green-600 dark:text-green-400">
                       <span>Remise</span>
                       <span>-{formatPrice(selectedOrder.discount)}</span>
                     </div>

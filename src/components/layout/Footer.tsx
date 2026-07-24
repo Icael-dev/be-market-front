@@ -21,24 +21,24 @@ export function Footer({ compact = false }: { compact?: boolean }) {
               <span className="text-gray-400 dark:text-gray-500">&copy; {new Date().getFullYear()} BE-Market. Tous droits reserves.</span>
             </div>
             <div className="flex items-center gap-5">
-              <span className="hidden sm:inline text-gray-500">Suivez-nous :</span>
+              <span className="hidden sm:inline text-gray-500 dark:text-gray-400">Suivez-nous :</span>
               <div className="flex items-center gap-3">
-                <a href="https://facebook.com/bemarkettg" target="_blank" rel="noopener noreferrer" aria-label="Facebook" className="text-gray-400 hover:text-white transition-colors">
+                <a href="https://facebook.com/bemarkettg" target="_blank" rel="noopener noreferrer" aria-label="Facebook" className="text-gray-400 dark:text-gray-500 hover:text-white transition-colors">
                   <Facebook className="w-5 h-5" />
                 </a>
-                <a href="https://instagram.com/bemarkettg" target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="text-gray-400 hover:text-white transition-colors">
+                <a href="https://instagram.com/bemarkettg" target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="text-gray-400 dark:text-gray-500 hover:text-white transition-colors">
                   <Instagram className="w-5 h-5" />
                 </a>
-                <a href="https://twitter.com/bemarkettg" target="_blank" rel="noopener noreferrer" aria-label="Twitter" className="text-gray-400 hover:text-white transition-colors">
+                <a href="https://twitter.com/bemarkettg" target="_blank" rel="noopener noreferrer" aria-label="Twitter" className="text-gray-400 dark:text-gray-500 hover:text-white transition-colors">
                   <Twitter className="w-5 h-5" />
                 </a>
-                <a href="https://tiktok.com/@bemarkettg" target="_blank" rel="noopener noreferrer" aria-label="TikTok" className="text-gray-400 hover:text-white transition-colors">
+                <a href="https://tiktok.com/@bemarkettg" target="_blank" rel="noopener noreferrer" aria-label="TikTok" className="text-gray-400 dark:text-gray-500 hover:text-white transition-colors">
                   <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.88-2.88 2.89 2.89 0 0 1 2.88-2.88c.28 0 .54.04.79.1v-3.5a6.37 6.37 0 0 0-.79-.05A6.34 6.34 0 0 0 3.15 15.2a6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.34-6.34V8.73a8.16 8.16 0 0 0 4.76 1.52v-3.4a4.85 4.85 0 0 1-1-.16z"/></svg>
                 </a>
               </div>
               <span className="w-px h-4 bg-gray-700" />
-              <Link to="/faq" className="text-gray-400 hover:text-white transition-colors">FAQ</Link>
-              <Link to="/blog" className="text-gray-400 hover:text-white transition-colors">Blog</Link>
+              <Link to="/faq" className="text-gray-400 dark:text-gray-500 hover:text-white transition-colors">FAQ</Link>
+              <Link to="/blog" className="text-gray-400 dark:text-gray-500 hover:text-white transition-colors">Blog</Link>
             </div>
           </div>
         </div>

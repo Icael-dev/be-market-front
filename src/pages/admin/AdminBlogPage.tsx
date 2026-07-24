@@ -7,33 +7,45 @@ import {
   updateAdminBlogPost,
   deleteAdminBlogPost
 } from '../../services/admin';
-import type { BlogPost } from '../../types';
-import { Plus, Edit2, Trash2, X, Save, FileText, Calendar, Eye, Loader2, Power } from 'lucide-react';
+import { fetchProducts } from '../../services/products';
+import type { BlogPost, Product } from '../../types';
+import { Plus, Edit2, Trash2, Save, FileText, Calendar, Loader2, Power } from 'lucide-react';
 import { AdminLayout } from '../../components/admin/AdminLayout';
 import { PageHeader } from '../../components/admin/PageHeader';
-import { AnimatePresence } from 'framer-motion';
+import { MobileNotOptimizedBanner } from '../../components/admin/MobileNotOptimizedBanner';
+import { StatusBadge } from '../../components/admin/StatusBadge';
+import { AdminDrawer } from '../../components/admin/AdminDrawer';
+import { ConfirmDialog } from '../../components/admin/ConfirmDialog';
 import { format } from 'date-fns';
 import { useEscape } from '../../hooks/useKeyPress';
+import { ImageUpload } from '../../components/admin/ImageUpload';
 
 export function AdminBlogPage() {
   const [posts, setPosts] = useState<BlogPost[]>([]);
+  const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   useEscape(() => setShowForm(false), showForm);
   const [editingPost, setEditingPost] = useState<BlogPost | null>(null);
   const [saving, setSaving] = useState(false);
   const [togglingId, setTogglingId] = useState<string | null>(null);
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [confirmTargetId, setConfirmTargetId] = useState<string | null>(null);
 
   const [formData, setFormData] = useState({
     title: '',
     content: '',
     excerpt: '',
     image_url: '',
-    is_published: false
+    is_published: false,
+    related_product_ids: [] as string[]
   });
+
+  const [imageUrls, setImageUrls] = useState<string[]>([]);
 
   useEffect(() => {
     fetchPosts();
+    fetchProducts({}).then(setProducts).catch(console.error);
   }, []);
 
   const fetchPosts = async () => {
@@ -53,8 +65,10 @@ export function AdminBlogPage() {
       content: '',
       excerpt: '',
       image_url: '',
-      is_published: false
+      is_published: false,
+      related_product_ids: []
     });
+    setImageUrls([]);
     setEditingPost(null);
   };
 
@@ -65,8 +79,10 @@ export function AdminBlogPage() {
       content: post.content,
       excerpt: post.excerpt || '',
       image_url: post.image_url || '',
-      is_published: post.is_published
+      is_published: post.is_published,
+      related_product_ids: post.related_product_ids || []
     });
+    setImageUrls(post.image_url ? [post.image_url] : []);
     setShowForm(true);
   };
 
@@ -82,6 +98,7 @@ export function AdminBlogPage() {
     try {
       const postData = {
         ...formData,
+        image_url: imageUrls[0] || null,
         slug: editingPost ? editingPost.slug : `${slug}-${Date.now().toString(36)}`,
         published_at: formData.is_published && (!editingPost || !editingPost.is_published)
           ? new Date().toISOString()
@@ -105,15 +122,17 @@ export function AdminBlogPage() {
     }
   };
 
-  const handleDelete = async (id: string) => {
-    if (!window.confirm('Supprimer cet article ?')) return;
-
+  const handleConfirmDelete = async () => {
+    if (!confirmTargetId) return;
     try {
-      await deleteAdminBlogPost(id);
-      setPosts(prev => prev.filter(p => p.id !== id));
+      await deleteAdminBlogPost(confirmTargetId);
+      setPosts(prev => prev.filter(p => p.id !== confirmTargetId));
     } catch (error) {
       console.error('Error deleting blog post:', error);
       toast.error('Erreur lors de la suppression');
+    } finally {
+      setConfirmOpen(false);
+      setConfirmTargetId(null);
     }
   };
 
@@ -139,6 +158,7 @@ export function AdminBlogPage() {
 
   return (
     <AdminLayout>
+      <MobileNotOptimizedBanner />
       <div className="p-6 lg:p-8">
         <PageHeader
           title="Blog"
@@ -157,7 +177,8 @@ export function AdminBlogPage() {
         </PageHeader>
 
         <div className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 overflow-hidden">
-          <table className="w-full">
+          <div className="overflow-x-auto">
+            <table className="w-full">
             <thead className="bg-gray-50 border-b dark:border-gray-700">
               <tr>
                 <th className="text-left px-6 py-4 text-sm font-medium dark:text-gray-500">Article</th>
@@ -197,14 +218,10 @@ export function AdminBlogPage() {
                     </div>
                   </td>
                   <td className="px-6 py-4">
-                    <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${
-                      post.is_published
-                        ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
-                        : 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400'
-                    }`}>
-                      <Eye className="w-3 h-3" />
-                      {post.is_published ? 'Publie' : 'Brouillon'}
-                    </span>
+                    <StatusBadge
+                      label={post.is_published ? 'Publie' : 'Brouillon'}
+                      variant={post.is_published ? 'success' : 'warning'}
+                    />
                   </td>
                   <td className="px-6 py-4 text-sm dark:text-gray-500">
                     <div className="flex items-center gap-1">
@@ -233,7 +250,7 @@ export function AdminBlogPage() {
                         <Edit2 className="w-6 h-6" />
                       </button>
                       <button
-                        onClick={() => handleDelete(post.id)}
+                        onClick={() => { setConfirmTargetId(post.id); setConfirmOpen(true); }}
                         className="p-3 bg-red-100 hover:bg-red-200 text-red-700 border border-red-300 rounded-lg transition-colors dark:bg-red-900/40 dark:text-red-300 dark:border-red-700 dark:hover:bg-red-900/60"
                       >
                         <Trash2 className="w-6 h-6" />
@@ -244,58 +261,36 @@ export function AdminBlogPage() {
               ))}
             </tbody>
           </table>
+          </div>
 
           {posts.length === 0 && !loading && (
             <div className="text-center py-12">
-              <FileText className="w-12 h-12 text-gray-300 mx-auto mb-4" />
+              <FileText className="w-12 h-12 text-gray-300 dark:text-gray-500 mx-auto mb-4" />
               <p className="dark:text-gray-500">Aucun article</p>
             </div>
           )}
         </div>
       </div>
 
-      <AnimatePresence>
-        {showForm && (
-          <>
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setShowForm(false)}
-              className="fixed inset-0 bg-black/50 z-50"
+      <AdminDrawer
+        isOpen={showForm}
+        onClose={() => setShowForm(false)}
+        title={editingPost ? 'Modifier l\'article' : 'Nouvel article'}
+      >
+        <div className="p-6 space-y-6">
+          <div>
+            <label className="block text-sm font-medium dark:text-gray-300 mb-2">
+              Titre *
+            </label>
+            <input
+              type="text"
+              id="blog-title"
+              name="title"
+              value={formData.title}
+              onChange={e => setFormData({ ...formData, title: e.target.value })}
+              className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 bg-white dark:bg-gray-800 dark:text-white dark:placeholder-gray-500"
             />
-            <motion.div
-              initial={{ opacity: 0, x: '100%' }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: '100%' }}
-              className="fixed right-0 top-0 bottom-0 w-full max-w-xl bg-white dark:bg-gray-800 z-50 overflow-y-auto"
-            >
-              <div className="p-6 border-b dark:border-gray-700 flex items-center justify-between sticky top-0 bg-white dark:bg-gray-800">
-                <h2 className="text-xl font-bold dark:text-white">
-                  {editingPost ? 'Modifier l\'article' : 'Nouvel article'}
-                </h2>
-                <button
-                  onClick={() => setShowForm(false)}
-                  className="p-2 hover:bg-gray-100 hover:dark:bg-gray-700 rounded-lg"
-                >
-                  <X className="w-5 h-5" />
-                </button>
-              </div>
-
-              <div className="p-6 space-y-6">
-                <div>
-                  <label className="block text-sm font-medium dark:text-gray-300 mb-2">
-                    Titre *
-                  </label>
-                  <input
-                    type="text"
-                    id="blog-title"
-                    name="title"
-                    value={formData.title}
-                    onChange={e => setFormData({ ...formData, title: e.target.value })}
-                    className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
-                  />
-                </div>
+          </div>
 
                 <div>
                   <label className="block text-sm font-medium dark:text-gray-300 mb-2">
@@ -307,7 +302,7 @@ export function AdminBlogPage() {
                     value={formData.excerpt}
                     onChange={e => setFormData({ ...formData, excerpt: e.target.value })}
                     rows={2}
-                    className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                    className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 bg-white dark:bg-gray-800 dark:text-white dark:placeholder-gray-500"
                   />
                 </div>
 
@@ -321,22 +316,44 @@ export function AdminBlogPage() {
                     value={formData.content}
                     onChange={e => setFormData({ ...formData, content: e.target.value })}
                     rows={10}
-                    className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                    className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 bg-white dark:bg-gray-800 dark:text-white dark:placeholder-gray-500"
                   />
                 </div>
 
+                <ImageUpload
+                  value={imageUrls}
+                  onChange={setImageUrls}
+                  folder="blog"
+                  single
+                  maxFiles={1}
+                />
+
                 <div>
                   <label className="block text-sm font-medium dark:text-gray-300 mb-2">
-                    URL de l'image
+                    Produits lies
                   </label>
-                  <input
-                    type="text"
-                    id="blog-image_url"
-                    name="image_url"
-                    value={formData.image_url}
-                    onChange={e => setFormData({ ...formData, image_url: e.target.value })}
-                    className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
-                  />
+                  <div className="max-h-48 overflow-y-auto border dark:border-gray-700 rounded-xl p-3 space-y-2">
+                    {products.length === 0 ? (
+                      <p className="text-sm text-gray-500 dark:text-gray-400">Aucun produit disponible</p>
+                    ) : (
+                      products.map(product => (
+                        <label key={product.id} className="flex items-center gap-2 cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={formData.related_product_ids.includes(product.id)}
+                            onChange={e => {
+                              const ids = e.target.checked
+                                ? [...formData.related_product_ids, product.id]
+                                : formData.related_product_ids.filter(id => id !== product.id);
+                              setFormData({ ...formData, related_product_ids: ids });
+                            }}
+                            className="w-4 h-4 text-primary-600 border-gray-300 dark:border-gray-600 rounded"
+                          />
+                          <span className="text-sm dark:text-gray-300">{product.name}</span>
+                        </label>
+                      ))
+                    )}
+                  </div>
                 </div>
 
                 <label className="flex items-center gap-2 cursor-pointer">
@@ -368,10 +385,15 @@ export function AdminBlogPage() {
                   </button>
                 </div>
               </div>
-            </motion.div>
-          </>
-        )}
-      </AnimatePresence>
-    </AdminLayout>
+            </AdminDrawer>
+        <ConfirmDialog
+          open={confirmOpen}
+          onClose={() => { setConfirmOpen(false); setConfirmTargetId(null); }}
+          onConfirm={handleConfirmDelete}
+          title="Supprimer cet article ?"
+          message="Cette action est irreversible."
+          variant="danger"
+        />
+      </AdminLayout>
   );
 }

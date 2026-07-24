@@ -1,5 +1,6 @@
 import { useState, useCallback, useMemo } from 'react';
-import type { Product, Category } from '../types';
+import type { Product, Category, CategorySpec } from '../types';
+import { getImageUrl } from '../lib/imageUrl';
 
 type DimensionsType = { length: string; width: string; height: string };
 type VariantColor = { name: string; hex: string };
@@ -13,9 +14,10 @@ interface FormDataType {
   stock: string;
   category_id: string;
   images: string[];
-  specs: { key: string; value: string; placeholder?: string }[];
+  specs: { key: string; value: string; placeholder?: string | null }[];
   is_featured: boolean;
   is_active: boolean;
+  condition: string;
   weight: string;
   cost_price: string;
   dimensions: DimensionsType;
@@ -97,6 +99,7 @@ const initialFormData: FormDataType = {
   specs: [{ key: '', value: '', placeholder: '' }],
   is_featured: false,
   is_active: true,
+  condition: 'new',
   weight: '',
   cost_price: '',
   dimensions: { length: '', width: '', height: '' },
@@ -116,9 +119,10 @@ export function useProductForm(categories: Category[]) {
   const getCategoryDefaultSpecs = useCallback((categoryId: string) => {
     const category = categories.find(c => c.id === categoryId);
     if (category?.specs && category.specs.length > 0) {
-      return category.specs.map((s: { key: string; placeholder?: string }) => ({ key: s.key, value: '', placeholder: s.placeholder }));
+      return category.specs.map((s: CategorySpec) => ({ key: s.key, value: '', placeholder: s.placeholder }));
     }
-    return (DEFAULT_SPECS_BY_CATEGORY[categoryId] || []).map(s => ({ key: s.key, value: '', placeholder: s.placeholder }));
+    const fallbackKey = category?.slug || categoryId;
+    return (DEFAULT_SPECS_BY_CATEGORY[fallbackKey] || []).map(s => ({ key: s.key, value: '', placeholder: s.placeholder }));
   }, [categories]);
 
   const resetForm = useCallback(() => {
@@ -128,14 +132,6 @@ export function useProductForm(categories: Category[]) {
   }, []);
 
   const populateForm = useCallback((product: Product) => {
-    const getImageUrl = (url: string) => {
-      if (!url) return url;
-      if (url.includes('/storage/products/')) {
-        return url.replace('/storage/products/', '/api/images/');
-      }
-      return url;
-    };
-
     return {
       sku: product.sku || '',
       name: product.name,
@@ -148,6 +144,7 @@ export function useProductForm(categories: Category[]) {
       specs: Object.entries(product.specs || {}).map(([key, value]) => ({ key, value: value as string })),
       is_featured: product.is_featured,
       is_active: product.is_active,
+      condition: product.condition || 'new',
       weight: product.weight?.toString() || '',
       cost_price: product.cost_price?.toString() || '',
       dimensions: product.dimensions

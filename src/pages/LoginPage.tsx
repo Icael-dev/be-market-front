@@ -134,11 +134,11 @@ export function LoginPage() {
                   type="checkbox"
                   id="remember-me"
                   name="remember"
-                  className="w-4 h-4 text-primary-600 border-gray-300 rounded focus:ring-primary-500"
+                  className="w-4 h-4 text-primary-600 border-gray-300 dark:border-gray-600 rounded focus:ring-primary-500"
                 />
-                <span className="text-sm text-gray-600">Se souvenir de moi</span>
+                <span className="text-sm text-gray-600 dark:text-gray-400">Se souvenir de moi</span>
               </label>
-              <a href="#" className="text-sm text-primary-600 hover:underline">
+              <a href="/forgot-password" className="text-sm text-primary-600 hover:underline">
                 Mot de passe oublie ?
               </a>
             </div>

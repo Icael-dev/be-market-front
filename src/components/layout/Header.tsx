@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   LayoutDashboard,
@@ -49,10 +49,12 @@ export function Header() {
     { path: '/blog', label: 'Blog' }
   ];
 
+  const navigate = useNavigate();
+
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
-      window.location.href = `/products?search=${encodeURIComponent(searchQuery)}`;
+      navigate(`/products?search=${encodeURIComponent(searchQuery.trim())}`);
     }
   };
 
@@ -105,7 +107,7 @@ export function Header() {
             <div className="hidden sm:flex flex-1 max-w-md mx-6">
               <form onSubmit={handleSearch} className="w-full">
                 <div className="relative group">
-                  <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 group-focus-within:text-primary-500 transition-colors" />
+                  <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 dark:text-gray-500 group-focus-within:text-primary-500 transition-colors" />
                   <input
                     type="text"
                     id="header-search-desktop"
@@ -123,7 +125,7 @@ export function Header() {
             <div className="flex items-center gap-1">
               <button
                 onClick={toggleTheme}
-                className="icon-btn"
+                className="p-3 icon-btn"
                 title={theme === 'light' ? 'Mode sombre' : 'Mode clair'}
               >
                 {theme === 'light' ? <Moon className="w-5 h-5" /> : <Sun className="w-5 h-5" />}
@@ -131,7 +133,7 @@ export function Header() {
 
               <button
                 onClick={() => setShowWishlist(true)}
-                className="icon-btn relative hover:text-red-500"
+                className="p-3 icon-btn relative hover:text-red-500"
               >
                 <Heart className="w-5 h-5" />
                 {wishlistItems.length > 0 && (
@@ -147,7 +149,7 @@ export function Header() {
 
               <Link
                 to="/cart"
-                className="icon-btn relative hover:text-primary-600"
+                className="p-3 icon-btn relative hover:text-primary-600"
               >
                 <ShoppingCart className="w-5 h-5" />
                 {count > 0 && (
@@ -173,7 +175,7 @@ export function Header() {
                     <div className="w-8 h-8 rounded-full brand-gradient flex items-center justify-center text-white text-sm font-semibold shadow-sm">
                       {profile?.full_name?.[0] || user.email?.[0] || 'U'}
                     </div>
-                    <ChevronDown className={cn('w-4 h-4 text-gray-400 transition-transform duration-200', isUserMenuOpen && 'rotate-180')} />
+                    <ChevronDown className={cn('w-4 h-4 text-gray-400 dark:text-gray-500 transition-transform duration-200', isUserMenuOpen && 'rotate-180')} />
                   </button>
 
                   <AnimatePresence>
@@ -291,7 +293,7 @@ export function Header() {
                 <div className="py-4">
                   <form onSubmit={handleSearch} className="px-4 mb-4">
                     <div className="relative">
-                      <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                      <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 dark:text-gray-500" />
                       <input
                         type="text"
                         id="header-search-mobile"

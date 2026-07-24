@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
@@ -23,18 +23,18 @@ export function ReviewSection({ productId }: ReviewSectionProps) {
   const [commentError, setCommentError] = useState<string | null>(null);
   const [formData, setFormData] = useState({ rating: 5, title: '', comment: '' });
 
-  const fetchReviews = async () => {
+  const fetchReviews = useCallback(async () => {
     try {
       const data = await fetchReviewsService(productId);
       setReviews(data);
     } catch (error) {
       console.error('Failed to load reviews:', error);
     }
-  };
+  }, [productId]);
 
   useEffect(() => {
     fetchReviews();
-  }, [productId]);
+  }, [fetchReviews]);
 
 
   const handleSubmit = async (e: React.FormEvent) => {

@@ -7,10 +7,14 @@ import type {
   Coupon,
   FlashSale,
   Order,
-  Profile,
   Settings,
   StaffUser,
-  UserRole
+  UserRole,
+  LoyaltyPoints,
+  LoyaltyTransaction,
+  Payment,
+  SupportTicket,
+  SupportMessage
 } from '../types';
 
 export interface AdminStats {
@@ -29,10 +33,19 @@ export interface AdminStats {
   payment_data: Array<{ name: string; value: number }>;
 }
 
-export interface AdminCustomer extends Profile {
+export interface AdminCustomer {
+  id: string;
+  user_id: string;
+  email: string | null;
+  full_name: string | null;
+  phone: string | null;
+  avatar_url: string | null;
+  is_admin: boolean;
+  role?: UserRole;
+  created_at: string;
+  updated_at: string;
   orders_count?: number;
   total_spent?: number;
-  user_id?: string;
 }
 
 type MaybePaginated<T> = T[] | { data: T[] };
@@ -282,6 +295,57 @@ export async function restoreAdminUser(id: string): Promise<StaffUser> {
 // Statistics
 export async function fetchAdminStatistics(days?: number): Promise<AdminStats> {
   return api.get<AdminStats>(`/api/admin/statistics${days ? `?days=${days}` : ''}`);
+}
+
+export interface TopProduct {
+  product_id: string;
+  product_name: string;
+  total_quantity: number;
+  total_revenue: number;
+}
+
+export interface LowStockProduct {
+  id: string;
+  name: string;
+  sku: string;
+  stock: number;
+  price: number;
+}
+
+export interface CouponStat {
+  code: string;
+  discount_type: string;
+  discount_value: number;
+  usage_count: number;
+}
+
+export interface CouponStatsResponse {
+  coupons_used: CouponStat[];
+  total_coupon_usages: number;
+}
+
+export interface CategorySale {
+  category_id: string;
+  category_name: string;
+  orders_count: number;
+  total_quantity: number;
+  total_revenue: number;
+}
+
+export async function fetchAdminTopProducts(days?: number): Promise<TopProduct[]> {
+  return api.get<TopProduct[]>(`/api/admin/statistics/top-products${days ? `?days=${days}` : ''}`);
+}
+
+export async function fetchAdminLowStock(threshold?: number): Promise<LowStockProduct[]> {
+  return api.get<LowStockProduct[]>(`/api/admin/statistics/low-stock${threshold ? `?threshold=${threshold}` : ''}`);
+}
+
+export async function fetchAdminCouponStats(days?: number): Promise<CouponStatsResponse> {
+  return api.get<CouponStatsResponse>(`/api/admin/statistics/coupons${days ? `?days=${days}` : ''}`);
+}
+
+export async function fetchAdminCategorySales(days?: number): Promise<CategorySale[]> {
+  return api.get<CategorySale[]>(`/api/admin/statistics/category-sales${days ? `?days=${days}` : ''}`);
 }
 
 // Export

@@ -1,20 +1,34 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { fetchCategories } from '../services/products';
-import type { Category } from '../types';
-import { Grid3X3, ArrowRight } from 'lucide-react';
+import { fetchCategories, fetchProducts } from '../services/products';
+import type { Category, Product } from '../types';
+import { ArrowRight } from 'lucide-react';
 import { IconBox } from '../components/ui/Card';
+import { Carousel } from '../components/Carousel';
 
 export function CategoriesPage() {
   const [categories, setCategories] = useState<Category[]>([]);
+  const [categoryProducts, setCategoryProducts] = useState<Record<string, Product[]>>({});
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function load() {
       try {
-        const data = await fetchCategories();
-        setCategories(data);
+        const cats = await fetchCategories();
+        setCategories(cats);
+
+        const productMap: Record<string, Product[]> = {};
+        for (const cat of cats) {
+          try {
+            const products = await fetchProducts({ category: cat.slug });
+            const shuffled = products.sort(() => Math.random() - 0.5).slice(0, 6);
+            productMap[cat.id] = shuffled;
+          } catch {
+            productMap[cat.id] = [];
+          }
+        }
+        setCategoryProducts(productMap);
       } catch (error) {
         console.error('Error fetching categories:', error);
       } finally {
@@ -60,7 +74,12 @@ if (loading) {
           >
             <div className="flex items-center gap-3 mb-2">
               <IconBox tone="primary" size="md">
-                <Grid3X3 className="w-5 h-5" />
+                <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="3" y="3" width="7" height="7" />
+                  <rect x="14" y="3" width="7" height="7" />
+                  <rect x="14" y="14" width="7" height="7" />
+                  <rect x="3" y="14" width="7" height="7" />
+                </svg>
               </IconBox>
               <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Categories</h1>
             </div>
@@ -74,7 +93,12 @@ if (loading) {
       <div className="page-section py-8">
         {categories.length === 0 ? (
           <div className="card p-12 text-center">
-            <Grid3X3 className="w-12 h-12 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
+            <svg className="w-12 h-12 text-gray-300 dark:text-gray-600 mx-auto mb-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <rect x="3" y="3" width="7" height="7" />
+              <rect x="14" y="3" width="7" height="7" />
+              <rect x="14" y="14" width="7" height="7" />
+              <rect x="3" y="14" width="7" height="7" />
+            </svg>
             <p className="text-gray-500 dark:text-gray-400">Aucune categorie disponible pour le moment</p>
           </div>
         ) : (
@@ -90,25 +114,13 @@ if (loading) {
                   to={`/products?category=${category.slug}`}
                   className="group block card overflow-hidden hover:shadow-premium hover:border-primary-200 dark:hover:border-primary-800 transition-all"
                 >
-                  <div className="relative h-48 bg-gray-100 dark:bg-gray-800 overflow-hidden">
-                    {category.image_url ? (
-                      <img
-                        src={category.image_url}
-                        alt={category.name}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                      />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary-50 dark:from-primary-900/50 to-cyan-50 dark:to-cyan-900/50">
-                        <Grid3X3 className="w-12 h-12 text-primary-300 dark:text-primary-400" />
-                      </div>
-                    )}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
-                    <div className="absolute bottom-4 left-4">
-                      <h3 className="text-xl font-bold text-white">{category.name}</h3>
-                    </div>
-                  </div>
+                  <Carousel
+                    images={(categoryProducts[category.id] || [])
+                      .flatMap(p => (p.images || []).filter(Boolean))}
+                  />
                   <div className="p-5">
-                    <p className="text-sm text-gray-500 dark:text-gray-400 line-clamp-2">
+                    <h3 className="text-xl font-bold text-gray-900 dark:text-white">{category.name}</h3>
+                    <p className="text-sm text-gray-500 dark:text-gray-400 line-clamp-2 mt-1">
                       {category.description || `Decouvrez tous nos produits dans la categorie ${category.name}`}
                     </p>
                     <div className="mt-4 flex items-center gap-1 text-sm font-medium text-primary-600 dark:text-primary-400 group-hover:gap-2 transition-all">

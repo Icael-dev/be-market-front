@@ -5,6 +5,7 @@ import { fetchAdminCustomers, type AdminCustomer } from '../../services/admin';
 import { formatPrice } from '../../lib/utils';
 import { AdminLayout } from '../../components/admin/AdminLayout';
 import { PageHeader } from '../../components/admin/PageHeader';
+import { MobileNotOptimizedBanner } from '../../components/admin/MobileNotOptimizedBanner';
 import { Search, Users, Mail, Phone, ShoppingBag } from 'lucide-react';
 
 export function AdminCustomersPage() {
@@ -32,6 +33,7 @@ export function AdminCustomersPage() {
 
   return (
     <AdminLayout>
+      <MobileNotOptimizedBanner />
       <div className="p-6 lg:p-8">
         <PageHeader title="Clients" subtitle={`${customers.length} clients inscrits`} />
 
@@ -50,7 +52,7 @@ export function AdminCustomersPage() {
               placeholder="Rechercher par nom, email ou telephone..."
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2.5 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+              className="w-full pl-10 pr-4 py-2.5 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 bg-white dark:bg-gray-800 dark:text-white dark:placeholder-gray-500"
             />
           </div>
         </motion.div>

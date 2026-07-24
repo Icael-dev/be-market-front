@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
@@ -69,6 +69,21 @@ export function CheckoutPage() {
   const [couponValidation, setCouponValidation] = useState<CouponValidation | null>(null);
   const [couponLoading, setCouponLoading] = useState(false);
 
+  const handleApplyCoupon = useCallback(async () => {
+    if (!couponCode.trim() || !total) return;
+    setCouponLoading(true);
+    setCouponValidation(null);
+    try {
+      const result = await validateCoupon(couponCode.trim(), total);
+      setCouponValidation(result);
+    } catch (error) {
+      console.error('Failed to validate coupon:', error);
+      setCouponValidation({ valid: false, message: 'Erreur lors de la validation du coupon.', discount_amount: 0 });
+    } finally {
+      setCouponLoading(false);
+    }
+  }, [couponCode, total]);
+
   useEnter(() => { if (couponCode.trim()) handleApplyCoupon(); }, couponCode.trim().length > 0);
 
   useEffect(() => {
@@ -94,13 +109,40 @@ export function CheckoutPage() {
   const [useNewAddress, setUseNewAddress] = useState(true);
 
   const shippingFee = total > 50000 ? 0 : 2500;
+  const couponDiscount = couponValidation?.valid ? (couponValidation.discount_amount || 0) : 0;
   const maxLoyaltyDiscount = Math.min(
     loyaltyPoints?.points || 0,
-    Math.floor((total - (total > 50000 ? 0 : 2500)) / 50)
+    Math.floor((total - couponDiscount) * 4)
   );
-  const loyaltyDiscount = Math.min(loyaltyPointsToRedeem * 50, total);
-  const couponDiscount = couponValidation?.valid ? (couponValidation.discount_amount || 0) : 0;
-  const grandTotal = Math.max(0, total + shippingFee - couponDiscount - loyaltyDiscount);
+  const loyaltyDiscount = loyaltyPointsToRedeem * 25;
+  const tax = Math.max(0, Math.round((total - couponDiscount - loyaltyDiscount) * 0.1 * 100) / 100);
+  const grandTotal = Math.max(0, total + shippingFee - couponDiscount - loyaltyDiscount + tax);
+
+  const loadLoyaltyPoints = useCallback(async () => {
+    if (!user) return;
+    try {
+      const data = await fetchLoyaltyPoints();
+      setLoyaltyPoints(data);
+    } catch (error) {
+      console.error('Failed to load loyalty points:', error);
+    }
+  }, [user]);
+
+  const loadAddresses = useCallback(async () => {
+    if (!user) return;
+
+    try {
+      const data = await fetchAddresses();
+      setAddresses(data);
+      const defaultAddress = data.find(a => a.is_default);
+      if (defaultAddress) {
+        setSelectedAddressId(defaultAddress.id);
+        setUseNewAddress(false);
+      }
+    } catch (error) {
+      console.error('Failed to load addresses:', error);
+    }
+  }, [user]);
 
   useEffect(() => {
     if (!user) {
@@ -116,47 +158,7 @@ export function CheckoutPage() {
 
     loadAddresses();
     loadLoyaltyPoints();
-  }, [user, items]);
-
-  const loadLoyaltyPoints = async () => {
-    if (!user) return;
-    try {
-      const data = await fetchLoyaltyPoints();
-      setLoyaltyPoints(data);
-    } catch (error) {
-      console.error('Failed to load loyalty points:', error);
-    }
-  };
-
-  const handleApplyCoupon = async () => {
-    if (!couponCode.trim()) return;
-    setCouponLoading(true);
-    setCouponValidation(null);
-    try {
-      const result = await validateCoupon(couponCode.trim(), total);
-      setCouponValidation(result);
-    } catch (error) {
-      setCouponValidation({ valid: false, message: error instanceof Error ? error.message : 'Erreur lors de la validation du coupon' });
-    } finally {
-      setCouponLoading(false);
-    }
-  };
-
-  const loadAddresses = async () => {
-    if (!user) return;
-
-    try {
-      const data = await fetchAddresses();
-      setAddresses(data);
-      const defaultAddress = data.find(a => a.is_default);
-      if (defaultAddress) {
-        setSelectedAddressId(defaultAddress.id);
-        setUseNewAddress(false);
-      }
-    } catch (error) {
-      console.error('Failed to load addresses:', error);
-    }
-  };
+  }, [user, items, loadAddresses, loadLoyaltyPoints, navigate, searchParams]);
 
 const handlePlaceOrder = async () => {
     if (!user) return;
@@ -205,6 +207,7 @@ const handlePlaceOrder = async () => {
           await initiatePayment(order.id, paymentMethod, shippingAddress.phone);
         } catch (paymentError) {
           console.error('Payment initiation error:', paymentError);
+          throw new Error('La commande a ete creee mais le paiement n\'a pas pu etre initie. Vous pourrez payer depuis vos commandes.');
         }
       }
 
@@ -499,7 +502,7 @@ const handlePlaceOrder = async () => {
                       value={notes}
                       onChange={e => setNotes(e.target.value)}
                       rows={3}
-                      className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                      className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 bg-white dark:bg-gray-800 dark:text-white dark:placeholder-gray-500"
                       placeholder="Instructions speciales pour la livraison..."
                     />
                   </div>
@@ -694,7 +697,7 @@ const handlePlaceOrder = async () => {
                 {loyaltyPoints && loyaltyPoints.points > 0 && (
                   <div className="pt-3 border-t border-dashed dark:border-gray-700">
                     <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      Points de fidelite disponibles : {loyaltyPoints.points} ({formatPrice(loyaltyPoints.points * 50)} de reduction)
+                       Points de fidelite disponibles : {loyaltyPoints.points} ({formatPrice(loyaltyPoints.points * 25)} de reduction)
                     </p>
                     <div className="flex items-center gap-3">
                       <input
@@ -707,11 +710,16 @@ const handlePlaceOrder = async () => {
                         placeholder="0"
                       />
                       <span className="text-sm text-gray-500 dark:text-gray-400">
-                        = {formatPrice(loyaltyPointsToRedeem * 50)} de reduction
+                         = {formatPrice(loyaltyPointsToRedeem * 25)} de reduction
                       </span>
                     </div>
                   </div>
                 )}
+
+                <div className="flex justify-between dark:text-gray-500">
+                  <span>Taxe (10%)</span>
+                  <span>{formatPrice(tax)}</span>
+                </div>
               </div>
 
               <div className="mt-4 pt-4 border-t dark:border-gray-700 flex justify-between text-lg font-bold dark:text-white">

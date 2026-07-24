@@ -2,6 +2,8 @@ import { useState, useRef, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Search, X, Package } from 'lucide-react';
 import { formatPrice } from '../lib/utils';
+import { getImageUrl } from '../lib/imageUrl';
+import { api } from '../lib/api';
 import { useEscape } from '../hooks/useKeyPress';
 
 interface SuggestionProduct {
@@ -32,9 +34,8 @@ export function SearchWithSuggestions() {
 
     setLoading(true);
     try {
-      const response = await fetch(`/api/products/suggestions?q=${encodeURIComponent(searchQuery)}&limit=8`);
-      const data = await response.json();
-      setSuggestions(data);
+      const data = await api.get<SuggestionProduct[]>(`/api/products/suggestions?q=${encodeURIComponent(searchQuery)}&limit=8`);
+      setSuggestions(data ?? []);
     } catch (error) {
       console.error('Search suggestions error:', error);
     } finally {
@@ -86,14 +87,6 @@ export function SearchWithSuggestions() {
   const clearSearch = () => {
     setQuery('');
     setSuggestions([]);
-  };
-
-  const getImageUrl = (url: string) => {
-    if (!url) return url;
-    if (url.includes('/storage/products/')) {
-      return url.replace('/storage/products/', '/api/images/');
-    }
-    return url;
   };
 
   return (

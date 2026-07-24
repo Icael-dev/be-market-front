@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 import { fetchAdminLoyaltyTransactions, fetchAdminLoyaltyPoints } from '../../services/admin';
 import { AdminLayout } from '../../components/admin/AdminLayout';
 import { PageHeader } from '../../components/admin/PageHeader';
+import { MobileNotOptimizedBanner } from '../../components/admin/MobileNotOptimizedBanner';
+import { StatusBadge } from '../../components/admin/StatusBadge';
 import { Loader2 } from 'lucide-react';
 import type { LoyaltyPoints, LoyaltyTransaction } from '../../types';
 import { format } from 'date-fns';
@@ -36,6 +38,7 @@ export function AdminLoyaltyPage() {
 
   return (
     <AdminLayout>
+      <MobileNotOptimizedBanner />
       <div className="p-6 lg:p-8">
         <PageHeader title="Fidelite" subtitle={`${transactions.length} transactions`} />
 
@@ -102,11 +105,12 @@ export function AdminLoyaltyPage() {
                       <tr><td colSpan={6} className="text-center py-8 text-gray-500 dark:text-gray-400">Aucune transaction</td></tr>
                     ) : visible.map(t => (
                       <tr key={t.id} className="hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
-                        <td className="px-6 py-4 text-sm dark:text-white">{t.user?.name || t.user?.email || '—'}</td>
+                        <td className="px-6 py-4 text-sm dark:text-white">{t.user?.profile?.full_name || t.user?.email || '—'}</td>
                         <td className="px-6 py-4">
-                          <span className="inline-flex px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300">
-                            {t.type === 'earned' ? 'Gagnee' : t.type === 'redeemed' ? 'Utilisee' : 'Expiree'}
-                          </span>
+                          <StatusBadge
+                            label={t.type === 'earned' ? 'Gagnee' : t.type === 'redeemed' ? 'Utilisee' : 'Expiree'}
+                            variant={t.type === 'earned' ? 'success' : t.type === 'redeemed' ? 'danger' : 'neutral'}
+                          />
                         </td>
                         <td className="px-6 py-4 text-sm font-medium dark:text-white">{Math.abs(t.points)}</td>
                         <td className="px-6 py-4 text-sm dark:text-gray-500">{t.description || '—'}</td>

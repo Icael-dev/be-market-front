@@ -33,7 +33,7 @@ export function LoyaltyPage() {
     }
   };
 
-  const pointsValue = (loyalty?.points || 0) * 50; // 1 point = 50 FCFA
+  const pointsValue = (loyalty?.points || 0) * 25; // 1 point = 25 FCFA
 
   if (!user) {
     return (

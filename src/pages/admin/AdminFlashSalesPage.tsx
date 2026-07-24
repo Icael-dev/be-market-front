@@ -9,14 +9,19 @@ import {
   updateAdminFlashSale
 } from '../../services/admin';
 import type { FlashSale, Product } from '../../types';
-import { Plus, Edit2, Trash2, X, Save, Zap, Loader2, Power } from 'lucide-react';
+import { Plus, Edit2, Trash2, Save, Zap, Loader2, Power } from 'lucide-react';
 import { AdminLayout } from '../../components/admin/AdminLayout';
 import { PageHeader } from '../../components/admin/PageHeader';
-import { AnimatePresence } from 'framer-motion';
+import { MobileNotOptimizedBanner } from '../../components/admin/MobileNotOptimizedBanner';
+import { StatusBadge } from '../../components/admin/StatusBadge';
+import { AdminDrawer } from '../../components/admin/AdminDrawer';
+import { ConfirmDialog } from '../../components/admin/ConfirmDialog';
 import { format } from 'date-fns';
 import { useEscape } from '../../hooks/useKeyPress';
+import { useAuth } from '../../context/AuthContext';
 
 export function AdminFlashSalesPage() {
+  const { isSuperAdmin } = useAuth();
   const [flashSales, setFlashSales] = useState<FlashSale[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
@@ -25,6 +30,8 @@ export function AdminFlashSalesPage() {
   const [editingSale, setEditingSale] = useState<FlashSale | null>(null);
   const [saving, setSaving] = useState(false);
   const [togglingId, setTogglingId] = useState<string | null>(null);
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [confirmTargetId, setConfirmTargetId] = useState<string | null>(null);
 
   const [formData, setFormData] = useState({
     product_id: '',
@@ -69,7 +76,7 @@ export function AdminFlashSalesPage() {
     setEditingSale(sale);
     setFormData({
       product_id: sale.product_id,
-      discount_percentage: sale.discount_percentage,
+      discount_percentage: sale.discount_percentage != null ? sale.discount_percentage : 0,
       starts_at: sale.starts_at.slice(0, 16),
       ends_at: sale.ends_at.slice(0, 16),
       is_active: sale.is_active
@@ -90,11 +97,16 @@ export function AdminFlashSalesPage() {
         ? formData.ends_at
         : formData.ends_at.replace(' ', 'T');
 
-      const data = {
+      const data: Record<string, unknown> = {
         ...formData,
         starts_at: new Date(startsAt).toISOString(),
-        ends_at: new Date(endsAt).toISOString()
+        ends_at: new Date(endsAt).toISOString(),
+        product_id: formData.product_id,
+        is_active: formData.is_active,
       };
+      if (formData.discount_percentage != null && formData.discount_percentage !== undefined) {
+        data.discount_percentage = Number(formData.discount_percentage);
+      }
 
       if (editingSale) {
         await updateAdminFlashSale(editingSale.id, data);
@@ -113,14 +125,17 @@ export function AdminFlashSalesPage() {
     }
   };
 
-  const handleDelete = async (id: string) => {
-    if (!window.confirm('Supprimer ce flash sale ?')) return;
+  const handleConfirmDelete = async () => {
+    if (!confirmTargetId) return;
     try {
-      await deleteAdminFlashSale(id);
-      setFlashSales(prev => prev.filter(s => s.id !== id));
+      await deleteAdminFlashSale(confirmTargetId);
+      setFlashSales(prev => prev.filter(s => s.id !== confirmTargetId));
     } catch (error) {
       console.error('Flash sale delete error:', error);
       toast.error('Erreur lors de la suppression');
+    } finally {
+      setConfirmOpen(false);
+      setConfirmTargetId(null);
     }
   };
 
@@ -141,22 +156,26 @@ export function AdminFlashSalesPage() {
 
   return (
     <AdminLayout>
+      <MobileNotOptimizedBanner />
       <div className="p-6 lg:p-8">
         <PageHeader
           title="Flash Sales"
           subtitle={`${flashSales.length} vente${flashSales.length > 1 ? 's' : ''} eclair`}
         >
-          <button
-            onClick={() => { resetForm(); setShowForm(true); }}
-            className="flex items-center gap-2 bg-orange-500 text-white px-4 py-2.5 rounded-xl font-medium hover:bg-orange-600"
-          >
-            <Plus className="w-5 h-5" />
-            Nouveau Flash Sale
-          </button>
+          {isSuperAdmin && (
+            <button
+              onClick={() => { resetForm(); setShowForm(true); }}
+              className="flex items-center gap-2 bg-orange-500 text-white px-4 py-2.5 rounded-xl font-medium hover:bg-orange-600"
+            >
+              <Plus className="w-5 h-5" />
+              Nouveau Flash Sale
+            </button>
+          )}
         </PageHeader>
 
         <div className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 overflow-hidden">
-          <table className="w-full">
+          <div className="overflow-x-auto">
+            <table className="w-full">
             <thead className="bg-gray-50 dark:bg-gray-800 border-b dark:border-gray-700">
               <tr>
                 <th className="text-left px-6 py-4 text-sm font-medium dark:text-gray-500">Produit</th>
@@ -186,13 +205,12 @@ export function AdminFlashSalesPage() {
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-2">
-                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${sale.is_active ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' : 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-400'}`}>
-                          {sale.is_active ? 'Actif' : 'Inactif'}
-                        </span>
+                        <StatusBadge
+                          label={sale.is_active ? 'Actif' : 'Inactif'}
+                          variant={sale.is_active ? 'success' : 'neutral'}
+                        />
                         {isActive && (
-                          <span className="inline-flex px-2 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400">
-                            En cours
-                          </span>
+                          <StatusBadge label="En cours" variant="warning" />
                         )}
                       </div>
                     </td>
@@ -204,7 +222,7 @@ export function AdminFlashSalesPage() {
                         <button onClick={() => handleEdit(sale)} className="p-3 bg-gray-100 hover:bg-gray-200 text-gray-700 border border-gray-200 rounded-lg transition-colors dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600 dark:hover:bg-gray-600">
                           <Edit2 className="w-6 h-6" />
                         </button>
-                        <button onClick={() => handleDelete(sale.id)} className="p-3 bg-red-100 hover:bg-red-200 text-red-700 border border-red-300 rounded-lg transition-colors dark:bg-red-900/40 dark:text-red-300 dark:border-red-700 dark:hover:bg-red-900/60">
+                        <button onClick={() => { setConfirmTargetId(sale.id); setConfirmOpen(true); }} className="p-3 bg-red-100 hover:bg-red-200 text-red-700 border border-red-300 rounded-lg transition-colors dark:bg-red-900/40 dark:text-red-300 dark:border-red-700 dark:hover:bg-red-900/60">
                           <Trash2 className="w-6 h-6" />
                         </button>
                       </div>
@@ -214,6 +232,7 @@ export function AdminFlashSalesPage() {
               })}
             </tbody>
           </table>
+          </div>
 
           {flashSales.length === 0 && !loading && (
             <div className="text-center py-12">
@@ -224,32 +243,27 @@ export function AdminFlashSalesPage() {
         </div>
       </div>
 
-      <AnimatePresence>
-        {showForm && (
-          <>
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setShowForm(false)} className="fixed inset-0 bg-black/50 z-50" />
-            <motion.div initial={{ opacity: 0, x: '100%' }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: '100%' }} className="fixed right-0 top-0 bottom-0 w-full max-w-xl bg-white dark:bg-gray-800 z-50 overflow-y-auto">
-              <div className="p-6 border-b dark:border-gray-700 flex items-center justify-between sticky top-0 bg-white dark:bg-gray-800">
-                <h2 className="text-xl font-bold dark:text-white">{editingSale ? 'Modifier' : 'Nouveau Flash Sale'}</h2>
-                <button onClick={() => setShowForm(false)} className="p-2 hover:bg-gray-100 hover:dark:bg-gray-700 rounded-lg"><X className="w-5 h-5" /></button>
-              </div>
-
-              <div className="p-6 space-y-6">
-                <div>
-                  <label className="block text-sm font-medium dark:text-gray-500 mb-2">Produit *</label>
-                  <select
-                    id="flash-product_id"
-                    name="product_id"
-                    value={formData.product_id}
-                    onChange={e => setFormData({ ...formData, product_id: e.target.value })}
-                    className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500/20"
-                  >
-                    <option value="">Selectionnez un produit</option>
-                    {products.map(p => (
-                      <option key={p.id} value={p.id}>{p.name}</option>
-                    ))}
-                  </select>
-                </div>
+      <AdminDrawer
+        isOpen={showForm}
+        onClose={() => setShowForm(false)}
+        title={editingSale ? 'Modifier' : 'Nouveau Flash Sale'}
+      >
+        <div className="p-6 space-y-6">
+          <div>
+            <label className="block text-sm font-medium dark:text-gray-500 mb-2">Produit *</label>
+            <select
+              id="flash-product_id"
+              name="product_id"
+              value={formData.product_id}
+              onChange={e => setFormData({ ...formData, product_id: e.target.value })}
+              className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500/20 bg-white dark:bg-gray-800 dark:text-white dark:placeholder-gray-500"
+            >
+              <option value="">Selectionnez un produit</option>
+              {products.map(p => (
+                <option key={p.id} value={p.id}>{p.name}</option>
+              ))}
+            </select>
+          </div>
 
                 <div>
                   <label className="block text-sm font-medium dark:text-gray-500 mb-2">Reduction (%) *</label>
@@ -259,13 +273,13 @@ export function AdminFlashSalesPage() {
                     name="discount_percentage"
                     min="1"
                     max="99"
-                    value={formData.discount_percentage}
+                    value={formData.discount_percentage ?? ''}
                     onChange={e => setFormData({ ...formData, discount_percentage: parseInt(e.target.value) || 0 })}
-                    className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500/20"
+                    className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500/20 bg-white dark:bg-gray-800 dark:text-white dark:placeholder-gray-500"
                   />
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium dark:text-gray-500 mb-2">Date debut *</label>
                     <input
@@ -274,8 +288,8 @@ export function AdminFlashSalesPage() {
                       name="starts_at"
                       value={formData.starts_at}
                       onChange={e => setFormData({ ...formData, starts_at: e.target.value })}
-                      className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500/20"
-                    />
+                       className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500/20 bg-white dark:bg-gray-800 dark:text-white dark:placeholder-gray-500"
+                     />
                   </div>
                   <div>
                     <label className="block text-sm font-medium dark:text-gray-500 mb-2">Date fin *</label>
@@ -285,13 +299,13 @@ export function AdminFlashSalesPage() {
                       name="ends_at"
                       value={formData.ends_at}
                       onChange={e => setFormData({ ...formData, ends_at: e.target.value })}
-                      className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500/20"
-                    />
+                       className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500/20 bg-white dark:bg-gray-800 dark:text-white dark:placeholder-gray-500"
+                     />
                   </div>
                 </div>
 
                 <label className="flex items-center gap-2 cursor-pointer">
-                  <input type="checkbox" id="flash-is_active" name="is_active" checked={formData.is_active} onChange={e => setFormData({ ...formData, is_active: e.target.checked })} className="w-4 h-4 text-orange-500 border-gray-300 rounded" />
+                  <input type="checkbox" id="flash-is_active" name="is_active" checked={formData.is_active} onChange={e => setFormData({ ...formData, is_active: e.target.checked })}                   className="w-4 h-4 text-orange-500 border-gray-300 dark:border-gray-600 rounded" />
                   <span className="text-sm dark:text-gray-500">Flash sale actif</span>
                 </label>
 
@@ -303,10 +317,15 @@ export function AdminFlashSalesPage() {
                   <button onClick={() => setShowForm(false)} className="px-6 py-2.5 border dark:border-gray-700 rounded-xl font-medium hover:bg-gray-100 dark:hover:bg-gray-700">Annuler</button>
                 </div>
               </div>
-            </motion.div>
-          </>
-        )}
-      </AnimatePresence>
-    </AdminLayout>
+            </AdminDrawer>
+        <ConfirmDialog
+          open={confirmOpen}
+          onClose={() => { setConfirmOpen(false); setConfirmTargetId(null); }}
+          onConfirm={handleConfirmDelete}
+          title="Supprimer ce flash sale ?"
+          message="Cette action est irreversible."
+          variant="danger"
+        />
+      </AdminLayout>
   );
 }

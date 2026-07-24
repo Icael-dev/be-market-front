@@ -5,6 +5,7 @@ import { fetchAdminSettings, updateAdminSettings } from '../../services/admin';
 import { Settings, Save, Loader2 } from 'lucide-react';
 import { AdminLayout } from '../../components/admin/AdminLayout';
 import { PageHeader } from '../../components/admin/PageHeader';
+import { MobileNotOptimizedBanner } from '../../components/admin/MobileNotOptimizedBanner';
 
 export function AdminSettingsPage() {
   const [settings, setSettings] = useState<Record<string, string | number>>({});
@@ -32,7 +33,18 @@ export function AdminSettingsPage() {
     setSaved(false);
 
     try {
-      await updateAdminSettings(settings);
+      const payload: Record<string, unknown> = {};
+      for (const key of Object.keys(settings)) {
+        const value = (settings as Record<string, unknown>)[key];
+        if (value === '' || value === null || value === undefined) continue;
+        if (key === 'shipping_fee' || key === 'free_shipping_threshold' || key === 'tax_rate') {
+          const n = Number(value);
+          payload[key] = Number.isFinite(n) ? n : null;
+        } else {
+          payload[key] = value;
+        }
+      }
+      await updateAdminSettings(payload);
       setSaved(true);
       setTimeout(() => setSaved(false), 2000);
     } catch (error) {
@@ -73,6 +85,7 @@ export function AdminSettingsPage() {
 
   return (
     <AdminLayout>
+      <MobileNotOptimizedBanner />
       <div className="p-6 lg:p-8">
         <PageHeader
           title="Configuration"
@@ -120,14 +133,14 @@ export function AdminSettingsPage() {
                       <label className="block text-sm font-medium dark:text-gray-300 mb-2">
                         {item.label}
                       </label>
-                      <input
-                        id={`setting-${item.key}`}
-                        name={item.key}
-                        type={item.type}
-                        value={settings[item.key] || ''}
-                        onChange={e => handleChange(item.key, e.target.value)}
-                        className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
-                      />
+                       <input
+                         id={`setting-${item.key}`}
+                         name={item.key}
+                         type={item.type}
+                         value={settings[item.key] || ''}
+                         onChange={e => handleChange(item.key, e.target.value)}
+                         className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 bg-white dark:bg-gray-800 dark:text-white dark:placeholder-gray-500"
+                       />
                     </div>
                   ))}
                 </div>

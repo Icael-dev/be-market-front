@@ -5,23 +5,19 @@ import {
   fetchAdminBanners,
   createAdminBanner,
   updateAdminBanner,
-  deleteAdminBanner,
-  uploadProductImage
+  deleteAdminBanner
 } from '../../services/admin';
 import type { Banner } from '../../types';
-import { Plus, Edit2, Trash2, X, Save, Image as ImageIcon, Upload, Loader2, Power } from 'lucide-react';
+import { Plus, Edit2, Trash2, Save, Image as ImageIcon, Loader2, Power } from 'lucide-react';
 import { AdminLayout } from '../../components/admin/AdminLayout';
 import { PageHeader } from '../../components/admin/PageHeader';
-import { AnimatePresence } from 'framer-motion';
+import { MobileNotOptimizedBanner } from '../../components/admin/MobileNotOptimizedBanner';
+import { StatusBadge } from '../../components/admin/StatusBadge';
+import { AdminDrawer } from '../../components/admin/AdminDrawer';
+import { ConfirmDialog } from '../../components/admin/ConfirmDialog';
 import { useEscape } from '../../hooks/useKeyPress';
-
-const displayImageUrl = (url: string) => {
-  if (!url) return url;
-  if (url.includes('/storage/products/')) {
-    return url.replace('/storage/products/', '/api/images/');
-  }
-  return url;
-};
+import { ImageUpload } from '../../components/admin/ImageUpload';
+import { getImageUrl } from '../../lib/imageUrl';
 
 export function AdminBannersPage() {
   const [banners, setBanners] = useState<Banner[]>([]);
@@ -31,6 +27,8 @@ export function AdminBannersPage() {
   const [editingBanner, setEditingBanner] = useState<Banner | null>(null);
   const [saving, setSaving] = useState(false);
   const [togglingId, setTogglingId] = useState<string | null>(null);
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [confirmTargetId, setConfirmTargetId] = useState<string | null>(null);
 
   const [formData, setFormData] = useState({
     title: '',
@@ -41,7 +39,7 @@ export function AdminBannersPage() {
     is_active: true,
     sort_order: 0
   });
-  const [uploadingImage, setUploadingImage] = useState(false);
+  const [imageUrls, setImageUrls] = useState<string[]>([]);
 
   useEffect(() => {
     fetchBanners();
@@ -68,26 +66,8 @@ export function AdminBannersPage() {
       is_active: true,
       sort_order: 0
     });
+    setImageUrls([]);
     setEditingBanner(null);
-  };
-
-  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    setUploadingImage(true);
-    try {
-      const fd = new FormData();
-      fd.append('image', file);
-      const result = await uploadProductImage(fd);
-      setFormData(prev => ({ ...prev, image_url: result.url }));
-    } catch (err) {
-      console.error('Banner image upload error:', err);
-      toast.error('Erreur lors de l\'upload de l\'image');
-    } finally {
-      setUploadingImage(false);
-      e.target.value = '';
-    }
   };
 
   const handleEdit = (banner: Banner) => {
@@ -99,8 +79,9 @@ export function AdminBannersPage() {
       link_url: banner.link_url || '',
       button_text: banner.button_text || '',
       is_active: banner.is_active,
-      sort_order: banner.sort_order
+      sort_order: banner.sort_order != null ? banner.sort_order : 0
     });
+    setImageUrls(banner.image_url ? [banner.image_url] : []);
     setShowForm(true);
   };
 
@@ -108,10 +89,17 @@ export function AdminBannersPage() {
     setSaving(true);
 
     try {
+      const data: Record<string, unknown> = {
+        ...formData,
+        image_url: imageUrls[0] || ''
+      };
+      if (formData.sort_order != null && formData.sort_order !== undefined) {
+        data.sort_order = Number(formData.sort_order);
+      }
       if (editingBanner) {
-        await updateAdminBanner(editingBanner.id, formData);
+        await updateAdminBanner(editingBanner.id, data);
       } else {
-        await createAdminBanner(formData);
+        await createAdminBanner(data);
       }
 
       await fetchBanners();
@@ -125,15 +113,17 @@ export function AdminBannersPage() {
     }
   };
 
-  const handleDelete = async (id: string) => {
-    if (!window.confirm('Supprimer cette banniere ?')) return;
-
+  const handleConfirmDelete = async () => {
+    if (!confirmTargetId) return;
     try {
-      await deleteAdminBanner(id);
-      setBanners(prev => prev.filter(b => b.id !== id));
+      await deleteAdminBanner(confirmTargetId);
+      setBanners(prev => prev.filter(b => b.id !== confirmTargetId));
     } catch (error) {
       console.error('Error deleting banner:', error);
       toast.error('Erreur lors de la suppression');
+    } finally {
+      setConfirmOpen(false);
+      setConfirmTargetId(null);
     }
   };
 
@@ -154,6 +144,7 @@ export function AdminBannersPage() {
 
   return (
     <AdminLayout>
+      <MobileNotOptimizedBanner />
       <div className="p-6 lg:p-8">
         <PageHeader
           title="Bannieres"
@@ -182,7 +173,7 @@ export function AdminBannersPage() {
             >
                 <div className="relative h-48">
                   <img
-                    src={displayImageUrl(banner.image_url)}
+                    src={getImageUrl(banner.image_url)}
                     alt={banner.title}
                     className="w-full h-full object-cover"
                   />
@@ -191,17 +182,16 @@ export function AdminBannersPage() {
                   <div className="text-white">
                     <h3 className="text-2xl font-bold">{banner.title}</h3>
                     {banner.subtitle && (
-                      <p className="text-gray-200 mt-1">{banner.subtitle}</p>
+                      <p className="text-gray-200 dark:text-gray-300 mt-1">{banner.subtitle}</p>
                     )}
                   </div>
                 </div>
 
                 <div className="absolute top-4 right-4 flex items-center gap-2">
-                  <span className={`px-2 py-1 rounded text-xs font-medium ${
-                    banner.is_active ? 'bg-green-500 text-white' : 'bg-gray-500 text-white'
-                  }`}>
-                    {banner.is_active ? 'Active' : 'Inactive'}
-                  </span>
+                  <StatusBadge
+                    label={banner.is_active ? 'Active' : 'Inactive'}
+                    variant={banner.is_active ? 'success' : 'neutral'}
+                  />
                 </div>
               </div>
 
@@ -231,7 +221,7 @@ export function AdminBannersPage() {
                     <Edit2 className="w-6 h-6" />
                   </button>
                   <button
-                    onClick={() => handleDelete(banner.id)}
+                    onClick={() => { setConfirmTargetId(banner.id); setConfirmOpen(true); }}
                     className="p-3 bg-red-100 hover:bg-red-200 text-red-700 border border-red-300 rounded-lg transition-colors dark:bg-red-900/40 dark:text-red-300 dark:border-red-700 dark:hover:bg-red-900/60"
                   >
                     <Trash2 className="w-6 h-6" />
@@ -250,48 +240,25 @@ export function AdminBannersPage() {
         </div>
       </div>
 
-      <AnimatePresence>
-        {showForm && (
-          <>
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setShowForm(false)}
-              className="fixed inset-0 bg-black/50 z-50"
+      <AdminDrawer
+        isOpen={showForm}
+        onClose={() => setShowForm(false)}
+        title={editingBanner ? 'Modifier la banniere' : 'Nouvelle banniere'}
+      >
+        <div className="space-y-6">
+          <div>
+            <label className="block text-sm font-medium dark:text-gray-500 mb-2">
+              Titre *
+            </label>
+            <input
+              type="text"
+              id="banner-title"
+              name="title"
+              value={formData.title}
+              onChange={e => setFormData({ ...formData, title: e.target.value })}
+              className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 bg-white dark:bg-gray-800 dark:text-white dark:placeholder-gray-500"
             />
-            <motion.div
-              initial={{ opacity: 0, x: '100%' }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: '100%' }}
-              className="fixed right-0 top-0 bottom-0 w-full max-w-xl bg-white dark:bg-gray-800 z-50 overflow-y-auto"
-            >
-              <div className="p-6 border-b dark:border-gray-700 flex items-center justify-between sticky top-0 bg-white dark:bg-gray-800">
-                <h2 className="text-xl font-bold dark:text-white">
-                  {editingBanner ? 'Modifier la banniere' : 'Nouvelle banniere'}
-                </h2>
-                <button
-                  onClick={() => setShowForm(false)}
-                  className="p-2 hover:bg-gray-100 hover:dark:bg-gray-700 rounded-lg"
-                >
-                  <X className="w-5 h-5" />
-                </button>
-              </div>
-
-              <div className="p-6 space-y-6">
-                <div>
-                  <label className="block text-sm font-medium dark:text-gray-500 mb-2">
-                    Titre *
-                  </label>
-                  <input
-                    type="text"
-                    id="banner-title"
-                    name="title"
-                    value={formData.title}
-                    onChange={e => setFormData({ ...formData, title: e.target.value })}
-                    className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
-                  />
-                </div>
+          </div>
 
                 <div>
                   <label className="block text-sm font-medium dark:text-gray-500 mb-2">
@@ -303,7 +270,7 @@ export function AdminBannersPage() {
                     name="subtitle"
                     value={formData.subtitle}
                     onChange={e => setFormData({ ...formData, subtitle: e.target.value })}
-                    className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                    className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 bg-white dark:bg-gray-800 dark:text-white dark:placeholder-gray-500"
                   />
                 </div>
 
@@ -311,43 +278,13 @@ export function AdminBannersPage() {
                   <label className="block text-sm font-medium dark:text-gray-500 mb-2">
                     Image *
                   </label>
-                  {formData.image_url ? (
-                    <div className="relative rounded-xl overflow-hidden border dark:border-gray-700">
-                      <img
-                        src={displayImageUrl(formData.image_url)}
-                        alt="Apercu"
-                        className="w-full h-48 object-cover"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => setFormData({ ...formData, image_url: '' })}
-                        className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1.5 hover:bg-red-600"
-                        aria-label="Retirer l'image"
-                      >
-                        <X className="w-4 h-4" />
-                      </button>
-                    </div>
-                  ) : (
-                    <label className="flex flex-col items-center justify-center gap-2 w-full px-4 py-8 border-2 border-dashed dark:border-gray-700 rounded-xl hover:border-primary-500 dark:hover:border-primary-400 hover:bg-primary-50 dark:hover:bg-primary-900/10 transition-colors cursor-pointer">
-                      {uploadingImage ? (
-                        <Loader2 className="w-6 h-6 animate-spin text-primary-600" />
-                      ) : (
-                        <Upload className="w-6 h-6 dark:text-gray-500" />
-                      )}
-                      <span className="text-sm font-medium dark:text-gray-500">
-                        {uploadingImage ? 'Upload en cours...' : 'Cliquer pour uploader une image'}
-                      </span>
-                      <input
-                        type="file"
-                        id="banner-image"
-                        name="image"
-                        accept="image/*"
-                        className="hidden"
-                        onChange={handleImageUpload}
-                        disabled={uploadingImage}
-                      />
-                    </label>
-                  )}
+                  <ImageUpload
+                    value={imageUrls}
+                    onChange={setImageUrls}
+                    folder="banners"
+                    single
+                    maxFiles={1}
+                  />
                 </div>
 
                 <div>
@@ -360,7 +297,7 @@ export function AdminBannersPage() {
                     name="link_url"
                     value={formData.link_url}
                     onChange={e => setFormData({ ...formData, link_url: e.target.value })}
-                    className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                    className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 bg-white dark:bg-gray-800 dark:text-white dark:placeholder-gray-500"
                   />
                 </div>
 
@@ -374,7 +311,7 @@ export function AdminBannersPage() {
                     name="button_text"
                     value={formData.button_text}
                     onChange={e => setFormData({ ...formData, button_text: e.target.value })}
-                    className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                    className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 bg-white dark:bg-gray-800 dark:text-white dark:placeholder-gray-500"
                   />
                 </div>
 
@@ -386,9 +323,9 @@ export function AdminBannersPage() {
                     type="number"
                     id="banner-sort-order"
                     name="sort_order"
-                    value={formData.sort_order}
+                    value={formData.sort_order ?? ''}
                     onChange={e => setFormData({ ...formData, sort_order: parseInt(e.target.value) || 0 })}
-                    className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                    className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 bg-white dark:bg-gray-800 dark:text-white dark:placeholder-gray-500"
                   />
                 </div>
 
@@ -421,10 +358,15 @@ export function AdminBannersPage() {
                   </button>
                 </div>
               </div>
-            </motion.div>
-          </>
-        )}
-      </AnimatePresence>
-    </AdminLayout>
+            </AdminDrawer>
+        <ConfirmDialog
+          open={confirmOpen}
+          onClose={() => { setConfirmOpen(false); setConfirmTargetId(null); }}
+          onConfirm={handleConfirmDelete}
+          title="Supprimer cette banniere ?"
+          message="Cette action est irreversible."
+          variant="danger"
+        />
+      </AdminLayout>
   );
 }

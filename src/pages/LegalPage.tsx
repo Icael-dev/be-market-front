@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { fetchLegalPages } from '../services/content';
@@ -14,13 +14,7 @@ export function LegalPage() {
   const [pages, setPages] = useState<LP[]>([]);
   const [current, setCurrent] = useState<LP | null>(null);
 
-  useEffect(() => { fetchPages(); }, []);
-
-  useEffect(() => {
-    if (pages.length > 0) setCurrent(slug ? pages.find(p => p.slug === slug) || pages[0] : pages[0]);
-  }, [pages, slug]);
-
-  const fetchPages = async () => {
+  const fetchPages = useCallback(async () => {
     try {
       const data = await fetchLegalPages();
       if (data) {
@@ -30,7 +24,9 @@ export function LegalPage() {
     } catch (error) {
       console.error('Failed to load legal pages:', error);
     }
-  };
+  }, [slug]);
+
+  useEffect(() => { fetchPages(); }, [fetchPages]);
 
   return (
     <div className="min-h-screen page-bg py-12">

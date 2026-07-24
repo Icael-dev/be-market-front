@@ -1,20 +1,17 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { fetchBlogPosts, fetchBlogPostBySlug } from '../services/content';
 import type { BlogPost } from '../types';
-import { Calendar, ArrowLeft, Clock } from 'lucide-react';
+import { Calendar, ArrowLeft, Clock, ShoppingBag } from 'lucide-react';
 import { format } from 'date-fns';
+import { ProductCard } from '../components/ProductCard';
 
 export function BlogPage() {
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    fetchPosts();
-  }, []);
-
-  const fetchPosts = async () => {
+  const fetchPosts = useCallback(async () => {
     try {
       const data = await fetchBlogPosts();
       setPosts(data);
@@ -23,7 +20,11 @@ export function BlogPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    fetchPosts();
+  }, [fetchPosts]);
 
   return (
     <div className="min-h-screen page-bg py-12">
@@ -130,11 +131,7 @@ export function BlogPostPage() {
   const [post, setPost] = useState<BlogPost | null>(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    fetchPost();
-  }, [slug]);
-
-  const fetchPost = async () => {
+  const fetchPost = useCallback(async () => {
     if (!slug) return;
 
     try {
@@ -145,7 +142,11 @@ export function BlogPostPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [slug]);
+
+  useEffect(() => {
+    fetchPost();
+  }, [fetchPost]);
 
   if (loading) {
     return (
@@ -214,6 +215,24 @@ export function BlogPostPage() {
               </p>
             </div>
           </div>
+
+          {post.related_products && post.related_products.length > 0 && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="mt-12"
+            >
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-2">
+                <ShoppingBag className="w-6 h-6 text-primary-600" />
+                Produits lies
+              </h2>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                {post.related_products.map((product, index) => (
+                  <ProductCard key={product.id} product={product} index={index} />
+                ))}
+              </div>
+            </motion.div>
+          )}
         </motion.div>
       </article>
     </div>

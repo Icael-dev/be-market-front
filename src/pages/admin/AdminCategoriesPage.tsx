@@ -1,6 +1,6 @@
 import { toast } from 'react-hot-toast';
 import { useEffect, useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import {
   fetchAdminCategories,
   createAdminCategory,
@@ -8,10 +8,14 @@ import {
   deleteAdminCategory,
   restoreAdminCategory
 } from '../../services/admin';
-import type { Category } from '../../types';
-import { Plus, Edit2, Trash2, X, Save, Loader2, Grid3X3, Tag, Power, RotateCcw } from 'lucide-react';
+import type { Category, CategorySpec } from '../../types';
+import { Plus, Edit2, Trash2, X, Save, Loader2, Tag, Power, RotateCcw } from 'lucide-react';
 import { AdminLayout } from '../../components/admin/AdminLayout';
 import { PageHeader } from '../../components/admin/PageHeader';
+import { MobileNotOptimizedBanner } from '../../components/admin/MobileNotOptimizedBanner';
+import { StatusBadge } from '../../components/admin/StatusBadge';
+import { AdminDrawer } from '../../components/admin/AdminDrawer';
+import { ConfirmDialog } from '../../components/admin/ConfirmDialog';
 import { cn } from '../../lib/utils';
 import { useEscape } from '../../hooks/useKeyPress';
 
@@ -24,13 +28,15 @@ export function AdminCategoriesPage() {
   const [saving, setSaving] = useState(false);
   const [togglingId, setTogglingId] = useState<string | null>(null);
   const [restoringId, setRestoringId] = useState<string | null>(null);
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [confirmTargetId, setConfirmTargetId] = useState<string | null>(null);
 
   const [formData, setFormData] = useState({
     name: '',
     slug: '',
     description: '',
     is_active: true,
-    specs: [{ key: '', placeholder: '' }] as { key: string; placeholder?: string }[]
+    specs: [{ key: '', placeholder: '' }] as { key: string; placeholder?: string | null }[]
   });
 
   useEffect(() => {
@@ -111,7 +117,7 @@ export function AdminCategoriesPage() {
 
     const specsToSend = formData.specs
       .filter(s => s.key.trim())
-      .map(s => ({ key: s.key.trim(), placeholder: s.placeholder || undefined }));
+      .map(s => ({ key: s.key.trim(), placeholder: s.placeholder ?? null })) as CategorySpec[];
 
     try {
       const data: Partial<Category> = {
@@ -119,7 +125,7 @@ export function AdminCategoriesPage() {
         slug: formData.slug,
         description: formData.description || null,
         is_active: formData.is_active,
-        specs: specsToSend.length > 0 ? specsToSend : undefined
+        specs: specsToSend.length > 0 ? specsToSend : undefined,
       };
 
       if (editingCategory) {
@@ -139,14 +145,17 @@ export function AdminCategoriesPage() {
     }
   };
 
-  const handleDelete = async (id: string) => {
-    if (!window.confirm('Supprimer cette categorie ?')) return;
+  const handleConfirmDelete = async () => {
+    if (!confirmTargetId) return;
     try {
-      await deleteAdminCategory(id);
-      setCategories(prev => prev.filter(c => c.id !== id));
+      await deleteAdminCategory(confirmTargetId);
+      setCategories(prev => prev.filter(c => c.id !== confirmTargetId));
     } catch (error) {
       console.error('Error deleting category:', error);
       toast.error('Erreur lors de la suppression');
+    } finally {
+      setConfirmOpen(false);
+      setConfirmTargetId(null);
     }
   };
 
@@ -181,6 +190,7 @@ export function AdminCategoriesPage() {
 
   return (
     <AdminLayout>
+      <MobileNotOptimizedBanner />
       <div className="p-6 lg:p-8">
         <PageHeader
           title="Categories"
@@ -195,8 +205,9 @@ export function AdminCategoriesPage() {
           </button>
         </PageHeader>
 
-        <div         className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 overflow-hidden">
-          <table className="w-full">
+        <div className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="w-full">
             <thead className="bg-gray-50 border-b dark:border-gray-700">
               <tr>
                 <th className="text-left px-6 py-4 text-sm font-medium dark:text-gray-500">Categorie</th>
@@ -217,11 +228,12 @@ export function AdminCategoriesPage() {
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 rounded-lg bg-gray-100 dark:bg-gray-700 flex items-center justify-center">
-                        {category.image_url ? (
-                          <img src={category.image_url} alt={category.name} className="w-10 h-10 rounded-lg object-cover" />
-                        ) : (
-                          <Grid3X3 className="w-5 h-5 dark:text-gray-500" />
-                        )}
+                        <svg className="w-5 h-5 text-gray-400 dark:text-gray-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <rect x="3" y="3" width="7" height="7" />
+                          <rect x="14" y="3" width="7" height="7" />
+                          <rect x="14" y="14" width="7" height="7" />
+                          <rect x="3" y="14" width="7" height="7" />
+                        </svg>
                       </div>
                       <div>
                         <p className="font-medium dark:text-white">{category.name}</p>
@@ -235,16 +247,16 @@ export function AdminCategoriesPage() {
                     {category.slug}
                   </td>
                   <td className="px-6 py-4">
-                    <span className={cn(
-                      'inline-flex px-2 py-1 rounded-full text-xs font-medium',
-                      category.deleted_at
-                        ? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400'
-                        : category.is_active
-                          ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
-                          : 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-400'
-                    )}>
-                      {category.deleted_at ? 'Supprime' : category.is_active ? 'Active' : 'Inactive'}
-                    </span>
+                    <StatusBadge
+                      label={category.deleted_at ? 'Supprime' : category.is_active ? 'Active' : 'Inactive'}
+                      variant={
+                        category.deleted_at
+                          ? 'danger'
+                          : category.is_active
+                            ? 'success'
+                            : 'neutral'
+                      }
+                    />
                   </td>
                   <td className="px-6 py-4">
                     <div className="flex items-center justify-end gap-2">
@@ -286,12 +298,12 @@ export function AdminCategoriesPage() {
                           >
                             <Edit2 className="w-6 h-6" />
                           </button>
-                          <button
-                            onClick={() => handleDelete(category.id)}
-                            className="p-3 bg-red-100 hover:bg-red-200 text-red-700 border border-red-300 rounded-lg transition-colors dark:bg-red-900/40 dark:text-red-300 dark:border-red-700 dark:hover:bg-red-900/60"
-                          >
-                            <Trash2 className="w-6 h-6" />
-                          </button>
+                            <button
+                              onClick={() => { setConfirmTargetId(category.id); setConfirmOpen(true); }}
+                              className="p-3 bg-red-100 hover:bg-red-200 text-red-700 border border-red-300 rounded-lg transition-colors dark:bg-red-900/40 dark:text-red-300 dark:border-red-700 dark:hover:bg-red-900/60"
+                            >
+                              <Trash2 className="w-6 h-6" />
+                            </button>
                         </>
                       )}
                     </div>
@@ -300,59 +312,42 @@ export function AdminCategoriesPage() {
               ))}
             </tbody>
           </table>
+          </div>
 
           {categories.length === 0 && !loading && (
             <div className="text-center py-12">
-              <Grid3X3 className="w-12 h-12 text-gray-300 mx-auto mb-4" />
+              <svg className="w-12 h-12 text-gray-300 dark:text-gray-500 mx-auto mb-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <rect x="3" y="3" width="7" height="7" />
+                <rect x="14" y="3" width="7" height="7" />
+                <rect x="14" y="14" width="7" height="7" />
+                <rect x="3" y="14" width="7" height="7" />
+              </svg>
               <p className="dark:text-gray-500">Aucune categorie</p>
             </div>
           )}
         </div>
       </div>
 
-      <AnimatePresence>
-        {showForm && (
-          <>
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setShowForm(false)}
-              className="fixed inset-0 bg-black/50 z-50"
+      <AdminDrawer
+        isOpen={showForm}
+        onClose={() => setShowForm(false)}
+        title={editingCategory ? 'Modifier la categorie' : 'Nouvelle categorie'}
+      >
+        <div className="space-y-6">
+          <div>
+            <label className="block text-sm font-medium dark:text-gray-300 mb-2">
+              Nom *
+            </label>
+            <input
+              type="text"
+              id="category-name"
+              name="name"
+              value={formData.name}
+              onChange={e => handleNameChange(e.target.value)}
+              className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 bg-white dark:bg-gray-800 dark:text-white dark:placeholder-gray-500"
+              placeholder="Ex: Telephones"
             />
-            <motion.div
-              initial={{ opacity: 0, x: '100%' }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: '100%' }}
-               className="fixed right-0 top-0 bottom-0 w-full max-w-xl bg-white dark:bg-gray-800 z-50 overflow-y-auto"
-            >
-              <div className="p-6 border-b dark:border-gray-700 flex items-center justify-between sticky top-0 bg-white dark:bg-gray-800">
-                <h2 className="text-xl font-bold dark:text-white">
-                  {editingCategory ? 'Modifier la categorie' : 'Nouvelle categorie'}
-                </h2>
-                <button
-                  onClick={() => setShowForm(false)}
-                  className="p-2 hover:bg-gray-100 hover:dark:bg-gray-700 rounded-lg transition-colors"
-                >
-                  <X className="w-5 h-5" />
-                </button>
-              </div>
-
-              <div className="p-6 space-y-6">
-                <div>
-                  <label className="block text-sm font-medium dark:text-gray-300 mb-2">
-                    Nom *
-                  </label>
-                  <input
-                    type="text"
-                    id="category-name"
-                    name="name"
-                    value={formData.name}
-                    onChange={e => handleNameChange(e.target.value)}
-                    className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
-                    placeholder="Ex: Telephones"
-                  />
-                </div>
+          </div>
 
                 <div>
                   <label className="block text-sm font-medium dark:text-gray-300 mb-2">
@@ -365,7 +360,7 @@ export function AdminCategoriesPage() {
                     value={formData.slug}
                     onChange={e => setFormData({ ...formData, slug: e.target.value })}
                     disabled
-                    className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl bg-gray-50 dark:text-gray-500 cursor-not-allowed font-mono text-sm"
+                     className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl bg-gray-50 dark:bg-gray-700 dark:text-gray-500 cursor-not-allowed font-mono text-sm"
                   />
                   <p className="text-xs dark:text-gray-500 mt-1">Genere automatiquement depuis le nom</p>
                 </div>
@@ -380,7 +375,7 @@ export function AdminCategoriesPage() {
                     value={formData.description}
                     onChange={e => setFormData({ ...formData, description: e.target.value })}
                     rows={3}
-                    className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                    className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 bg-white dark:bg-gray-800 dark:text-white dark:placeholder-gray-500"
                     placeholder="Description de la categorie..."
                   />
                 </div>
@@ -392,7 +387,7 @@ export function AdminCategoriesPage() {
                     name="is_active"
                     checked={formData.is_active}
                     onChange={e => setFormData({ ...formData, is_active: e.target.checked })}
-                    className="w-4 h-4 dark:text-primary-400 border-gray-300 rounded"
+                     className="w-4 h-4 dark:text-primary-400 border-gray-300 dark:border-gray-600 rounded"
                   />
                   <span className="text-sm dark:text-gray-300">Categorie active</span>
                 </label>
@@ -411,7 +406,7 @@ export function AdminCategoriesPage() {
                    <div className="space-y-2">
                      {formData.specs.map((spec, i) => (
                        <div key={i} className="flex gap-2 items-center">
-                         <Tag className="w-4 h-4 text-gray-400 flex-shrink-0" />
+                         <Tag className="w-4 h-4 text-gray-400 dark:text-gray-500 flex-shrink-0" />
                           <input
                             type="text"
                             id={`category-spec-key-${i}`}
@@ -420,23 +415,23 @@ export function AdminCategoriesPage() {
                             onChange={e => updateSpec(i, 'key', e.target.value)}
                             placeholder="Cle (ex: Marque)"
                            className={cn(
-                             'flex-1 px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 dark:bg-gray-800',
-                             'dark:border-gray-700'
-                           )}
-                         />
-                          <input
-                            type="text"
-                            id={`category-spec-placeholder-${i}`}
+                              'flex-1 px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 dark:bg-gray-800 dark:text-white dark:placeholder-gray-500',
+                              'dark:border-gray-700'
+                            )}
+                          />
+                           <input
+                             type="text"
+                             id={`category-spec-placeholder-${i}`}
                             name={`spec_placeholder_${i}`}
-                            value={spec.placeholder}
+                            value={spec.placeholder || ''}
                             onChange={e => updateSpec(i, 'placeholder', e.target.value)}
                             placeholder="Placeholder (ex: Ex: Samsung)"
                            className={cn(
-                             'flex-1 px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 dark:bg-gray-800',
-                             'dark:border-gray-700'
-                           )}
-                         />
-                         <button
+                              'flex-1 px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 dark:bg-gray-800 dark:text-white dark:placeholder-gray-500',
+                              'dark:border-gray-700'
+                            )}
+                          />
+                          <button
                            type="button"
                            onClick={() => removeSpec(i)}
                            disabled={formData.specs.length <= 1}
@@ -469,10 +464,15 @@ export function AdminCategoriesPage() {
                   </button>
                 </div>
               </div>
-            </motion.div>
-          </>
-        )}
-      </AnimatePresence>
-    </AdminLayout>
+            </AdminDrawer>
+        <ConfirmDialog
+          open={confirmOpen}
+          onClose={() => { setConfirmOpen(false); setConfirmTargetId(null); }}
+          onConfirm={handleConfirmDelete}
+          title="Supprimer cette categorie ?"
+          message="Cette action est irreversible."
+          variant="danger"
+        />
+      </AdminLayout>
   );
 }

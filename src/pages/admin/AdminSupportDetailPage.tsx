@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
@@ -8,6 +8,7 @@ import {
 } from '../../services/admin';
 import { AdminLayout } from '../../components/admin/AdminLayout';
 import { PageHeader } from '../../components/admin/PageHeader';
+import { MobileNotOptimizedBanner } from '../../components/admin/MobileNotOptimizedBanner';
 import { ArrowLeft, Loader2, Send } from 'lucide-react';
 import type { SupportTicket } from '../../types';
 import { format } from 'date-fns';
@@ -29,7 +30,7 @@ export function AdminSupportDetailPage() {
   const [sending, setSending] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  const load = async () => {
+  const load = useCallback(async () => {
     if (!id) return;
     setLoading(true);
     try {
@@ -40,11 +41,11 @@ export function AdminSupportDetailPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [id]);
 
   useEffect(() => {
     load();
-  }, [id]);
+  }, [load]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -80,6 +81,7 @@ export function AdminSupportDetailPage() {
   if (loading) {
     return (
       <AdminLayout>
+        <MobileNotOptimizedBanner />
         <div className="flex justify-center py-12"><Loader2 className="w-8 h-8 animate-spin text-primary-600" /></div>
       </AdminLayout>
     );
@@ -88,6 +90,7 @@ export function AdminSupportDetailPage() {
   if (!ticket) {
     return (
       <AdminLayout>
+        <MobileNotOptimizedBanner />
         <div className="p-6 lg:p-8">
           <p className="text-gray-500 dark:text-gray-400">Ticket introuvable</p>
         </div>
@@ -97,6 +100,7 @@ export function AdminSupportDetailPage() {
 
   return (
     <AdminLayout>
+      <MobileNotOptimizedBanner />
       <div className="p-6 lg:p-8">
         <PageHeader
           title={ticket.subject}

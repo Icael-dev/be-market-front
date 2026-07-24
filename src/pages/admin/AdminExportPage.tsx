@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { fetchAdminExport } from '../../services/admin';
 import { AdminLayout } from '../../components/admin/AdminLayout';
 import { PageHeader } from '../../components/admin/PageHeader';
+import { MobileNotOptimizedBanner } from '../../components/admin/MobileNotOptimizedBanner';
 import { Download, FileSpreadsheet, Loader2, CheckCircle } from 'lucide-react';
 import { format } from 'date-fns';
 
@@ -37,6 +38,7 @@ export function AdminExportPage() {
 
   return (
     <AdminLayout>
+      <MobileNotOptimizedBanner />
       <div className="p-6 lg:p-8">
         <PageHeader title="Export de donnees" subtitle="Exportez vos donnees au format CSV" />
         <div className="grid md:grid-cols-2 gap-4">{options.map((opt, i) => (

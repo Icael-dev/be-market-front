@@ -1,11 +1,12 @@
-import { useEffect, useState, useRef, useLayoutEffect } from 'react';
+import { useEffect, useState, useRef, useLayoutEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
-import { fetchAdminStatistics } from '../../services/admin';
+import { fetchAdminStatistics, fetchAdminTopProducts, fetchAdminLowStock, fetchAdminCouponStats, fetchAdminCategorySales, type TopProduct, type LowStockProduct, type CouponStatsResponse, type CategorySale } from '../../services/admin';
 import { AdminLayout } from '../../components/admin/AdminLayout';
 import { PageHeader } from '../../components/admin/PageHeader';
+import { MobileNotOptimizedBanner } from '../../components/admin/MobileNotOptimizedBanner';
 import { formatPrice } from '../../lib/utils';
-import { DollarSign, ShoppingCart, Users, Package, ArrowUpRight, ArrowDownRight, Download } from 'lucide-react';
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell } from 'recharts';
+import { DollarSign, ShoppingCart, Users, Package, TrendingUp, TrendingDown, Download, AlertTriangle, Ticket, Tag } from 'lucide-react';
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from 'recharts';
 import { format } from 'date-fns';
 
 function useElementWidth<T extends HTMLElement>() {
@@ -25,12 +26,10 @@ function useElementWidth<T extends HTMLElement>() {
   return { ref, width };
 }
 
-const COLORS = ['#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6'];
-
 function ChartBox({ height, children }: { height: number; children: (props: { width: number }) => React.ReactNode }) {
   const { ref, width } = useElementWidth<HTMLDivElement>();
   return (
-    <div ref={ref} className="w-full" style={{ height }}>
+    <div ref={ref} className="w-full min-h-0" style={{ height }}>
       {width > 0 && children({ width })}
     </div>
   );
@@ -51,36 +50,50 @@ type AdminStatsView = {
 
 export function AdminStatisticsPage() {
   const [stats, setStats] = useState<AdminStatsView | null>(null);
+  const [topProducts, setTopProducts] = useState<TopProduct[]>([]);
+  const [lowStock, setLowStock] = useState<LowStockProduct[]>([]);
+  const [couponStats, setCouponStats] = useState<CouponStatsResponse | null>(null);
+  const [categorySales, setCategorySales] = useState<CategorySale[]>([]);
   const [loading, setLoading] = useState(true);
   const [days, setDays] = useState<'7' | '30' | '90'>('30');
 
-  useEffect(() => {
-    void fetchStats();
-  }, [days]);
-
-  const fetchStats = async () => {
+  const fetchAllStats = useCallback(async () => {
     setLoading(true);
     try {
-      const data = await fetchAdminStatistics(Number(days));
+      const [statsData, topProductsData, lowStockData, couponStatsData, categorySalesData] = await Promise.all([
+        fetchAdminStatistics(Number(days)),
+        fetchAdminTopProducts(Number(days)),
+        fetchAdminLowStock(),
+        fetchAdminCouponStats(Number(days)),
+        fetchAdminCategorySales(Number(days)),
+      ]);
 
       setStats({
-        totalRevenue: data.period_revenue,
-        totalOrders: data.period_orders,
-        totalProducts: data.total_products,
-        newCustomers: data.new_customers,
-        revenueChange: data.revenue_change,
-        ordersChange: data.orders_change,
-        avgOrder: data.avg_order,
-        dailyRevenue: data.daily_revenue,
-        statusData: data.status_data,
-        paymentData: data.payment_data,
+        totalRevenue: statsData.total_revenue,
+        totalOrders: statsData.total_orders,
+        totalProducts: statsData.total_products,
+        newCustomers: statsData.new_customers,
+        revenueChange: statsData.revenue_change,
+        ordersChange: statsData.orders_change,
+        avgOrder: statsData.avg_order,
+        dailyRevenue: statsData.daily_revenue,
+        statusData: statsData.status_data,
+        paymentData: statsData.payment_data,
       });
+      setTopProducts(topProductsData);
+      setLowStock(lowStockData);
+      setCouponStats(couponStatsData);
+      setCategorySales(categorySalesData);
     } catch (error) {
       console.error('Stats fetch error:', error);
     } finally {
       setLoading(false);
     }
-  };
+  }, [days]);
+
+  useEffect(() => {
+    void fetchAllStats();
+  }, [days, fetchAllStats]);
 
   const exportData = () => {
     if (!stats) return;
@@ -134,6 +147,7 @@ export function AdminStatisticsPage() {
 
   return (
     <AdminLayout>
+      <MobileNotOptimizedBanner />
       <div className="p-6 lg:p-8">
         <PageHeader
           title="Statistiques"
@@ -145,7 +159,7 @@ export function AdminStatisticsPage() {
               name="stats-days"
               value={days}
               onChange={e => setDays(e.target.value as '7' | '30' | '90')}
-              className="px-4 py-2 border dark:border-gray-700 rounded-xl"
+              className="px-4 py-2 border dark:border-gray-700 rounded-xl bg-white dark:bg-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 cursor-pointer"
             >
               <option value="7">7 jours</option>
               <option value="30">30 jours</option>
@@ -187,9 +201,9 @@ export function AdminStatisticsPage() {
                           className={`flex items-center gap-1 text-sm ${c.change >= 0 ? 'text-green-600' : 'text-red-500'}`}
                         >
                           {c.change >= 0 ? (
-                            <ArrowUpRight className="w-4 h-4" />
+                            <TrendingUp className="w-4 h-4" />
                           ) : (
-                            <ArrowDownRight className="w-4 h-4" />
+                            <TrendingDown className="w-4 h-4" />
                           )}
                           {Math.abs(c.change).toFixed(1)}%
                         </div>
@@ -201,100 +215,179 @@ export function AdminStatisticsPage() {
                 ))}
               </div>
 
-<div className="grid lg:grid-cols-2 gap-6 min-h-0">
-                 <div className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 p-6 min-h-0 flex flex-col">
-                   <h3 className="text-lg font-bold dark:text-white mb-4">Revenus quotidiens</h3>
-                   <ChartBox height={256}>
-                     {({ width }) => (
-                       <ResponsiveContainer width={width || '100%'} height={256}>
-                         <AreaChart data={stats.dailyRevenue}>
-                           <CartesianGrid strokeDasharray="3 3" stroke="#F3F4F6" />
-                           <XAxis dataKey="date" tick={{ fontSize: 12 }} stroke="#9CA3AF" />
-                           <YAxis
-                             tick={{ fontSize: 12 }}
-                             stroke="#9CA3AF"
-                             tickFormatter={v => `${(v / 1000).toFixed(0)}k`}
-                           />
-                           <Tooltip
-                             formatter={(value) => formatPrice(Number(value) || 0)}
-                             contentStyle={{ background: '#1F2937', border: 'none', borderRadius: '12px', color: 'white' }}
-                           />
-                           <Area type="monotone" dataKey="revenue" stroke="#3B82F6" fill="#3B82F620" />
-                         </AreaChart>
-                       </ResponsiveContainer>
-                     )}
-                   </ChartBox>
-                 </div>
+              <div className="grid lg:grid-cols-2 gap-6 mb-6">
+                <div className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 p-6">
+                  <h3 className="text-lg font-bold dark:text-white mb-4">Revenus quotidiens</h3>
+                  <ChartBox height={320}>
+                    {({ width }) => (
+                      <ResponsiveContainer width={width || '100%'} height={320}>
+                        <AreaChart data={stats.dailyRevenue}>
+                          <CartesianGrid strokeDasharray="3 3" stroke="#F3F4F6" />
+                          <XAxis dataKey="date" tick={{ fontSize: 12 }} stroke="#9CA3AF" />
+                          <YAxis tick={{ fontSize: 12 }} stroke="#9CA3AF" tickFormatter={v => `${(v / 1000).toFixed(0)}k`} />
+                          <Tooltip formatter={(value) => formatPrice(Number(value) || 0)} contentStyle={{ background: '#1F2937', border: 'none', borderRadius: '12px', color: 'white' }} />
+                          <Area type="monotone" dataKey="revenue" stroke="#3B82F6" fill="#3B82F620" />
+                        </AreaChart>
+                      </ResponsiveContainer>
+                    )}
+                  </ChartBox>
+                </div>
 
-                 <div className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 p-6 min-h-0 flex flex-col">
-                   <h3 className="text-lg font-bold dark:text-white mb-4">Commandes par jour</h3>
-                   <ChartBox height={256}>
-                     {({ width }) => (
-                       <ResponsiveContainer width={width || '100%'} height={256}>
-                         <BarChart data={stats.dailyRevenue}>
-                           <CartesianGrid strokeDasharray="3 3" stroke="#F3F4F6" />
-                           <XAxis dataKey="date" tick={{ fontSize: 12 }} stroke="#9CA3AF" />
-                           <YAxis tick={{ fontSize: 12 }} stroke="#9CA3AF" />
-                           <Tooltip contentStyle={{ background: '#1F2937', border: 'none', borderRadius: '12px', color: 'white' }} />
-                           <Bar dataKey="orders" fill="#3B82F6" radius={[4, 4, 0, 0]} />
-                         </BarChart>
-                       </ResponsiveContainer>
-                     )}
-                   </ChartBox>
-                 </div>
+                <div className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 p-6">
+                  <h3 className="text-lg font-bold dark:text-white mb-4">Commandes par jour</h3>
+                  <ChartBox height={320}>
+                    {({ width }) => (
+                      <ResponsiveContainer width={width || '100%'} height={320}>
+                        <BarChart data={stats.dailyRevenue}>
+                          <CartesianGrid strokeDasharray="3 3" stroke="#F3F4F6" />
+                          <XAxis dataKey="date" tick={{ fontSize: 12 }} stroke="#9CA3AF" />
+                          <YAxis tick={{ fontSize: 12 }} stroke="#9CA3AF" />
+                          <Tooltip contentStyle={{ background: '#1F2937', border: 'none', borderRadius: '12px', color: 'white' }} />
+                          <Bar dataKey="orders" fill="#3B82F6" radius={[4, 4, 0, 0]} />
+                        </BarChart>
+                      </ResponsiveContainer>
+                    )}
+                  </ChartBox>
+                </div>
+              </div>
 
-                 <div className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 p-6 min-h-0 flex flex-col">
-                   <h3 className="text-lg font-bold dark:text-white mb-4">Statuts commandes</h3>
-                   <ChartBox height={192}>
-                     {({ width }) => (
-                       <ResponsiveContainer width={width || '100%'} height={192}>
-                         <PieChart>
-                           <Pie
-                             data={stats.statusData}
-                             cx="50%"
-                             cy="50%"
-                             innerRadius={50}
-                             outerRadius={70}
-                             dataKey="value"
-                             label={({ name, value }) => `${name}: ${value}`}
-                           >
-                             {stats.statusData.map((row, i) => (
-                               <Cell key={row.name} fill={COLORS[i % COLORS.length]} />
-                             ))}
-                           </Pie>
-                           <Tooltip />
-                         </PieChart>
-                       </ResponsiveContainer>
-                     )}
-                   </ChartBox>
-                 </div>
+              <div className="grid lg:grid-cols-2 gap-6 mb-6">
+                <div className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 p-6">
+                  <h3 className="text-lg font-bold dark:text-white mb-4">Top 10 produits vendus</h3>
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-sm">
+                      <thead>
+                        <tr className="border-b dark:border-gray-700">
+                          <th className="text-left py-2 px-3 dark:text-gray-400">Produit</th>
+                          <th className="text-right py-2 px-3 dark:text-gray-400">Quantite</th>
+                          <th className="text-right py-2 px-3 dark:text-gray-400">Revenu</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y dark:divide-gray-700">
+                        {topProducts.map((product, i) => (
+                          <tr key={product.product_id} className="hover:bg-gray-50 dark:hover:bg-gray-700/50">
+                            <td className="py-3 px-3 dark:text-white">
+                              <div className="flex items-center gap-2">
+                                <span className="w-6 h-6 rounded-full bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300 flex items-center justify-center text-xs font-bold">{i + 1}</span>
+                                {product.product_name}
+                              </div>
+                            </td>
+                            <td className="text-right py-3 px-3 dark:text-gray-300">{product.total_quantity}</td>
+                            <td className="text-right py-3 px-3 dark:text-gray-300">{formatPrice(product.total_revenue)}</td>
+                          </tr>
+                        ))}
+                        {topProducts.length === 0 && (
+                          <tr><td colSpan={3} className="text-center py-8 text-gray-500 dark:text-gray-400">Aucune donnee</td></tr>
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
 
-                 <div className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 p-6 min-h-0 flex flex-col">
-                   <h3 className="text-lg font-bold dark:text-white mb-4">Methodes paiement</h3>
-                   <ChartBox height={192}>
-                     {({ width }) => (
-                       <ResponsiveContainer width={width || '100%'} height={192}>
-                         <PieChart>
-                           <Pie
-                             data={stats.paymentData}
-                             cx="50%"
-                             cy="50%"
-                             innerRadius={50}
-                             outerRadius={70}
-                             dataKey="value"
-                             label={({ name, value }) => `${name}: ${value}`}
-                           >
-                             {stats.paymentData.map((row, i) => (
-                               <Cell key={row.name} fill={COLORS[i % COLORS.length]} />
-                             ))}
-                           </Pie>
-                           <Tooltip />
-                         </PieChart>
-                       </ResponsiveContainer>
-                     )}
-                   </ChartBox>
-                 </div>
-               </div>
+                <div className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 p-6">
+                  <h3 className="text-lg font-bold dark:text-white mb-4 flex items-center gap-2">
+                    <AlertTriangle className="w-5 h-5 text-orange-500" />
+                    Stock bas / rupture
+                  </h3>
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-sm">
+                      <thead>
+                        <tr className="border-b dark:border-gray-700">
+                          <th className="text-left py-2 px-3 dark:text-gray-400">Produit</th>
+                          <th className="text-left py-2 px-3 dark:text-gray-400">SKU</th>
+                          <th className="text-right py-2 px-3 dark:text-gray-400">Stock</th>
+                          <th className="text-right py-2 px-3 dark:text-gray-400">Prix</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y dark:divide-gray-700">
+                        {lowStock.map((product) => (
+                          <tr key={product.id} className="hover:bg-gray-50 dark:hover:bg-gray-700/50">
+                            <td className="py-3 px-3 dark:text-white">{product.name}</td>
+                            <td className="py-3 px-3 dark:text-gray-400 font-mono text-xs">{product.sku}</td>
+                            <td className={`text-right py-3 px-3 font-medium ${product.stock === 0 ? 'text-red-600 dark:text-red-400' : 'text-orange-600 dark:text-orange-400'}`}>
+                              {product.stock}
+                            </td>
+                            <td className="text-right py-3 px-3 dark:text-gray-300">{formatPrice(product.price)}</td>
+                          </tr>
+                        ))}
+                        {lowStock.length === 0 && (
+                          <tr><td colSpan={4} className="text-center py-8 text-gray-500 dark:text-gray-400">Aucun produit en stock bas</td></tr>
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+
+                  <div className="grid lg:grid-cols-2 gap-6 mb-6">
+                    <div className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 p-6">
+                      <h3 className="text-lg font-bold dark:text-white mb-4 flex items-center gap-2">
+                        <Ticket className="w-5 h-5 text-purple-500" />
+                        Impact des coupons
+                      </h3>
+                      <div className="grid grid-cols-2 gap-4 mb-4">
+                        <div className="bg-gray-50 dark:bg-gray-700/50 rounded-xl p-4">
+                          <p className="text-sm text-gray-500 dark:text-gray-400">Coupons utilises</p>
+                          <p className="text-2xl font-bold dark:text-white">{couponStats?.total_coupon_usages ?? 0}</p>
+                        </div>
+                      </div>
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-sm">
+                      <thead>
+                        <tr className="border-b dark:border-gray-700">
+                          <th className="text-left py-2 px-3 dark:text-gray-400">Code</th>
+                          <th className="text-right py-2 px-3 dark:text-gray-400">Type</th>
+                          <th className="text-right py-2 px-3 dark:text-gray-400">Utilisations</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y dark:divide-gray-700">
+                        {couponStats?.coupons_used.map((coupon) => (
+                          <tr key={coupon.code} className="hover:bg-gray-50 dark:hover:bg-gray-700/50">
+                            <td className="py-3 px-3 dark:text-white font-mono">{coupon.code}</td>
+                            <td className="text-right py-3 px-3 dark:text-gray-300">{coupon.discount_type === 'percentage' ? `${coupon.discount_value}%` : `${coupon.discount_value} FCFA`}</td>
+                            <td className="text-right py-3 px-3 dark:text-gray-300">{coupon.usage_count}</td>
+                          </tr>
+                        ))}
+                        {(!couponStats || couponStats.coupons_used.length === 0) && (
+                          <tr><td colSpan={3} className="text-center py-8 text-gray-500 dark:text-gray-400">Aucun coupon utilise</td></tr>
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
+                <div className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 p-6">
+                  <h3 className="text-lg font-bold dark:text-white mb-4 flex items-center gap-2">
+                    <Tag className="w-5 h-5 text-cyan-500" />
+                    Ventes par categorie
+                  </h3>
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-sm">
+                      <thead>
+                        <tr className="border-b dark:border-gray-700">
+                          <th className="text-left py-2 px-3 dark:text-gray-400">Categorie</th>
+                          <th className="text-right py-2 px-3 dark:text-gray-400">Commandes</th>
+                          <th className="text-right py-2 px-3 dark:text-gray-400">Quantite</th>
+                          <th className="text-right py-2 px-3 dark:text-gray-400">Revenu</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y dark:divide-gray-700">
+                        {categorySales.map((cat) => (
+                          <tr key={cat.category_id} className="hover:bg-gray-50 dark:hover:bg-gray-700/50">
+                            <td className="py-3 px-3 dark:text-white">{cat.category_name}</td>
+                            <td className="text-right py-3 px-3 dark:text-gray-300">{cat.orders_count}</td>
+                            <td className="text-right py-3 px-3 dark:text-gray-300">{cat.total_quantity}</td>
+                            <td className="text-right py-3 px-3 dark:text-gray-300">{formatPrice(cat.total_revenue)}</td>
+                          </tr>
+                        ))}
+                        {categorySales.length === 0 && (
+                          <tr><td colSpan={4} className="text-center py-8 text-gray-500 dark:text-gray-400">Aucune vente</td></tr>
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
             </>
           )
         )}
@@ -302,4 +395,3 @@ export function AdminStatisticsPage() {
     </AdminLayout>
   );
 }
-

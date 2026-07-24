@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
@@ -9,8 +9,11 @@ import {
 } from '../../services/admin';
 import { AdminLayout } from '../../components/admin/AdminLayout';
 import { PageHeader } from '../../components/admin/PageHeader';
+import { MobileNotOptimizedBanner } from '../../components/admin/MobileNotOptimizedBanner';
+import { StatusBadge } from '../../components/admin/StatusBadge';
 import { Package, Gift, CreditCard, Loader2, ArrowLeft } from 'lucide-react';
 import type { Order, LoyaltyPoints, LoyaltyTransaction, Payment } from '../../types';
+import type { AdminCustomer } from '../../services/admin';
 import { formatPrice } from '../../lib/utils';
 import { format } from 'date-fns';
 
@@ -20,12 +23,12 @@ export function AdminCustomerDetailPage() {
   const { id } = useParams<{ id: string }>();
   const [tab, setTab] = useState<Tab>('orders');
   const [loading, setLoading] = useState(true);
-  const [customer, setCustomer] = useState<{ full_name: string; email: string; phone?: string; created_at: string } | null>(null);
+  const [customer, setCustomer] = useState<AdminCustomer | null>(null);
   const [orders, setOrders] = useState<Order[]>([]);
   const [loyalty, setLoyalty] = useState<{ points: LoyaltyPoints | null; transactions: LoyaltyTransaction[] }>({ points: null, transactions: [] });
   const [payments, setPayments] = useState<Payment[]>([]);
 
-  const load = async () => {
+  const load = useCallback(async () => {
     if (!id) return;
     setLoading(true);
     try {
@@ -44,11 +47,11 @@ export function AdminCustomerDetailPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [id]);
 
   useEffect(() => {
     load();
-  }, [id]);
+  }, [load]);
 
   const tabs: { key: Tab; label: string; icon: React.ReactNode }[] = [
     { key: 'orders', label: 'Commandes', icon: <Package className="w-4 h-4" /> },
@@ -58,6 +61,7 @@ export function AdminCustomerDetailPage() {
 
   return (
     <AdminLayout>
+      <MobileNotOptimizedBanner />
       <div className="p-6 lg:p-8">
         <PageHeader
           title={customer?.full_name || 'Detail client'}
@@ -120,15 +124,11 @@ export function AdminCustomerDetailPage() {
                           </td>
                           <td className="px-6 py-4 text-sm dark:text-gray-500">{format(new Date(order.created_at), 'dd/MM/yyyy')}</td>
                           <td className="px-6 py-4">
-                            <span className="inline-flex px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300">
-                              {order.status}
-                            </span>
-                          </td>
-                          <td className="px-6 py-4">
-                            <span className="inline-flex px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300">
-                              {order.payment_status}
-                            </span>
-                          </td>
+                          <StatusBadge label={order.status} variant={order.status === 'delivered' ? 'success' : order.status === 'cancelled' ? 'danger' : order.status === 'pending' ? 'warning' : 'info'} />
+                        </td>
+                        <td className="px-6 py-4">
+                          <StatusBadge label={order.payment_status} variant={order.payment_status === 'paid' ? 'success' : order.payment_status === 'failed' || order.payment_status === 'refunded' ? 'danger' : 'warning'} />
+                        </td>
                           <td className="px-6 py-4 text-right font-medium dark:text-white">{formatPrice(order.total)}</td>
                         </tr>
                       ))}

@@ -1,10 +1,11 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
 import type { Address } from '../types';
 import { MapPin, Plus, Edit2, Trash2, Check } from 'lucide-react';
 import { fetchAddresses, createAddress, updateAddress, deleteAddress } from '../services/address';
 import { InputField } from '../components/ui/FormField';
+import { ConfirmDialog } from '../components/admin/ConfirmDialog';
 import { useEscape, useEnter } from '../hooks/useKeyPress';
 
 type AddressErrors = Partial<Record<'full_name' | 'phone' | 'address_line1' | 'city', string>>;
@@ -41,23 +42,26 @@ export function AddressesPage() {
   const [formData, setFormData] = useState(initialForm);
   const [errors, setErrors] = useState<AddressErrors>({});
 
-  useEscape(() => { setShowAddForm(false); setEditingId(null); }, showAddForm || !!editingId);
-  useEnter(() => { if (showAddForm) handleAddAddress(); }, showAddForm);
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [confirmTargetId, setConfirmTargetId] = useState<string | null>(null);
 
-  useEffect(() => {
-    loadAddresses();
-  }, [user]);
+   useEscape(() => { setShowAddForm(false); setEditingId(null); }, showAddForm || !!editingId);
+   useEnter(() => { if (showAddForm) handleAddAddress(); }, showAddForm);
 
-  const loadAddresses = async () => {
-    if (!user) return;
+   const loadAddresses = useCallback(async () => {
+     if (!user) return;
 
-    try {
-      const data = await fetchAddresses();
-      setAddresses(data);
-    } catch (error) {
-      console.error('Failed to load addresses:', error);
-    }
-  };
+     try {
+       const data = await fetchAddresses();
+       setAddresses(data);
+     } catch (error) {
+       console.error('Failed to load addresses:', error);
+     }
+   }, [user]);
+
+   useEffect(() => {
+     loadAddresses();
+   }, [loadAddresses]);
 
   const handleAddAddress = async () => {
     if (!user) return;
@@ -101,14 +105,16 @@ export function AddressesPage() {
     }
   };
 
-  const handleDeleteAddress = async (addressId: string) => {
-    if (!window.confirm('Supprimer cette adresse ?')) return;
-
+  const handleConfirmDelete = async () => {
+    if (!confirmTargetId) return;
     try {
-      await deleteAddress(addressId);
-      setAddresses(prev => prev.filter(a => a.id !== addressId));
+      await deleteAddress(confirmTargetId);
+      setAddresses(prev => prev.filter(a => a.id !== confirmTargetId));
     } catch (error) {
       console.error('Failed to delete address:', error);
+    } finally {
+      setConfirmOpen(false);
+      setConfirmTargetId(null);
     }
   };
 
@@ -304,12 +310,12 @@ export function AddressesPage() {
                             <Edit2 className="w-4 h-4 dark:text-gray-500" />
                           </button>
                           {!address.is_default && (
-                            <button
-                              onClick={() => handleDeleteAddress(address.id)}
-                              className="p-2 dark:hover:bg-red-900/30 rounded-lg transition-colors"
-                            >
-                              <Trash2 className="w-4 h-4 text-red-500" />
-                            </button>
+                          <button
+                            onClick={() => { setConfirmTargetId(address.id); setConfirmOpen(true); }}
+                            className="p-2 dark:hover:bg-red-900/30 rounded-lg transition-colors"
+                          >
+                            <Trash2 className="w-4 h-4 text-red-500" />
+                          </button>
                           )}
                         </div>
                       </div>
@@ -387,7 +393,7 @@ export function AddressesPage() {
                           name="is_default"
                           checked={formData.is_default}
                           onChange={e => setFormData({ ...formData, is_default: e.target.checked })}
-                          className="w-4 h-4 dark:text-primary-400 border-gray-300 rounded focus:ring-primary-500"
+                           className="w-4 h-4 dark:text-primary-400 border-gray-300 dark:border-gray-600 rounded focus:ring-primary-500"
                         />
                         <span className="text-sm dark:text-gray-500">
                           Definir comme adresse par defaut
@@ -420,6 +426,14 @@ export function AddressesPage() {
           )}
         </AnimatePresence>
       </div>
+      <ConfirmDialog
+        open={confirmOpen}
+        onClose={() => { setConfirmOpen(false); setConfirmTargetId(null); }}
+        onConfirm={handleConfirmDelete}
+        title="Supprimer cette adresse ?"
+        message="Cette action est irreversible."
+        variant="danger"
+      />
     </div>
   );
 }

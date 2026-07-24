@@ -30,6 +30,18 @@ export async function fetchProducts(filters: FilterOptions = {}): Promise<Produc
   if (filters.sort) {
     params.set('sort', filters.sort);
   }
+  if (filters.flash_sale) {
+    params.set('flash_sale', 'true');
+  }
+  if (filters.condition) {
+    params.set('condition', filters.condition);
+  }
+  if (filters.in_stock) {
+    params.set('in_stock', 'true');
+  }
+  if (filters.on_sale) {
+    params.set('on_sale', 'true');
+  }
 
   const query = params.toString();
   return api.get<Product[]>(`/api/products${query ? `?${query}` : ''}`);

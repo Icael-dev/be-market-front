@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
 import { useAuth } from './AuthContext';
 import type { WishlistItem, Product } from '../types';
 import { fetchWishlist, addWishlistItem, removeWishlistItem } from '../services/wishlist';
@@ -20,7 +20,7 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
 
   const productIds = items.map(i => i.product_id);
 
-  const loadWishlist = async () => {
+  const loadWishlist = useCallback(async () => {
     try {
       if (!user) {
         const stored = localStorage.getItem('be_market_wishlist');
@@ -35,12 +35,12 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
     } finally {
       setLoading(false);
     }
-  };
+  }, [user]);
 
   useEffect(() => {
     setLoading(true);
     loadWishlist();
-  }, [user]);
+  }, [loadWishlist]);
 
   useEffect(() => {
     if (!user) {

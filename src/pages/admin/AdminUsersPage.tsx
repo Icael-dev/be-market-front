@@ -12,7 +12,9 @@ import {
 import type { StaffUser, UserRole } from '../../types';
 import { AdminLayout } from '../../components/admin/AdminLayout';
 import { PageHeader } from '../../components/admin/PageHeader';
+import { MobileNotOptimizedBanner } from '../../components/admin/MobileNotOptimizedBanner';
 import { useAuth } from '../../context/AuthContext';
+import { ConfirmDialog } from '../../components/admin/ConfirmDialog';
 import { Plus, Edit2, Trash2, X, Save, Loader2, UserCog, Mail, Phone, ShieldCheck, User as UserIcon, RotateCcw } from 'lucide-react';
 import { useEscape } from '../../hooks/useKeyPress';
 
@@ -42,6 +44,8 @@ export function AdminUsersPage() {
   const [restoringId, setRestoringId] = useState<string | null>(null);
   const [errors, setErrors] = useState<Record<string, string[]>>({});
   const [form, setForm] = useState({ ...emptyForm });
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [confirmTarget, setConfirmTarget] = useState<StaffUser | null>(null);
 
   useEffect(() => {
     loadUsers();
@@ -124,21 +128,19 @@ export function AdminUsersPage() {
     }
   };
 
-  const handleDelete = async (user: StaffUser) => {
-    if (isSelf(user)) {
-      toast.error('Vous ne pouvez pas supprimer votre propre compte');
-      return;
-    }
-    if (!window.confirm(`Supprimer le compte de ${user.full_name || user.email} ?`)) return;
-    setDeletingId(user.id);
+  const handleConfirmDelete = async () => {
+    if (!confirmTarget) return;
+    setDeletingId(confirmTarget.id);
     try {
-      await deleteAdminUser(user.id);
-      setUsers(prev => prev.map(u => (u.id === user.id ? { ...u, deleted_at: new Date().toISOString() } : u)));
+      await deleteAdminUser(confirmTarget.id);
+      setUsers(prev => prev.map(u => (u.id === confirmTarget.id ? { ...u, deleted_at: new Date().toISOString() } : u)));
       toast.success('Utilisateur supprime (masque)');
     } catch (err: unknown) {
       const e = err as { message?: string };
       toast.error(e?.message || 'Erreur lors de la suppression');
     } finally {
+      setConfirmOpen(false);
+      setConfirmTarget(null);
       setDeletingId(null);
     }
   };
@@ -169,6 +171,7 @@ export function AdminUsersPage() {
 
   return (
     <AdminLayout>
+      <MobileNotOptimizedBanner />
       <div className="p-6 lg:p-8">
         <PageHeader
           title="Utilisateurs"
@@ -268,18 +271,18 @@ export function AdminUsersPage() {
                             >
                               <Edit2 className="w-6 h-6" />
                             </button>
-                            <button
-                              onClick={() => handleDelete(user)}
-                              disabled={deletingId === user.id || isSelf(user)}
-                              className="p-3 bg-red-100 hover:bg-red-200 text-red-700 border border-red-300 rounded-lg transition-colors disabled:opacity-40 disabled:cursor-not-allowed dark:bg-red-900/40 dark:text-red-300 dark:border-red-700 dark:hover:bg-red-900/60"
-                              title={isSelf(user) ? 'Vous ne pouvez pas supprimer votre compte' : 'Supprimer'}
-                            >
-                              {deletingId === user.id ? (
-                                <Loader2 className="w-6 h-6 animate-spin" />
-                              ) : (
-                                <Trash2 className="w-6 h-6" />
-                              )}
-                            </button>
+                              <button
+                                onClick={() => { setConfirmTarget(user); setConfirmOpen(true); }}
+                                disabled={deletingId === user.id || isSelf(user)}
+                                className="p-3 bg-red-100 hover:bg-red-200 text-red-700 border border-red-300 rounded-lg transition-colors disabled:opacity-40 disabled:cursor-not-allowed dark:bg-red-900/40 dark:text-red-300 dark:border-red-700 dark:hover:bg-red-900/60"
+                                title={isSelf(user) ? 'Vous ne pouvez pas supprimer votre compte' : 'Supprimer'}
+                              >
+                                {deletingId === user.id ? (
+                                  <Loader2 className="w-6 h-6 animate-spin" />
+                                ) : (
+                                  <Trash2 className="w-6 h-6" />
+                                )}
+                              </button>
                           </>
                         )}
                       </div>
@@ -321,7 +324,7 @@ export function AdminUsersPage() {
                 </h2>
                 <button
                   onClick={() => setShowForm(false)}
-                  className="p-2 hover:bg-gray-100 hover:dark:bg-gray-700 rounded-lg transition-colors"
+                  className="p-3 hover:bg-gray-100 hover:dark:bg-gray-700 rounded-lg transition-colors"
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -336,7 +339,7 @@ export function AdminUsersPage() {
                     name="full_name"
                     value={form.full_name}
                     onChange={e => setForm({ ...form, full_name: e.target.value })}
-                    className="w-full px-4 py-3 border dark:border-gray-700 dark:bg-gray-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                    className="w-full px-4 py-3 border dark:border-gray-700 dark:bg-gray-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 dark:text-white dark:placeholder-gray-500"
                     placeholder="Ex: Awa Diop"
                   />
                   {fieldError('full_name') && <p className="text-xs text-red-500 mt-1">{fieldError('full_name')}</p>}
@@ -350,7 +353,7 @@ export function AdminUsersPage() {
                     name="email"
                     value={form.email}
                     onChange={e => setForm({ ...form, email: e.target.value })}
-                    className="w-full px-4 py-3 border dark:border-gray-700 dark:bg-gray-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                    className="w-full px-4 py-3 border dark:border-gray-700 dark:bg-gray-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 dark:text-white dark:placeholder-gray-500"
                     placeholder="secretaire@example.com"
                   />
                   {fieldError('email') && <p className="text-xs text-red-500 mt-1">{fieldError('email')}</p>}
@@ -364,7 +367,7 @@ export function AdminUsersPage() {
                     name="phone"
                     value={form.phone}
                     onChange={e => setForm({ ...form, phone: e.target.value })}
-                    className="w-full px-4 py-3 border dark:border-gray-700 dark:bg-gray-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                    className="w-full px-4 py-3 border dark:border-gray-700 dark:bg-gray-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 dark:text-white dark:placeholder-gray-500"
                     placeholder="+221 ..."
                   />
                 </div>
@@ -379,7 +382,7 @@ export function AdminUsersPage() {
                     name="password"
                     value={form.password}
                     onChange={e => setForm({ ...form, password: e.target.value })}
-                    className="w-full px-4 py-3 border dark:border-gray-700 dark:bg-gray-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                    className="w-full px-4 py-3 border dark:border-gray-700 dark:bg-gray-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 dark:text-white dark:placeholder-gray-500"
                     placeholder="Minimum 8 caracteres"
                     autoComplete="new-password"
                   />
@@ -393,7 +396,7 @@ export function AdminUsersPage() {
                     name="role"
                     value={form.role}
                     onChange={e => setForm({ ...form, role: e.target.value as UserRole })}
-                    className="w-full px-4 py-3 border dark:border-gray-700 dark:bg-gray-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                    className="w-full px-4 py-3 border dark:border-gray-700 dark:bg-gray-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 dark:text-white dark:placeholder-gray-500"
                   >
                     {editing?.role === 'client' && (
                       <option value="client">Client (compte boutique)</option>
@@ -427,6 +430,14 @@ export function AdminUsersPage() {
             </motion.div>
           </>
         )}
+        <ConfirmDialog
+          open={confirmOpen}
+          onClose={() => { setConfirmOpen(false); setConfirmTarget(null); }}
+          onConfirm={handleConfirmDelete}
+          title={confirmTarget ? `Supprimer le compte de ${confirmTarget.full_name || confirmTarget.email} ?` : 'Supprimer cet utilisateur ?'}
+          message="Cette action est irreversible."
+          variant="danger"
+        />
       </AnimatePresence>
     </AdminLayout>
   );

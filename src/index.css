@@ -86,7 +86,7 @@
   }
 
   .icon-btn {
-    @apply inline-flex items-center justify-center rounded-xl p-2.5 text-gray-600 dark:text-gray-300 transition-all duration-200 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-primary-600 dark:hover:text-primary-400;
+    @apply inline-flex items-center justify-center rounded-xl p-3 text-gray-600 dark:text-gray-300 transition-all duration-200 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-primary-600 dark:hover:text-primary-400;
   }
 
   /* ---- Inputs ---- */

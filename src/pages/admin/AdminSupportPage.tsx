@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import {
@@ -6,6 +6,8 @@ import {
 } from '../../services/admin';
 import { AdminLayout } from '../../components/admin/AdminLayout';
 import { PageHeader } from '../../components/admin/PageHeader';
+import { MobileNotOptimizedBanner } from '../../components/admin/MobileNotOptimizedBanner';
+import { StatusBadge } from '../../components/admin/StatusBadge';
 import { Search, Loader2, RefreshCw } from 'lucide-react';
 import type { SupportTicket } from '../../types';
 import { format } from 'date-fns';
@@ -25,21 +27,23 @@ export function AdminSupportPage() {
   const [statusFilter, setStatusFilter] = useState('');
   const [search, setSearch] = useState('');
 
-  const load = async () => {
+  const load = useCallback(async () => {
     setLoading(true);
     try {
-      const data = await fetchAdminSupportTickets(statusFilter || undefined);
+      const data = await fetchAdminSupportTickets(statusFilter ? { status: statusFilter } : undefined);
       setTickets(data);
-    } catch (error) {
-      console.error('Failed to load support tickets:', error);
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Erreur inconnue';
+      console.error('Failed to load support tickets:', message, error);
+      alert('Impossible de charger les tickets de support. Verifiez que le backend fonctionne et que les migrations sont a jour.');
     } finally {
       setLoading(false);
     }
-  };
+  }, [statusFilter]);
 
   useEffect(() => {
     load();
-  }, [statusFilter]);
+  }, [load]);
 
   const filtered = tickets.filter(t => {
     const matchesSearch = !search ||
@@ -50,6 +54,7 @@ export function AdminSupportPage() {
 
   return (
     <AdminLayout>
+      <MobileNotOptimizedBanner />
       <div className="p-6 lg:p-8">
         <PageHeader title="Support" subtitle={`${filtered.length} ticket${filtered.length > 1 ? 's' : ''}`} />
 
@@ -62,13 +67,13 @@ export function AdminSupportPage() {
                 placeholder="Rechercher par sujet ou email..."
                 value={search}
                 onChange={e => setSearch(e.target.value)}
-                className="w-full pl-10 pr-4 py-2.5 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                className="w-full pl-10 pr-4 py-2.5 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 bg-white dark:bg-gray-800 dark:text-white dark:placeholder-gray-500"
               />
             </div>
             <select
               value={statusFilter}
               onChange={e => setStatusFilter(e.target.value)}
-              className="px-3 py-2.5 border dark:border-gray-700 rounded-xl text-sm"
+              className="px-3 py-2.5 border dark:border-gray-700 rounded-xl text-sm bg-white dark:bg-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 cursor-pointer"
             >
               {STATUS_FILTERS.map(f => (
                 <option key={f.value} value={f.value}>{f.label}</option>
@@ -109,9 +114,10 @@ export function AdminSupportPage() {
                       </td>
                       <td className="px-6 py-4 text-sm dark:text-gray-500">{t.user?.email || '—'}</td>
                       <td className="px-6 py-4">
-                        <span className="inline-flex px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300">
-                          {getStatusLabel(t.status)}
-                        </span>
+                        <StatusBadge
+                          label={getStatusLabel(t.status)}
+                          variant={t.status === 'resolved' || t.status === 'closed' ? 'success' : t.status === 'open' ? 'warning' : 'info'}
+                        />
                       </td>
                       <td className="px-6 py-4 text-sm dark:text-gray-500 capitalize">{t.priority}</td>
                       <td className="px-6 py-4 text-sm dark:text-gray-500">{t.messages?.length || 0}</td>
