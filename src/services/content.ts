@@ -1,5 +1,9 @@
 import { api } from '../lib/api';
-import { FAQ, LegalPage, Banner, FlashSale, Review, LoyaltyPoints, LoyaltyTransaction, BlogPost, Testimonial } from '../types';
+import { FAQ, LegalPage, Banner, FlashSale, Review, LoyaltyPoints, LoyaltyTransaction, BlogPost, Testimonial, CouponValidation, Settings } from '../types';
+
+export async function fetchSettings(): Promise<Settings> {
+  return api.get<Settings>('/api/settings');
+}
 
 export async function fetchFaqs(): Promise<FAQ[]> {
   return api.get<FAQ[]>('/api/faqs');
@@ -51,15 +55,6 @@ export async function subscribeNewsletter(email: string): Promise<void> {
 
 export async function createStockNotification(productId: string, email: string): Promise<void> {
   await api.post('/api/stock-notifications', { product_id: productId, email });
-}
-
-export interface CouponValidation {
-  valid: boolean;
-  code?: string;
-  discount_type?: string;
-  discount_value?: number;
-  discount_amount?: number;
-  message: string;
 }
 
 export async function validateCoupon(code: string, subtotal: number): Promise<CouponValidation> {

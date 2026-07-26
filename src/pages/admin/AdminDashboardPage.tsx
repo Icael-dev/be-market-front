@@ -20,6 +20,7 @@ import {
   BarChart3
 } from 'lucide-react';
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
+import { useElementWidth } from '../../hooks/useElementWidth';
 import type { Order } from '../../types';
 
 interface Stat {
@@ -32,6 +33,7 @@ interface Stat {
 }
 
 export function AdminDashboardPage() {
+  const { ref: chartRef, width: chartWidth } = useElementWidth<HTMLDivElement>();
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState<Stat[]>([]);
   const [recentOrders, setRecentOrders] = useState<Order[]>([]);
@@ -278,25 +280,27 @@ export function AdminDashboardPage() {
           >
              <div className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 p-6">
               <h2 className="font-bold dark:text-white mb-4">Tendance des revenus</h2>
-              <div className="w-full" style={{ height: 320 }}>
-                <ResponsiveContainer width="100%" height="100%">
-                  <AreaChart data={dailyRevenue}>
-                    <defs>
-                      <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="#3B82F6" stopOpacity={0.3}/>
-                        <stop offset="95%" stopColor="#3B82F6" stopOpacity={0}/>
-                      </linearGradient>
-                    </defs>
-                    <XAxis dataKey="date" tick={{ fontSize: 12 }} stroke="#9CA3AF" />
-                    <YAxis tick={{ fontSize: 12 }} stroke="#9CA3AF" tickFormatter={v => `${(v / 1000).toFixed(0)}k`} />
-                    <Tooltip
-                      formatter={(value) => formatPrice(Number(value))}
-                      contentStyle={{ background: '#1F2937', border: 'none', borderRadius: '12px', color: 'white' }}
-                    />
-                    <Area type="monotone" dataKey="revenue" stroke="#3B82F6" fillOpacity={1} fill="url(#colorRevenue)" />
-                  </AreaChart>
-                </ResponsiveContainer>
-              </div>
+               <div ref={chartRef} className="w-full" style={{ height: 320 }}>
+                 {chartWidth > 0 && (
+                   <ResponsiveContainer width={chartWidth} height={320}>
+                     <AreaChart data={dailyRevenue}>
+                       <defs>
+                         <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
+                           <stop offset="5%" stopColor="#3B82F6" stopOpacity={0.3}/>
+                           <stop offset="95%" stopColor="#3B82F6" stopOpacity={0}/>
+                         </linearGradient>
+                       </defs>
+                       <XAxis dataKey="date" tick={{ fontSize: 12 }} stroke="#9CA3AF" />
+                       <YAxis tick={{ fontSize: 12 }} stroke="#9CA3AF" tickFormatter={v => `${(v / 1000).toFixed(0)}k`} />
+                       <Tooltip
+                         formatter={(value) => formatPrice(Number(value))}
+                         contentStyle={{ background: '#1F2937', border: 'none', borderRadius: '12px', color: 'white' }}
+                       />
+                       <Area type="monotone" dataKey="revenue" stroke="#3B82F6" fillOpacity={1} fill="url(#colorRevenue)" />
+                     </AreaChart>
+                   </ResponsiveContainer>
+                 )}
+               </div>
             </div>
           </motion.div>
         )}

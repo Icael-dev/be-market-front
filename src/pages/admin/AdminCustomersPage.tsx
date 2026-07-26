@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { fetchAdminCustomers, type AdminCustomer } from '../../services/admin';
+import { fetchAdminCustomers } from '../../services/admin';
+import type { AdminCustomer } from '../../types';
 import { formatPrice } from '../../lib/utils';
 import { AdminLayout } from '../../components/admin/AdminLayout';
 import { PageHeader } from '../../components/admin/PageHeader';

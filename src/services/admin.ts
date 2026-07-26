@@ -14,7 +14,11 @@ import type {
   LoyaltyTransaction,
   Payment,
   SupportTicket,
-  SupportMessage
+  SupportMessage,
+  AdminCustomer,
+  FAQ,
+  LegalPage,
+  Testimonial
 } from '../types';
 
 export interface AdminStats {
@@ -31,21 +35,6 @@ export interface AdminStats {
   daily_revenue: Array<{ date: string; revenue: number; orders: number }>;
   status_data: Array<{ name: string; value: number }>;
   payment_data: Array<{ name: string; value: number }>;
-}
-
-export interface AdminCustomer {
-  id: string;
-  user_id: string;
-  email: string | null;
-  full_name: string | null;
-  phone: string | null;
-  avatar_url: string | null;
-  is_admin: boolean;
-  role?: UserRole;
-  created_at: string;
-  updated_at: string;
-  orders_count?: number;
-  total_spent?: number;
 }
 
 type MaybePaginated<T> = T[] | { data: T[] };
@@ -346,6 +335,57 @@ export async function fetchAdminCouponStats(days?: number): Promise<CouponStatsR
 
 export async function fetchAdminCategorySales(days?: number): Promise<CategorySale[]> {
   return api.get<CategorySale[]>(`/api/admin/statistics/category-sales${days ? `?days=${days}` : ''}`);
+}
+
+// FAQs
+export async function fetchAdminFAQs(): Promise<FAQ[]> {
+  return unwrapList(await api.get<MaybePaginated<FAQ>>('/api/admin/faqs'));
+}
+
+export async function createAdminFAQ(faq: Partial<FAQ>): Promise<FAQ> {
+  return api.post<FAQ>('/api/admin/faqs', faq);
+}
+
+export async function updateAdminFAQ(id: string, faq: Partial<FAQ>): Promise<FAQ> {
+  return api.put<FAQ>(`/api/admin/faqs/${id}`, faq);
+}
+
+export async function deleteAdminFAQ(id: string): Promise<void> {
+  await api.delete(`/api/admin/faqs/${id}`);
+}
+
+// Legal Pages
+export async function fetchAdminLegalPages(): Promise<LegalPage[]> {
+  return unwrapList(await api.get<MaybePaginated<LegalPage>>('/api/admin/legal-pages'));
+}
+
+export async function createAdminLegalPage(page: Partial<LegalPage>): Promise<LegalPage> {
+  return api.post<LegalPage>('/api/admin/legal-pages', page);
+}
+
+export async function updateAdminLegalPage(id: string, page: Partial<LegalPage>): Promise<LegalPage> {
+  return api.put<LegalPage>(`/api/admin/legal-pages/${id}`, page);
+}
+
+export async function deleteAdminLegalPage(id: string): Promise<void> {
+  await api.delete(`/api/admin/legal-pages/${id}`);
+}
+
+// Testimonials
+export async function fetchAdminTestimonials(): Promise<Testimonial[]> {
+  return unwrapList(await api.get<MaybePaginated<Testimonial>>('/api/admin/testimonials'));
+}
+
+export async function createAdminTestimonial(testimonial: Partial<Testimonial>): Promise<Testimonial> {
+  return api.post<Testimonial>('/api/admin/testimonials', testimonial);
+}
+
+export async function updateAdminTestimonial(id: string, testimonial: Partial<Testimonial>): Promise<Testimonial> {
+  return api.put<Testimonial>(`/api/admin/testimonials/${id}`, testimonial);
+}
+
+export async function deleteAdminTestimonial(id: string): Promise<void> {
+  await api.delete(`/api/admin/testimonials/${id}`);
 }
 
 // Export

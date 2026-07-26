@@ -12,8 +12,7 @@ import { PageHeader } from '../../components/admin/PageHeader';
 import { MobileNotOptimizedBanner } from '../../components/admin/MobileNotOptimizedBanner';
 import { StatusBadge } from '../../components/admin/StatusBadge';
 import { Package, Gift, CreditCard, Loader2, ArrowLeft } from 'lucide-react';
-import type { Order, LoyaltyPoints, LoyaltyTransaction, Payment } from '../../types';
-import type { AdminCustomer } from '../../services/admin';
+import type { Order, LoyaltyPoints, LoyaltyTransaction, Payment, AdminCustomer } from '../../types';
 import { formatPrice } from '../../lib/utils';
 import { format } from 'date-fns';
 

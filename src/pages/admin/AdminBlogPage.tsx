@@ -203,6 +203,7 @@ export function AdminBlogPage() {
                           src={post.image_url}
                           alt={post.title}
                           className="w-12 h-12 rounded-lg object-cover"
+                          onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
                         />
                       ) : (
                         <div className="w-12 h-12 rounded-lg bg-gray-100 dark:bg-gray-700 flex items-center justify-center">

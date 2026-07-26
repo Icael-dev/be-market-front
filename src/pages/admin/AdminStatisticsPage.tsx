@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef, useLayoutEffect, useCallback } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { fetchAdminStatistics, fetchAdminTopProducts, fetchAdminLowStock, fetchAdminCouponStats, fetchAdminCategorySales, type TopProduct, type LowStockProduct, type CouponStatsResponse, type CategorySale } from '../../services/admin';
 import { AdminLayout } from '../../components/admin/AdminLayout';
@@ -8,23 +8,7 @@ import { formatPrice } from '../../lib/utils';
 import { DollarSign, ShoppingCart, Users, Package, TrendingUp, TrendingDown, Download, AlertTriangle, Ticket, Tag } from 'lucide-react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from 'recharts';
 import { format } from 'date-fns';
-
-function useElementWidth<T extends HTMLElement>() {
-  const ref = useRef<T>(null);
-  const [width, setWidth] = useState(0);
-
-  useLayoutEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const update = () => setWidth(el.clientWidth);
-    update();
-    const observer = new ResizeObserver(update);
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, []);
-
-  return { ref, width };
-}
+import { useElementWidth } from '../../hooks/useElementWidth';
 
 function ChartBox({ height, children }: { height: number; children: (props: { width: number }) => React.ReactNode }) {
   const { ref, width } = useElementWidth<HTMLDivElement>();

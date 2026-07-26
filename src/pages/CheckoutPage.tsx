@@ -19,9 +19,9 @@ import { InputField } from '../components/ui/FormField';
 import { fetchAddresses, createAddress } from '../services/address';
 import { placeOrder } from '../services/orders';
 import { initiatePayment } from '../services/payments';
-import { fetchLoyaltyPoints, validateCoupon, type CouponValidation } from '../services/content';
+import { fetchLoyaltyPoints, fetchSettings, validateCoupon } from '../services/content';
 import { useEnter } from '../hooks/useKeyPress';
-import type { LoyaltyPoints } from '../types';
+import type { LoyaltyPoints, Settings, CouponValidation } from '../types';
 
 type Step = 'shipping' | 'payment' | 'confirm';
 type PaymentMethod = 'tmoney' | 'flooz' | 'cash_on_delivery';
@@ -68,6 +68,7 @@ export function CheckoutPage() {
   const [couponCode, setCouponCode] = useState('');
   const [couponValidation, setCouponValidation] = useState<CouponValidation | null>(null);
   const [couponLoading, setCouponLoading] = useState(false);
+  const [settings, setSettings] = useState<Settings | null>(null);
 
   const handleApplyCoupon = useCallback(async () => {
     if (!couponCode.trim() || !total) return;
@@ -108,7 +109,7 @@ export function CheckoutPage() {
 
   const [useNewAddress, setUseNewAddress] = useState(true);
 
-  const shippingFee = total > 50000 ? 0 : 2500;
+  const shippingFee = total > (settings?.free_shipping_threshold ?? 50000) ? 0 : (settings?.shipping_fee ?? 2500);
   const couponDiscount = couponValidation?.valid ? (couponValidation.discount_amount || 0) : 0;
   const maxLoyaltyDiscount = Math.min(
     loyaltyPoints?.points || 0,
@@ -127,6 +128,15 @@ export function CheckoutPage() {
       console.error('Failed to load loyalty points:', error);
     }
   }, [user]);
+
+  const loadSettings = useCallback(async () => {
+    try {
+      const data = await fetchSettings();
+      setSettings(data);
+    } catch (error) {
+      console.error('Failed to load settings:', error);
+    }
+  }, []);
 
   const loadAddresses = useCallback(async () => {
     if (!user) return;
@@ -158,7 +168,8 @@ export function CheckoutPage() {
 
     loadAddresses();
     loadLoyaltyPoints();
-  }, [user, items, loadAddresses, loadLoyaltyPoints, navigate, searchParams]);
+    loadSettings();
+  }, [user, items, loadAddresses, loadLoyaltyPoints, loadSettings, navigate, searchParams]);
 
 const handlePlaceOrder = async () => {
     if (!user) return;
@@ -699,6 +710,11 @@ const handlePlaceOrder = async () => {
                     <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                        Points de fidelite disponibles : {loyaltyPoints.points} ({formatPrice(loyaltyPoints.points * 25)} de reduction)
                     </p>
+                    {loyaltyPoints.threshold > 0 && (total - couponDiscount) < loyaltyPoints.threshold && (
+                      <p className="text-xs text-orange-600 dark:text-orange-400 mb-2">
+                        Vous devez depenser au moins {formatPrice(loyaltyPoints.threshold)} pour utiliser vos points (actuellement {formatPrice(total - couponDiscount)})
+                      </p>
+                    )}
                     <div className="flex items-center gap-3">
                       <input
                         type="number"
@@ -706,7 +722,8 @@ const handlePlaceOrder = async () => {
                         max={maxLoyaltyDiscount}
                         value={loyaltyPointsToRedeem}
                         onChange={e => setLoyaltyPointsToRedeem(Math.max(0, Math.min(maxLoyaltyDiscount, parseInt(e.target.value || '0'))))}
-                        className="w-24 px-3 py-2 border dark:border-gray-700 rounded-lg text-sm dark:bg-gray-800 dark:text-white"
+                        disabled={loyaltyPoints.threshold > 0 && (total - couponDiscount) < loyaltyPoints.threshold}
+                        className="w-24 px-3 py-2 border dark:border-gray-700 rounded-lg text-sm dark:bg-gray-800 dark:text-white disabled:opacity-50 disabled:cursor-not-allowed"
                         placeholder="0"
                       />
                       <span className="text-sm text-gray-500 dark:text-gray-400">

@@ -3,7 +3,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import { formatPrice, FALLBACK_IMAGE } from '../lib/utils';
-import { validateCoupon, type CouponValidation } from '../services/content';
+import type { CouponValidation } from '../types';
+import { validateCoupon } from '../services/content';
 import { useEnter } from '../hooks/useKeyPress';
 import { useState } from 'react';
 import {
@@ -40,7 +41,7 @@ export function CartPage() {
       const result = await validateCoupon(couponCode.trim(), total);
       setCouponValidation(result);
     } catch (error) {
-      setCouponValidation({ valid: false, message: error instanceof Error ? error.message : 'Erreur lors de la validation du coupon' });
+      setCouponValidation({ valid: false, message: error instanceof Error ? error.message : 'Erreur lors de la validation du coupon', discount_amount: 0 });
     } finally {
       setCouponLoading(false);
     }

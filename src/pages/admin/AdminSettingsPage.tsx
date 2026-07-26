@@ -74,6 +74,12 @@ export function AdminSettingsPage() {
       ]
     },
     {
+      group: 'Fidelite',
+      items: [
+        { key: 'loyalty_points_threshold', label: 'Seuil de depense pour utiliser les points (FCFA)', type: 'number' }
+      ]
+    },
+    {
       group: 'Boutique',
       items: [
         { key: 'store_name', label: 'Nom de la boutique', type: 'text' },

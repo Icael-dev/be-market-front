@@ -10,6 +10,7 @@ import { ProductCard } from '../components/ProductCard';
 export function BlogPage() {
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
+  const [imageErrors, setImageErrors] = useState<Set<string>>(new Set());
 
   const fetchPosts = useCallback(async () => {
     try {
@@ -68,21 +69,22 @@ export function BlogPage() {
                 transition={{ delay: index * 0.1 }}
                 className="card hover:shadow-premium transition-all"
               >
-                <Link to={`/blog/${post.slug}`}>
-                  <div className="relative h-48 overflow-hidden">
-                    {post.image_url ? (
-                      <img
-                        src={post.image_url}
-                        alt={post.title}
-                        className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
-                      />
-                    ) : (
-                      <div className="w-full h-full bg-gradient-to-br from-primary-600 to-cyan-500 flex items-center justify-center">
-                        <span className="text-white text-6xl font-bold">{post.title[0]}</span>
-                      </div>
-                    )}
-                  </div>
-                </Link>
+                 <Link to={`/blog/${post.slug}`}>
+                   <div className="relative h-48 overflow-hidden">
+                     {post.image_url && !imageErrors.has(post.slug) ? (
+                       <img
+                         src={post.image_url}
+                         alt={post.title}
+                         className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+                         onError={() => setImageErrors(prev => new Set(prev).add(post.slug))}
+                       />
+                     ) : (
+                       <div className="w-full h-full bg-gradient-to-br from-primary-600 to-cyan-500 flex items-center justify-center">
+                         <span className="text-white text-6xl font-bold">{post.title[0]}</span>
+                       </div>
+                     )}
+                   </div>
+                 </Link>
 
                 <div className="p-6">
                   <div className="flex items-center gap-4 text-sm text-gray-500 dark:text-gray-400 mb-3">
@@ -130,6 +132,7 @@ export function BlogPostPage() {
   const { slug } = useParams();
   const [post, setPost] = useState<BlogPost | null>(null);
   const [loading, setLoading] = useState(true);
+  const [imageError, setImageError] = useState(false);
 
   const fetchPost = useCallback(async () => {
     if (!slug) return;
@@ -198,12 +201,13 @@ export function BlogPostPage() {
             </div>
           </header>
 
-          {post.image_url && (
+          {post.image_url && !imageError && (
             <div className="mb-8 rounded-2xl overflow-hidden">
               <img
                 src={post.image_url}
                 alt={post.title}
                 className="w-full h-64 md:h-96 object-cover"
+                onError={() => setImageError(true)}
               />
             </div>
           )}

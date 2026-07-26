@@ -237,6 +237,30 @@ export interface BlogPost {
   related_products?: Product[];
 }
 
+export interface AdminCustomer {
+  id: string;
+  user_id: string;
+  email: string | null;
+  full_name: string | null;
+  phone: string | null;
+  avatar_url: string | null;
+  is_admin: boolean;
+  role?: UserRole;
+  created_at: string;
+  updated_at: string;
+  orders_count?: number;
+  total_spent?: number;
+}
+
+export interface CouponValidation {
+  valid: boolean;
+  code?: string;
+  discount_type?: string;
+  discount_value?: number;
+  discount_amount: number;
+  message: string;
+}
+
 export interface Settings {
   shipping_fee: number;
   free_shipping_threshold: number;
@@ -245,6 +269,7 @@ export interface Settings {
   store_name: string;
   store_email: string;
   store_phone: string;
+  loyalty_points_threshold: number;
   site_description?: string;
 }
 
@@ -346,6 +371,7 @@ export interface LoyaltyPoints {
   points: number;
   total_earned: number;
   total_redeemed: number;
+  threshold: number;
   created_at: string;
   updated_at: string;
 }

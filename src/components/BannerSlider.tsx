@@ -46,6 +46,10 @@ export function BannerSlider() {
     goTo((currentIndex + 1) % banners.length);
   }, [currentIndex, banners.length, goTo]);
 
+  const handleImageError = useCallback(() => {
+    setCurrentIndex(prev => (prev + 1) % banners.length);
+  }, [banners.length]);
+
   if (loading) return (
     <div className="w-full h-[32rem] sm:h-[36rem] md:h-[40rem] lg:h-[46rem] rounded-3xl bg-gray-100 dark:bg-gray-800 animate-pulse" />
   );
@@ -74,9 +78,7 @@ export function BannerSlider() {
             animate={{ scale: 1 }}
             transition={{ duration: 6, ease: 'linear' }}
             className="w-full h-full object-cover"
-            onError={(e) => {
-              (e.currentTarget as HTMLImageElement).style.display = 'none';
-            }}
+            onError={handleImageError}
           />
           <div className="absolute inset-0 bg-gradient-to-r from-gray-950/85 via-gray-900/55 to-transparent" />
           <div className="absolute inset-0 bg-gradient-to-t from-gray-950/40 via-transparent to-transparent" />
