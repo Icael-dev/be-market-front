@@ -18,7 +18,7 @@ import { LoadingSpinner } from '../components/LoadingSpinner';
 import { InputField } from '../components/ui/FormField';
 import { fetchAddresses, createAddress } from '../services/address';
 import { placeOrder } from '../services/orders';
-import { initiatePayment } from '../services/payments';
+import { initiatePayment, verifyPayment } from '../services/payments';
 import { fetchLoyaltyPoints, fetchSettings, validateCoupon } from '../services/content';
 import { useEnter } from '../hooks/useKeyPress';
 import type { LoyaltyPoints, Settings, CouponValidation } from '../types';
@@ -215,7 +215,13 @@ const handlePlaceOrder = async () => {
 
       if (paymentMethod !== 'cash_on_delivery') {
         try {
-          await initiatePayment(order.id, paymentMethod, shippingAddress.phone);
+          const payment = await initiatePayment(order.id, paymentMethod, shippingAddress.phone);
+          if (payment.status !== 'paid') {
+            const verified = await verifyPayment(payment.id);
+            if (verified.status !== 'paid') {
+              throw new Error('Le paiement n\'a pas ete confirme. Vous pourrez payer depuis vos commandes.');
+            }
+          }
         } catch (paymentError) {
           console.error('Payment initiation error:', paymentError);
           throw new Error('La commande a ete creee mais le paiement n\'a pas pu etre initie. Vous pourrez payer depuis vos commandes.');

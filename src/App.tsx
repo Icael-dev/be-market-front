@@ -56,6 +56,7 @@ const LazyBlogPage = lazy(() => import('./pages/BlogPage').then(m => ({ default:
 const LazyBlogPostPage = lazy(() => import('./pages/BlogPage').then(m => ({ default: m.BlogPostPage })));
 const LazyLoyaltyPage = lazy(() => import('./pages/LoyaltyPage').then(m => ({ default: m.LoyaltyPage })));
 const LazyPaymentsPage = lazy(() => import('./pages/PaymentsPage').then(m => ({ default: m.PaymentsPage })));
+const LazyWishlistPage = lazy(() => import('./pages/WishlistPage').then(m => ({ default: m.WishlistPage })));
 const LazyNotFoundPage = lazy(() => import('./pages/NotFoundPage').then(m => ({ default: m.NotFoundPage })));
 const LazyForgotPasswordPage = lazy(() => import('./pages/ForgotPasswordPage').then(m => ({ default: m.ForgotPasswordPage })));
 const LazyResetPasswordPage = lazy(() => import('./pages/ResetPasswordPage').then(m => ({ default: m.ResetPasswordPage })));
@@ -191,6 +192,7 @@ function AppRoutes() {
               <Route path="/support/:id" element={<ProtectedRoute><LazyTicketDetailPage /></ProtectedRoute>} />
               <Route path="/loyalty" element={<ProtectedRoute><LazyLoyaltyPage /></ProtectedRoute>} />
               <Route path="/payments" element={<ProtectedRoute><LazyPaymentsPage /></ProtectedRoute>} />
+              <Route path="/wishlist" element={<ProtectedRoute><LazyWishlistPage /></ProtectedRoute>} />
               <Route path="*" element={<LazyNotFoundPage />} />
             </Route>
 

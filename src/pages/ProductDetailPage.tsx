@@ -8,6 +8,7 @@ import { useWishlist } from '../context/WishlistContext';
 import { ProductCard } from '../components/ProductCard';
 import { ReviewSection } from '../components/ReviewSection';
 import { PageLoading } from '../components/LoadingSpinner';
+import { StockNotificationButton } from '../pages/StockNotificationPage';
 import {
   ShoppingCart,
   Heart,
@@ -263,6 +264,10 @@ export function ProductDetailPage() {
                   </div>
                 </div>
               </div>
+            )}
+
+            {product.stock === 0 && (
+              <StockNotificationButton product={product} />
             )}
 
             <div className="flex gap-3">

@@ -51,7 +51,7 @@ export function AdminDashboardPage() {
     try {
       const [statsRes, ordersRes, topProductsRes, lowStockRes] = await Promise.all([
         fetchAdminStatistics(),
-        fetchAdminOrders(),
+        fetchAdminOrders({ per_page: 10 }),
         fetchAdminTopProducts(),
         fetchAdminLowStock(),
       ]);
@@ -104,7 +104,7 @@ export function AdminDashboardPage() {
       setDailyRevenue((stats.daily_revenue || []).map(d => ({ date: d.date, revenue: d.revenue })));
 
       if (ordersRes) {
-        const orders = ordersRes as Order[];
+        const orders = ordersRes.data;
         setRecentOrders(orders.slice(0, 10));
         const pendingCount = orders.filter(o => o.status === 'pending' || o.payment_status === 'pending').length;
         setPendingOrdersCount(pendingCount);

@@ -8,6 +8,7 @@ import { AdminLayout } from '../../components/admin/AdminLayout';
 import { PageHeader } from '../../components/admin/PageHeader';
 import { MobileNotOptimizedBanner } from '../../components/admin/MobileNotOptimizedBanner';
 import { StatusBadge } from '../../components/admin/StatusBadge';
+import { Pagination } from '../../components/Pagination';
 import { Search, Loader2, RefreshCw } from 'lucide-react';
 import type { SupportTicket } from '../../types';
 import { format } from 'date-fns';
@@ -23,29 +24,41 @@ const STATUS_FILTERS = [
 
 export function AdminSupportPage() {
   const [tickets, setTickets] = useState<SupportTicket[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [perPage] = useState(10);
+  const [total, setTotal] = useState(0);
+  const [lastPage, setLastPage] = useState(1);
   const [loading, setLoading] = useState(true);
   const [statusFilter, setStatusFilter] = useState('');
   const [search, setSearch] = useState('');
 
-  const load = useCallback(async () => {
+  const load = useCallback(async (page = 1) => {
     setLoading(true);
     try {
-      const data = await fetchAdminSupportTickets(statusFilter ? { status: statusFilter } : undefined);
-      setTickets(data);
+      const result = await fetchAdminSupportTickets({
+        page,
+        per_page: perPage,
+        status: statusFilter || undefined,
+      });
+      setTickets(result.data || []);
+      setCurrentPage(result.current_page);
+      setLastPage(result.last_page);
+      setTotal(result.total);
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : 'Erreur inconnue';
       console.error('Failed to load support tickets:', message, error);
+      setTickets([]);
       alert('Impossible de charger les tickets de support. Verifiez que le backend fonctionne et que les migrations sont a jour.');
     } finally {
       setLoading(false);
     }
-  }, [statusFilter]);
+  }, [statusFilter, perPage]);
 
   useEffect(() => {
-    load();
+    load(1);
   }, [load]);
 
-  const filtered = tickets.filter(t => {
+  const filtered = (tickets || []).filter(t => {
     const matchesSearch = !search ||
       t.subject.toLowerCase().includes(search.toLowerCase()) ||
       t.user?.email?.toLowerCase().includes(search.toLowerCase());
@@ -79,7 +92,7 @@ export function AdminSupportPage() {
                 <option key={f.value} value={f.value}>{f.label}</option>
               ))}
             </select>
-            <button onClick={load} className="flex items-center gap-2 px-4 py-2.5 border dark:border-gray-700 rounded-xl text-sm font-medium hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+            <button onClick={() => load()} className="flex items-center gap-2 px-4 py-2.5 border dark:border-gray-700 rounded-xl text-sm font-medium hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
               <RefreshCw className="w-4 h-4" />
               Actualiser
             </button>
@@ -126,6 +139,14 @@ export function AdminSupportPage() {
                   ))}
                 </tbody>
               </table>
+
+              <Pagination
+                currentPage={currentPage}
+                lastPage={lastPage}
+                perPage={perPage}
+                total={total}
+                onPageChange={(page) => load(page)}
+              />
             </div>
           </div>
         )}

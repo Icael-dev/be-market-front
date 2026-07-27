@@ -1,11 +1,12 @@
 import { toast } from 'react-hot-toast';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { fetchAdminOrders, updateAdminOrder, restoreAdminOrder } from '../../services/admin';
 import { formatPrice, getStatusColor, getStatusLabel } from '../../lib/utils';
 import { AdminLayout } from '../../components/admin/AdminLayout';
 import { PageHeader } from '../../components/admin/PageHeader';
 import { MobileNotOptimizedBanner } from '../../components/admin/MobileNotOptimizedBanner';
+import { Pagination } from '../../components/Pagination';
 import type { Order, OrderStatus } from '../../types';
 import {
   Package,
@@ -22,22 +23,35 @@ import { cn } from '../../lib/utils';
 
 export function AdminOrdersPage() {
   const [orders, setOrders] = useState<Order[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [perPage] = useState(10);
+  const [total, setTotal] = useState(0);
+  const [lastPage, setLastPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [restoringId, setRestoringId] = useState<string | null>(null);
 
-  useEffect(() => {
-    fetchOrders();
-  }, []);
-
-  const fetchOrders = async () => {
+  const fetchOrders = useCallback(async (page = 1) => {
     try {
-      setOrders(await fetchAdminOrders());
+      const result = await fetchAdminOrders({
+        page,
+        per_page: perPage,
+        status: statusFilter || undefined
+      });
+      setOrders(result.data || []);
+      setCurrentPage(result.current_page);
+      setLastPage(result.last_page);
+      setTotal(result.total);
     } catch (err) {
       console.error('Orders fetch error:', err);
+      setOrders([]);
     }
-  };
+  }, [statusFilter, perPage]);
+
+  useEffect(() => {
+    fetchOrders(1);
+  }, [statusFilter, fetchOrders]);
 
   const handleRestoreOrder = async (orderId: string) => {
     setRestoringId(orderId);
@@ -355,6 +369,17 @@ export function AdminOrdersPage() {
           </>
         )}
       </AnimatePresence>
+
+        <Pagination
+          currentPage={currentPage}
+          lastPage={lastPage}
+          perPage={perPage}
+          total={total}
+          onPageChange={(page) => {
+            setCurrentPage(page);
+            fetchOrders(page);
+          }}
+        />
     </AdminLayout>
   );
 }

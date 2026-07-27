@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { fetchAdminCustomers } from '../../services/admin';
@@ -7,25 +7,39 @@ import { formatPrice } from '../../lib/utils';
 import { AdminLayout } from '../../components/admin/AdminLayout';
 import { PageHeader } from '../../components/admin/PageHeader';
 import { MobileNotOptimizedBanner } from '../../components/admin/MobileNotOptimizedBanner';
+import { Pagination } from '../../components/Pagination';
 import { Search, Users, Mail, Phone, ShoppingBag } from 'lucide-react';
 
 export function AdminCustomersPage() {
   const [customers, setCustomers] = useState<AdminCustomer[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [perPage] = useState(10);
+  const [total, setTotal] = useState(0);
+  const [lastPage, setLastPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState('');
 
+   const fetchCustomers = useCallback(async (page = 1) => {
+     try {
+       const result = await fetchAdminCustomers({
+         page,
+         per_page: perPage,
+         email: searchQuery || undefined
+       });
+       setCustomers(result.data || []);
+       setCurrentPage(result.current_page);
+       setLastPage(result.last_page);
+       setTotal(result.total);
+     } catch (error) {
+       console.error('Error fetching customers:', error);
+       setCustomers([]);
+     }
+   }, [searchQuery, perPage]);
+
   useEffect(() => {
-    fetchCustomers();
-  }, []);
+    fetchCustomers(1);
+  }, [searchQuery, fetchCustomers]);
 
-  const fetchCustomers = async () => {
-    try {
-      setCustomers(await fetchAdminCustomers());
-    } catch (error) {
-      console.error('Error fetching customers:', error);
-    }
-  };
-
-  const filteredCustomers = customers.filter(c =>
+  const filteredCustomers = (customers || []).filter(c =>
     !searchQuery ||
     c.full_name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
     c.email?.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -141,6 +155,17 @@ export function AdminCustomersPage() {
             </div>
           )}
         </motion.div>
+
+        <Pagination
+          currentPage={currentPage}
+          lastPage={lastPage}
+          perPage={perPage}
+          total={total}
+          onPageChange={(page) => {
+            setCurrentPage(page);
+            fetchCustomers(page);
+          }}
+        />
       </div>
     </AdminLayout>
   );

@@ -1,40 +1,53 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { fetchAdminLoyaltyTransactions, fetchAdminLoyaltyPoints } from '../../services/admin';
 import { AdminLayout } from '../../components/admin/AdminLayout';
 import { PageHeader } from '../../components/admin/PageHeader';
 import { MobileNotOptimizedBanner } from '../../components/admin/MobileNotOptimizedBanner';
 import { StatusBadge } from '../../components/admin/StatusBadge';
+import { Pagination } from '../../components/Pagination';
 import { Loader2 } from 'lucide-react';
 import type { LoyaltyPoints, LoyaltyTransaction } from '../../types';
 import { format } from 'date-fns';
 
 export function AdminLoyaltyPage() {
   const [transactions, setTransactions] = useState<LoyaltyTransaction[]>([]);
+  const [txCurrentPage, setTxCurrentPage] = useState(1);
+  const [txPerPage] = useState(10);
+  const [txTotal, setTxTotal] = useState(0);
+  const [txLastPage, setTxLastPage] = useState(1);
   const [points, setPoints] = useState<LoyaltyPoints[]>([]);
+  const [ptsCurrentPage, setPtsCurrentPage] = useState(1);
+  const [ptsPerPage] = useState(10);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<'all' | 'earned' | 'redeemed' | 'expired'>('all');
 
-  const load = async () => {
+  const load = useCallback(async (txPage = 1, ptsPage = 1) => {
     setLoading(true);
     try {
       const [txData, pointsData] = await Promise.all([
-        fetchAdminLoyaltyTransactions(),
-        fetchAdminLoyaltyPoints(),
+        fetchAdminLoyaltyTransactions({ page: txPage, per_page: txPerPage }),
+        fetchAdminLoyaltyPoints({ page: ptsPage, per_page: ptsPerPage }),
       ]);
-      setTransactions(txData);
-      setPoints(pointsData);
+      setTransactions(txData.data || []);
+      setTxCurrentPage(txData.current_page);
+      setTxLastPage(txData.last_page);
+      setTxTotal(txData.total);
+      setPoints(pointsData.data || []);
+      setPtsCurrentPage(pointsData.current_page);
     } catch (error) {
       console.error('Failed to load loyalty data:', error);
+      setTransactions([]);
+      setPoints([]);
     } finally {
       setLoading(false);
     }
-  };
+  }, [txPerPage, ptsPerPage]);
 
   useEffect(() => {
-    load();
-  }, []);
+    load(1, 1);
+  }, [load]);
 
-  const visible = filter === 'all' ? transactions : transactions.filter(t => t.type === filter);
+  const visible = filter === 'all' ? transactions : (transactions || []).filter(t => t.type === filter);
 
   return (
     <AdminLayout>
@@ -120,6 +133,14 @@ export function AdminLoyaltyPage() {
                     ))}
                   </tbody>
                 </table>
+
+                <Pagination
+                  currentPage={txCurrentPage}
+                  lastPage={txLastPage}
+                  perPage={txPerPage}
+                  total={txTotal}
+                  onPageChange={(page) => load(page, ptsCurrentPage)}
+                />
               </div>
             </div>
           </>

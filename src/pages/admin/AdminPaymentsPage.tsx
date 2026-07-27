@@ -6,6 +6,7 @@ import { AdminLayout } from '../../components/admin/AdminLayout';
 import { PageHeader } from '../../components/admin/PageHeader';
 import { MobileNotOptimizedBanner } from '../../components/admin/MobileNotOptimizedBanner';
 import { StatusBadge } from '../../components/admin/StatusBadge';
+import { Pagination } from '../../components/Pagination';
 import { Search, Loader2 } from 'lucide-react';
 import type { Payment } from '../../types';
 import { formatPrice } from '../../lib/utils';
@@ -13,28 +14,38 @@ import { format } from 'date-fns';
 
 export function AdminPaymentsPage() {
   const [payments, setPayments] = useState<Payment[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [perPage] = useState(10);
+  const [total, setTotal] = useState(0);
+  const [lastPage, setLastPage] = useState(1);
   const [loading, setLoading] = useState(true);
   const [statusFilter, setStatusFilter] = useState('');
   const [methodFilter, setMethodFilter] = useState('');
   const [search, setSearch] = useState('');
 
-  const load = useCallback(async () => {
+  const load = useCallback(async (page = 1) => {
     setLoading(true);
     try {
-      const data = await fetchAdminPayments({
+      const result = await fetchAdminPayments({
+        page,
+        per_page: perPage,
         status: statusFilter || undefined,
         payment_method: methodFilter || undefined,
       });
-      setPayments(data);
+      setPayments(result.data || []);
+      setCurrentPage(result.current_page);
+      setLastPage(result.last_page);
+      setTotal(result.total);
     } catch (error) {
       console.error('Failed to load payments:', error);
+      setPayments([]);
     } finally {
       setLoading(false);
     }
-  }, [statusFilter, methodFilter]);
+  }, [statusFilter, methodFilter, perPage]);
 
   useEffect(() => {
-    load();
+    load(1);
   }, [load]);
 
   const filtered = payments.filter(p => {
@@ -135,6 +146,17 @@ export function AdminPaymentsPage() {
             </div>
           </div>
         )}
+
+        <Pagination
+          currentPage={currentPage}
+          lastPage={lastPage}
+          perPage={perPage}
+          total={total}
+          onPageChange={(page) => {
+            setCurrentPage(page);
+            load(page);
+          }}
+        />
       </div>
     </AdminLayout>
   );

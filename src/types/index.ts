@@ -5,6 +5,14 @@ export interface CategorySpec {
   placeholder: string | null;
 }
 
+export interface PaginatedResponse<T> {
+  data: T[];
+  current_page: number;
+  last_page: number;
+  per_page: number;
+  total: number;
+}
+
 export interface Category {
   id: string;
   name: string;
@@ -418,4 +426,6 @@ export interface FilterOptions {
   in_stock?: boolean;
   on_sale?: boolean;
   sort?: 'price_asc' | 'price_desc' | 'newest' | 'name_asc' | 'name_desc';
+  page?: number;
+  per_page?: number;
 }

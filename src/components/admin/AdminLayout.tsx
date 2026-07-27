@@ -32,6 +32,7 @@ import {
   Headphones
 } from 'lucide-react';
 import { cn } from '../../lib/utils';
+import { WishlistDrawer } from '../WishlistDrawer';
 
 interface AdminLayoutProps {
   children: ReactNode;
@@ -74,6 +75,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
   const location = useLocation();
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [showWishlist, setShowWishlist] = useState(false);
 
   useEffect(() => {
     if (!loading && !isAdmin) {
@@ -116,10 +118,10 @@ export function AdminLayout({ children }: AdminLayoutProps) {
           >
             {theme === 'light' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
           </button>
-          <Link
-            to="/wishlist"
-           className="relative p-3 text-gray-600 dark:text-gray-400 hover:text-red-500 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
-          title="Favoris"
+          <button
+            onClick={() => setShowWishlist(true)}
+            className="relative p-3 text-gray-600 dark:text-gray-400 hover:text-red-500 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+            title="Favoris"
           >
             <Heart className="w-5 h-5" />
             {wishlistItems.length > 0 && (
@@ -127,7 +129,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
                 {wishlistItems.length}
               </span>
             )}
-          </Link>
+          </button>
           <Link
             to="/cart"
            className="relative p-3 text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
@@ -269,6 +271,8 @@ export function AdminLayout({ children }: AdminLayoutProps) {
       <main className="lg:ml-72 pt-20 lg:pt-0 min-h-screen">
         {children}
       </main>
+
+      <WishlistDrawer isOpen={showWishlist} onClose={() => setShowWishlist(false)} />
     </div>
   );
 }

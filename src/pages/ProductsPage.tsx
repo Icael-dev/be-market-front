@@ -1,10 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { fetchProducts, fetchCategories, fetchPriceBounds } from '../services/products';
+import { fetchProductsPaginated, fetchCategories, fetchPriceBounds } from '../services/products';
 import type { Product, Category, FilterOptions } from '../types';
 import { ProductCard } from '../components/ProductCard';
 import { ProductsGridSkeleton } from '../components/LoadingSpinner';
+import { Pagination } from '../components/Pagination';
 import {
   SlidersHorizontal,
   X,
@@ -33,6 +34,11 @@ export function ProductsPage() {
   const [showFilters, setShowFilters] = useState(false);
   useEscape(() => setShowFilters(false), showFilters);
   const [view, setView] = useState<'grid' | 'list'>('grid');
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const [perPage] = useState(10);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalProducts, setTotalProducts] = useState(0);
 
   const selectedCategory = searchParams.get('category') || '';
   const searchQuery = searchParams.get('search') || '';
@@ -91,13 +97,17 @@ export function ProductsPage() {
           on_sale: onSaleFilter || undefined,
           minPrice: effectiveMin > priceBoundsRef.current.min ? effectiveMin : undefined,
           maxPrice: effectiveMax < priceBoundsRef.current.max ? effectiveMax : undefined,
+          page: currentPage,
+          per_page: perPage,
         };
 
-        const productsData = await fetchProducts(filters);
-        setProducts(productsData);
+        const productsData = await fetchProductsPaginated(filters);
+        setProducts(productsData.data);
+        setTotalPages(productsData.last_page);
+        setTotalProducts(productsData.total);
 
         const brandSet = new Set<string>();
-        productsData.forEach((p: Product) => {
+        productsData.data.forEach((p: Product) => {
           if (p.specs?.brand) {
             brandSet.add(p.specs.brand);
           }
@@ -111,7 +121,7 @@ export function ProductsPage() {
     }
 
     fetchData();
-  }, [selectedCategory, searchQuery, sortBy, selectedBrand, minPriceParam, maxPriceParam, flashSaleFilter, isFeaturedFilter, conditionFilter, inStockFilter, onSaleFilter]);
+  }, [selectedCategory, searchQuery, sortBy, selectedBrand, minPriceParam, maxPriceParam, flashSaleFilter, isFeaturedFilter, conditionFilter, inStockFilter, onSaleFilter, currentPage, perPage]);
 
   const updateFilter = (key: string, value: string | null) => {
     const params = new URLSearchParams(searchParams);
@@ -155,7 +165,7 @@ export function ProductsPage() {
               {selectedCategoryName || 'Tous les produits'}
             </h1>
             <p className="text-gray-500 dark:text-gray-400 mt-2">
-              {loading ? 'Chargement...' : `${products.length} produits trouves`}
+              {loading ? 'Chargement...' : `${totalProducts} produits trouves`}
             </p>
           </motion.div>
         </div>
@@ -586,6 +596,16 @@ export function ProductsPage() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      <div className="mt-8">
+        <Pagination
+          currentPage={currentPage}
+          lastPage={totalPages}
+          perPage={perPage}
+          total={totalProducts}
+          onPageChange={(page) => setCurrentPage(page)}
+        />
+      </div>
     </div>
   );
 }

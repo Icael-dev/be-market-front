@@ -18,7 +18,8 @@ import type {
   AdminCustomer,
   FAQ,
   LegalPage,
-  Testimonial
+  Testimonial,
+  PaginatedResponse
 } from '../types';
 
 export interface AdminStats {
@@ -171,8 +172,13 @@ export async function updateAdminSettings(settings: Partial<Settings>): Promise<
 }
 
 // Orders
-export async function fetchAdminOrders(): Promise<Order[]> {
-  return unwrapList(await api.get<MaybePaginated<Order>>('/api/admin/orders'));
+export async function fetchAdminOrders(params?: { page?: number; per_page?: number; status?: string }): Promise<PaginatedResponse<Order>> {
+  const search = new URLSearchParams();
+  if (params?.status) search.set('status', params.status);
+  if (params?.page) search.set('page', String(params.page));
+  if (params?.per_page) search.set('per_page', String(params.per_page));
+  const qs = search.toString();
+  return api.get<PaginatedResponse<Order>>(`/api/admin/orders${qs ? `?${qs}` : ''}`);
 }
 
 export async function updateAdminOrder(id: string, order: Partial<Order>): Promise<Order> {
@@ -184,8 +190,13 @@ export async function restoreAdminOrder(id: string): Promise<Order> {
 }
 
 // Customers
-export async function fetchAdminCustomers(): Promise<AdminCustomer[]> {
-  return unwrapList(await api.get<MaybePaginated<AdminCustomer>>('/api/admin/customers'));
+export async function fetchAdminCustomers(params?: { page?: number; per_page?: number; email?: string }): Promise<PaginatedResponse<AdminCustomer>> {
+  const search = new URLSearchParams();
+  if (params?.email) search.set('email', params.email);
+  if (params?.page) search.set('page', String(params.page));
+  if (params?.per_page) search.set('per_page', String(params.per_page));
+  const qs = search.toString();
+  return api.get<PaginatedResponse<AdminCustomer>>(`/api/admin/customers${qs ? `?${qs}` : ''}`);
 }
 
 // Customers (history per customer)
@@ -209,35 +220,45 @@ export async function fetchAdminCustomerPayments(id: string): Promise<Payment[]>
 }
 
 // Payments (global admin)
-export async function fetchAdminPayments(params?: { status?: string; payment_method?: string; user_id?: string }): Promise<Payment[]> {
+export async function fetchAdminPayments(params?: { page?: number; per_page?: number; status?: string; payment_method?: string; user_id?: string }): Promise<PaginatedResponse<Payment>> {
   const search = new URLSearchParams();
   if (params?.status) search.set('status', params.status);
   if (params?.payment_method) search.set('payment_method', params.payment_method);
   if (params?.user_id) search.set('user_id', params.user_id);
+  if (params?.page) search.set('page', String(params.page));
+  if (params?.per_page) search.set('per_page', String(params.per_page));
   const qs = search.toString();
-  return api.get<Payment[]>(`/api/admin/payments${qs ? `?${qs}` : ''}`);
+  return api.get<PaginatedResponse<Payment>>(`/api/admin/payments${qs ? `?${qs}` : ''}`);
 }
 
 // Loyalty (global admin)
-export async function fetchAdminLoyaltyTransactions(params?: { user_id?: string; type?: string }): Promise<LoyaltyTransaction[]> {
+export async function fetchAdminLoyaltyTransactions(params?: { page?: number; per_page?: number; user_id?: string; type?: string }): Promise<PaginatedResponse<LoyaltyTransaction>> {
   const search = new URLSearchParams();
   if (params?.user_id) search.set('user_id', params.user_id);
   if (params?.type) search.set('type', params.type);
+  if (params?.page) search.set('page', String(params.page));
+  if (params?.per_page) search.set('per_page', String(params.per_page));
   const qs = search.toString();
-  return api.get<LoyaltyTransaction[]>(`/api/admin/loyalty/transactions${qs ? `?${qs}` : ''}`);
+  return api.get<PaginatedResponse<LoyaltyTransaction>>(`/api/admin/loyalty/transactions${qs ? `?${qs}` : ''}`);
 }
 
-export async function fetchAdminLoyaltyPoints(): Promise<LoyaltyPoints[]> {
-  return api.get<LoyaltyPoints[]>('/api/admin/loyalty/points');
+export async function fetchAdminLoyaltyPoints(params?: { page?: number; per_page?: number }): Promise<PaginatedResponse<LoyaltyPoints>> {
+  const search = new URLSearchParams();
+  if (params?.page) search.set('page', String(params.page));
+  if (params?.per_page) search.set('per_page', String(params.per_page));
+  const qs = search.toString();
+  return api.get<PaginatedResponse<LoyaltyPoints>>(`/api/admin/loyalty/points${qs ? `?${qs}` : ''}`);
 }
 
 // Support
-export async function fetchAdminSupportTickets(params?: { status?: string; priority?: string }): Promise<SupportTicket[]> {
+export async function fetchAdminSupportTickets(params?: { page?: number; per_page?: number; status?: string; priority?: string }): Promise<PaginatedResponse<SupportTicket>> {
   const search = new URLSearchParams();
   if (params?.status) search.set('status', params.status);
   if (params?.priority) search.set('priority', params.priority);
+  if (params?.page) search.set('page', String(params.page));
+  if (params?.per_page) search.set('per_page', String(params.per_page));
   const qs = search.toString();
-  return api.get<SupportTicket[]>(`/api/admin/support/tickets${qs ? `?${qs}` : ''}`);
+  return api.get<PaginatedResponse<SupportTicket>>(`/api/admin/support/tickets${qs ? `?${qs}` : ''}`);
 }
 
 export async function fetchAdminSupportTicket(id: string): Promise<SupportTicket> {

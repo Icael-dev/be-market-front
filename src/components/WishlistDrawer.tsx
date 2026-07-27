@@ -62,7 +62,7 @@ export function WishlistDrawer({ isOpen, onClose }: WishlistDrawerProps) {
                   </div>
                 ) : (
                   <div className="space-y-4">
-                    {items.map(item => (
+                    {items.slice(0, 6).map(item => (
                       <div
                         key={item.id}
                         className="flex gap-4 p-4 bg-gray-50 dark:bg-gray-800 rounded-xl"
@@ -103,6 +103,15 @@ export function WishlistDrawer({ isOpen, onClose }: WishlistDrawerProps) {
                         </button>
                       </div>
                     ))}
+                    {items.length > 3 && (
+                      <Link
+                        to="/wishlist"
+                        onClick={onClose}
+                        className="block text-center text-sm font-medium text-primary-600 dark:text-primary-400 hover:underline pt-2"
+                      >
+                        Voir tous les favoris ({items.length})
+                      </Link>
+                    )}
                   </div>
                 )}
               </div>
