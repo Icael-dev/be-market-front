@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { fetchBanners as fetchBannersService } from '../services/content';
 import type { Banner } from '../types';
 import { ChevronLeft, ChevronRight, Sparkles } from 'lucide-react';
+import { getImageUrl } from '../lib/imageUrl';
 
 export function BannerSlider() {
   const [banners, setBanners] = useState<Banner[]>([]);
@@ -72,7 +73,7 @@ export function BannerSlider() {
           className="absolute inset-0"
         >
           <motion.img
-            src={banner.image_url}
+            src={getImageUrl(banner.image_url, 'banners')}
             alt={banner.title}
             initial={{ scale: 1.12 }}
             animate={{ scale: 1 }}

@@ -14,9 +14,13 @@ import { PageHeader } from '../../components/admin/PageHeader';
 import { MobileNotOptimizedBanner } from '../../components/admin/MobileNotOptimizedBanner';
 import { ConfirmDialog } from '../../components/admin/ConfirmDialog';
 import { useEscape } from '../../hooks/useKeyPress';
+import { Pagination } from '../../components/Pagination';
 
 export function AdminFAQPage() {
   const [faqs, setFaqs] = useState<FAQ[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [perPage] = useState(10);
+  const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   useEscape(() => setShowForm(false), showForm);
@@ -42,6 +46,8 @@ export function AdminFAQPage() {
     try {
       const data = await fetchAdminFAQs();
       setFaqs(data);
+      setCurrentPage(1);
+      setTotal(data.length);
     } catch (error) {
       console.error('Error fetching FAQs:', error);
       toast.error('Erreur lors du chargement des FAQ');
@@ -49,6 +55,9 @@ export function AdminFAQPage() {
       setLoading(false);
     }
   };
+
+  const totalPages = Math.max(1, Math.ceil(faqs.length / perPage));
+  const paginatedFaqs = faqs.slice((currentPage - 1) * perPage, currentPage * perPage);
 
   const resetForm = () => {
     setFormData({ question: '', answer: '', category: '', sort_order: 0, is_active: true });
@@ -136,7 +145,7 @@ export function AdminFAQPage() {
         </PageHeader>
 
         <div className="grid gap-4">
-          {faqs.map((faq, index) => (
+          {paginatedFaqs.map((faq, index) => (
             <motion.div
               key={faq.id}
               initial={{ opacity: 0, y: 20 }}
@@ -274,6 +283,13 @@ export function AdminFAQPage() {
         onConfirm={handleDelete}
         title="Supprimer la FAQ"
         message="Etes-vous sûr de vouloir supprimer cette question frequente ?"
+      />
+      <Pagination
+        currentPage={currentPage}
+        lastPage={totalPages}
+        perPage={perPage}
+        total={total}
+        onPageChange={(page) => setCurrentPage(page)}
       />
     </AdminLayout>
   );

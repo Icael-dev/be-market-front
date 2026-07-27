@@ -1,9 +1,9 @@
-export function getImageUrl(url: string): string {
+export function getImageUrl(url: string, folder = 'products'): string {
   if (!url) return '';
   if (url.startsWith('http')) return url;
-  if (url.startsWith('/storage/products/')) {
-    return url.replace('/storage/products/', '/api/images/products/');
+  if (url.startsWith(`/storage/${folder}/`)) {
+    return url.replace(`/storage/${folder}/`, `/api/images/${folder}/`);
   }
   if (url.startsWith('/')) return url;
-  return `/api/images/products/${url}`;
+  return `/api/images/${folder}/${url}`;
 }

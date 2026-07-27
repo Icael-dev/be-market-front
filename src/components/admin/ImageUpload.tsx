@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Camera, Upload, X, Loader2 } from 'lucide-react';
+import { getImageUrl } from '../../lib/imageUrl';
 
 interface ImageUploadProps {
   value?: string[];
@@ -256,7 +257,7 @@ export function ImageUpload({
           {displayValue.map((url, idx) => (
             <div key={idx} className="relative group">
               <img
-                src={url}
+                src={getImageUrl(url, folder)}
                 alt={single ? "Image" : `Upload ${idx + 1}`}
                 className={single ? "w-full h-40 object-cover rounded-lg border dark:border-gray-700" : "w-full h-24 object-cover rounded-lg border dark:border-gray-700"}
               />

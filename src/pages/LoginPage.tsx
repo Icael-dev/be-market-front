@@ -118,6 +118,7 @@ export function LoginPage() {
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Mot de passe"
                 required
+                autoComplete="off"
               />
               <button
                 type="button"

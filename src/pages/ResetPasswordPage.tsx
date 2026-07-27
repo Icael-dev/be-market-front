@@ -132,6 +132,7 @@ export function ResetPasswordPage() {
               onChange={e => setPassword(e.target.value)}
               placeholder="Minimum 8 caracteres"
               required
+              autoComplete="new-password"
             />
 
             <InputField
@@ -142,6 +143,7 @@ export function ResetPasswordPage() {
               onChange={e => setPasswordConfirmation(e.target.value)}
               placeholder="Repetez le mot de passe"
               required
+              autoComplete="new-password"
             />
 
             <button type="submit" disabled={loading} className="btn-primary w-full">

@@ -165,12 +165,11 @@ function AppRoutes() {
       >
         <Suspense fallback={<PageLoading />}>
           <Routes location={location}>
-            <Route path="/login" element={<LazyLoginPage />} />
-            <Route path="/register" element={<LazyRegisterPage />} />
-            <Route path="/forgot-password" element={<LazyForgotPasswordPage />} />
-            <Route path="/reset-password/:token" element={<LazyResetPasswordPage />} />
-
             <Route element={<Layout><Outlet /></Layout>}>
+              <Route path="/login" element={<LazyLoginPage />} />
+              <Route path="/register" element={<LazyRegisterPage />} />
+              <Route path="/forgot-password" element={<LazyForgotPasswordPage />} />
+              <Route path="/reset-password/:token" element={<LazyResetPasswordPage />} />
               <Route path="/" element={<LazyHomePage />} />
               <Route path="/products" element={<LazyProductsPage />} />
               <Route path="/categories" element={<LazyCategoriesPage />} />

@@ -6,6 +6,7 @@ import type { BlogPost } from '../types';
 import { Calendar, ArrowLeft, Clock, ShoppingBag } from 'lucide-react';
 import { format } from 'date-fns';
 import { ProductCard } from '../components/ProductCard';
+import { getImageUrl } from '../lib/imageUrl';
 
 export function BlogPage() {
   const [posts, setPosts] = useState<BlogPost[]>([]);
@@ -71,13 +72,13 @@ export function BlogPage() {
               >
                  <Link to={`/blog/${post.slug}`}>
                    <div className="relative h-48 overflow-hidden">
-                     {post.image_url && !imageErrors.has(post.slug) ? (
-                       <img
-                         src={post.image_url}
-                         alt={post.title}
-                         className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
-                         onError={() => setImageErrors(prev => new Set(prev).add(post.slug))}
-                       />
+                      {post.image_url && !imageErrors.has(post.slug) ? (
+                        <img
+                          src={getImageUrl(post.image_url, 'blog')}
+                          alt={post.title}
+                          className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+                          onError={() => setImageErrors(prev => new Set(prev).add(post.slug))}
+                        />
                      ) : (
                        <div className="w-full h-full bg-gradient-to-br from-primary-600 to-cyan-500 flex items-center justify-center">
                          <span className="text-white text-6xl font-bold">{post.title[0]}</span>
@@ -204,7 +205,7 @@ export function BlogPostPage() {
           {post.image_url && !imageError && (
             <div className="mb-8 rounded-2xl overflow-hidden">
               <img
-                src={post.image_url}
+                src={getImageUrl(post.image_url, 'blog')}
                 alt={post.title}
                 className="w-full h-64 md:h-96 object-cover"
                 onError={() => setImageError(true)}

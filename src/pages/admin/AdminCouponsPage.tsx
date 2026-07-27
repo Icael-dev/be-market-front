@@ -15,6 +15,7 @@ import { MobileNotOptimizedBanner } from '../../components/admin/MobileNotOptimi
 import { AdminDrawer } from '../../components/admin/AdminDrawer';
 import { useEscape } from '../../hooks/useKeyPress';
 import { useAuth } from '../../context/AuthContext';
+import { Pagination } from '../../components/Pagination';
 
 interface CouponForm {
   code: string;
@@ -29,6 +30,9 @@ interface CouponForm {
 export function AdminCouponsPage() {
   const { isSuperAdmin } = useAuth();
   const [coupons, setCoupons] = useState<Coupon[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [perPage] = useState(10);
+  const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   useEscape(() => setShowForm(false), showForm);
@@ -44,12 +48,17 @@ export function AdminCouponsPage() {
     try {
       const data = await fetchAdminCoupons();
       setCoupons(data);
+      setCurrentPage(1);
+      setTotal(data.length);
     } catch (error) {
       console.error('Error fetching coupons:', error);
     } finally {
       setLoading(false);
     }
   };
+
+  const totalPages = Math.max(1, Math.ceil(coupons.length / perPage));
+  const paginatedCoupons = coupons.slice((currentPage - 1) * perPage, currentPage * perPage);
 
   const reset = () => { setForm({ code: '', discount_type: 'percentage', discount_value: 10, min_order_amount: null, max_uses: null, expires_at: '', is_active: true }); setEditing(null); };
 
@@ -125,7 +134,7 @@ export function AdminCouponsPage() {
 
         <div className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 overflow-hidden">
           <div className="overflow-x-auto"><table className="w-full"><thead className="bg-gray-50 dark:bg-gray-800 border-b"><tr><th className="text-left px-6 py-4 text-sm font-medium dark:text-gray-500">Code</th><th className="text-left px-6 py-4 text-sm font-medium dark:text-gray-500">Reduction</th><th className="text-left px-6 py-4 text-sm font-medium dark:text-gray-500">Utilisations</th><th className="text-left px-6 py-4 text-sm font-medium dark:text-gray-500">Statut</th><th className="text-right px-6 py-4 text-sm font-medium dark:text-gray-500">Actions</th></tr></thead>
-            <tbody className="divide-y">{coupons.map((c, i) => (<motion.tr key={c.id} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: i * 0.02 }} className="dark:hover:bg-gray-700"><td className="px-6 py-4"><span className="font-mono font-bold dark:text-white">{c.code}</span></td><td className="px-6 py-4"><span className="dark:text-white">{c.discount_type === 'percentage' ? `${c.discount_value}%` : `${c.discount_value} FCFA`}</span></td><td className="px-6 py-4 dark:text-gray-500">{c.uses_count}{c.max_uses ? ` / ${c.max_uses}` : ''}</td><td className="px-6 py-4"><span className={`px-2 py-1 rounded-full text-xs font-medium ${c.is_active ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' : 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-400'}`}>{c.is_active ? 'Actif' : 'Inactif'}</span></td><td className="px-6 py-4"><div className="flex justify-end gap-2"><button onClick={() => handleToggleActive(c)} disabled={togglingId === c.id} className={`p-3 rounded-lg border transition-colors disabled:opacity-50 ${c.is_active ? 'bg-green-100 text-green-700 border-green-300 hover:bg-green-200 dark:bg-green-900/40 dark:text-green-300 dark:border-green-700 dark:hover:bg-green-900/60' : 'bg-gray-100 text-gray-600 border-gray-300 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-600'}`} title={c.is_active ? 'Desactiver' : 'Activer'}>{togglingId === c.id ? <Loader2 className="w-6 h-6 animate-spin" /> : <Power className="w-6 h-6" />}</button><button onClick={() => handleEdit(c)} className="p-3 bg-gray-100 hover:bg-gray-200 text-gray-700 border border-gray-200 rounded-lg transition-colors dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600 dark:hover:bg-gray-600"><Edit2 className="w-6 h-6" /></button><button onClick={() => handleDelete(c.id)} className="p-3 bg-red-100 hover:bg-red-200 text-red-700 border border-red-300 rounded-lg transition-colors dark:bg-red-900/40 dark:text-red-300 dark:border-red-700 dark:hover:bg-red-900/60"><Trash2 className="w-6 h-6" /></button></div></td></motion.tr>))}</tbody>
+            <tbody className="divide-y">{paginatedCoupons.map((c, i) => (<motion.tr key={c.id} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: i * 0.02 }} className="dark:hover:bg-gray-700"><td className="px-6 py-4"><span className="font-mono font-bold dark:text-white">{c.code}</span></td><td className="px-6 py-4"><span className="dark:text-white">{c.discount_type === 'percentage' ? `${c.discount_value}%` : `${c.discount_value} FCFA`}</span></td><td className="px-6 py-4 dark:text-gray-500">{c.uses_count}{c.max_uses ? ` / ${c.max_uses}` : ''}</td><td className="px-6 py-4"><span className={`px-2 py-1 rounded-full text-xs font-medium ${c.is_active ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' : 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-400'}`}>{c.is_active ? 'Actif' : 'Inactif'}</span></td><td className="px-6 py-4"><div className="flex justify-end gap-2"><button onClick={() => handleToggleActive(c)} disabled={togglingId === c.id} className={`p-3 rounded-lg border transition-colors disabled:opacity-50 ${c.is_active ? 'bg-green-100 text-green-700 border-green-300 hover:bg-green-200 dark:bg-green-900/40 dark:text-green-300 dark:border-green-700 dark:hover:bg-green-900/60' : 'bg-gray-100 text-gray-600 border-gray-300 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-600'}`} title={c.is_active ? 'Desactiver' : 'Activer'}>{togglingId === c.id ? <Loader2 className="w-6 h-6 animate-spin" /> : <Power className="w-6 h-6" />}</button><button onClick={() => handleEdit(c)} className="p-3 bg-gray-100 hover:bg-gray-200 text-gray-700 border border-gray-200 rounded-lg transition-colors dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600 dark:hover:bg-gray-600"><Edit2 className="w-6 h-6" /></button><button onClick={() => handleDelete(c.id)} className="p-3 bg-red-100 hover:bg-red-200 text-red-700 border border-red-300 rounded-lg transition-colors dark:bg-red-900/40 dark:text-red-300 dark:border-red-700 dark:hover:bg-red-900/60"><Trash2 className="w-6 h-6" /></button></div></td></motion.tr>))}</tbody>
           </table></div>
           {coupons.length === 0 && !loading && <div className="text-center py-12"><Tag className="w-12 h-12 dark:text-gray-500 mx-auto mb-4" /><p className="dark:text-gray-500">Aucun code promo</p></div>}
         </div>
@@ -194,7 +203,16 @@ export function AdminCouponsPage() {
                  <button onClick={() => setShowForm(false)} className="px-6 py-2.5 border dark:border-gray-700 rounded-xl font-medium hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">Annuler</button>
                </div>
               </div>
-            </AdminDrawer>
-    </AdminLayout>
+             </AdminDrawer>
+            <>
+              <Pagination
+                currentPage={currentPage}
+                lastPage={totalPages}
+                perPage={perPage}
+                total={total}
+                onPageChange={(page) => setCurrentPage(page)}
+              />
+            </>
+          </AdminLayout>
   );
 }

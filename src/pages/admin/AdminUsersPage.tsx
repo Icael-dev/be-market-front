@@ -17,6 +17,7 @@ import { useAuth } from '../../context/AuthContext';
 import { ConfirmDialog } from '../../components/admin/ConfirmDialog';
 import { Plus, Edit2, Trash2, X, Save, Loader2, UserCog, Mail, Phone, ShieldCheck, User as UserIcon, RotateCcw } from 'lucide-react';
 import { useEscape } from '../../hooks/useKeyPress';
+import { Pagination } from '../../components/Pagination';
 
 const ROLE_LABELS: Record<UserRole, string> = {
   admin: 'Administrateur',
@@ -35,6 +36,9 @@ const emptyForm = {
 export function AdminUsersPage() {
   const { profile } = useAuth();
   const [users, setUsers] = useState<StaffUser[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [perPage] = useState(10);
+  const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   useEscape(() => setShowForm(false), showForm);
@@ -53,7 +57,10 @@ export function AdminUsersPage() {
 
   const loadUsers = async () => {
     try {
-      setUsers(await fetchAdminUsers());
+      const data = await fetchAdminUsers();
+      setUsers(data);
+      setCurrentPage(1);
+      setTotal(data.length);
     } catch (error) {
       console.error('Error fetching users:', error);
       toast.error('Erreur lors du chargement des utilisateurs');
@@ -61,6 +68,9 @@ export function AdminUsersPage() {
       setLoading(false);
     }
   };
+
+  const totalPages = Math.max(1, Math.ceil(users.length / perPage));
+  const paginatedUsers = users.slice((currentPage - 1) * perPage, currentPage * perPage);
 
   const openCreate = () => {
     setEditing(null);
@@ -198,7 +208,7 @@ export function AdminUsersPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
-                {users.map((user, index) => (
+                {paginatedUsers.map((user, index) => (
                   <motion.tr
                     key={user.id}
                     initial={{ opacity: 0, y: 10 }}
@@ -437,6 +447,13 @@ export function AdminUsersPage() {
           title={confirmTarget ? `Supprimer le compte de ${confirmTarget.full_name || confirmTarget.email} ?` : 'Supprimer cet utilisateur ?'}
           message="Cette action est irreversible."
           variant="danger"
+        />
+        <Pagination
+          currentPage={currentPage}
+          lastPage={totalPages}
+          perPage={perPage}
+          total={total}
+          onPageChange={(page) => setCurrentPage(page)}
         />
       </AnimatePresence>
     </AdminLayout>

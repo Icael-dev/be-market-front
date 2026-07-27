@@ -25,10 +25,10 @@ export function AdminCustomersPage() {
          per_page: perPage,
          email: searchQuery || undefined
        });
-       setCustomers(result.data || []);
-       setCurrentPage(result.current_page);
-       setLastPage(result.last_page);
-       setTotal(result.total);
+      setCustomers(result.data || []);
+      setCurrentPage(result.current_page);
+      setLastPage(result.last_page);
+      setTotal(result.total);
      } catch (error) {
        console.error('Error fetching customers:', error);
        setCustomers([]);

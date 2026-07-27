@@ -16,6 +16,7 @@ import { AdminLayout } from '../../components/admin/AdminLayout';
 import { PageHeader } from '../../components/admin/PageHeader';
 import { MobileNotOptimizedBanner } from '../../components/admin/MobileNotOptimizedBanner';
 import { StatusBadge } from '../../components/admin/StatusBadge';
+import { Pagination } from '../../components/Pagination';
 import { useProductForm } from '../../hooks/useProductForm';
 import { getImageUrl } from '../../lib/imageUrl';
 import type { Product, Category } from '../../types';
@@ -78,6 +79,8 @@ function TabButton({ icon, label, active, onClick, badge }: {
 export function AdminProductsPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [perPage] = useState(10);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('');
   const [showForm, setShowForm] = useState(false);
@@ -152,6 +155,9 @@ export function AdminProductsPage() {
     const matchesCategory = !selectedCategory || p.category_id === selectedCategory;
     return matchesSearch && matchesCategory;
   });
+
+  const totalPages = Math.max(1, Math.ceil(filteredProducts.length / perPage));
+  const paginatedProducts = filteredProducts.slice((currentPage - 1) * perPage, currentPage * perPage);
 
   const handleEdit = useCallback((product: Product) => {
     setEditingProduct(product);
@@ -570,7 +576,7 @@ export function AdminProductsPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
-                {filteredProducts.map((product, index) => (
+                {paginatedProducts.map((product, index) => (
                   <motion.tr
                     key={product.id}
                     initial={{ opacity: 0, y: 10 }}
@@ -721,6 +727,14 @@ export function AdminProductsPage() {
             </div>
           )}
         </motion.div>
+
+        <Pagination
+          currentPage={currentPage}
+          lastPage={totalPages}
+          perPage={perPage}
+          total={filteredProducts.length}
+          onPageChange={(page) => setCurrentPage(page)}
+        />
       </div>
 
       <AnimatePresence>
@@ -1005,11 +1019,10 @@ export function AdminProductsPage() {
                           {formData.variant_sizes.map((size, i) => (
                             <div key={i} className="flex items-center gap-1 bg-gray-100 dark:bg-gray-700 rounded-lg px-3 py-1.5">
                               <input type="text" id={`product-variant-size-${i}`} name={`variant_size_${i}`} value={size} onChange={e => updateVariantSize(i, e.target.value)} placeholder="Ex: S, M, L" className="bg-transparent border-none outline-none text-sm w-16 dark:text-white" />
-                              <button type="button" onClick={() => removeVariantSize(i)} className="p-1.5 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors">
-                                <X className="w-4 h-4" />
-                              </button>
-                                <X className="w-4 h-4" />
-                            </div>
+                               <button type="button" onClick={() => removeVariantSize(i)} className="p-1.5 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors">
+                                 <X className="w-4 h-4" />
+                               </button>
+                             </div>
                           ))}
                         </div>
                         {formData.variant_sizes.length === 0 && <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Aucune taille ajoutee</p>}

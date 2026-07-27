@@ -9,9 +9,13 @@ import { ConfirmDialog } from '../../components/admin/ConfirmDialog';
 import { fetchAdminTestimonials, createAdminTestimonial, updateAdminTestimonial, deleteAdminTestimonial } from '../../services/admin';
 import { format } from 'date-fns';
 import type { Testimonial } from '../../types';
+import { Pagination } from '../../components/Pagination';
 
 export function AdminTestimonialsPage() {
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [perPage] = useState(10);
+  const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [editing, setEditing] = useState<Testimonial | null>(null);
@@ -23,8 +27,13 @@ export function AdminTestimonialsPage() {
     try {
       const data = await fetchAdminTestimonials();
       setTestimonials(data);
+      setCurrentPage(1);
+      setTotal(data.length);
     } catch { /* ignore */ } finally { setLoading(false); }
   };
+
+  const totalPages = Math.max(1, Math.ceil(testimonials.length / perPage));
+  const paginatedTestimonials = testimonials.slice((currentPage - 1) * perPage, currentPage * perPage);
 
   useEffect(() => { fetchTestimonials(); }, []);
 
@@ -126,7 +135,7 @@ export function AdminTestimonialsPage() {
           <div className="card p-12 text-center"><p className="text-gray-500">Aucun temoignage</p></div>
         ) : (
           <div className="space-y-4">
-            {testimonials.map((t, i) => (
+            {paginatedTestimonials.map((t, i) => (
               <motion.div key={t.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.03 }} className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 p-6 flex items-start justify-between">
                 <div>
                   <div className="flex items-center gap-3 mb-2">
@@ -148,8 +157,15 @@ export function AdminTestimonialsPage() {
         )}
 
         <ConfirmDialog open={!!deleteId} onClose={() => setDeleteId(null)} onConfirm={handleDelete} title="Supprimer" message="Ce temoignage sera definitivement supprime." />
-
-
+        <>
+          <Pagination
+            currentPage={currentPage}
+            lastPage={totalPages}
+            perPage={perPage}
+            total={total}
+            onPageChange={(page) => setCurrentPage(page)}
+          />
+        </>
       </div>
     </AdminLayout>
   );

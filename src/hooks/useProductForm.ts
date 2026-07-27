@@ -140,7 +140,7 @@ export function useProductForm(categories: Category[]) {
       compare_price: product.compare_price?.toString() || '',
       stock: product.stock.toString(),
       category_id: product.category_id || '',
-      images: (product.images || []).map(getImageUrl),
+      images: (product.images || []).map(url => getImageUrl(url)),
       specs: Object.entries(product.specs || {}).map(([key, value]) => ({ key, value: value as string })),
       is_featured: product.is_featured,
       is_active: product.is_active,

@@ -18,9 +18,13 @@ import { AdminDrawer } from '../../components/admin/AdminDrawer';
 import { ConfirmDialog } from '../../components/admin/ConfirmDialog';
 import { cn } from '../../lib/utils';
 import { useEscape } from '../../hooks/useKeyPress';
+import { Pagination } from '../../components/Pagination';
 
 export function AdminCategoriesPage() {
   const [categories, setCategories] = useState<Category[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [perPage] = useState(10);
+  const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   useEscape(() => setShowForm(false), showForm);
@@ -47,12 +51,17 @@ export function AdminCategoriesPage() {
     try {
       const data = await fetchAdminCategories();
       setCategories(data);
+      setCurrentPage(1);
+      setTotal(data.length);
     } catch (error) {
       console.error('Error fetching categories:', error);
     } finally {
       setLoading(false);
     }
   };
+
+  const totalPages = Math.max(1, Math.ceil(categories.length / perPage));
+  const paginatedCategories = categories.slice((currentPage - 1) * perPage, currentPage * perPage);
 
   const resetForm = () => {
     setFormData({ name: '', slug: '', description: '', is_active: true, specs: [{ key: '', placeholder: '' }] });
@@ -217,7 +226,7 @@ export function AdminCategoriesPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
-              {categories.map((category, index) => (
+              {paginatedCategories.map((category, index) => (
                 <motion.tr
                   key={category.id}
                   initial={{ opacity: 0, y: 10 }}
@@ -472,6 +481,13 @@ export function AdminCategoriesPage() {
           title="Supprimer cette categorie ?"
           message="Cette action est irreversible."
           variant="danger"
+        />
+        <Pagination
+          currentPage={currentPage}
+          lastPage={totalPages}
+          perPage={perPage}
+          total={total}
+          onPageChange={(page) => setCurrentPage(page)}
         />
       </AdminLayout>
   );

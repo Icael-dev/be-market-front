@@ -33,6 +33,7 @@ import {
 } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { WishlistDrawer } from '../WishlistDrawer';
+import { Footer } from '../layout/Footer';
 
 interface AdminLayoutProps {
   children: ReactNode;
@@ -268,9 +269,11 @@ export function AdminLayout({ children }: AdminLayoutProps) {
         />
       )}
 
-      <main className="lg:ml-72 pt-20 lg:pt-0 min-h-screen">
+      <main className="lg:ml-72 pt-20 lg:pt-0 min-h-screen px-4 sm:px-6 lg:px-8">
         {children}
       </main>
+
+      <Footer compact />
 
       <WishlistDrawer isOpen={showWishlist} onClose={() => setShowWishlist(false)} />
     </div>

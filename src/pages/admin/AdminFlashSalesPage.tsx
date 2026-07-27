@@ -19,10 +19,14 @@ import { ConfirmDialog } from '../../components/admin/ConfirmDialog';
 import { format } from 'date-fns';
 import { useEscape } from '../../hooks/useKeyPress';
 import { useAuth } from '../../context/AuthContext';
+import { Pagination } from '../../components/Pagination';
 
 export function AdminFlashSalesPage() {
   const { isSuperAdmin } = useAuth();
   const [flashSales, setFlashSales] = useState<FlashSale[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [perPage] = useState(10);
+  const [total, setTotal] = useState(0);
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
@@ -54,12 +58,17 @@ export function AdminFlashSalesPage() {
 
       setFlashSales(sales);
       setProducts(products);
+      setCurrentPage(1);
+      setTotal(sales.length);
     } catch (error) {
       console.error('Flash sales fetch error:', error);
     } finally {
       setLoading(false);
     }
   };
+
+  const totalPages = Math.max(1, Math.ceil(flashSales.length / perPage));
+  const paginatedFlashSales = flashSales.slice((currentPage - 1) * perPage, currentPage * perPage);
 
   const resetForm = () => {
     setFormData({
@@ -186,7 +195,7 @@ export function AdminFlashSalesPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
-              {flashSales.map((sale, index) => {
+              {paginatedFlashSales.map((sale, index) => {
                 const product = products.find(p => p.id === sale.product_id);
                 const isActive = sale.is_active && new Date(sale.starts_at) <= new Date() && new Date(sale.ends_at) > new Date();
 
@@ -325,6 +334,13 @@ export function AdminFlashSalesPage() {
           title="Supprimer ce flash sale ?"
           message="Cette action est irreversible."
           variant="danger"
+        />
+        <Pagination
+          currentPage={currentPage}
+          lastPage={totalPages}
+          perPage={perPage}
+          total={total}
+          onPageChange={(page) => setCurrentPage(page)}
         />
       </AdminLayout>
   );

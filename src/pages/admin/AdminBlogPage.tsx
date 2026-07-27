@@ -19,9 +19,14 @@ import { ConfirmDialog } from '../../components/admin/ConfirmDialog';
 import { format } from 'date-fns';
 import { useEscape } from '../../hooks/useKeyPress';
 import { ImageUpload } from '../../components/admin/ImageUpload';
+import { getImageUrl } from '../../lib/imageUrl';
+import { Pagination } from '../../components/Pagination';
 
 export function AdminBlogPage() {
   const [posts, setPosts] = useState<BlogPost[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [perPage] = useState(10);
+  const [total, setTotal] = useState(0);
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
@@ -52,12 +57,17 @@ export function AdminBlogPage() {
     try {
       const data = await fetchAdminBlogPosts();
       setPosts(data);
+      setCurrentPage(1);
+      setTotal(data.length);
     } catch (error) {
       console.error('Error fetching blog posts:', error);
     } finally {
       setLoading(false);
     }
   };
+
+  const totalPages = Math.max(1, Math.ceil(posts.length / perPage));
+  const paginatedPosts = posts.slice((currentPage - 1) * perPage, currentPage * perPage);
 
   const resetForm = () => {
     setFormData({
@@ -188,7 +198,7 @@ export function AdminBlogPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
-              {posts.map((post, index) => (
+              {paginatedPosts.map((post, index) => (
                 <motion.tr
                   key={post.id}
                   initial={{ opacity: 0, y: 10 }}
@@ -200,7 +210,7 @@ export function AdminBlogPage() {
                     <div className="flex items-center gap-3">
                       {post.image_url ? (
                         <img
-                          src={post.image_url}
+                          src={getImageUrl(post.image_url, 'blog')}
                           alt={post.title}
                           className="w-12 h-12 rounded-lg object-cover"
                           onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
@@ -394,6 +404,13 @@ export function AdminBlogPage() {
           title="Supprimer cet article ?"
           message="Cette action est irreversible."
           variant="danger"
+        />
+        <Pagination
+          currentPage={currentPage}
+          lastPage={totalPages}
+          perPage={perPage}
+          total={total}
+          onPageChange={(page) => setCurrentPage(page)}
         />
       </AdminLayout>
   );

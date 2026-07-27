@@ -14,9 +14,13 @@ import { PageHeader } from '../../components/admin/PageHeader';
 import { MobileNotOptimizedBanner } from '../../components/admin/MobileNotOptimizedBanner';
 import { ConfirmDialog } from '../../components/admin/ConfirmDialog';
 import { useEscape } from '../../hooks/useKeyPress';
+import { Pagination } from '../../components/Pagination';
 
 export function AdminLegalPage() {
   const [pages, setPages] = useState<LegalPage[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [perPage] = useState(10);
+  const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   useEscape(() => setShowForm(false), showForm);
@@ -39,6 +43,8 @@ export function AdminLegalPage() {
     try {
       const data = await fetchAdminLegalPages();
       setPages(data);
+      setCurrentPage(1);
+      setTotal(data.length);
     } catch (error) {
       console.error('Error fetching legal pages:', error);
       toast.error('Erreur lors du chargement des pages legales');
@@ -46,6 +52,9 @@ export function AdminLegalPage() {
       setLoading(false);
     }
   };
+
+  const totalPages = Math.max(1, Math.ceil(pages.length / perPage));
+  const paginatedPages = pages.slice((currentPage - 1) * perPage, currentPage * perPage);
 
   const resetForm = () => {
     setFormData({ slug: '', title: '', content: '' });
@@ -114,7 +123,7 @@ export function AdminLegalPage() {
         </PageHeader>
 
         <div className="grid gap-4">
-          {pages.map((page, index) => (
+          {paginatedPages.map((page, index) => (
             <motion.div
               key={page.id}
               initial={{ opacity: 0, y: 20 }}
@@ -216,6 +225,15 @@ export function AdminLegalPage() {
         title="Supprimer la page"
         message="Etes-vous sûr de vouloir supprimer cette page legale ?"
       />
+      <>
+        <Pagination
+          currentPage={currentPage}
+          lastPage={totalPages}
+          perPage={perPage}
+          total={total}
+          onPageChange={(page) => setCurrentPage(page)}
+        />
+      </>
     </AdminLayout>
   );
 }

@@ -18,9 +18,13 @@ import { ConfirmDialog } from '../../components/admin/ConfirmDialog';
 import { useEscape } from '../../hooks/useKeyPress';
 import { ImageUpload } from '../../components/admin/ImageUpload';
 import { getImageUrl } from '../../lib/imageUrl';
+import { Pagination } from '../../components/Pagination';
 
 export function AdminBannersPage() {
   const [banners, setBanners] = useState<Banner[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [perPage] = useState(10);
+  const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   useEscape(() => setShowForm(false), showForm);
@@ -49,12 +53,17 @@ export function AdminBannersPage() {
     try {
       const data = await fetchAdminBanners();
       setBanners(data);
+      setCurrentPage(1);
+      setTotal(data.length);
     } catch (error) {
       console.error('Error fetching banners:', error);
     } finally {
       setLoading(false);
     }
   };
+
+  const totalPages = Math.max(1, Math.ceil(banners.length / perPage));
+  const paginatedBanners = banners.slice((currentPage - 1) * perPage, currentPage * perPage);
 
   const resetForm = () => {
     setFormData({
@@ -163,7 +172,7 @@ export function AdminBannersPage() {
         </PageHeader>
 
         <div className="grid gap-6">
-          {banners.map((banner, index) => (
+          {paginatedBanners.map((banner, index) => (
             <motion.div
               key={banner.id}
               initial={{ opacity: 0, y: 20 }}
@@ -367,6 +376,13 @@ export function AdminBannersPage() {
           title="Supprimer cette banniere ?"
           message="Cette action est irreversible."
           variant="danger"
+        />
+        <Pagination
+          currentPage={currentPage}
+          lastPage={totalPages}
+          perPage={perPage}
+          total={total}
+          onPageChange={(page) => setCurrentPage(page)}
         />
       </AdminLayout>
   );
