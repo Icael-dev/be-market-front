@@ -1,4 +1,5 @@
 import { useEffect, useState, useCallback } from 'react';
+import { logger } from '../lib/logger';
 import { motion } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
 import { fetchSupportTickets, createSupportTicket, fetchSupportTicket, createSupportMessage } from '../services/support';
@@ -30,7 +31,7 @@ export function SupportPage() {
       const data = await fetchSupportTickets();
       setTickets(data);
     } catch (error) {
-      console.error('Error fetching support tickets:', error);
+      logger.error('Error fetching support tickets:', error);
     }
   };
 
@@ -53,7 +54,7 @@ export function SupportPage() {
       setMessage('');
       setErrors({});
     } catch (error) {
-      console.error('Error creating support ticket:', error);
+      logger.error('Error creating support ticket:', error);
     } finally {
       setSubmitting(false);
     }
@@ -177,7 +178,7 @@ export function TicketDetailPage() {
       setTicket(ticketData);
       setMessages(ticketData.messages ?? []);
     } catch (error) {
-      console.error('Error fetching ticket details:', error);
+      logger.error('Error fetching ticket details:', error);
     } finally {
       setLoading(false);
     }

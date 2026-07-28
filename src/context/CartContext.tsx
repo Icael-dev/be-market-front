@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useState, useCallback, ReactNode } from 'react';
+import { logger } from '../lib/logger';
 import { useAuth } from './AuthContext';
 import type { Product, CartItem } from '../types';
 import { fetchCart, addCartItem, updateCartItem, deleteCartItem, clearCart as clearCartService } from '../services/cart';
@@ -37,7 +38,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
         setItems(stored ? JSON.parse(stored) : []);
       }
     } catch (error) {
-      console.error('Error fetching cart:', error);
+      logger.error('Error fetching cart:', error);
       setItems([]);
     } finally {
       setLoading(false);
@@ -67,7 +68,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
         const newItem = await addCartItem(product.id, quantity);
         setItems(prev => [...prev, { ...newItem, product } as CartItem]);
       } catch (error) {
-        console.error('Error adding cart item:', error);
+        logger.error('Error adding cart item:', error);
       }
     } else {
       setItems(prev => {
@@ -113,7 +114,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
         try {
           await updateCartItem(item.id, quantity);
         } catch (error) {
-          console.error('Error updating cart item:', error);
+          logger.error('Error updating cart item:', error);
         }
       }
     }
@@ -128,7 +129,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
       try {
         await clearCartService();
       } catch (error) {
-        console.error('Error clearing cart:', error);
+        logger.error('Error clearing cart:', error);
       }
     }
     setItems([]);

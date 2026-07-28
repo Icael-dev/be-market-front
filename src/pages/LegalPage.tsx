@@ -1,4 +1,5 @@
 import { useEffect, useState, useCallback } from 'react';
+import { logger } from '../lib/logger';
 import { Link, useParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { fetchLegalPages } from '../services/content';
@@ -22,7 +23,7 @@ export function LegalPage() {
         if (data.length > 0 && !slug) setCurrent(data[0]);
       }
     } catch (error) {
-      console.error('Failed to load legal pages:', error);
+      logger.error('Failed to load legal pages:', error);
     }
   }, [slug]);
 

@@ -1,4 +1,5 @@
 import { toast } from 'react-hot-toast';
+import { logger } from '../../lib/logger';
 import { useEffect, useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { fetchAdminOrders, updateAdminOrder, restoreAdminOrder } from '../../services/admin';
@@ -44,7 +45,7 @@ export function AdminOrdersPage() {
       setLastPage(result.last_page);
       setTotal(result.total);
     } catch (err) {
-      console.error('Orders fetch error:', err);
+      logger.error('Orders fetch error:', err);
       setOrders([]);
     }
   }, [statusFilter, perPage]);
@@ -60,7 +61,7 @@ export function AdminOrdersPage() {
       setOrders(prev => prev.map(o => (o.id === orderId ? { ...o, ...restored, deleted_at: null } : o)));
       toast.success('Commande restauree');
     } catch (error) {
-      console.error('Order restore error:', error);
+      logger.error('Order restore error:', error);
       toast.error('Erreur lors de la restauration');
     } finally {
       setRestoringId(null);
@@ -77,7 +78,7 @@ export function AdminOrdersPage() {
         setSelectedOrder(updatedOrder);
       }
     } catch (error) {
-      console.error('Order status update error:', error);
+      logger.error('Order status update error:', error);
       toast.error('Erreur lors de la mise a jour du statut');
     }
   };

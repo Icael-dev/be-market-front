@@ -1,6 +1,9 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
-import { login, logout, register, getCurrentUser } from '../services/auth';
+import { login, logout, register, getCurrentUser, refreshToken as refreshAuthToken } from '../services/auth';
 import type { AuthUser, Profile, UserRole } from '../types';
+
+const TOKEN_REFRESH_INTERVAL = 6 * 24 * 60 * 60 * 1000;
+const TOKEN_REFRESH_KEY = 'be_market_token_refresh_timestamp';
 
 interface AuthContextType {
   user: AuthUser | null;
@@ -17,9 +20,6 @@ interface AuthContextType {
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
-
-
-
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(null);
@@ -39,18 +39,47 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  const setupTokenRefresh = () => {
+    const now = Date.now();
+    const lastRefresh = parseInt(localStorage.getItem(TOKEN_REFRESH_KEY) || '0', 10);
+    const elapsed = now - lastRefresh;
+
+    if (elapsed >= TOKEN_REFRESH_INTERVAL) {
+      refreshAuthToken().then(() => {
+        localStorage.setItem(TOKEN_REFRESH_KEY, Date.now().toString());
+      });
+    }
+
+    const intervalId = setInterval(() => {
+      const currentNow = Date.now();
+      const currentElapsed = currentNow - lastRefresh;
+      if (currentElapsed >= TOKEN_REFRESH_INTERVAL) {
+        refreshAuthToken().then(() => {
+          localStorage.setItem(TOKEN_REFRESH_KEY, currentNow.toString());
+        });
+      }
+    }, 60 * 60 * 1000);
+
+    return intervalId;
+  };
+
   useEffect(() => {
     fetchUser();
   }, []);
 
-type ServiceError = { error?: string };
+  useEffect(() => {
+    if (user) {
+      const intervalId = setupTokenRefresh();
+      return () => clearInterval(intervalId);
+    }
+  }, [user]);
 
-
-
+  type ServiceError = { error?: string };
 
   const signIn = async (email: string, password: string) => {
     try {
       await login({ email, password });
+      localStorage.setItem(TOKEN_REFRESH_KEY, Date.now().toString());
       await fetchUser();
       return { error: null };
     } catch (err: unknown) {
@@ -62,6 +91,7 @@ type ServiceError = { error?: string };
   const signUp = async (email: string, password: string, fullName?: string) => {
     try {
       await register({ email, password, full_name: fullName });
+      localStorage.setItem(TOKEN_REFRESH_KEY, Date.now().toString());
       await fetchUser();
       return { error: null };
     } catch (err: unknown) {
@@ -76,6 +106,7 @@ type ServiceError = { error?: string };
     } finally {
       setUser(null);
       setProfile(null);
+      localStorage.removeItem(TOKEN_REFRESH_KEY);
     }
   };
 

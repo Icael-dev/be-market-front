@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { logger } from '../lib/logger';
 import { motion } from 'framer-motion';
 import { fetchFaqs } from '../services/content';
 import type { FAQ } from '../types';
@@ -15,7 +16,7 @@ export function FAQPage() {
       const data = await fetchFaqs();
       setFaqs(data);
     } catch (error) {
-      console.error('Error fetching FAQs:', error);
+      logger.error('Error fetching FAQs:', error);
     }
   };
 

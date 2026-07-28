@@ -1,4 +1,4 @@
-import { api, setAuthToken } from '../lib/api';
+import { api, clearAuthToken, setAuthToken } from '../lib/api';
 import type { AuthUser, Profile } from '../types';
 
 export interface LoginPayload {
@@ -31,10 +31,19 @@ export async function register(payload: RegisterPayload): Promise<AuthResult> {
 }
 
 export async function logout(): Promise<void> {
-  await api.post('/api/auth/logout');
-  setAuthToken(null);
+  try {
+    await api.post('/api/auth/logout');
+  } finally {
+    clearAuthToken();
+  }
 }
 
 export async function getCurrentUser(): Promise<{ user: AuthUser; profile: Profile | null }> {
   return api.get<{ user: AuthUser; profile: Profile | null }>('/api/auth/user');
+}
+
+export async function refreshToken(): Promise<AuthResult> {
+  const result = await api.post<AuthResult>('/api/auth/refresh');
+  setAuthToken(result.token);
+  return result;
 }

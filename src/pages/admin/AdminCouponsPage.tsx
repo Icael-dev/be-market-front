@@ -1,4 +1,5 @@
 import { toast } from 'react-hot-toast';
+import { logger } from '../../lib/logger';
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import {
@@ -51,7 +52,7 @@ export function AdminCouponsPage() {
       setCurrentPage(1);
       setTotal(data.length);
     } catch (error) {
-      console.error('Error fetching coupons:', error);
+      logger.error('Error fetching coupons:', error);
     } finally {
       setLoading(false);
     }
@@ -86,7 +87,7 @@ export function AdminCouponsPage() {
       setShowForm(false);
       reset();
     } catch (error) {
-      console.error('Error saving coupon:', error);
+      logger.error('Error saving coupon:', error);
       toast.error('Erreur lors de l\'enregistrement');
     } finally {
       setSaving(false);
@@ -99,7 +100,7 @@ export function AdminCouponsPage() {
       await deleteAdminCoupon(id);
       setCoupons(prev => prev.filter(c => c.id !== id));
     } catch (error) {
-      console.error('Error deleting coupon:', error);
+      logger.error('Error deleting coupon:', error);
       toast.error('Erreur lors de la suppression');
     }
   };
@@ -111,7 +112,7 @@ export function AdminCouponsPage() {
     try {
       await updateAdminCoupon(coupon.id, { is_active: nextActive });
     } catch (error) {
-      console.error('Error toggling coupon status:', error);
+      logger.error('Error toggling coupon status:', error);
       setCoupons(prev => prev.map(c => (c.id === coupon.id ? { ...c, is_active: coupon.is_active } : c)));
       toast.error('Erreur lors du changement de statut');
     } finally {

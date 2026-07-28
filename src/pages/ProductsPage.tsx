@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { logger } from '../lib/logger';
 import { useSearchParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { fetchProductsPaginated, fetchCategories, fetchPriceBounds } from '../services/products';
@@ -114,7 +115,7 @@ export function ProductsPage() {
         });
         setBrands(Array.from(brandSet).sort());
       } catch (error) {
-        console.error('Error fetching products:', error);
+        logger.error('Error fetching products:', error);
       } finally {
         setLoading(false);
       }

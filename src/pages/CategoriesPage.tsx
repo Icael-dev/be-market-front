@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { logger } from '../lib/logger';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { fetchCategories, fetchProducts } from '../services/products';
@@ -30,7 +31,7 @@ export function CategoriesPage() {
         }
         setCategoryProducts(productMap);
       } catch (error) {
-        console.error('Error fetching categories:', error);
+        logger.error('Error fetching categories:', error);
       } finally {
         setLoading(false);
       }

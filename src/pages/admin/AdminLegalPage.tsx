@@ -1,4 +1,5 @@
 import { toast } from 'react-hot-toast';
+import { logger } from '../../lib/logger';
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import {
@@ -46,7 +47,7 @@ export function AdminLegalPage() {
       setCurrentPage(1);
       setTotal(data.length);
     } catch (error) {
-      console.error('Error fetching legal pages:', error);
+      logger.error('Error fetching legal pages:', error);
       toast.error('Erreur lors du chargement des pages legales');
     } finally {
       setLoading(false);
@@ -83,7 +84,7 @@ export function AdminLegalPage() {
       }
       resetForm();
     } catch (error) {
-      console.error('Error saving legal page:', error);
+      logger.error('Error saving legal page:', error);
       toast.error('Erreur lors de la sauvegarde');
     } finally {
       setSaving(false);
@@ -97,7 +98,7 @@ export function AdminLegalPage() {
       setPages(prev => prev.filter(p => p.id !== confirmTargetId));
       toast.success('Page legale supprimee');
     } catch (error) {
-      console.error('Error deleting legal page:', error);
+      logger.error('Error deleting legal page:', error);
       toast.error('Erreur lors de la suppression');
     } finally {
       setConfirmOpen(false);

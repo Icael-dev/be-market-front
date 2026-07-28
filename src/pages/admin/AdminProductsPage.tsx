@@ -1,4 +1,5 @@
 import { useEffect, useState, useRef, useCallback } from 'react';
+import { logger } from '../../lib/logger';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   fetchAdminProducts,
@@ -131,7 +132,7 @@ export function AdminProductsPage() {
       const data = await fetchAdminProducts();
       setProducts(data);
     } catch (err) {
-      console.error('Products fetch error:', err);
+      logger.error('Products fetch error:', err);
     }
   }, []);
 
@@ -140,7 +141,7 @@ export function AdminProductsPage() {
       const data = await fetchAdminCategories();
       setCategories(data);
     } catch (err) {
-      console.error('Categories fetch error:', err);
+      logger.error('Categories fetch error:', err);
     }
   }, []);
 
@@ -189,7 +190,7 @@ export function AdminProductsPage() {
       streamRef.current = stream;
       setCameraOpen(true);
     } catch (err) {
-      console.error('Camera error:', err);
+      logger.error('Camera error:', err);
       setCameraError('Impossible d\'acceder a la camera. Autorisez l\'acces ou utilisez l\'upload.');
       setCameraOpen(false);
     }
@@ -262,7 +263,7 @@ export function AdminProductsPage() {
         succeeded = true;
         break;
       } catch (err) {
-        console.error(`Capture upload error (attempt ${attempt}):`, err);
+        logger.error(`Capture upload error (attempt ${attempt}):`, err);
         isRetryable = isNetworkOrCorsError(err);
         if (isRetryable && attempt < MAX_RETRIES) {
           await new Promise(res => setTimeout(res, 800 * attempt));
@@ -358,7 +359,7 @@ export function AdminProductsPage() {
           setErrors(err.error as Record<string, string[]>);
         }
       }
-      console.error('Error:', error);
+      logger.error('Error:', error);
     } finally {
       setSaving(false);
     }
@@ -378,7 +379,7 @@ export function AdminProductsPage() {
       await deleteAdminProduct(id);
       setProducts(prev => prev.map(p => (p.id === id ? { ...p, deleted_at: new Date().toISOString() } : p)));
     } catch (error) {
-      console.error('Error deleting product:', error);
+      logger.error('Error deleting product:', error);
     } finally {
       setDeletingId(null);
     }
@@ -393,7 +394,7 @@ export function AdminProductsPage() {
     try {
       await updateAdminProduct(product.id, { is_active: nextActive });
     } catch (error) {
-      console.error('Error toggling product status:', error);
+      logger.error('Error toggling product status:', error);
       // Revert on failure
       setProducts(prev => prev.map(p => (p.id === product.id ? { ...p, is_active: product.is_active } : p)));
     } finally {
@@ -419,7 +420,7 @@ export function AdminProductsPage() {
       setStockQuantity('');
       setStockProductId(null);
     } catch (error: unknown) {
-      console.error('Error adding stock:', error);
+      logger.error('Error adding stock:', error);
       const e = error as { error?: string };
       toast.error(e?.error || 'Erreur lors de l\'ajout de stock');
     } finally {
@@ -433,7 +434,7 @@ export function AdminProductsPage() {
       const restored = await restoreAdminProduct(productId);
       setProducts(prev => prev.map(p => (p.id === productId ? { ...p, ...restored, deleted_at: null } : p)));
     } catch (error) {
-      console.error('Error restoring product:', error);
+      logger.error('Error restoring product:', error);
     } finally {
       setRestoringId(null);
     }
@@ -455,7 +456,7 @@ export function AdminProductsPage() {
         const result = await uploadProductImage(fd);
         newImages.push(result.url);
       } catch (err) {
-        console.error('Upload error:', err);
+        logger.error('Upload error:', err);
         uploadErrors.push(`Erreur upload: ${file.name}`);
       }
     }

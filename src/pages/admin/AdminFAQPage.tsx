@@ -1,4 +1,5 @@
 import { toast } from 'react-hot-toast';
+import { logger } from '../../lib/logger';
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import {
@@ -49,7 +50,7 @@ export function AdminFAQPage() {
       setCurrentPage(1);
       setTotal(data.length);
     } catch (error) {
-      console.error('Error fetching FAQs:', error);
+      logger.error('Error fetching FAQs:', error);
       toast.error('Erreur lors du chargement des FAQ');
     } finally {
       setLoading(false);
@@ -92,7 +93,7 @@ export function AdminFAQPage() {
       }
       resetForm();
     } catch (error) {
-      console.error('Error saving FAQ:', error);
+      logger.error('Error saving FAQ:', error);
       toast.error('Erreur lors de la sauvegarde');
     } finally {
       setSaving(false);
@@ -106,7 +107,7 @@ export function AdminFAQPage() {
       setFaqs(prev => prev.filter(f => f.id !== confirmTargetId));
       toast.success('FAQ supprimee');
     } catch (error) {
-      console.error('Error deleting FAQ:', error);
+      logger.error('Error deleting FAQ:', error);
       toast.error('Erreur lors de la suppression');
     } finally {
       setConfirmOpen(false);
@@ -121,7 +122,7 @@ export function AdminFAQPage() {
       await updateAdminFAQ(faq.id, { is_active: nextActive });
       toast.success(nextActive ? 'FAQ activee' : 'FAQ desactivee');
     } catch (error) {
-      console.error('Error toggling FAQ:', error);
+      logger.error('Error toggling FAQ:', error);
       setFaqs(prev => prev.map(f => (f.id === faq.id ? { ...f, is_active: faq.is_active } : f)));
       toast.error('Erreur lors du changement de statut');
     }

@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route, Navigate, Outlet, useLocation, useNavigationType } from 'react-router-dom';
+import { logger } from './lib/logger';
 import { Component, ErrorInfo, ReactNode, useEffect, lazy, Suspense } from 'react';
 import { Toaster } from 'react-hot-toast';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -13,7 +14,7 @@ const scrollPositions = new Map<string, number>();
 class ErrorBoundary extends Component<{ children: ReactNode }, { error: Error | null }> {
   state = { error: null };
   static getDerivedStateFromError(error: Error) { return { error }; }
-  componentDidCatch(error: Error, info: ErrorInfo) { console.error('App error:', error, info); }
+  componentDidCatch(error: Error, info: ErrorInfo) { logger.error('App error:', error, info); }
   render() {
     if (this.state.error) {
       return (

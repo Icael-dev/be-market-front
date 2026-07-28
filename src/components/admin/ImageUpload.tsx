@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { logger } from '../../lib/logger';
 import { Camera, Upload, X, Loader2 } from 'lucide-react';
 import { getImageUrl } from '../../lib/imageUrl';
 
@@ -37,8 +38,8 @@ export function ImageUpload({
       body: fd,
       headers: {
         Accept: 'application/json',
-        Authorization: `Bearer ${localStorage.getItem('be_market_jwt_token') || ''}`,
       },
+      credentials: 'include',
     });
 
     if (!res.ok) {
@@ -70,7 +71,7 @@ export function ImageUpload({
         onChange([...value, ...urls]);
       }
     } catch (err) {
-      console.error('Upload error:', err);
+      logger.error('Upload error:', err);
       setCameraError(err instanceof Error ? err.message : 'Erreur lors de l\'upload');
     } finally {
       setUploading(false);
@@ -95,7 +96,7 @@ export function ImageUpload({
       setStream(mediaStream);
       setCameraOpen(true);
     } catch (err) {
-      console.error('Camera error:', err);
+      logger.error('Camera error:', err);
       setCameraError('Impossible d\'acceder a la camera. Autorisez l\'acces ou utilisez l\'upload.');
       setCameraOpen(false);
     }
@@ -163,7 +164,7 @@ export function ImageUpload({
       onChange([...value, url]);
       stopCamera();
     } catch (err) {
-      console.error('Capture upload error:', err);
+      logger.error('Capture upload error:', err);
       const status = (err as { status?: number }).status;
       if (status === 413 || status === 422) {
         setCameraError('Photo trop lourde ou format non supporte. Utilisez une image JPEG/PNG de moins de 10 Mo.');

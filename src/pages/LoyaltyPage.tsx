@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { logger } from '../lib/logger';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
@@ -27,7 +28,7 @@ export function LoyaltyPage() {
       setLoyalty(loyaltyData);
       setTransactions(transactionsData);
     } catch (error) {
-      console.error('Failed to load loyalty data:', error);
+      logger.error('Failed to load loyalty data:', error);
     } finally {
       setLoading(false);
     }

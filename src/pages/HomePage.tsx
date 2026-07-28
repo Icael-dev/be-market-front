@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { logger } from '../lib/logger';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { fetchCategories, fetchFeaturedProducts } from '../services/products';
@@ -69,7 +70,7 @@ useEffect(() => {
          setCategories(categories);
          setTestimonials(testimonials);
        } catch (error) {
-         console.error('Error fetching data:', error);
+         logger.error('Error fetching data:', error);
        } finally {
          setLoading(false);
        }
@@ -587,7 +588,7 @@ useEffect(() => {
             <p className="text-gray-500 dark:text-gray-400 mb-8 max-w-lg mx-auto">
               Recevez nos offres exclusives et les dernieres nouveautes directement dans votre boite mail
             </p>
-             <form onSubmit={async (e) => { e.preventDefault(); if (!newsletterEmail.trim()) return; setNewsletterLoading(true); try { await subscribeNewsletter(newsletterEmail.trim()); setNewsletterEmail(''); } catch (err) { console.error(err); } finally { setNewsletterLoading(false); } }} className="flex flex-col sm:flex-row gap-3 max-w-lg mx-auto">
+             <form onSubmit={async (e) => { e.preventDefault(); if (!newsletterEmail.trim()) return; setNewsletterLoading(true); try { await subscribeNewsletter(newsletterEmail.trim()); setNewsletterEmail(''); } catch (err) { logger.error(err); } finally { setNewsletterLoading(false); } }} className="flex flex-col sm:flex-row gap-3 max-w-lg mx-auto">
                <input
                  type="email"
                  value={newsletterEmail}

@@ -1,16 +1,23 @@
 const API_BASE_URL = import.meta.env.VITE_API_URL?.replace(/\/$/, '') ?? '';
-const TOKEN_KEY = 'be_market_jwt_token';
+const TOKEN_STORAGE_KEY = 'be_market_api_token';
 
-export function getAuthToken(): string | null {
-  return localStorage.getItem(TOKEN_KEY);
+let authToken: string | null = localStorage.getItem(TOKEN_STORAGE_KEY);
+
+export function setAuthToken(token: string | null): void {
+  authToken = token;
+  if (token) {
+    localStorage.setItem(TOKEN_STORAGE_KEY, token);
+  } else {
+    localStorage.removeItem(TOKEN_STORAGE_KEY);
+  }
 }
 
-export function setAuthToken(token: string | null) {
-  if (token) {
-    localStorage.setItem(TOKEN_KEY, token);
-  } else {
-    localStorage.removeItem(TOKEN_KEY);
-  }
+export function getAuthToken(): string | null {
+  return authToken;
+}
+
+export function clearAuthToken(): void {
+  setAuthToken(null);
 }
 
 function buildHeaders(customHeaders?: HeadersInit, isFormData?: boolean): Headers {
@@ -21,10 +28,8 @@ function buildHeaders(customHeaders?: HeadersInit, isFormData?: boolean): Header
   if (!isFormData && !headers.has('Content-Type')) {
     headers.set('Content-Type', 'application/json');
   }
-
-  const token = getAuthToken();
-  if (token) {
-    headers.set('Authorization', `Bearer ${token}`);
+  if (authToken && !headers.has('Authorization')) {
+    headers.set('Authorization', `Bearer ${authToken}`);
   }
 
   return headers;
@@ -51,6 +56,7 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
   const response = await fetch(url, {
     ...options,
     headers,
+    credentials: 'include',
   });
 
   return parseResponse<T>(response);

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { logger } from '../../lib/logger';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { fetchAdminOrders, fetchAdminStatistics, fetchAdminTopProducts, fetchAdminLowStock } from '../../services/admin';
@@ -124,7 +125,7 @@ export function AdminDashboardPage() {
       );
 
     } catch (error) {
-      console.error('Error fetching dashboard data:', error);
+      logger.error('Error fetching dashboard data:', error);
     } finally {
       setLoading(false);
     }

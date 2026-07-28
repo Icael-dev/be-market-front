@@ -1,4 +1,5 @@
 import { toast } from 'react-hot-toast';
+import { logger } from '../../lib/logger';
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import {
@@ -61,7 +62,7 @@ export function AdminFlashSalesPage() {
       setCurrentPage(1);
       setTotal(sales.length);
     } catch (error) {
-      console.error('Flash sales fetch error:', error);
+      logger.error('Flash sales fetch error:', error);
     } finally {
       setLoading(false);
     }
@@ -127,7 +128,7 @@ export function AdminFlashSalesPage() {
       setShowForm(false);
       resetForm();
     } catch (error) {
-      console.error('Flash sale save error:', error);
+      logger.error('Flash sale save error:', error);
       toast.error('Erreur lors de l\'enregistrement');
     } finally {
       setSaving(false);
@@ -140,7 +141,7 @@ export function AdminFlashSalesPage() {
       await deleteAdminFlashSale(confirmTargetId);
       setFlashSales(prev => prev.filter(s => s.id !== confirmTargetId));
     } catch (error) {
-      console.error('Flash sale delete error:', error);
+      logger.error('Flash sale delete error:', error);
       toast.error('Erreur lors de la suppression');
     } finally {
       setConfirmOpen(false);
@@ -155,7 +156,7 @@ export function AdminFlashSalesPage() {
     try {
       await updateAdminFlashSale(sale.id, { is_active: nextActive });
     } catch (error) {
-      console.error('Flash sale toggle error:', error);
+      logger.error('Flash sale toggle error:', error);
       setFlashSales(prev => prev.map(s => (s.id === sale.id ? { ...s, is_active: sale.is_active } : s)));
       toast.error('Erreur lors du changement de statut');
     } finally {

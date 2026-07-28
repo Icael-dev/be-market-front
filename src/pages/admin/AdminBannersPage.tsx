@@ -1,4 +1,5 @@
 import { toast } from 'react-hot-toast';
+import { logger } from '../../lib/logger';
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import {
@@ -56,7 +57,7 @@ export function AdminBannersPage() {
       setCurrentPage(1);
       setTotal(data.length);
     } catch (error) {
-      console.error('Error fetching banners:', error);
+      logger.error('Error fetching banners:', error);
     } finally {
       setLoading(false);
     }
@@ -115,7 +116,7 @@ export function AdminBannersPage() {
       setShowForm(false);
       resetForm();
     } catch (error) {
-      console.error('Error saving banner:', error);
+      logger.error('Error saving banner:', error);
       toast.error('Erreur lors de l\'enregistrement');
     } finally {
       setSaving(false);
@@ -128,7 +129,7 @@ export function AdminBannersPage() {
       await deleteAdminBanner(confirmTargetId);
       setBanners(prev => prev.filter(b => b.id !== confirmTargetId));
     } catch (error) {
-      console.error('Error deleting banner:', error);
+      logger.error('Error deleting banner:', error);
       toast.error('Erreur lors de la suppression');
     } finally {
       setConfirmOpen(false);
@@ -143,7 +144,7 @@ export function AdminBannersPage() {
     try {
       await updateAdminBanner(banner.id, { is_active: nextActive });
     } catch (error) {
-      console.error('Error toggling banner status:', error);
+      logger.error('Error toggling banner status:', error);
       setBanners(prev => prev.map(b => (b.id === banner.id ? { ...b, is_active: banner.is_active } : b)));
       toast.error('Erreur lors du changement de statut');
     } finally {

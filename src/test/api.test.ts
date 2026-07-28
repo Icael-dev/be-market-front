@@ -1,10 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { api, getAuthToken, setAuthToken } from '../lib/api';
+import { api } from '../lib/api';
 
 describe('api helper', () => {
   beforeEach(() => {
-    localStorage.clear();
     (globalThis as any).fetch = vi.fn();
   });
 
@@ -21,7 +20,7 @@ describe('api helper', () => {
     expect(result).toEqual(mockData);
     expect((globalThis as any).fetch).toHaveBeenCalledWith(
       expect.stringContaining('/test'),
-      expect.objectContaining({ method: 'GET' })
+      expect.objectContaining({ method: 'GET', credentials: 'include' })
     );
   });
 
@@ -41,8 +40,7 @@ describe('api helper', () => {
     });
   });
 
-  it('attaches Authorization header when token exists', async () => {
-    setAuthToken('test-token');
+  it('does not attach Authorization header automatically', async () => {
     ((globalThis as any).fetch as ReturnType<typeof vi.fn>).mockResolvedValue({
       ok: true,
       status: 200,
@@ -52,7 +50,20 @@ describe('api helper', () => {
 
     await api.get('/test');
     const [, options] = ((globalThis as any).fetch as ReturnType<typeof vi.fn>).mock.calls[0];
-    expect(options.headers.get('Authorization')).toBe('Bearer test-token');
+    expect(options.headers.get('Authorization')).toBeNull();
+  });
+
+  it('includes credentials in fetch options', async () => {
+    ((globalThis as any).fetch as ReturnType<typeof vi.fn>).mockResolvedValue({
+      ok: true,
+      status: 200,
+      headers: new Headers({ 'content-type': 'application/json' }),
+      json: async () => ({}),
+    });
+
+    await api.get('/test');
+    const [, options] = ((globalThis as any).fetch as ReturnType<typeof vi.fn>).mock.calls[0];
+    expect(options.credentials).toBe('include');
   });
 
   it('skips Content-Type for FormData', async () => {
@@ -67,18 +78,5 @@ describe('api helper', () => {
     await api.post('/test', form);
     const callArgs = ((globalThis as any).fetch as ReturnType<typeof vi.fn>).mock.calls[0];
     expect(callArgs[1].body).toBe(form);
-  });
-});
-
-describe('auth token helpers', () => {
-  it('stores and retrieves token', () => {
-    setAuthToken('abc');
-    expect(getAuthToken()).toBe('abc');
-  });
-
-  it('removes token when set to null', () => {
-    setAuthToken('abc');
-    setAuthToken(null);
-    expect(getAuthToken()).toBeNull();
   });
 });

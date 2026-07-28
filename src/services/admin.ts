@@ -412,15 +412,10 @@ export async function deleteAdminTestimonial(id: string): Promise<void> {
 // Export
 export async function fetchAdminExport(type: string): Promise<Blob> {
   const API_BASE_URL = (import.meta.env.VITE_API_URL ?? '').replace(/\/$/, '');
-  const token = localStorage.getItem('be_market_jwt_token');
-  const headers: Record<string, string> = { Accept: 'text/csv' };
-  if (token) {
-    headers.Authorization = `Bearer ${token}`;
-  }
-
   const response = await fetch(`${API_BASE_URL}/api/admin/export?type=${encodeURIComponent(type)}`, {
     method: 'GET',
-    headers,
+    headers: { Accept: 'text/csv' },
+    credentials: 'include',
   });
 
   if (!response.ok) {

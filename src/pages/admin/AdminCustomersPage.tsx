@@ -1,4 +1,5 @@
 import { useEffect, useState, useCallback } from 'react';
+import { logger } from '../../lib/logger';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { fetchAdminCustomers } from '../../services/admin';
@@ -30,7 +31,7 @@ export function AdminCustomersPage() {
       setLastPage(result.last_page);
       setTotal(result.total);
      } catch (error) {
-       console.error('Error fetching customers:', error);
+       logger.error('Error fetching customers:', error);
        setCustomers([]);
      }
    }, [searchQuery, perPage]);

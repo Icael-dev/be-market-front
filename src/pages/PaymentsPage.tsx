@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { logger } from '../lib/logger';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
@@ -28,7 +29,7 @@ export function PaymentsPage() {
       const data = await fetchPaymentHistory();
       setPayments(data);
     } catch (error) {
-      console.error('Failed to load payments:', error);
+      logger.error('Failed to load payments:', error);
     } finally {
       setLoading(false);
     }

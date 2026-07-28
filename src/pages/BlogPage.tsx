@@ -1,4 +1,5 @@
 import { useEffect, useState, useCallback } from 'react';
+import { logger } from '../lib/logger';
 import { Link, useParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { fetchBlogPosts, fetchBlogPostBySlug } from '../services/content';
@@ -18,7 +19,7 @@ export function BlogPage() {
       const data = await fetchBlogPosts();
       setPosts(data);
     } catch (error) {
-      console.error('Failed to load blog posts:', error);
+      logger.error('Failed to load blog posts:', error);
     } finally {
       setLoading(false);
     }
@@ -142,7 +143,7 @@ export function BlogPostPage() {
       const data = await fetchBlogPostBySlug(slug);
       setPost(data);
     } catch (error) {
-      console.error('Failed to load blog post:', error);
+      logger.error('Failed to load blog post:', error);
     } finally {
       setLoading(false);
     }

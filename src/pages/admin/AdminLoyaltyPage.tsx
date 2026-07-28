@@ -1,4 +1,5 @@
 import { useEffect, useState, useCallback } from 'react';
+import { logger } from '../../lib/logger';
 import { fetchAdminLoyaltyTransactions, fetchAdminLoyaltyPoints } from '../../services/admin';
 import { AdminLayout } from '../../components/admin/AdminLayout';
 import { PageHeader } from '../../components/admin/PageHeader';
@@ -35,7 +36,7 @@ export function AdminLoyaltyPage() {
       setPoints(pointsData.data || []);
       setPtsCurrentPage(pointsData.current_page);
     } catch (error) {
-      console.error('Failed to load loyalty data:', error);
+      logger.error('Failed to load loyalty data:', error);
       setTransactions([]);
       setPoints([]);
     } finally {

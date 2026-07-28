@@ -1,4 +1,5 @@
 import { useEffect, useState, useRef, useCallback } from 'react';
+import { logger } from '../../lib/logger';
 import { useParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
@@ -37,7 +38,7 @@ export function AdminSupportDetailPage() {
       const data = await fetchAdminSupportTicket(id);
       setTicket(data);
     } catch (error) {
-      console.error('Failed to load support ticket:', error);
+      logger.error('Failed to load support ticket:', error);
     } finally {
       setLoading(false);
     }
@@ -58,7 +59,7 @@ export function AdminSupportDetailPage() {
       const updated = await updateAdminSupportTicket(id, { status });
       setTicket(updated);
     } catch (error) {
-      console.error('Failed to update ticket:', error);
+      logger.error('Failed to update ticket:', error);
     } finally {
       setSaving(false);
     }
@@ -72,7 +73,7 @@ export function AdminSupportDetailPage() {
       setTicket(prev => prev ? { ...prev, messages: [...(prev.messages || []), newMessage] } : prev);
       setMessage('');
     } catch (error) {
-      console.error('Failed to send message:', error);
+      logger.error('Failed to send message:', error);
     } finally {
       setSending(false);
     }

@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { logger } from '../lib/logger';
 import { motion } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
 import { formatPrice, getStatusColor, getStatusLabel } from '../lib/utils';
@@ -43,7 +44,7 @@ export function ProfilePage() {
     fetchRecentOrders(3)
       .then(setRecentOrders)
       .catch(error => {
-        console.error('Error fetching recent orders:', error);
+        logger.error('Error fetching recent orders:', error);
       });
   }, []);
 

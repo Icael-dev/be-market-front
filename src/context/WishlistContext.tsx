@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
+import { logger } from '../lib/logger';
 import { useAuth } from './AuthContext';
 import type { WishlistItem, Product } from '../types';
 import { fetchWishlist, addWishlistItem, removeWishlistItem } from '../services/wishlist';
@@ -30,7 +31,7 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
         setItems(wishlistData);
       }
     } catch (err) {
-      console.error('Wishlist fetch error:', err);
+      logger.error('Wishlist fetch error:', err);
       setItems([]);
     } finally {
       setLoading(false);

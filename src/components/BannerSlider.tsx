@@ -1,4 +1,5 @@
 import { useEffect, useState, useCallback } from 'react';
+import { logger } from '../lib/logger';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { fetchBanners as fetchBannersService } from '../services/content';
@@ -29,7 +30,7 @@ export function BannerSlider() {
       const data = await fetchBannersService();
       setBanners(data);
     } catch (error) {
-      console.error('Failed to load banners:', error);
+      logger.error('Failed to load banners:', error);
     } finally {
       setLoading(false);
     }

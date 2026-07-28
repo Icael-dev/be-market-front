@@ -1,4 +1,5 @@
 import { useEffect, useState, useCallback } from 'react';
+import { logger } from '../lib/logger';
 import { useParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import type { Order } from '../types';
@@ -24,7 +25,7 @@ export function OrderSuccessPage() {
       const orderData = await fetchOrderById(orderId);
       setOrder(orderData);
     } catch (err) {
-      console.error('Order fetch error:', err);
+      logger.error('Order fetch error:', err);
     } finally {
       setLoading(false);
     }

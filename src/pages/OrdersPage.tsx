@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { logger } from '../lib/logger';
 import { useParams, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
@@ -23,7 +24,7 @@ export function OrdersPage() {
       const data = await fetchOrdersService();
       setOrders(data);
     } catch (error) {
-      console.error('Error fetching orders:', error);
+      logger.error('Error fetching orders:', error);
     } finally {
       setLoading(false);
     }
@@ -206,7 +207,7 @@ export function OrderDetailPage() {
       const orderData = await fetchOrderById(id);
       setOrder(orderData);
     } catch (err) {
-      console.error('Order fetch error:', err);
+      logger.error('Order fetch error:', err);
     } finally {
       setLoading(false);
     }

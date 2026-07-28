@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { logger } from '../lib/logger';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { fetchFlashSales as fetchFlashSalesService } from '../services/content';
@@ -73,7 +74,7 @@ export function FlashSaleSection() {
 
       setFlashSales(merged);
     } catch (err) {
-      console.error('FlashSales fetch error:', err);
+      logger.error('FlashSales fetch error:', err);
     } finally {
       setLoading(false);
     }

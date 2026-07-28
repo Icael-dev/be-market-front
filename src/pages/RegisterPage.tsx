@@ -21,6 +21,7 @@ export function RegisterPage() {
     { label: 'Au moins 8 caracteres', met: password.length >= 8 },
     { label: 'Une majuscule', met: /[A-Z]/.test(password) },
     { label: 'Un chiffre', met: /[0-9]/.test(password) },
+    { label: 'Une minuscule', met: /[a-z]/.test(password) },
   ];
 
   const handleSubmit = async (e: React.FormEvent) => {

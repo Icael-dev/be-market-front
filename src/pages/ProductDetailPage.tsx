@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { logger } from '../lib/logger';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { fetchProductBySlug, fetchRelatedProducts } from '../services/products';
@@ -50,7 +51,7 @@ export function ProductDetailPage() {
           setRelatedProducts(related);
         }
       } catch (error) {
-        console.error('Error fetching product:', error);
+        logger.error('Error fetching product:', error);
         navigate('/products');
       } finally {
         setLoading(false);

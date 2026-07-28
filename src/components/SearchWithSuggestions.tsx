@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
+import { logger } from '../lib/logger';
 import { useNavigate } from 'react-router-dom';
 import { Search, X, Package } from 'lucide-react';
 import { formatPrice } from '../lib/utils';
@@ -37,7 +38,7 @@ export function SearchWithSuggestions() {
       const data = await api.get<SuggestionProduct[]>(`/api/products/suggestions?q=${encodeURIComponent(searchQuery)}&limit=8`);
       setSuggestions(data ?? []);
     } catch (error) {
-      console.error('Search suggestions error:', error);
+      logger.error('Search suggestions error:', error);
     } finally {
       setLoading(false);
     }

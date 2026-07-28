@@ -1,4 +1,5 @@
 import { useEffect, useState, useCallback } from 'react';
+import { logger } from '../../lib/logger';
 import { motion } from 'framer-motion';
 import { fetchAdminStatistics, fetchAdminTopProducts, fetchAdminLowStock, fetchAdminCouponStats, fetchAdminCategorySales, type TopProduct, type LowStockProduct, type CouponStatsResponse, type CategorySale } from '../../services/admin';
 import { AdminLayout } from '../../components/admin/AdminLayout';
@@ -69,7 +70,7 @@ export function AdminStatisticsPage() {
       setCouponStats(couponStatsData);
       setCategorySales(categorySalesData);
     } catch (error) {
-      console.error('Stats fetch error:', error);
+      logger.error('Stats fetch error:', error);
     } finally {
       setLoading(false);
     }

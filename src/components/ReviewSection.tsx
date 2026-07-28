@@ -1,4 +1,5 @@
 import { useEffect, useState, useCallback } from 'react';
+import { logger } from '../lib/logger';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
@@ -28,7 +29,7 @@ export function ReviewSection({ productId }: ReviewSectionProps) {
       const data = await fetchReviewsService(productId);
       setReviews(data);
     } catch (error) {
-      console.error('Failed to load reviews:', error);
+      logger.error('Failed to load reviews:', error);
     }
   }, [productId]);
 

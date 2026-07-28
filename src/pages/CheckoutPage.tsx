@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { logger } from '../lib/logger';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
@@ -78,7 +79,7 @@ export function CheckoutPage() {
       const result = await validateCoupon(couponCode.trim(), total);
       setCouponValidation(result);
     } catch (error) {
-      console.error('Failed to validate coupon:', error);
+      logger.error('Failed to validate coupon:', error);
       setCouponValidation({ valid: false, message: 'Erreur lors de la validation du coupon.', discount_amount: 0 });
     } finally {
       setCouponLoading(false);
@@ -125,7 +126,7 @@ export function CheckoutPage() {
       const data = await fetchLoyaltyPoints();
       setLoyaltyPoints(data);
     } catch (error) {
-      console.error('Failed to load loyalty points:', error);
+      logger.error('Failed to load loyalty points:', error);
     }
   }, [user]);
 
@@ -134,7 +135,7 @@ export function CheckoutPage() {
       const data = await fetchSettings();
       setSettings(data);
     } catch (error) {
-      console.error('Failed to load settings:', error);
+      logger.error('Failed to load settings:', error);
     }
   }, []);
 
@@ -150,7 +151,7 @@ export function CheckoutPage() {
         setUseNewAddress(false);
       }
     } catch (error) {
-      console.error('Failed to load addresses:', error);
+      logger.error('Failed to load addresses:', error);
     }
   }, [user]);
 
@@ -223,7 +224,7 @@ const handlePlaceOrder = async () => {
             }
           }
         } catch (paymentError) {
-          console.error('Payment initiation error:', paymentError);
+          logger.error('Payment initiation error:', paymentError);
           throw new Error('La commande a ete creee mais le paiement n\'a pas pu etre initie. Vous pourrez payer depuis vos commandes.');
         }
       }
@@ -241,7 +242,7 @@ const handlePlaceOrder = async () => {
       await clearCart();
       navigate(`/order-success/${order.id}`);
     } catch (error) {
-      console.error('Order error:', error);
+      logger.error('Order error:', error);
       toast.error('Erreur lors de la commande. Veuillez reessayer.');
     } finally {
       setLoading(false);

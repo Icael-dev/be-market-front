@@ -1,4 +1,5 @@
 import { toast } from 'react-hot-toast';
+import { logger } from '../../lib/logger';
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { fetchAdminSettings, updateAdminSettings } from '../../services/admin';
@@ -22,7 +23,7 @@ export function AdminSettingsPage() {
       const data = await fetchAdminSettings();
       setSettings(data as unknown as Record<string, string | number>);
     } catch (error) {
-      console.error('Settings fetch error:', error);
+      logger.error('Settings fetch error:', error);
     } finally {
       setLoading(false);
     }
@@ -48,7 +49,7 @@ export function AdminSettingsPage() {
       setSaved(true);
       setTimeout(() => setSaved(false), 2000);
     } catch (error) {
-      console.error('Settings save error:', error);
+      logger.error('Settings save error:', error);
       toast.error('Erreur lors de la sauvegarde');
     } finally {
       setSaving(false);

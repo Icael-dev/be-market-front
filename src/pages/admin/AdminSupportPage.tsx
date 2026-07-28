@@ -1,4 +1,5 @@
 import { useEffect, useState, useCallback } from 'react';
+import { logger } from '../../lib/logger';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import {
@@ -46,7 +47,7 @@ export function AdminSupportPage() {
       setTotal(result.total);
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : 'Erreur inconnue';
-      console.error('Failed to load support tickets:', message, error);
+      logger.error('Failed to load support tickets:', message, error);
       setTickets([]);
       alert('Impossible de charger les tickets de support. Verifiez que le backend fonctionne et que les migrations sont a jour.');
     } finally {

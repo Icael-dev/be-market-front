@@ -1,4 +1,5 @@
 import { toast } from 'react-hot-toast';
+import { logger } from '../../lib/logger';
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import {
@@ -60,7 +61,7 @@ export function AdminBlogPage() {
       setCurrentPage(1);
       setTotal(data.length);
     } catch (error) {
-      console.error('Error fetching blog posts:', error);
+      logger.error('Error fetching blog posts:', error);
     } finally {
       setLoading(false);
     }
@@ -125,7 +126,7 @@ export function AdminBlogPage() {
       setShowForm(false);
       resetForm();
     } catch (error) {
-      console.error('Error saving blog post:', error);
+      logger.error('Error saving blog post:', error);
       toast.error('Erreur lors de l\'enregistrement');
     } finally {
       setSaving(false);
@@ -138,7 +139,7 @@ export function AdminBlogPage() {
       await deleteAdminBlogPost(confirmTargetId);
       setPosts(prev => prev.filter(p => p.id !== confirmTargetId));
     } catch (error) {
-      console.error('Error deleting blog post:', error);
+      logger.error('Error deleting blog post:', error);
       toast.error('Erreur lors de la suppression');
     } finally {
       setConfirmOpen(false);
@@ -158,7 +159,7 @@ export function AdminBlogPage() {
     try {
       await updateAdminBlogPost(post.id, { is_published: nextPublished, published_at: nextPublishedAt });
     } catch (error) {
-      console.error('Error toggling blog post status:', error);
+      logger.error('Error toggling blog post status:', error);
       setPosts(prev => prev.map(p => (p.id === post.id ? { ...p, is_published: post.is_published, published_at: post.published_at } : p)));
       toast.error('Erreur lors du changement de statut');
     } finally {

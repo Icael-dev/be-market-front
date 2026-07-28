@@ -1,4 +1,5 @@
 import { toast } from 'react-hot-toast';
+import { logger } from '../../lib/logger';
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import {
@@ -54,7 +55,7 @@ export function AdminCategoriesPage() {
       setCurrentPage(1);
       setTotal(data.length);
     } catch (error) {
-      console.error('Error fetching categories:', error);
+      logger.error('Error fetching categories:', error);
     } finally {
       setLoading(false);
     }
@@ -147,7 +148,7 @@ export function AdminCategoriesPage() {
       setShowForm(false);
       resetForm();
     } catch (error) {
-      console.error('Error saving category:', error);
+      logger.error('Error saving category:', error);
       toast.error('Erreur lors de l\'enregistrement');
     } finally {
       setSaving(false);
@@ -160,7 +161,7 @@ export function AdminCategoriesPage() {
       await deleteAdminCategory(confirmTargetId);
       setCategories(prev => prev.filter(c => c.id !== confirmTargetId));
     } catch (error) {
-      console.error('Error deleting category:', error);
+      logger.error('Error deleting category:', error);
       toast.error('Erreur lors de la suppression');
     } finally {
       setConfirmOpen(false);
@@ -175,7 +176,7 @@ export function AdminCategoriesPage() {
       setCategories(prev => prev.map(c => (c.id === id ? { ...c, ...restored, deleted_at: null } : c)));
       toast.success('Categorie restauree');
     } catch (error) {
-      console.error('Error restoring category:', error);
+      logger.error('Error restoring category:', error);
       toast.error('Erreur lors de la restauration');
     } finally {
       setRestoringId(null);
@@ -189,7 +190,7 @@ export function AdminCategoriesPage() {
     try {
       await updateAdminCategory(category.id, { is_active: nextActive });
     } catch (error) {
-      console.error('Error toggling category status:', error);
+      logger.error('Error toggling category status:', error);
       setCategories(prev => prev.map(c => (c.id === category.id ? { ...c, is_active: category.is_active } : c)));
       toast.error('Erreur lors du changement de statut');
     } finally {

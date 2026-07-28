@@ -1,4 +1,5 @@
 import { toast } from 'react-hot-toast';
+import { logger } from '../../lib/logger';
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { fetchAdminExport } from '../../services/admin';
@@ -31,7 +32,7 @@ export function AdminExportPage() {
       URL.revokeObjectURL(url);
       setSuccess(type);
     } catch (error) {
-      console.error('Export error:', error);
+      logger.error('Export error:', error);
       toast.error('Erreur lors de l\'export.');
     } finally { setExporting(null); }
   };

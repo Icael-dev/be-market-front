@@ -7,15 +7,7 @@
     <meta name="description" content="BE-Market - Votre boutique de confiance pour les accessoires electroniques au Togo. Smartphones, ordinateurs, ecouteurs, montres connectees..." />
 
     <!-- Anti-flash: apply theme before first paint -->
-    <script>
-      (function () {
-        try {
-          var t = localStorage.getItem('theme');
-          if (!t) t = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-          if (t === 'dark') document.documentElement.classList.add('dark');
-        } catch (e) {}
-      })();
-    </script>
+    <script src="/theme-init.js"></script>
     <meta name="keywords" content="electronique, smartphone, ordinateur, accessoires, togo, lome, tmoney, flooz" />
     <meta name="author" content="BE-Market" />
 

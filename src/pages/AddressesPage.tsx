@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { logger } from '../lib/logger';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
 import type { Address } from '../types';
@@ -55,7 +56,7 @@ export function AddressesPage() {
        const data = await fetchAddresses();
        setAddresses(data);
      } catch (error) {
-       console.error('Failed to load addresses:', error);
+       logger.error('Failed to load addresses:', error);
      }
    }, [user]);
 
@@ -81,7 +82,7 @@ export function AddressesPage() {
       setShowAddForm(false);
       resetForm();
     } catch (error) {
-      console.error('Failed to add address:', error);
+      logger.error('Failed to add address:', error);
     }
   };
 
@@ -101,7 +102,7 @@ export function AddressesPage() {
       setEditingId(null);
       resetForm();
     } catch (error) {
-      console.error('Failed to update address:', error);
+      logger.error('Failed to update address:', error);
     }
   };
 
@@ -111,7 +112,7 @@ export function AddressesPage() {
       await deleteAddress(confirmTargetId);
       setAddresses(prev => prev.filter(a => a.id !== confirmTargetId));
     } catch (error) {
-      console.error('Failed to delete address:', error);
+      logger.error('Failed to delete address:', error);
     } finally {
       setConfirmOpen(false);
       setConfirmTargetId(null);

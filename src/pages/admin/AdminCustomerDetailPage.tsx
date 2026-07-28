@@ -1,4 +1,5 @@
 import { useEffect, useState, useCallback } from 'react';
+import { logger } from '../../lib/logger';
 import { useParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
@@ -42,7 +43,7 @@ export function AdminCustomerDetailPage() {
       setLoyalty(loyaltyData);
       setPayments(paymentsData);
     } catch (error) {
-      console.error('Failed to load customer detail:', error);
+      logger.error('Failed to load customer detail:', error);
     } finally {
       setLoading(false);
     }

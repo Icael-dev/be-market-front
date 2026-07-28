@@ -1,4 +1,5 @@
 import { useEffect, useState, useCallback } from 'react';
+import { logger } from '../../lib/logger';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { fetchAdminPayments } from '../../services/admin';
@@ -37,7 +38,7 @@ export function AdminPaymentsPage() {
       setLastPage(result.last_page);
       setTotal(result.total);
     } catch (error) {
-      console.error('Failed to load payments:', error);
+      logger.error('Failed to load payments:', error);
       setPayments([]);
     } finally {
       setLoading(false);
