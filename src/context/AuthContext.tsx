@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
+import { createContext, useCallback, useContext, useEffect, useRef, useState, ReactNode } from 'react';
 import { login, logout, register, getCurrentUser, refreshToken as refreshAuthToken } from '../services/auth';
 import type { AuthUser, Profile, UserRole } from '../types';
 
@@ -25,6 +25,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const fetchUser = async () => {
     try {
@@ -39,29 +40,40 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const setupTokenRefresh = () => {
-    const now = Date.now();
-    const lastRefresh = parseInt(localStorage.getItem(TOKEN_REFRESH_KEY) || '0', 10);
-    const elapsed = now - lastRefresh;
+  const clearRefreshInterval = useCallback(() => {
+    if (intervalRef.current !== null) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
+    }
+  }, []);
 
-    if (elapsed >= TOKEN_REFRESH_INTERVAL) {
+  const setupTokenRefresh = useCallback(() => {
+    clearRefreshInterval();
+
+    const getLastRefresh = () => parseInt(localStorage.getItem(TOKEN_REFRESH_KEY) || '0', 10);
+
+    const doRefresh = () => {
       refreshAuthToken().then(() => {
         localStorage.setItem(TOKEN_REFRESH_KEY, Date.now().toString());
       });
+    };
+
+    const now = Date.now();
+    const lastRefresh = getLastRefresh();
+    const elapsed = now - lastRefresh;
+
+    if (elapsed >= TOKEN_REFRESH_INTERVAL) {
+      doRefresh();
     }
 
-    const intervalId = setInterval(() => {
-      const currentNow = Date.now();
-      const currentElapsed = currentNow - lastRefresh;
+    intervalRef.current = setInterval(() => {
+      const currentLastRefresh = getLastRefresh();
+      const currentElapsed = Date.now() - currentLastRefresh;
       if (currentElapsed >= TOKEN_REFRESH_INTERVAL) {
-        refreshAuthToken().then(() => {
-          localStorage.setItem(TOKEN_REFRESH_KEY, currentNow.toString());
-        });
+        doRefresh();
       }
     }, 60 * 60 * 1000);
-
-    return intervalId;
-  };
+  }, [clearRefreshInterval]);
 
   useEffect(() => {
     fetchUser();
@@ -69,10 +81,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (user) {
-      const intervalId = setupTokenRefresh();
-      return () => clearInterval(intervalId);
+      setupTokenRefresh();
+    } else {
+      clearRefreshInterval();
     }
-  }, [user]);
+    return clearRefreshInterval;
+  }, [user, setupTokenRefresh, clearRefreshInterval]);
+
+  useEffect(() => {
+    if (import.meta.hot) {
+      import.meta.hot.dispose(() => {
+        clearRefreshInterval();
+      });
+    }
+  }, [clearRefreshInterval]);
 
   type ServiceError = { error?: string };
 
@@ -106,6 +128,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } finally {
       setUser(null);
       setProfile(null);
+      clearRefreshInterval();
       localStorage.removeItem(TOKEN_REFRESH_KEY);
     }
   };

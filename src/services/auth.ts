@@ -1,4 +1,4 @@
-import { api, clearAuthToken, setAuthToken } from '../lib/api';
+import { api } from '../lib/api';
 import type { AuthUser, Profile } from '../types';
 
 export interface LoginPayload {
@@ -19,23 +19,15 @@ export interface AuthResult {
 }
 
 export async function login(payload: LoginPayload): Promise<AuthResult> {
-  const result = await api.post<AuthResult>('/api/auth/login', payload);
-  setAuthToken(result.token);
-  return result;
+  return api.post<AuthResult>('/api/auth/login', payload);
 }
 
 export async function register(payload: RegisterPayload): Promise<AuthResult> {
-  const result = await api.post<AuthResult>('/api/auth/register', payload);
-  setAuthToken(result.token);
-  return result;
+  return api.post<AuthResult>('/api/auth/register', payload);
 }
 
 export async function logout(): Promise<void> {
-  try {
-    await api.post('/api/auth/logout');
-  } finally {
-    clearAuthToken();
-  }
+  await api.post('/api/auth/logout');
 }
 
 export async function getCurrentUser(): Promise<{ user: AuthUser; profile: Profile | null }> {
@@ -43,7 +35,5 @@ export async function getCurrentUser(): Promise<{ user: AuthUser; profile: Profi
 }
 
 export async function refreshToken(): Promise<AuthResult> {
-  const result = await api.post<AuthResult>('/api/auth/refresh');
-  setAuthToken(result.token);
-  return result;
+  return api.post<AuthResult>('/api/auth/refresh');
 }
