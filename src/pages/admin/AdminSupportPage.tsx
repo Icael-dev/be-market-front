@@ -103,24 +103,34 @@ export function AdminSupportPage() {
         {loading ? (
           <div className="flex justify-center py-12"><Loader2 className="w-8 h-8 animate-spin text-primary-600" /></div>
         ) : (
-          <div className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 overflow-hidden">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 overflow-hidden"
+          >
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead className="bg-gray-50 dark:bg-gray-800 border-b dark:border-gray-700">
                   <tr>
-                    <th className="text-left px-6 py-4 text-sm font-medium dark:text-gray-500">Sujet</th>
-                    <th className="text-left px-6 py-4 text-sm font-medium dark:text-gray-500">Client</th>
-                    <th className="text-left px-6 py-4 text-sm font-medium dark:text-gray-500">Statut</th>
-                    <th className="text-left px-6 py-4 text-sm font-medium dark:text-gray-500">Priorite</th>
-                    <th className="text-left px-6 py-4 text-sm font-medium dark:text-gray-500">Messages</th>
-                    <th className="text-left px-6 py-4 text-sm font-medium dark:text-gray-500">Date</th>
+                    <th className="text-left px-6 py-4 text-sm font-medium dark:text-gray-300">Sujet</th>
+                    <th className="text-left px-6 py-4 text-sm font-medium dark:text-gray-300">Client</th>
+                    <th className="text-left px-6 py-4 text-sm font-medium dark:text-gray-300">Statut</th>
+                    <th className="text-left px-6 py-4 text-sm font-medium dark:text-gray-300">Priorite</th>
+                    <th className="text-left px-6 py-4 text-sm font-medium dark:text-gray-300">Messages</th>
+                    <th className="text-left px-6 py-4 text-sm font-medium dark:text-gray-300">Date</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
+                <tbody className="divide-y divide-gray-100">
                   {filtered.length === 0 ? (
                     <tr><td colSpan={6} className="text-center py-8 text-gray-500 dark:text-gray-400">Aucun ticket</td></tr>
-                  ) : filtered.map(t => (
-                    <tr key={t.id} className="hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+                  ) : filtered.map((t, index) => (
+                    <motion.tr
+                      key={t.id}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: index * 0.02 }}
+                      className="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
+                    >
                       <td className="px-6 py-4">
                         <Link to={`/admin/support/${t.id}`} className="font-medium text-primary-600 dark:text-primary-400 hover:underline">
                           {t.subject}
@@ -136,20 +146,26 @@ export function AdminSupportPage() {
                       <td className="px-6 py-4 text-sm dark:text-gray-500 capitalize">{t.priority}</td>
                       <td className="px-6 py-4 text-sm dark:text-gray-500">{t.messages?.length || 0}</td>
                       <td className="px-6 py-4 text-sm text-gray-500 dark:text-gray-500">{format(new Date(t.created_at), 'dd/MM/yyyy')}</td>
-                    </tr>
+                    </motion.tr>
                   ))}
                 </tbody>
               </table>
-
-              <Pagination
-                currentPage={currentPage}
-                lastPage={lastPage}
-                perPage={perPage}
-                total={total}
-                onPageChange={(page) => load(page)}
-              />
             </div>
-          </div>
+
+            {filtered.length === 0 && !loading && (
+              <div className="text-center py-12">
+                <Search className="w-12 h-12 dark:text-gray-500 mx-auto mb-4" />
+                <p className="dark:text-gray-500">Aucun ticket</p>
+              </div>
+            )}
+            <Pagination
+              currentPage={currentPage}
+              lastPage={lastPage}
+              perPage={perPage}
+              total={total}
+              onPageChange={(page) => load(page)}
+            />
+          </motion.div>
         )}
       </div>
     </AdminLayout>

@@ -1,5 +1,28 @@
 export const API_BASE_URL = import.meta.env.VITE_API_URL?.replace(/\/$/, '') ?? '';
 
+async function fetchCsrfToken(): Promise<void> {
+  await fetch(`${API_BASE_URL}/sanctum/csrf-cookie`, {
+    method: 'GET',
+    credentials: 'include',
+  });
+}
+
+let csrfToken: string | null = null;
+
+function getCsrfToken(): string | null {
+  if (csrfToken) return csrfToken;
+  const match = document.cookie.match(/(?:^|;\s*)XSRF-TOKEN=([^;]+)/);
+  if (match) {
+    csrfToken = decodeURIComponent(match[1]);
+  }
+  return csrfToken;
+}
+
+export async function initializeCsrf(): Promise<void> {
+  await fetchCsrfToken();
+  csrfToken = getCsrfToken();
+}
+
 function buildHeaders(customHeaders?: HeadersInit, isFormData?: boolean): Headers {
   const headers = new Headers(customHeaders);
   if (!headers.has('Accept')) {
@@ -7,6 +30,10 @@ function buildHeaders(customHeaders?: HeadersInit, isFormData?: boolean): Header
   }
   if (!isFormData && !headers.has('Content-Type')) {
     headers.set('Content-Type', 'application/json');
+  }
+  const token = getCsrfToken();
+  if (token && !headers.has('X-XSRF-TOKEN')) {
+    headers.set('X-XSRF-TOKEN', token);
   }
 
   return headers;

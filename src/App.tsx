@@ -75,6 +75,10 @@ const LazyAdminBannersPage = lazy(() => import('./pages/admin/AdminBannersPage')
 const LazyAdminBlogPage = lazy(() => import('./pages/admin/AdminBlogPage').then(m => ({ default: m.AdminBlogPage })));
 const LazyAdminSettingsPage = lazy(() => import('./pages/admin/AdminSettingsPage').then(m => ({ default: m.AdminSettingsPage })));
 const LazyAdminStatisticsPage = lazy(() => import('./pages/admin/AdminStatisticsPage').then(m => ({ default: m.AdminStatisticsPage })));
+const LazyAdminTopProductsPage = lazy(() => import('./pages/admin/AdminTopProductsPage').then(m => ({ default: m.AdminTopProductsPage })));
+const LazyAdminLowStockPage = lazy(() => import('./pages/admin/AdminLowStockPage').then(m => ({ default: m.AdminLowStockPage })));
+const LazyAdminCouponUsagePage = lazy(() => import('./pages/admin/AdminCouponUsagePage').then(m => ({ default: m.AdminCouponUsagePage })));
+const LazyAdminCategorySalesPage = lazy(() => import('./pages/admin/AdminCategorySalesPage').then(m => ({ default: m.AdminCategorySalesPage })));
 const LazyAdminCouponsPage = lazy(() => import('./pages/admin/AdminCouponsPage').then(m => ({ default: m.AdminCouponsPage })));
 const LazyAdminExportPage = lazy(() => import('./pages/admin/AdminExportPage').then(m => ({ default: m.AdminExportPage })));
 const LazyAdminFlashSalesPage = lazy(() => import('./pages/admin/AdminFlashSalesPage').then(m => ({ default: m.AdminFlashSalesPage })));
@@ -214,6 +218,10 @@ function AppRoutes() {
             <Route path="/admin/settings" element={<AdminRoute superAdmin><LazyAdminSettingsPage /></AdminRoute>} />
             <Route path="/admin/users" element={<AdminRoute superAdmin><LazyAdminUsersPage /></AdminRoute>} />
             <Route path="/admin/statistics" element={<AdminRoute superAdmin><LazyAdminStatisticsPage /></AdminRoute>} />
+            <Route path="/admin/statistics/top-products" element={<AdminRoute superAdmin><LazyAdminTopProductsPage /></AdminRoute>} />
+            <Route path="/admin/statistics/low-stock" element={<AdminRoute superAdmin><LazyAdminLowStockPage /></AdminRoute>} />
+            <Route path="/admin/statistics/coupons" element={<AdminRoute superAdmin><LazyAdminCouponUsagePage /></AdminRoute>} />
+            <Route path="/admin/statistics/category-sales" element={<AdminRoute superAdmin><LazyAdminCategorySalesPage /></AdminRoute>} />
             <Route path="/admin/coupons" element={<AdminRoute><LazyAdminCouponsPage /></AdminRoute>} />
             <Route path="/admin/export" element={<AdminRoute><LazyAdminExportPage /></AdminRoute>} />
             <Route path="/admin/flash-sales" element={<AdminRoute><LazyAdminFlashSalesPage /></AdminRoute>} />

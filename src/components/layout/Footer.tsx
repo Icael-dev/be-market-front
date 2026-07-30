@@ -1,18 +1,11 @@
-import { Link, useLocation } from 'react-router-dom';
-import { cn } from '../../lib/utils';
+import { Link } from 'react-router-dom';
 import { Mail, Phone, MapPin, Facebook, Instagram, Twitter, Globe } from 'lucide-react';
 
 export function Footer({ compact = false }: { compact?: boolean }) {
-  const location = useLocation();
-  const isAdmin = location.pathname.startsWith('/admin');
-
   if (compact) {
     return (
-      <footer className={cn(
-        "bg-gray-900 text-gray-300 dark:bg-gray-900 dark:text-gray-400",
-        isAdmin && "lg:ml-72"
-      )}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
+      <footer className="bg-gray-900 text-gray-300 dark:bg-gray-900 dark:text-gray-400 w-full">
+        <div className="w-full px-4 sm:px-6 lg:px-8 py-5">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-gray-400 dark:text-gray-500">
             <div className="flex items-center gap-2.5">
               <div className="w-6 h-6 rounded-md brand-gradient flex items-center justify-center">
@@ -47,11 +40,8 @@ export function Footer({ compact = false }: { compact?: boolean }) {
   }
 
   return (
-    <footer className={cn(
-      "bg-gray-900 text-gray-300 dark:bg-gray-900 dark:text-gray-400",
-      isAdmin && "lg:ml-72"
-    )}>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
+    <footer className="bg-gray-900 text-gray-300 dark:bg-gray-900 dark:text-gray-400 w-full">
+      <div className="w-full px-4 sm:px-6 lg:px-8 py-14">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-8">
           <div className="text-center sm:text-left">
             <Link to="/" className="inline-flex items-center gap-2.5 mb-4">

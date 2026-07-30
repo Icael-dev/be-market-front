@@ -12,6 +12,7 @@ import { AdminLayout } from '../../components/admin/AdminLayout';
 import { PageHeader } from '../../components/admin/PageHeader';
 import { MobileNotOptimizedBanner } from '../../components/admin/MobileNotOptimizedBanner';
 import { StatusBadge } from '../../components/admin/StatusBadge';
+import { Pagination } from '../../components/Pagination';
 import { Package, Gift, CreditCard, Loader2, ArrowLeft } from 'lucide-react';
 import type { Order, LoyaltyPoints, LoyaltyTransaction, Payment, AdminCustomer } from '../../types';
 import { formatPrice } from '../../lib/utils';
@@ -27,6 +28,8 @@ export function AdminCustomerDetailPage() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loyalty, setLoyalty] = useState<{ points: LoyaltyPoints | null; transactions: LoyaltyTransaction[] }>({ points: null, transactions: [] });
   const [payments, setPayments] = useState<Payment[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const perPage = 10;
 
   const load = useCallback(async () => {
     if (!id) return;
@@ -52,6 +55,12 @@ export function AdminCustomerDetailPage() {
   useEffect(() => {
     load();
   }, [load]);
+
+  const totalOrderPages = Math.max(1, Math.ceil(orders.length / perPage));
+  const paginatedOrders = orders.slice((currentPage - 1) * perPage, currentPage * perPage);
+
+  const totalPaymentPages = Math.max(1, Math.ceil(payments.length / perPage));
+  const paginatedPayments = payments.slice((currentPage - 1) * perPage, currentPage * perPage);
 
   const tabs: { key: Tab; label: string; icon: React.ReactNode }[] = [
     { key: 'orders', label: 'Commandes', icon: <Package className="w-4 h-4" /> },
@@ -86,7 +95,7 @@ export function AdminCustomerDetailPage() {
               {tabs.map(t => (
                 <button
                   key={t.key}
-                  onClick={() => setTab(t.key)}
+                  onClick={() => { setCurrentPage(1); setTab(t.key); }}
                   className={`
                     flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors
                     ${tab === t.key
@@ -115,9 +124,9 @@ export function AdminCustomerDetailPage() {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
-                      {orders.length === 0 ? (
+                      {paginatedOrders.length === 0 ? (
                         <tr><td colSpan={5} className="text-center py-8 text-gray-500 dark:text-gray-400">Aucune commande</td></tr>
-                      ) : orders.map((order) => (
+                      ) : paginatedOrders.map((order) => (
                         <tr key={order.id} className="hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
                           <td className="px-6 py-4">
                             <p className="font-medium dark:text-white">{order.order_number}</p>
@@ -135,6 +144,13 @@ export function AdminCustomerDetailPage() {
                     </tbody>
                   </table>
                 </div>
+                <Pagination
+                  currentPage={currentPage}
+                  lastPage={totalOrderPages}
+                  perPage={perPage}
+                  total={orders.length}
+                  onPageChange={setCurrentPage}
+                />
               </motion.div>
             )}
 
@@ -200,9 +216,9 @@ export function AdminCustomerDetailPage() {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
-                      {payments.length === 0 ? (
+                      {paginatedPayments.length === 0 ? (
                         <tr><td colSpan={5} className="text-center py-8 text-gray-500 dark:text-gray-400">Aucun paiement</td></tr>
-                      ) : payments.map(p => (
+                      ) : paginatedPayments.map(p => (
                         <tr key={p.id} className="hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
                           <td className="px-6 py-4 font-mono text-sm dark:text-white">{p.reference || '—'}</td>
                           <td className="px-6 py-4 text-sm dark:text-gray-500">{p.payment_method}</td>
@@ -218,6 +234,13 @@ export function AdminCustomerDetailPage() {
                     </tbody>
                   </table>
                 </div>
+                <Pagination
+                  currentPage={currentPage}
+                  lastPage={totalPaymentPages}
+                  perPage={perPage}
+                  total={payments.length}
+                  onPageChange={setCurrentPage}
+                />
               </motion.div>
             )}
           </>

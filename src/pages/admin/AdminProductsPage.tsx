@@ -566,14 +566,14 @@ export function AdminProductsPage() {
         >
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead className="bg-gray-50 dark:bg-gray-900 border-b dark:border-gray-700">
+              <thead className="bg-gray-50 dark:bg-gray-800 border-b dark:border-gray-700">
                 <tr>
-                  <th className="text-left px-6 py-4 text-sm font-medium dark:text-gray-500">Produit</th>
-                  <th className="text-left px-6 py-4 text-sm font-medium dark:text-gray-500">Categorie</th>
-                  <th className="text-left px-6 py-4 text-sm font-medium dark:text-gray-500">Prix</th>
-                  <th className="text-left px-6 py-4 text-sm font-medium dark:text-gray-500">Stock</th>
-                  <th className="text-left px-6 py-4 text-sm font-medium dark:text-gray-500">Statut</th>
-                  <th className="text-right px-6 py-4 text-sm font-medium dark:text-gray-500">Actions</th>
+                  <th className="text-left px-6 py-4 text-sm font-medium dark:text-gray-300">Produit</th>
+                  <th className="text-left px-6 py-4 text-sm font-medium dark:text-gray-300">Categorie</th>
+                  <th className="text-left px-6 py-4 text-sm font-medium dark:text-gray-300">Prix</th>
+                  <th className="text-left px-6 py-4 text-sm font-medium dark:text-gray-300">Stock</th>
+                  <th className="text-left px-6 py-4 text-sm font-medium dark:text-gray-300">Statut</th>
+                  <th className="text-right px-6 py-4 text-sm font-medium dark:text-gray-300">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
@@ -583,7 +583,7 @@ export function AdminProductsPage() {
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: index * 0.02 }}
-                    className="hover:bg-gray-50 hover:dark:bg-gray-900 transition-colors"
+                    className="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
                   >
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
@@ -727,15 +727,14 @@ export function AdminProductsPage() {
               <p className="dark:text-gray-500">Aucun produit trouve</p>
             </div>
           )}
+          <Pagination
+            currentPage={currentPage}
+            lastPage={totalPages}
+            perPage={perPage}
+            total={filteredProducts.length}
+            onPageChange={(page) => setCurrentPage(page)}
+          />
         </motion.div>
-
-        <Pagination
-          currentPage={currentPage}
-          lastPage={totalPages}
-          perPage={perPage}
-          total={filteredProducts.length}
-          onPageChange={(page) => setCurrentPage(page)}
-        />
       </div>
 
       <AnimatePresence>

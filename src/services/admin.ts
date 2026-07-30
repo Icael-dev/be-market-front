@@ -358,6 +358,22 @@ export async function fetchAdminCategorySales(days?: number): Promise<CategorySa
   return api.get<CategorySale[]>(`/api/admin/statistics/category-sales${days ? `?days=${days}` : ''}`);
 }
 
+export async function fetchAdminNewCustomers(limit: number = 5): Promise<Array<{ id: string; full_name: string; email: string; created_at: string }>> {
+  return api.get<Array<{ id: string; full_name: string; email: string; created_at: string }>>(`/api/admin/statistics/new-customers?limit=${limit}`);
+}
+
+export async function fetchAdminTopCustomers(limit: number = 5): Promise<Array<{ user_id: string; name: string; email: string; total_spent: number; orders_count: number }>> {
+  return api.get<Array<{ user_id: string; name: string; email: string; total_spent: number; orders_count: number }>>(`/api/admin/statistics/top-customers?limit=${limit}`);
+}
+
+export async function fetchAdminUnsoldProducts(limit: number = 10): Promise<Array<{ id: string; name: string; stock: number; price: number }>> {
+  return api.get<Array<{ id: string; name: string; stock: number; price: number }>>(`/api/admin/statistics/unsold-products?limit=${limit}`);
+}
+
+export async function fetchAdminFailedPayments(limit: number = 5): Promise<Array<{ id: string; order_number: string; status: string; payment_method: string; total: number }>> {
+  return api.get<Array<{ id: string; order_number: string; status: string; payment_method: string; total: number }>>(`/api/admin/statistics/failed-payments?limit=${limit}`);
+}
+
 // FAQs
 export async function fetchAdminFAQs(): Promise<FAQ[]> {
   return unwrapList(await api.get<MaybePaginated<FAQ>>('/api/admin/faqs'));

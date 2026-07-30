@@ -215,26 +215,30 @@ export function AdminCategoriesPage() {
           </button>
         </PageHeader>
 
-        <div className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 overflow-hidden">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 overflow-hidden"
+        >
           <div className="overflow-x-auto">
             <table className="w-full">
-            <thead className="bg-gray-50 border-b dark:border-gray-700">
-              <tr>
-                <th className="text-left px-6 py-4 text-sm font-medium dark:text-gray-500">Categorie</th>
-                <th className="text-left px-6 py-4 text-sm font-medium dark:text-gray-500">Slug</th>
-                <th className="text-left px-6 py-4 text-sm font-medium dark:text-gray-500">Statut</th>
-                <th className="text-right px-6 py-4 text-sm font-medium dark:text-gray-500">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-100">
-              {paginatedCategories.map((category, index) => (
-                <motion.tr
-                  key={category.id}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.02 }}
-                  className="dark:hover:bg-gray-700 hover:bg-gray-100 transition-colors"
-                >
+              <thead className="bg-gray-50 dark:bg-gray-800 border-b dark:border-gray-700">
+                <tr>
+                  <th className="text-left px-6 py-4 text-sm font-medium dark:text-gray-300">Categorie</th>
+                  <th className="text-left px-6 py-4 text-sm font-medium dark:text-gray-300">Slug</th>
+                  <th className="text-left px-6 py-4 text-sm font-medium dark:text-gray-300">Statut</th>
+                  <th className="text-right px-6 py-4 text-sm font-medium dark:text-gray-300">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-100">
+                {paginatedCategories.map((category, index) => (
+                  <motion.tr
+                    key={category.id}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.02 }}
+                    className="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
+                  >
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 rounded-lg bg-gray-100 dark:bg-gray-700 flex items-center justify-center">
@@ -335,7 +339,14 @@ export function AdminCategoriesPage() {
               <p className="dark:text-gray-500">Aucune categorie</p>
             </div>
           )}
-        </div>
+          <Pagination
+            currentPage={currentPage}
+            lastPage={totalPages}
+            perPage={perPage}
+            total={total}
+            onPageChange={(page) => setCurrentPage(page)}
+          />
+        </motion.div>
       </div>
 
       <AdminDrawer
@@ -482,13 +493,6 @@ export function AdminCategoriesPage() {
           title="Supprimer cette categorie ?"
           message="Cette action est irreversible."
           variant="danger"
-        />
-        <Pagination
-          currentPage={currentPage}
-          lastPage={totalPages}
-          perPage={perPage}
-          total={total}
-          onPageChange={(page) => setCurrentPage(page)}
         />
       </AdminLayout>
   );

@@ -197,25 +197,29 @@ export function AdminUsersPage() {
           </button>
         </PageHeader>
 
-        <div className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 overflow-hidden">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 overflow-hidden"
+        >
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead className="bg-gray-50 dark:bg-gray-800 border-b dark:border-gray-700">
                 <tr>
-                  <th className="text-left px-6 py-4 text-sm font-medium dark:text-gray-500">Utilisateur</th>
-                  <th className="text-left px-6 py-4 text-sm font-medium dark:text-gray-500">Contact</th>
-                  <th className="text-left px-6 py-4 text-sm font-medium dark:text-gray-500">Role</th>
-                  <th className="text-right px-6 py-4 text-sm font-medium dark:text-gray-500">Actions</th>
+                  <th className="text-left px-6 py-4 text-sm font-medium dark:text-gray-300">Utilisateur</th>
+                  <th className="text-left px-6 py-4 text-sm font-medium dark:text-gray-300">Contact</th>
+                  <th className="text-left px-6 py-4 text-sm font-medium dark:text-gray-300">Role</th>
+                  <th className="text-right px-6 py-4 text-sm font-medium dark:text-gray-300">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
+              <tbody className="divide-y divide-gray-100">
                 {paginatedUsers.map((user, index) => (
                   <motion.tr
                     key={user.id}
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: index * 0.02 }}
-                    className="dark:hover:bg-gray-700 hover:bg-gray-100 transition-colors"
+                    className="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
                   >
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
@@ -310,7 +314,14 @@ export function AdminUsersPage() {
               <p className="dark:text-gray-500">Aucun utilisateur</p>
             </div>
           )}
-        </div>
+          <Pagination
+            currentPage={currentPage}
+            lastPage={totalPages}
+            perPage={perPage}
+            total={total}
+            onPageChange={(page) => setCurrentPage(page)}
+          />
+        </motion.div>
       </div>
 
       <AnimatePresence>
@@ -448,13 +459,6 @@ export function AdminUsersPage() {
           title={confirmTarget ? `Supprimer le compte de ${confirmTarget.full_name || confirmTarget.email} ?` : 'Supprimer cet utilisateur ?'}
           message="Cette action est irreversible."
           variant="danger"
-        />
-        <Pagination
-          currentPage={currentPage}
-          lastPage={totalPages}
-          perPage={perPage}
-          total={total}
-          onPageChange={(page) => setCurrentPage(page)}
         />
       </AnimatePresence>
     </AdminLayout>

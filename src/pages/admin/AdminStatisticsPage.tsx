@@ -5,8 +5,9 @@ import { fetchAdminStatistics, fetchAdminTopProducts, fetchAdminLowStock, fetchA
 import { AdminLayout } from '../../components/admin/AdminLayout';
 import { PageHeader } from '../../components/admin/PageHeader';
 import { MobileNotOptimizedBanner } from '../../components/admin/MobileNotOptimizedBanner';
+import { Link } from 'react-router-dom';
 import { formatPrice } from '../../lib/utils';
-import { DollarSign, ShoppingCart, Users, Package, TrendingUp, TrendingDown, Download, AlertTriangle, Ticket, Tag } from 'lucide-react';
+import { DollarSign, ShoppingCart, Users, Package, TrendingUp, TrendingDown, Download, ArrowRight } from 'lucide-react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from 'recharts';
 import { format } from 'date-fns';
 import { useElementWidth } from '../../hooks/useElementWidth';
@@ -238,18 +239,23 @@ export function AdminStatisticsPage() {
 
               <div className="grid lg:grid-cols-2 gap-6 mb-6">
                 <div className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 p-6">
-                  <h3 className="text-lg font-bold dark:text-white mb-4">Top 10 produits vendus</h3>
+                  <h3 className="text-lg font-bold dark:text-white mb-4 flex items-center gap-2">
+                    Top 5 produits vendus
+                    <Link to="/admin/statistics/top-products" className="ml-auto text-xs text-primary-600 dark:text-primary-400 hover:underline flex items-center gap-1">
+                      Voir plus <ArrowRight className="w-3 h-3" />
+                    </Link>
+                  </h3>
                   <div className="overflow-x-auto">
                     <table className="w-full text-sm">
-                      <thead>
-                        <tr className="border-b dark:border-gray-700">
-                          <th className="text-left py-2 px-3 dark:text-gray-400">Produit</th>
-                          <th className="text-right py-2 px-3 dark:text-gray-400">Quantite</th>
-                          <th className="text-right py-2 px-3 dark:text-gray-400">Revenu</th>
+                      <thead className="bg-gray-50 dark:bg-gray-800 border-b dark:border-gray-700">
+                        <tr>
+                          <th className="text-left py-2 px-3 dark:text-gray-300">Produit</th>
+                          <th className="text-right py-2 px-3 dark:text-gray-300">Quantite</th>
+                          <th className="text-right py-2 px-3 dark:text-gray-300">Revenu</th>
                         </tr>
                       </thead>
-                      <tbody className="divide-y dark:divide-gray-700">
-                        {topProducts.map((product, i) => (
+                      <tbody className="divide-y divide-gray-100">
+                        {topProducts.slice(0, 5).map((product, i) => (
                           <tr key={product.product_id} className="hover:bg-gray-50 dark:hover:bg-gray-700/50">
                             <td className="py-3 px-3 dark:text-white">
                               <div className="flex items-center gap-2">
@@ -271,21 +277,23 @@ export function AdminStatisticsPage() {
 
                 <div className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 p-6">
                   <h3 className="text-lg font-bold dark:text-white mb-4 flex items-center gap-2">
-                    <AlertTriangle className="w-5 h-5 text-orange-500" />
                     Stock bas / rupture
+                    <Link to="/admin/statistics/low-stock" className="ml-auto text-xs text-primary-600 dark:text-primary-400 hover:underline flex items-center gap-1">
+                      Voir plus <ArrowRight className="w-3 h-3" />
+                    </Link>
                   </h3>
                   <div className="overflow-x-auto">
                     <table className="w-full text-sm">
-                      <thead>
-                        <tr className="border-b dark:border-gray-700">
-                          <th className="text-left py-2 px-3 dark:text-gray-400">Produit</th>
-                          <th className="text-left py-2 px-3 dark:text-gray-400">SKU</th>
-                          <th className="text-right py-2 px-3 dark:text-gray-400">Stock</th>
-                          <th className="text-right py-2 px-3 dark:text-gray-400">Prix</th>
+                      <thead className="bg-gray-50 dark:bg-gray-800 border-b dark:border-gray-700">
+                        <tr>
+                          <th className="text-left py-2 px-3 dark:text-gray-300">Produit</th>
+                          <th className="text-left py-2 px-3 dark:text-gray-300">SKU</th>
+                          <th className="text-right py-2 px-3 dark:text-gray-300">Stock</th>
+                          <th className="text-right py-2 px-3 dark:text-gray-300">Prix</th>
                         </tr>
                       </thead>
-                      <tbody className="divide-y dark:divide-gray-700">
-                        {lowStock.map((product) => (
+                      <tbody className="divide-y divide-gray-100">
+                        {lowStock.slice(0, 5).map((product) => (
                           <tr key={product.id} className="hover:bg-gray-50 dark:hover:bg-gray-700/50">
                             <td className="py-3 px-3 dark:text-white">{product.name}</td>
                             <td className="py-3 px-3 dark:text-gray-400 font-mono text-xs">{product.sku}</td>
@@ -307,9 +315,11 @@ export function AdminStatisticsPage() {
                   <div className="grid lg:grid-cols-2 gap-6 mb-6">
                     <div className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 p-6">
                       <h3 className="text-lg font-bold dark:text-white mb-4 flex items-center gap-2">
-                        <Ticket className="w-5 h-5 text-purple-500" />
-                        Impact des coupons
-                      </h3>
+                    Impact des coupons
+                    <Link to="/admin/statistics/coupons" className="ml-auto text-xs text-primary-600 dark:text-primary-400 hover:underline flex items-center gap-1">
+                      Voir plus <ArrowRight className="w-3 h-3" />
+                    </Link>
+                  </h3>
                       <div className="grid grid-cols-2 gap-4 mb-4">
                         <div className="bg-gray-50 dark:bg-gray-700/50 rounded-xl p-4">
                           <p className="text-sm text-gray-500 dark:text-gray-400">Coupons utilises</p>
@@ -318,15 +328,15 @@ export function AdminStatisticsPage() {
                       </div>
                   <div className="overflow-x-auto">
                     <table className="w-full text-sm">
-                      <thead>
-                        <tr className="border-b dark:border-gray-700">
-                          <th className="text-left py-2 px-3 dark:text-gray-400">Code</th>
-                          <th className="text-right py-2 px-3 dark:text-gray-400">Type</th>
-                          <th className="text-right py-2 px-3 dark:text-gray-400">Utilisations</th>
+                      <thead className="bg-gray-50 dark:bg-gray-800 border-b dark:border-gray-700">
+                        <tr>
+                          <th className="text-left py-2 px-3 dark:text-gray-300">Code</th>
+                          <th className="text-right py-2 px-3 dark:text-gray-300">Type</th>
+                          <th className="text-right py-2 px-3 dark:text-gray-300">Utilisations</th>
                         </tr>
                       </thead>
-                      <tbody className="divide-y dark:divide-gray-700">
-                        {couponStats?.coupons_used.map((coupon) => (
+                      <tbody className="divide-y divide-gray-100">
+                        {couponStats?.coupons_used.slice(0, 2).map((coupon) => (
                           <tr key={coupon.code} className="hover:bg-gray-50 dark:hover:bg-gray-700/50">
                             <td className="py-3 px-3 dark:text-white font-mono">{coupon.code}</td>
                             <td className="text-right py-3 px-3 dark:text-gray-300">{coupon.discount_type === 'percentage' ? `${coupon.discount_value}%` : `${coupon.discount_value} FCFA`}</td>
@@ -342,22 +352,24 @@ export function AdminStatisticsPage() {
                 </div>
 
                 <div className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 p-6">
-                  <h3 className="text-lg font-bold dark:text-white mb-4 flex items-center gap-2">
-                    <Tag className="w-5 h-5 text-cyan-500" />
+                      <h3 className="text-lg font-bold dark:text-white mb-4 flex items-center gap-2">
                     Ventes par categorie
+                    <Link to="/admin/statistics/category-sales" className="ml-auto text-xs text-primary-600 dark:text-primary-400 hover:underline flex items-center gap-1">
+                      Voir plus <ArrowRight className="w-3 h-3" />
+                    </Link>
                   </h3>
                   <div className="overflow-x-auto">
                     <table className="w-full text-sm">
-                      <thead>
-                        <tr className="border-b dark:border-gray-700">
-                          <th className="text-left py-2 px-3 dark:text-gray-400">Categorie</th>
-                          <th className="text-right py-2 px-3 dark:text-gray-400">Commandes</th>
-                          <th className="text-right py-2 px-3 dark:text-gray-400">Quantite</th>
-                          <th className="text-right py-2 px-3 dark:text-gray-400">Revenu</th>
+                      <thead className="bg-gray-50 dark:bg-gray-800 border-b dark:border-gray-700">
+                        <tr>
+                          <th className="text-left py-2 px-3 dark:text-gray-300">Categorie</th>
+                          <th className="text-right py-2 px-3 dark:text-gray-300">Commandes</th>
+                          <th className="text-right py-2 px-3 dark:text-gray-300">Quantite</th>
+                          <th className="text-right py-2 px-3 dark:text-gray-300">Revenu</th>
                         </tr>
                       </thead>
-                      <tbody className="divide-y dark:divide-gray-700">
-                        {categorySales.map((cat) => (
+                      <tbody className="divide-y divide-gray-100">
+                        {categorySales.slice(0, 5).map((cat) => (
                           <tr key={cat.category_id} className="hover:bg-gray-50 dark:hover:bg-gray-700/50">
                             <td className="py-3 px-3 dark:text-white">{cat.category_name}</td>
                             <td className="text-right py-3 px-3 dark:text-gray-300">{cat.orders_count}</td>

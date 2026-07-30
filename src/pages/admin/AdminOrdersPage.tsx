@@ -143,12 +143,12 @@ export function AdminOrdersPage() {
             <table className="w-full">
               <thead className="bg-gray-50 dark:bg-gray-800 border-b dark:border-gray-700">
                 <tr>
-                  <th className="text-left px-6 py-4 text-sm font-medium dark:text-gray-500">Commande</th>
-                  <th className="text-left px-6 py-4 text-sm font-medium dark:text-gray-500">Client</th>
-                  <th className="text-left px-6 py-4 text-sm font-medium dark:text-gray-500">Montant</th>
-                  <th className="text-left px-6 py-4 text-sm font-medium dark:text-gray-500">Statut</th>
-                  <th className="text-left px-6 py-4 text-sm font-medium dark:text-gray-500">Paiement</th>
-                  <th className="text-right px-6 py-4 text-sm font-medium dark:text-gray-500">Actions</th>
+                  <th className="text-left px-6 py-4 text-sm font-medium dark:text-gray-300">Commande</th>
+                  <th className="text-left px-6 py-4 text-sm font-medium dark:text-gray-300">Client</th>
+                  <th className="text-left px-6 py-4 text-sm font-medium dark:text-gray-300">Montant</th>
+                  <th className="text-left px-6 py-4 text-sm font-medium dark:text-gray-300">Statut</th>
+                  <th className="text-left px-6 py-4 text-sm font-medium dark:text-gray-300">Paiement</th>
+                  <th className="text-right px-6 py-4 text-sm font-medium dark:text-gray-300">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
@@ -158,7 +158,7 @@ export function AdminOrdersPage() {
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: index * 0.02 }}
-                    className="hover:bg-gray-50 hover:dark:bg-gray-800 transition-colors"
+                    className="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
                   >
                     <td className="px-6 py-4">
                       <p className="font-medium dark:text-white">{order.order_number}</p>
@@ -243,6 +243,16 @@ export function AdminOrdersPage() {
               <p className="dark:text-gray-500">Aucune commande trouvee</p>
             </div>
           )}
+          <Pagination
+            currentPage={currentPage}
+            lastPage={lastPage}
+            perPage={perPage}
+            total={total}
+            onPageChange={(page) => {
+              setCurrentPage(page);
+              fetchOrders(page);
+            }}
+          />
         </motion.div>
       </div>
 
@@ -370,17 +380,6 @@ export function AdminOrdersPage() {
           </>
         )}
       </AnimatePresence>
-
-        <Pagination
-          currentPage={currentPage}
-          lastPage={lastPage}
-          perPage={perPage}
-          total={total}
-          onPageChange={(page) => {
-            setCurrentPage(page);
-            fetchOrders(page);
-          }}
-        />
     </AdminLayout>
   );
 }

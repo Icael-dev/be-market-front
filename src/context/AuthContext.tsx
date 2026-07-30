@@ -1,4 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useRef, useState, ReactNode } from 'react';
+import { initializeCsrf } from '../lib/api';
 import { login, logout, register, getCurrentUser, refreshToken as refreshAuthToken } from '../services/auth';
 import type { AuthUser, Profile, UserRole } from '../types';
 
@@ -75,9 +76,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }, 60 * 60 * 1000);
   }, [clearRefreshInterval]);
 
-  useEffect(() => {
-    fetchUser();
-  }, []);
+   useEffect(() => {
+     initializeCsrf().then(fetchUser);
+   }, []);
 
   useEffect(() => {
     if (user) {
