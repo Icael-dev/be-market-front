@@ -50,11 +50,11 @@ interface NavItem {
 const navItems: NavItem[] = [
   { path: '/admin', label: 'Tableau de bord', icon: LayoutDashboard, section: 'Principal', adminOnly: true },
   { path: '/admin/statistics', label: 'Statistiques', icon: BarChart3, section: 'Principal', adminOnly: true },
-  { path: '/admin/statistics/top-products', label: 'Top produits', icon: Package, section: 'Principal', adminOnly: true },
-  { path: '/admin/statistics/low-stock', label: 'Stock bas', icon: AlertTriangle, section: 'Principal', adminOnly: true },
-  { path: '/admin/statistics/coupons', label: 'Coupons', icon: Ticket, section: 'Principal', adminOnly: true },
-  { path: '/admin/statistics/category-sales', label: 'Ventes par categorie', icon: Tag, section: 'Principal', adminOnly: true },
-  { path: '/admin/statistics/failed-payments', label: 'Paiements echoues', icon: AlertTriangle, section: 'Principal', adminOnly: true },
+  { path: '/admin/statistics/top-products', label: 'Top produits', icon: Package, section: 'Principal' },
+  { path: '/admin/statistics/low-stock', label: 'Stock bas', icon: AlertTriangle, section: 'Principal' },
+  { path: '/admin/statistics/coupons', label: 'Coupons', icon: Ticket, section: 'Principal' },
+  { path: '/admin/statistics/category-sales', label: 'Ventes par categorie', icon: Tag, section: 'Principal' },
+  { path: '/admin/statistics/failed-payments', label: 'Paiements echoues', icon: AlertTriangle, section: 'Principal' },
   { path: '/admin/categories', label: 'Categories', icon: Grid3X3, section: 'Catalogue' },
   { path: '/admin/products', label: 'Produits', icon: ShoppingBag, section: 'Catalogue' },
   { path: '/admin/banners', label: 'Bannieres', icon: Image, section: 'Catalogue' },
@@ -290,7 +290,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
         />
       )}
 
-      <main className={cn(`${mainMarginClass} px-3 sm:px-4 lg:px-6 pt-0 pb-5 flex-1 overflow-y-auto scrollbar-hide`)}>
+      <main className={cn(`${mainMarginClass} px-6 sm:px-8 lg:px-10 pt-0 pb-5 flex-1 overflow-y-auto scrollbar-hide`)}>
         {children}
       </main>
 

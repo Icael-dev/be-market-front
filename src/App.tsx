@@ -219,14 +219,14 @@ function AppRoutes() {
             <Route path="/admin/settings" element={<AdminRoute superAdmin><LazyAdminSettingsPage /></AdminRoute>} />
             <Route path="/admin/users" element={<AdminRoute superAdmin><LazyAdminUsersPage /></AdminRoute>} />
             <Route path="/admin/statistics" element={<AdminRoute superAdmin><LazyAdminStatisticsPage /></AdminRoute>} />
-            <Route path="/admin/statistics/top-products" element={<AdminRoute superAdmin><LazyAdminTopProductsPage /></AdminRoute>} />
-            <Route path="/admin/statistics/low-stock" element={<AdminRoute superAdmin><LazyAdminLowStockPage /></AdminRoute>} />
-            <Route path="/admin/statistics/coupons" element={<AdminRoute superAdmin><LazyAdminCouponUsagePage /></AdminRoute>} />
-            <Route path="/admin/statistics/category-sales" element={<AdminRoute superAdmin><LazyAdminCategorySalesPage /></AdminRoute>} />
+            <Route path="/admin/statistics/top-products" element={<AdminRoute><LazyAdminTopProductsPage /></AdminRoute>} />
+            <Route path="/admin/statistics/low-stock" element={<AdminRoute><LazyAdminLowStockPage /></AdminRoute>} />
+            <Route path="/admin/statistics/coupons" element={<AdminRoute><LazyAdminCouponUsagePage /></AdminRoute>} />
+            <Route path="/admin/statistics/category-sales" element={<AdminRoute><LazyAdminCategorySalesPage /></AdminRoute>} />
             <Route path="/admin/coupons" element={<AdminRoute><LazyAdminCouponsPage /></AdminRoute>} />
             <Route path="/admin/export" element={<AdminRoute><LazyAdminExportPage /></AdminRoute>} />
             <Route path="/admin/flash-sales" element={<AdminRoute><LazyAdminFlashSalesPage /></AdminRoute>} />
-            <Route path="/admin/statistics/failed-payments" element={<AdminRoute superAdmin><LazyAdminFailedPaymentsPage /></AdminRoute>} />
+            <Route path="/admin/statistics/failed-payments" element={<AdminRoute><LazyAdminFailedPaymentsPage /></AdminRoute>} />
           </Routes>
         </Suspense>
       </motion.div>

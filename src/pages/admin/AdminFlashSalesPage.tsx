@@ -1,6 +1,6 @@
 import { toast } from 'react-hot-toast';
 import { logger } from '../../lib/logger';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import {
   createAdminFlashSale,
@@ -15,6 +15,7 @@ import { AdminLayout } from '../../components/admin/AdminLayout';
 import { PageHeader } from '../../components/admin/PageHeader';
 import { MobileNotOptimizedBanner } from '../../components/admin/MobileNotOptimizedBanner';
 import { StatusBadge } from '../../components/admin/StatusBadge';
+import { AdminTable, type Column } from '../../components/admin/AdminTable';
 import { AdminDrawer } from '../../components/admin/AdminDrawer';
 import { ConfirmDialog } from '../../components/admin/ConfirmDialog';
 import { format } from 'date-fns';
@@ -163,6 +164,47 @@ export function AdminFlashSalesPage() {
     }
   };
 
+  const columns: Column<FlashSale>[] = [
+    {
+      key: 'product',
+      label: 'Produit',
+      render: (item) => {
+        const product = products.find(p => p.id === item.product_id);
+        return <span className="font-medium dark:text-white">{item.product?.name || product?.name || 'Produit'}</span>;
+      },
+    },
+    {
+      key: 'discount_percentage',
+      label: 'Reduction',
+      render: (item) => (
+        <span className="text-orange-600 font-bold">-{item.discount_percentage}%</span>
+      ),
+    },
+    {
+      key: 'period',
+      label: 'Periode',
+      render: (item) => (
+        <div className="text-sm dark:text-gray-500">
+          <div>{format(new Date(item.starts_at), 'dd MMM HH:mm')}</div>
+          <div className="dark:text-gray-500">au {format(new Date(item.ends_at), 'dd MMM HH:mm')}</div>
+        </div>
+      ),
+    },
+    {
+      key: 'status',
+      label: 'Statut',
+      render: (item) => {
+        const isActive = item.is_active && new Date(item.starts_at) <= new Date() && new Date(item.ends_at) > new Date();
+        return (
+          <div className="flex items-center gap-2">
+            <StatusBadge label={item.is_active ? 'Actif' : 'Inactif'} variant={item.is_active ? 'success' : 'neutral'} />
+            {isActive && <StatusBadge label="En cours" variant="warning" />}
+          </div>
+        );
+      },
+    },
+  ];
+
   return (
     <AdminLayout>
       <MobileNotOptimizedBanner />
@@ -182,74 +224,37 @@ export function AdminFlashSalesPage() {
           )}
         </PageHeader>
 
-        <div className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full">
-            <thead className="bg-gray-50 dark:bg-gray-800 border-b dark:border-gray-700">
-              <tr>
-                <th className="text-left px-6 py-4 text-sm font-medium dark:text-gray-500">Produit</th>
-                <th className="text-left px-6 py-4 text-sm font-medium dark:text-gray-500">Reduction</th>
-                <th className="text-left px-6 py-4 text-sm font-medium dark:text-gray-500">Periode</th>
-                <th className="text-left px-6 py-4 text-sm font-medium dark:text-gray-500">Statut</th>
-                <th className="text-right px-6 py-4 text-sm font-medium dark:text-gray-500">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-100">
-              {paginatedFlashSales.map((sale, index) => {
-                const product = products.find(p => p.id === sale.product_id);
-                const isActive = sale.is_active && new Date(sale.starts_at) <= new Date() && new Date(sale.ends_at) > new Date();
-
-                return (
-                  <motion.tr key={sale.id} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: index * 0.02 }} className="hover:bg-gray-50 hover:dark:bg-gray-700">
-                    <td className="px-6 py-4">
-                      <span className="font-medium dark:text-white">{sale.product?.name || product?.name || 'Produit'}</span>
-
-                    </td>
-                    <td className="px-6 py-4">
-                      <span className="text-orange-600 font-bold">-{sale.discount_percentage}%</span>
-                    </td>
-                    <td className="px-6 py-4 text-sm dark:text-gray-500">
-                      <div>{format(new Date(sale.starts_at), 'dd MMM HH:mm')}</div>
-                      <div className="dark:text-gray-500">au {format(new Date(sale.ends_at), 'dd MMM HH:mm')}</div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-2">
-                        <StatusBadge
-                          label={sale.is_active ? 'Actif' : 'Inactif'}
-                          variant={sale.is_active ? 'success' : 'neutral'}
-                        />
-                        {isActive && (
-                          <StatusBadge label="En cours" variant="warning" />
-                        )}
-                      </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="flex items-center justify-end gap-2">
-                        <button onClick={() => handleToggleActive(sale)} disabled={togglingId === sale.id} className={`p-3 rounded-lg border transition-colors disabled:opacity-50 ${sale.is_active ? 'bg-green-100 text-green-700 border-green-300 hover:bg-green-200 dark:bg-green-900/40 dark:text-green-300 dark:border-green-700 dark:hover:bg-green-900/60' : 'bg-gray-100 text-gray-600 border-gray-300 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-600'}`} title={sale.is_active ? 'Desactiver' : 'Activer'}>
-                          {togglingId === sale.id ? <Loader2 className="w-6 h-6 animate-spin" /> : <Power className="w-6 h-6" />}
-                        </button>
-                        <button onClick={() => handleEdit(sale)} className="p-3 bg-gray-100 hover:bg-gray-200 text-gray-700 border border-gray-200 rounded-lg transition-colors dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600 dark:hover:bg-gray-600">
-                          <Edit2 className="w-6 h-6" />
-                        </button>
-                        <button onClick={() => { setConfirmTargetId(sale.id); setConfirmOpen(true); }} className="p-3 bg-red-100 hover:bg-red-200 text-red-700 border border-red-300 rounded-lg transition-colors dark:bg-red-900/40 dark:text-red-300 dark:border-red-700 dark:hover:bg-red-900/60">
-                          <Trash2 className="w-6 h-6" />
-                        </button>
-                      </div>
-                    </td>
-                  </motion.tr>
-                );
-              })}
-            </tbody>
-          </table>
-          </div>
-
-          {flashSales.length === 0 && !loading && (
-            <div className="text-center py-12">
-              <Zap className="w-12 h-12 dark:text-gray-500 mx-auto mb-4" />
-              <p className="dark:text-gray-500">Aucun flash sale</p>
-            </div>
-          )}
-        </div>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+        >
+          <AdminTable
+            data={paginatedFlashSales}
+            columns={columns}
+            keyExtractor={(sale) => sale.id}
+            emptyIcon={Zap}
+            emptyMessage="Aucun flash sale"
+            total={flashSales.length}
+            perPage={perPage}
+            currentPage={currentPage}
+            lastPage={totalPages}
+            onPageChange={(page) => setCurrentPage(page)}
+            renderActions={(sale) => (
+              <div className="flex items-center justify-end gap-2">
+                <button onClick={() => handleToggleActive(sale)} disabled={togglingId === sale.id} className={`p-3 rounded-lg border transition-colors disabled:opacity-50 ${sale.is_active ? 'bg-green-100 text-green-700 border-green-300 hover:bg-green-200 dark:bg-green-900/40 dark:text-green-300 dark:border-green-700 dark:hover:bg-green-900/60' : 'bg-gray-100 text-gray-600 border-gray-300 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-600'}`} title={sale.is_active ? 'Desactiver' : 'Activer'}>
+                  {togglingId === sale.id ? <Loader2 className="w-6 h-6 animate-spin" /> : <Power className="w-6 h-6" />}
+                </button>
+                <button onClick={() => handleEdit(sale)} className="p-3 bg-gray-100 hover:bg-gray-200 text-gray-700 border border-gray-200 rounded-lg transition-colors dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600 dark:hover:bg-gray-600">
+                  <Edit2 className="w-6 h-6" />
+                </button>
+                <button onClick={() => { setConfirmTargetId(sale.id); setConfirmOpen(true); }} className="p-3 bg-red-100 hover:bg-red-200 text-red-700 border border-red-300 rounded-lg transition-colors dark:bg-red-900/40 dark:text-red-300 dark:border-red-700 dark:hover:bg-red-900/60">
+                  <Trash2 className="w-6 h-6" />
+                </button>
+              </div>
+            )}
+          />
+        </motion.div>
       </div>
 
       <AdminDrawer
@@ -334,13 +339,6 @@ export function AdminFlashSalesPage() {
           title="Supprimer ce flash sale ?"
           message="Cette action est irreversible."
           variant="danger"
-        />
-        <Pagination
-          currentPage={currentPage}
-          lastPage={totalPages}
-          perPage={perPage}
-          total={total}
-          onPageChange={(page) => setCurrentPage(page)}
         />
       </AdminLayout>
   );

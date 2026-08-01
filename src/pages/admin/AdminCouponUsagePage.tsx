@@ -27,7 +27,7 @@ export function AdminCouponUsagePage() {
       label: 'Code',
     },
     {
-      key: 'discount_type',
+      key: 'discount_value',
       label: 'Type',
       headerClassName: 'text-right',
       cellClassName: 'text-right',

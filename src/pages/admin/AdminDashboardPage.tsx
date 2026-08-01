@@ -211,7 +211,7 @@ export function AdminDashboardPage() {
             className="mb-6"
           >
             <Link
-              to="/admin/orders"
+              to="/admin/orders?status=pending"
               className="flex items-center gap-3 bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800 rounded-2xl p-4 hover:bg-orange-100 dark:hover:bg-orange-900/30 transition-colors"
             >
               <div className={`w-10 h-10 rounded-xl ${colorClasses.orange} flex items-center justify-center`}>

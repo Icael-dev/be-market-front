@@ -21,15 +21,17 @@ import {
   Loader2,
 } from 'lucide-react';
 import { cn } from '../../lib/utils';
+import { useSearchParams } from 'react-router-dom';
 
 export function AdminOrdersPage() {
+  const [searchParams] = useSearchParams();
   const [orders, setOrders] = useState<Order[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [perPage] = useState(10);
   const [lastPage, setLastPage] = useState(1);
   const [total, setTotal] = useState(0);
   const [searchQuery, setSearchQuery] = useState('');
-  const [statusFilter, setStatusFilter] = useState('');
+  const [statusFilter, setStatusFilter] = useState(searchParams.get('status') || '');
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [restoringId, setRestoringId] = useState<string | null>(null);
 
