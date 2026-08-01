@@ -27,7 +27,9 @@ import {
   AlertTriangle,
   Ticket,
   Sun,
-  Moon
+  Moon,
+  MessageSquare,
+  HelpCircle,
 } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { WishlistDrawer } from '../WishlistDrawer';
@@ -52,12 +54,16 @@ const navItems: NavItem[] = [
   { path: '/admin/statistics/low-stock', label: 'Stock bas', icon: AlertTriangle, section: 'Principal', adminOnly: true },
   { path: '/admin/statistics/coupons', label: 'Coupons', icon: Ticket, section: 'Principal', adminOnly: true },
   { path: '/admin/statistics/category-sales', label: 'Ventes par categorie', icon: Tag, section: 'Principal', adminOnly: true },
+  { path: '/admin/statistics/failed-payments', label: 'Paiements echoues', icon: AlertTriangle, section: 'Principal', adminOnly: true },
   { path: '/admin/categories', label: 'Categories', icon: Grid3X3, section: 'Catalogue' },
   { path: '/admin/products', label: 'Produits', icon: ShoppingBag, section: 'Catalogue' },
   { path: '/admin/banners', label: 'Bannieres', icon: Image, section: 'Catalogue' },
   { path: '/admin/flash-sales', label: 'Flash Sales', icon: Zap, section: 'Catalogue' },
   { path: '/admin/coupons', label: 'Codes promo', icon: Tag, section: 'Catalogue' },
   { path: '/admin/blog', label: 'Blog', icon: FileText, section: 'Catalogue' },
+  { path: '/admin/testimonials', label: 'Temoignages', icon: MessageSquare, section: 'Catalogue' },
+  { path: '/admin/faq', label: 'FAQ', icon: HelpCircle, section: 'Catalogue' },
+  { path: '/admin/legal-pages', label: 'Pages legales', icon: FileText, section: 'Catalogue', adminOnly: true },
   { path: '/admin/orders', label: 'Commandes', icon: Package, section: 'Ventes' },
   { path: '/admin/payments', label: 'Paiements', icon: CreditCard, section: 'Ventes' },
   { path: '/admin/customers', label: 'Clients', icon: Users, section: 'Ventes' },
@@ -123,7 +129,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
   const mainMarginClass = sidebarCollapsed ? 'lg:ml-20' : 'lg:ml-72';
 
   return (
-    <div className="min-h-screen page-bg max-h-[80vh]">
+    <div className="h-[100vh] flex flex-col page-bg overflow-hidden">
       <div className={cn(
         'fixed inset-y-0 left-0 border-r border-gray-200 dark:border-gray-800 z-50 transform transition-all duration-300 ease-in-out lg:translate-x-0 shadow-xl lg:shadow-none flex flex-col',
         sidebarWidthClass,
@@ -155,7 +161,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
             <button
               onClick={toggleSidebar}
               className="hidden lg:flex p-3 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
-              title={sidebarCollapsed ? 'Deplier la barre latérale' : 'Replier la barre latérale'}
+              title={sidebarCollapsed ? 'Deplier la barre laterale' : 'Replier la barre laterale'}
             >
               {sidebarCollapsed ? <ChevronRight className="w-5 h-5" /> : <ChevronLeft className="w-5 h-5" />}
             </button>
@@ -211,71 +217,71 @@ export function AdminLayout({ children }: AdminLayoutProps) {
                         </Link>
                       );
                     })}
+                  </div>
                 </div>
-              </div>
-            ))}
-          </nav>
+              ))}
+            </nav>
 
-          <div className="p-3 border-t border-gray-200 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-900/50">
-            {!sidebarCollapsed ? (
-              <div className="flex items-center gap-3 mb-3 px-2">
-                <div className="w-10 h-10 rounded-full brand-gradient flex items-center justify-center text-white font-semibold shadow-md">
-                  {profile?.full_name?.[0] || 'A'}
+            <div className="p-3 border-t border-gray-200 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-900/50">
+              {!sidebarCollapsed ? (
+                <div className="flex items-center gap-3 mb-3 px-2">
+                  <div className="w-10 h-10 rounded-full brand-gradient flex items-center justify-center text-white font-semibold shadow-md">
+                    {profile?.full_name?.[0] || 'A'}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-semibold text-gray-900 dark:text-white text-sm truncate">
+                      {profile?.full_name || 'Admin'}
+                    </p>
+                    <p className="text-xs text-gray-500 dark:text-gray-500 truncate">{isSuperAdmin ? 'Administrateur' : 'Staff'}</p>
+                  </div>
                 </div>
-                <div className="flex-1 min-w-0">
-                  <p className="font-semibold text-gray-900 dark:text-white text-sm truncate">
-                    {profile?.full_name || 'Admin'}
-                  </p>
-                  <p className="text-xs text-gray-500 dark:text-gray-500 truncate">{isSuperAdmin ? 'Administrateur' : 'Staff'}</p>
+              ) : (
+                <div className="flex justify-center mb-3">
+                  <div className="w-10 h-10 rounded-full brand-gradient flex items-center justify-center text-white font-semibold shadow-md">
+                    {profile?.full_name?.[0] || 'A'}
+                  </div>
                 </div>
-              </div>
-            ) : (
-              <div className="flex justify-center mb-3">
-                <div className="w-10 h-10 rounded-full brand-gradient flex items-center justify-center text-white font-semibold shadow-md">
-                  {profile?.full_name?.[0] || 'A'}
-                </div>
-              </div>
-            )}
+              )}
 
-            {!sidebarCollapsed ? (
-              <div className="space-y-1">
-                <Link
-                  to="/"
-                  className="flex items-center gap-3 px-3 py-2 text-sm text-gray-700 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-all"
-                >
-                  <Home className="w-4 h-4 shrink-0" />
-                  Voir le site
-                </Link>
+              {!sidebarCollapsed ? (
+                <div className="space-y-1">
+                  <Link
+                    to="/"
+                    className="flex items-center gap-3 px-3 py-2 text-sm text-gray-700 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-all"
+                  >
+                    <Home className="w-4 h-4 shrink-0" />
+                    Voir le site
+                  </Link>
 
-                <button
-                  onClick={signOut}
-                  className="flex items-center gap-3 px-3 py-2 text-sm dark:text-red-400 hover:text-red-700 dark:hover:bg-red-900/30 rounded-lg transition-all w-full"
-                >
-                  <LogOut className="w-4 h-4 shrink-0" />
-                  Deconnexion
-                </button>
-              </div>
-            ) : (
-              <div className="flex flex-col items-center gap-1">
-                <Link
-                  to="/"
-                  className="flex items-center justify-center p-2 text-sm text-gray-700 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-all"
-                  title="Voir le site"
-                >
-                  <Home className="w-4 h-4" />
-                </Link>
-                <button
-                  onClick={signOut}
-                  className="flex items-center justify-center p-2 text-sm dark:text-red-400 hover:text-red-700 dark:hover:bg-red-900/30 rounded-lg transition-all"
-                  title="Deconnexion"
-                >
-                  <LogOut className="w-4 h-4" />
-                </button>
-              </div>
-            )}
+                  <button
+                    onClick={signOut}
+                    className="flex items-center gap-3 px-3 py-2 text-sm dark:text-red-400 hover:text-red-700 dark:hover:bg-red-900/30 rounded-lg transition-all w-full"
+                  >
+                    <LogOut className="w-4 h-4 shrink-0" />
+                    Deconnexion
+                  </button>
+                </div>
+              ) : (
+                <div className="flex flex-col items-center gap-1">
+                  <Link
+                    to="/"
+                    className="flex items-center justify-center p-2 text-sm text-gray-700 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-all"
+                    title="Voir le site"
+                  >
+                    <Home className="w-4 h-4" />
+                  </Link>
+                  <button
+                    onClick={signOut}
+                    className="flex items-center justify-center p-2 text-sm dark:text-red-400 hover:text-red-700 dark:hover:bg-red-900/30 rounded-lg transition-all"
+                    title="Deconnexion"
+                  >
+                    <LogOut className="w-4 h-4" />
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
         </div>
-      </div>
 
       {sidebarOpen && (
         <div
@@ -284,7 +290,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
         />
       )}
 
-      <main className={cn(`${mainMarginClass} min-h-screen px-3 sm:px-4 lg:px-6 overflow-y-auto scrollbar-hide`)}>
+      <main className={cn(`${mainMarginClass} px-3 sm:px-4 lg:px-6 pt-0 pb-5 flex-1 overflow-y-auto scrollbar-hide`)}>
         {children}
       </main>
 

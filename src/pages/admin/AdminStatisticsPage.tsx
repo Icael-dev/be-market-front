@@ -231,7 +231,7 @@ export function AdminStatisticsPage() {
   return (
     <AdminLayout>
       <MobileNotOptimizedBanner />
-      <div className="p-6 lg:p-8">
+      <div>
         <PageHeader
           title="Statistiques"
           subtitle="Performances de la boutique"
@@ -383,7 +383,7 @@ export function AdminStatisticsPage() {
                     </div>
                   </div>
                   <AdminTable
-                    data={couponStats?.coupons_used.slice(0, 2) ?? []}
+                       data={couponStats?.coupons_used.slice(0, 3) ?? []}
                     columns={couponColumns}
                     keyExtractor={(item) => item.code}
                     emptyIcon={Package}

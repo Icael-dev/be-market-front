@@ -51,7 +51,7 @@ export function AdminCouponUsagePage() {
   return (
     <AdminLayout>
       <MobileNotOptimizedBanner />
-      <div className="p-6 lg:p-8">
+      <div>
         <PageHeader title="Utilisation des coupons" subtitle="Liste complete des coupons et leur utilisation" />
         {loading ? (
           <div className="flex justify-center py-20"><div className="animate-spin w-8 h-8 border-2 dark:border-gray-700 border-t-primary-600 rounded-full" /></div>

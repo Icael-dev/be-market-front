@@ -40,7 +40,7 @@ export function AdminExportPage() {
   return (
     <AdminLayout>
       <MobileNotOptimizedBanner />
-      <div className="p-6 lg:p-8">
+      <div>
         <PageHeader title="Export de donnees" subtitle="Exportez vos donnees au format CSV" />
         <div className="grid md:grid-cols-2 gap-4">{options.map((opt, i) => (
           <motion.div key={opt.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}           className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 p-6">

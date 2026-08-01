@@ -25,7 +25,7 @@ import { cn } from '../../lib/utils';
 export function AdminOrdersPage() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [perPage] = useState(8);
+  const [perPage] = useState(10);
   const [lastPage, setLastPage] = useState(1);
   const [total, setTotal] = useState(0);
   const [searchQuery, setSearchQuery] = useState('');
@@ -204,7 +204,7 @@ export function AdminOrdersPage() {
   return (
     <AdminLayout>
       <MobileNotOptimizedBanner />
-      <div className="p-6 lg:p-8">
+      <div>
         <PageHeader title="Commandes" subtitle={`${orders.length} commandes`} />
 
         <motion.div

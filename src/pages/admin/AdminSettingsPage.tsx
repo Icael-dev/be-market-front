@@ -93,7 +93,7 @@ export function AdminSettingsPage() {
   return (
     <AdminLayout>
       <MobileNotOptimizedBanner />
-      <div className="p-6 lg:p-8">
+      <div>
         <PageHeader
           title="Configuration"
           subtitle="Parametres de la boutique"

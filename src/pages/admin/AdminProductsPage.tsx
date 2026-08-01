@@ -81,7 +81,7 @@ export function AdminProductsPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [perPage] = useState(7);
+  const [perPage] = useState(10);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('');
   const [showForm, setShowForm] = useState(false);
@@ -666,7 +666,7 @@ export function AdminProductsPage() {
   return (
     <AdminLayout>
       <MobileNotOptimizedBanner />
-      <div className="p-6 lg:p-8">
+      <div>
         <PageHeader
           title="Produits"
           subtitle={`${products.length} produits`}

@@ -44,7 +44,7 @@ export function AdminTopProductsPage() {
   return (
     <AdminLayout>
       <MobileNotOptimizedBanner />
-      <div className="p-6 lg:p-8">
+      <div>
         <PageHeader title="Top produits vendus" subtitle="Liste complete des produits les plus vendus" />
         {loading ? (
           <div className="flex justify-center py-20"><div className="animate-spin w-8 h-8 border-2 dark:border-gray-700 border-t-primary-600 rounded-full" /></div>

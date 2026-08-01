@@ -30,6 +30,7 @@ import {
   AlertCircle,
   ShoppingBag,
   User,
+  ArrowRight,
 } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 import type { SupportTicket } from '../../types';
@@ -168,7 +169,7 @@ export function AdminDashboardPage() {
   if (loading) {
     return (
       <AdminLayout>
-        <div className="p-6 lg:p-8 flex items-center justify-center min-h-[60vh]">
+        <div className=" flex items-center justify-center min-h-[60vh]">
           <div className="animate-spin w-10 h-10 border-2 dark:border-gray-700 border-t-blue-600 rounded-full" />
         </div>
       </AdminLayout>
@@ -178,7 +179,7 @@ export function AdminDashboardPage() {
   return (
     <AdminLayout>
       <MobileNotOptimizedBanner />
-      <div className="p-6 lg:p-8">
+      <div>
         <PageHeader title="Tableau de bord" subtitle="Vue d'ensemble de votre boutique" />
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-4 lg:gap-6 mb-8">
@@ -454,9 +455,9 @@ export function AdminDashboardPage() {
                 <AlertCircle className="w-5 h-5 text-red-500" />
                 Paiements échoués / bloqués
               </h2>
-              <Link to="/admin/orders" className="text-sm text-blue-600 dark:text-blue-400 hover:underline">
-                Voir tout
-              </Link>
+               <Link to="/admin/statistics/failed-payments" className="ml-auto text-xs text-primary-600 dark:text-primary-400 hover:underline flex items-center gap-1">
+                 Voir plus <ArrowRight className="w-3 h-3" />
+               </Link>
             </div>
             <div className="space-y-4">
               {failedPayments.length === 0 ? (

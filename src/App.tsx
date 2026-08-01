@@ -88,6 +88,7 @@ const LazyAdminPaymentsPage = lazy(() => import('./pages/admin/AdminPaymentsPage
 const LazyAdminLoyaltyPage = lazy(() => import('./pages/admin/AdminLoyaltyPage').then(m => ({ default: m.AdminLoyaltyPage })));
 const LazyAdminSupportPage = lazy(() => import('./pages/admin/AdminSupportPage').then(m => ({ default: m.AdminSupportPage })));
 const LazyAdminSupportDetailPage = lazy(() => import('./pages/admin/AdminSupportDetailPage').then(m => ({ default: m.AdminSupportDetailPage })));
+const LazyAdminFailedPaymentsPage = lazy(() => import('./pages/admin/AdminFailedPaymentsPage').then(m => ({ default: m.AdminFailedPaymentsPage })));
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();
@@ -225,6 +226,7 @@ function AppRoutes() {
             <Route path="/admin/coupons" element={<AdminRoute><LazyAdminCouponsPage /></AdminRoute>} />
             <Route path="/admin/export" element={<AdminRoute><LazyAdminExportPage /></AdminRoute>} />
             <Route path="/admin/flash-sales" element={<AdminRoute><LazyAdminFlashSalesPage /></AdminRoute>} />
+            <Route path="/admin/statistics/failed-payments" element={<AdminRoute superAdmin><LazyAdminFailedPaymentsPage /></AdminRoute>} />
           </Routes>
         </Suspense>
       </motion.div>

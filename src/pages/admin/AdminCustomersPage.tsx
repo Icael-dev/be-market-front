@@ -14,7 +14,7 @@ import { Search, Users, Mail, Phone, ShoppingBag } from 'lucide-react';
 export function AdminCustomersPage() {
   const [customers, setCustomers] = useState<AdminCustomer[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [perPage] = useState(8);
+  const [perPage] = useState(10);
   const [total, setTotal] = useState(0);
   const [lastPage, setLastPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState('');
@@ -116,7 +116,7 @@ export function AdminCustomersPage() {
   return (
     <AdminLayout>
       <MobileNotOptimizedBanner />
-      <div className="p-6 lg:p-8">
+      <div>
         <PageHeader title="Clients" subtitle={`${customers.length} clients inscrits`} />
 
         <motion.div

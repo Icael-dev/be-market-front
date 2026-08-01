@@ -92,7 +92,7 @@ export function AdminSupportDetailPage() {
     return (
       <AdminLayout>
         <MobileNotOptimizedBanner />
-        <div className="p-6 lg:p-8">
+        <div>
           <p className="text-gray-500 dark:text-gray-400">Ticket introuvable</p>
         </div>
       </AdminLayout>
@@ -102,7 +102,7 @@ export function AdminSupportDetailPage() {
   return (
     <AdminLayout>
       <MobileNotOptimizedBanner />
-      <div className="p-6 lg:p-8">
+      <div>
         <PageHeader
           title={ticket.subject}
           subtitle={ticket.user?.email || ''}

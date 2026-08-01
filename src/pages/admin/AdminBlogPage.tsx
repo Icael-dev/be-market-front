@@ -27,7 +27,7 @@ import { cn } from '../../lib/utils';
 export function AdminBlogPage() {
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [perPage] = useState(8);
+  const [perPage] = useState(10);
   const [products, setProducts] = useState<Product[]>([]);
   const [showForm, setShowForm] = useState(false);
   useEscape(() => setShowForm(false), showForm);
@@ -254,7 +254,7 @@ export function AdminBlogPage() {
   return (
     <AdminLayout>
       <MobileNotOptimizedBanner />
-      <div className="p-6 lg:p-8">
+      <div>
         <PageHeader
           title="Blog"
           subtitle={`${posts.length} article${posts.length > 1 ? 's' : ''}`}

@@ -14,7 +14,7 @@ import { Pagination } from '../../components/Pagination';
 export function AdminTestimonialsPage() {
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [perPage] = useState(8);
+  const [perPage] = useState(10);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
@@ -78,7 +78,7 @@ export function AdminTestimonialsPage() {
   return (
     <AdminLayout>
       <MobileNotOptimizedBanner />
-      <div className="p-6 lg:p-8">
+      <div>
         <PageHeader title="Temoignages" subtitle="Gerer les temoignages clients">
           <button onClick={() => { resetForm(); setShowForm(true); }} className="flex items-center gap-2 bg-primary-600 text-white px-4 py-2 rounded-xl font-medium hover:bg-primary-700">
             <Plus className="w-4 h-4" /> Ajouter

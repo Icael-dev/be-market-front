@@ -38,7 +38,7 @@ export function AdminUsersPage() {
   const { profile } = useAuth();
   const [users, setUsers] = useState<StaffUser[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [perPage] = useState(8);
+  const [perPage] = useState(10);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
@@ -283,7 +283,7 @@ export function AdminUsersPage() {
   return (
     <AdminLayout>
       <MobileNotOptimizedBanner />
-      <div className="p-6 lg:p-8">
+      <div>
         <PageHeader
           title="Utilisateurs"
           subtitle={`${users.length} membre${users.length > 1 ? 's' : ''} de l'equipe`}

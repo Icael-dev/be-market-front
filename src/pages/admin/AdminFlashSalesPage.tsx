@@ -25,7 +25,7 @@ export function AdminFlashSalesPage() {
   const { isSuperAdmin } = useAuth();
   const [flashSales, setFlashSales] = useState<FlashSale[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [perPage] = useState(8);
+  const [perPage] = useState(10);
   const [total, setTotal] = useState(0);
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
@@ -166,7 +166,7 @@ export function AdminFlashSalesPage() {
   return (
     <AdminLayout>
       <MobileNotOptimizedBanner />
-      <div className="p-6 lg:p-8">
+      <div>
         <PageHeader
           title="Flash Sales"
           subtitle={`${flashSales.length} vente${flashSales.length > 1 ? 's' : ''} eclair`}

@@ -13,11 +13,11 @@ import { format } from 'date-fns';
 export function AdminLoyaltyPage() {
   const [transactions, setTransactions] = useState<LoyaltyTransaction[]>([]);
   const [txCurrentPage, setTxCurrentPage] = useState(1);
-  const [txPerPage] = useState(8);
+  const [txPerPage] = useState(10);
   const [txLastPage, setTxLastPage] = useState(1);
   const [points, setPoints] = useState<LoyaltyPoints[]>([]);
   const [ptsCurrentPage, setPtsCurrentPage] = useState(1);
-  const [ptsPerPage] = useState(8);
+  const [ptsPerPage] = useState(10);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<'all' | 'earned' | 'redeemed' | 'expired'>('all');
 
@@ -99,7 +99,7 @@ export function AdminLoyaltyPage() {
   return (
     <AdminLayout>
       <MobileNotOptimizedBanner />
-      <div className="p-6 lg:p-8">
+      <div>
         <PageHeader title="Fidelite" subtitle={`${transactions.length} transactions`} />
 
         {loading ? (

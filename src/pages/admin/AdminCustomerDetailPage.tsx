@@ -143,7 +143,7 @@ export function AdminCustomerDetailPage() {
   return (
     <AdminLayout>
       <MobileNotOptimizedBanner />
-      <div className="p-6 lg:p-8">
+      <div>
         <PageHeader
           title={customer?.full_name || 'Detail client'}
           subtitle={customer?.email || ''}
