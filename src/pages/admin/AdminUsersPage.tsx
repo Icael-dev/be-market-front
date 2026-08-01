@@ -17,8 +17,8 @@ import { MobileNotOptimizedBanner } from '../../components/admin/MobileNotOptimi
 import { useAuth } from '../../context/AuthContext';
 import { ConfirmDialog } from '../../components/admin/ConfirmDialog';
 import { Plus, Edit2, Trash2, X, Save, Loader2, UserCog, Mail, Phone, ShieldCheck, User as UserIcon, RotateCcw } from 'lucide-react';
+import { AdminTable, type Column } from '../../components/admin/AdminTable';
 import { useEscape } from '../../hooks/useKeyPress';
-import { Pagination } from '../../components/Pagination';
 
 const ROLE_LABELS: Record<UserRole, string> = {
   admin: 'Administrateur',
@@ -38,7 +38,7 @@ export function AdminUsersPage() {
   const { profile } = useAuth();
   const [users, setUsers] = useState<StaffUser[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [perPage] = useState(10);
+  const [perPage] = useState(8);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
@@ -79,6 +79,108 @@ export function AdminUsersPage() {
     setErrors({});
     setShowForm(true);
   };
+
+  const columns: Column<StaffUser>[] = [
+    {
+      key: 'name',
+      label: 'Utilisateur',
+      render: (user) => (
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary-600 to-cyan-500 flex items-center justify-center text-white font-medium">
+            {user.full_name?.[0] || user.email[0]}
+          </div>
+          <div>
+            <p className="font-medium text-gray-900 dark:text-white">{user.full_name || 'Sans nom'}</p>
+            {user.deleted_at ? (
+              <span className="inline-flex mt-0.5 px-2 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400">
+                Supprime
+              </span>
+            ) : isSelf(user) && (
+              <span className="text-xs text-primary-600 dark:text-primary-400">Vous</span>
+            )}
+          </div>
+        </div>
+      ),
+    },
+    {
+      key: 'contact',
+      label: 'Contact',
+      render: (user) => (
+        <div className="space-y-1">
+          <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+            <Mail className="w-4 h-4" />
+            {user.email}
+          </div>
+          {user.phone && (
+            <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+              <Phone className="w-4 h-4" />
+              {user.phone}
+            </div>
+          )}
+        </div>
+      ),
+    },
+    {
+      key: 'role',
+      label: 'Role',
+      render: (user) => (
+        <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium ${
+          user.role === 'admin'
+            ? 'bg-primary-100 text-primary-700 dark:bg-primary-900/30 dark:text-primary-400'
+            : 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400'
+        }`}>
+          {user.role === 'admin' ? <ShieldCheck className="w-3.5 h-3.5" /> : <UserIcon className="w-3.5 h-3.5" />}
+          {ROLE_LABELS[user.role]}
+        </span>
+      ),
+    },
+    {
+      key: 'actions',
+      label: 'Actions',
+      render: (user) => (
+        <div className="flex items-center justify-end gap-2">
+          {user.deleted_at ? (
+            <button
+              onClick={() => handleRestoreUser(user.id)}
+              disabled={restoringId === user.id}
+              className="flex items-center gap-1 bg-blue-100 hover:bg-blue-200 text-blue-700 border border-blue-300 rounded-lg px-3 py-2 text-sm font-medium transition-colors dark:bg-blue-900/40 dark:text-blue-300 dark:border-blue-700 dark:hover:bg-blue-900/60 disabled:opacity-50"
+            >
+              {restoringId === user.id ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                <RotateCcw className="w-4 h-4" />
+              )}
+              Restaurer
+            </button>
+          ) : (
+            <>
+              <button
+                onClick={() => openEdit(user)}
+                className="p-2 bg-gray-100 hover:bg-gray-200 text-gray-700 border border-gray-200 rounded-lg transition-colors dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600 dark:hover:bg-gray-600"
+                title="Modifier"
+              >
+                <Edit2 className="w-4 h-4" />
+              </button>
+              <button
+                onClick={() => { setConfirmTarget(user); setConfirmOpen(true); }}
+                disabled={deletingId === user.id || isSelf(user)}
+                className="p-2 bg-red-100 hover:bg-red-200 text-red-700 border border-red-300 rounded-lg transition-colors disabled:opacity-40 disabled:cursor-not-allowed dark:bg-red-900/40 dark:text-red-300 dark:border-red-700 dark:hover:bg-red-900/60"
+                title={isSelf(user) ? 'Vous ne pouvez pas supprimer votre compte' : 'Supprimer'}
+              >
+                {deletingId === user.id ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : (
+                  <Trash2 className="w-4 h-4" />
+                )}
+              </button>
+            </>
+          )}
+        </div>
+      ),
+    },
+  ];
+
+  const fieldError = (field: string) => errors[field]?.[0];
 
   const openEdit = (user: StaffUser) => {
     setEditing(user);
@@ -170,8 +272,6 @@ export function AdminUsersPage() {
     }
   };
 
-  const fieldError = (field: string) => errors[field]?.[0];
-
   // Detecte le compte de l'utilisateur connecte. On compare a la fois par id
   // (selon la semantique backend, StaffUser.id peut valoir user_id ou un id
   // de profil) et par email, identifiant naturel unique et stable, pour que
@@ -200,125 +300,20 @@ export function AdminUsersPage() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 overflow-hidden"
+          transition={{ delay: 0.1 }}
         >
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-gray-50 dark:bg-gray-800 border-b dark:border-gray-700">
-                <tr>
-                  <th className="text-left px-6 py-4 text-sm font-medium dark:text-gray-300">Utilisateur</th>
-                  <th className="text-left px-6 py-4 text-sm font-medium dark:text-gray-300">Contact</th>
-                  <th className="text-left px-6 py-4 text-sm font-medium dark:text-gray-300">Role</th>
-                  <th className="text-right px-6 py-4 text-sm font-medium dark:text-gray-300">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-100">
-                {paginatedUsers.map((user, index) => (
-                  <motion.tr
-                    key={user.id}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: index * 0.02 }}
-                    className="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
-                  >
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary-600 to-cyan-500 flex items-center justify-center text-white font-medium">
-                          {user.full_name?.[0] || user.email[0]}
-                        </div>
-                        <div>
-                          <p className="font-medium dark:text-white">{user.full_name || 'Sans nom'}</p>
-                          {user.deleted_at ? (
-                            <span className="inline-flex mt-0.5 px-2 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400">
-                              Supprime
-                            </span>
-                          ) : isSelf(user) && (
-                            <span className="text-xs text-primary-600 dark:text-primary-400">Vous</span>
-                          )}
-                        </div>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="space-y-1">
-                        <div className="flex items-center gap-2 text-sm dark:text-gray-400">
-                          <Mail className="w-4 h-4" />
-                          {user.email}
-                        </div>
-                        {user.phone && (
-                          <div className="flex items-center gap-2 text-sm dark:text-gray-400">
-                            <Phone className="w-4 h-4" />
-                            {user.phone}
-                          </div>
-                        )}
-                      </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium ${
-                        user.role === 'admin'
-                          ? 'bg-primary-100 text-primary-700 dark:bg-primary-900/30 dark:text-primary-400'
-                          : 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400'
-                      }`}>
-                        {user.role === 'admin' ? <ShieldCheck className="w-3.5 h-3.5" /> : <UserIcon className="w-3.5 h-3.5" />}
-                        {ROLE_LABELS[user.role]}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="flex items-center justify-end gap-2">
-                        {user.deleted_at ? (
-                          <button
-                            onClick={() => handleRestoreUser(user.id)}
-                            disabled={restoringId === user.id}
-                            className="flex items-center gap-1 bg-blue-100 hover:bg-blue-200 text-blue-700 border border-blue-300 rounded-lg px-3 py-2 transition-colors dark:bg-blue-900/40 dark:text-blue-300 dark:border-blue-700 dark:hover:bg-blue-900/60 disabled:opacity-50"
-                          >
-                            {restoringId === user.id ? (
-                              <Loader2 className="w-4 h-4 animate-spin" />
-                            ) : (
-                              <RotateCcw className="w-4 h-4" />
-                            )}
-                            Restaurer
-                          </button>
-                        ) : (
-                          <>
-                            <button
-                              onClick={() => openEdit(user)}
-                              className="p-3 bg-gray-100 hover:bg-gray-200 text-gray-700 border border-gray-200 rounded-lg transition-colors dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600 dark:hover:bg-gray-600"
-                              title="Modifier"
-                            >
-                              <Edit2 className="w-6 h-6" />
-                            </button>
-                              <button
-                                onClick={() => { setConfirmTarget(user); setConfirmOpen(true); }}
-                                disabled={deletingId === user.id || isSelf(user)}
-                                className="p-3 bg-red-100 hover:bg-red-200 text-red-700 border border-red-300 rounded-lg transition-colors disabled:opacity-40 disabled:cursor-not-allowed dark:bg-red-900/40 dark:text-red-300 dark:border-red-700 dark:hover:bg-red-900/60"
-                                title={isSelf(user) ? 'Vous ne pouvez pas supprimer votre compte' : 'Supprimer'}
-                              >
-                                {deletingId === user.id ? (
-                                  <Loader2 className="w-6 h-6 animate-spin" />
-                                ) : (
-                                  <Trash2 className="w-6 h-6" />
-                                )}
-                              </button>
-                          </>
-                        )}
-                      </div>
-                    </td>
-                  </motion.tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          <AdminTable
+            data={paginatedUsers}
+            columns={columns}
+            keyExtractor={(user) => user.id}
 
-          {users.length === 0 && !loading && (
-            <div className="text-center py-12">
-              <UserCog className="w-12 h-12 dark:text-gray-500 mx-auto mb-4" />
-              <p className="dark:text-gray-500">Aucun utilisateur</p>
-            </div>
-          )}
-          <Pagination
+            emptyIcon={UserCog}
+            emptyMessage="Aucun utilisateur"
+            loading={loading}
+            total={total}
+            perPage={perPage}
             currentPage={currentPage}
             lastPage={totalPages}
-            perPage={perPage}
-            total={total}
             onPageChange={(page) => setCurrentPage(page)}
           />
         </motion.div>

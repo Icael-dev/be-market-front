@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
 import { fetchSupportTickets, createSupportTicket, fetchSupportTicket, createSupportMessage } from '../services/support';
 import type { SupportTicket, SupportMessage } from '../types';
+import { getStatusLabel, getStatusColor } from '../lib/utils';
 import { MessageSquare, Send, Clock, Loader2, Plus, ArrowLeft } from 'lucide-react';
 import { format } from 'date-fns';
 import { Link, useParams } from 'react-router-dom';
@@ -58,20 +59,6 @@ export function SupportPage() {
     } finally {
       setSubmitting(false);
     }
-  };
-
-  const statusColors: Record<string, string> = {
-    open: 'bg-yellow-100 text-yellow-700',
-    in_progress: 'bg-primary-100 text-primary-700',
-    resolved: 'bg-green-100 text-green-700',
-    closed: 'bg-gray-100 text-gray-700'
-  };
-
-  const statusLabels: Record<string, string> = {
-    open: 'Ouvert',
-    in_progress: 'En cours',
-    resolved: 'Resolu',
-    closed: 'Ferme'
   };
 
   if (!authUser) {
@@ -145,10 +132,10 @@ export function SupportPage() {
                      <h3 className="font-medium text-gray-900 dark:text-white">{ticket.subject}</h3>
                      <p className="text-sm text-gray-500 dark:text-gray-400 mt-1 flex items-center gap-2">
                       <Clock className="w-4 h-4" />
-                      {format(new Date(ticket.created_at), 'dd MMM yyyy a HH:mm')}
+                       {format(new Date(ticket.created_at), 'dd MMM yyyy HH:mm')}
                     </p>
                   </div>
-                  <span className={`px-3 py-1 rounded-full text-xs font-medium ${statusColors[ticket.status]}`}>{statusLabels[ticket.status]}</span>
+                  <span className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(ticket.status)}`}>{getStatusLabel(ticket.status)}</span>
                 </div>
               </Link>
             </motion.div>

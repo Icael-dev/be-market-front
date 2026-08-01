@@ -3,7 +3,7 @@ import { fetchAdminCouponStats, type CouponStatsResponse } from '../../services/
 import { AdminLayout } from '../../components/admin/AdminLayout';
 import { PageHeader } from '../../components/admin/PageHeader';
 import { MobileNotOptimizedBanner } from '../../components/admin/MobileNotOptimizedBanner';
-import { Pagination } from '../../components/Pagination';
+import { AdminTable, type Column } from '../../components/admin/AdminTable';
 import { motion } from 'framer-motion';
 import { Tag } from 'lucide-react';
 
@@ -21,6 +21,33 @@ export function AdminCouponUsagePage() {
   const lastPage = Math.ceil(coupons.length / perPage) || 1;
   const paginated = coupons.slice((currentPage - 1) * perPage, currentPage * perPage);
 
+  const columns: Column<{ code: string; discount_type: string; discount_value: number; usage_count: number }>[] = [
+    {
+      key: 'code',
+      label: 'Code',
+    },
+    {
+      key: 'discount_type',
+      label: 'Type',
+      headerClassName: 'text-right',
+      cellClassName: 'text-right',
+      render: (item) => item.discount_type === 'percentage' ? `${item.discount_value}%` : `${item.discount_value} FCFA`,
+    },
+    {
+      key: 'discount_type',
+      label: 'Valeur',
+      headerClassName: 'text-right',
+      cellClassName: 'text-right',
+      render: (item) => item.discount_type === 'percentage' ? 'Pourcentage' : 'Montant fixe',
+    },
+    {
+      key: 'usage_count',
+      label: 'Utilisations',
+      headerClassName: 'text-right',
+      cellClassName: 'text-right',
+    },
+  ];
+
   return (
     <AdminLayout>
       <MobileNotOptimizedBanner />
@@ -32,48 +59,19 @@ export function AdminCouponUsagePage() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 overflow-hidden"
           >
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead className="bg-gray-50 dark:bg-gray-800 border-b dark:border-gray-700">
-                  <tr>
-                    <th className="text-left px-6 py-4 text-sm font-medium dark:text-gray-300">Code</th>
-                    <th className="text-right px-6 py-4 text-sm font-medium dark:text-gray-300">Type</th>
-                    <th className="text-right px-6 py-4 text-sm font-medium dark:text-gray-300">Valeur</th>
-                    <th className="text-right px-6 py-4 text-sm font-medium dark:text-gray-300">Utilisations</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-100">
-                  {paginated.map((coupon, i) => (
-                    <motion.tr
-                      key={coupon.code}
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: i * 0.02 }}
-                      className="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
-                    >
-                      <td className="px-6 py-4 dark:text-white font-mono">{coupon.code}</td>
-                      <td className="text-right px-6 py-4 dark:text-gray-300">{coupon.discount_type === 'percentage' ? `${coupon.discount_value}%` : `${coupon.discount_value} FCFA`}</td>
-                      <td className="text-right px-6 py-4 dark:text-gray-300">{coupon.discount_type === 'percentage' ? 'Pourcentage' : 'Montant fixe'}</td>
-                      <td className="text-right px-6 py-4 dark:text-gray-300">{coupon.usage_count}</td>
-                    </motion.tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-            {coupons.length === 0 && !loading && (
-              <div className="text-center py-12">
-                <Tag className="w-12 h-12 dark:text-gray-500 mx-auto mb-4" />
-                <p className="dark:text-gray-500">Aucun coupon utilise</p>
-              </div>
-            )}
-            <Pagination
+            <AdminTable
+              data={paginated}
+              columns={columns}
+              keyExtractor={(item) => item.code}
+
+              emptyIcon={Tag}
+              emptyMessage="Aucun coupon utilise"
+              total={coupons.length}
+              perPage={perPage}
               currentPage={currentPage}
               lastPage={lastPage}
-              perPage={perPage}
-              total={coupons.length}
-              onPageChange={(page) => { setCurrentPage(page); }}
+              onPageChange={(page) => setCurrentPage(page)}
             />
           </motion.div>
         )}

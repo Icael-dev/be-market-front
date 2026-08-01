@@ -11,6 +11,7 @@ import { DollarSign, ShoppingCart, Users, Package, TrendingUp, TrendingDown, Dow
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from 'recharts';
 import { format } from 'date-fns';
 import { useElementWidth } from '../../hooks/useElementWidth';
+import { AdminTable, type Column } from '../../components/admin/AdminTable';
 
 function ChartBox({ height, children }: { height: number; children: (props: { width: number }) => React.ReactNode }) {
   const { ref, width } = useElementWidth<HTMLDivElement>();
@@ -131,6 +132,102 @@ export function AdminStatisticsPage() {
       ]
     : [];
 
+  const topProductsColumns: Column<TopProduct>[] = [
+    {
+      key: 'product_name',
+      label: 'Produit',
+    },
+    {
+      key: 'total_quantity',
+      label: 'Quantite',
+      headerClassName: 'text-right',
+      cellClassName: 'text-right',
+    },
+    {
+      key: 'total_revenue',
+      label: 'Revenu',
+      headerClassName: 'text-right',
+      cellClassName: 'text-right',
+      render: (item) => formatPrice(item.total_revenue),
+    },
+  ];
+
+  const lowStockColumns: Column<LowStockProduct>[] = [
+    {
+      key: 'name',
+      label: 'Produit',
+    },
+    {
+      key: 'sku',
+      label: 'SKU',
+      cellClassName: 'font-mono text-xs',
+    },
+    {
+      key: 'stock',
+      label: 'Stock',
+      headerClassName: 'text-right',
+      cellClassName: 'text-right font-medium',
+      render: (item) => (
+        <span className={item.stock === 0 ? 'text-red-600 dark:text-red-400' : 'text-orange-600 dark:text-orange-400'}>
+          {item.stock}
+        </span>
+      ),
+    },
+    {
+      key: 'price',
+      label: 'Prix',
+      headerClassName: 'text-right',
+      cellClassName: 'text-right',
+      render: (item) => formatPrice(item.price),
+    },
+  ];
+
+  const couponColumns: Column<{ code: string; discount_type: string; discount_value: number; usage_count: number }>[] = [
+    {
+      key: 'code',
+      label: 'Code',
+    },
+    {
+      key: 'discount_type',
+      label: 'Type',
+      headerClassName: 'text-right',
+      cellClassName: 'text-right',
+      render: (item) => item.discount_type === 'percentage' ? `${item.discount_value}%` : `${item.discount_value} FCFA`,
+    },
+    {
+      key: 'usage_count',
+      label: 'Utilisations',
+      headerClassName: 'text-right',
+      cellClassName: 'text-right',
+    },
+  ];
+
+  const categorySalesColumns: Column<CategorySale>[] = [
+    {
+      key: 'category_name',
+      label: 'Categorie',
+    },
+    {
+      key: 'orders_count',
+      label: 'Commandes',
+      headerClassName: 'text-right',
+      cellClassName: 'text-right',
+    },
+    {
+      key: 'total_quantity',
+      label: 'Quantite',
+      headerClassName: 'text-right',
+      cellClassName: 'text-right',
+    },
+    {
+      key: 'total_revenue',
+      label: 'Revenu',
+      headerClassName: 'text-right',
+      cellClassName: 'text-right',
+      render: (item) => formatPrice(item.total_revenue),
+    },
+  ];
+
   return (
     <AdminLayout>
       <MobileNotOptimizedBanner />
@@ -245,34 +342,13 @@ export function AdminStatisticsPage() {
                       Voir plus <ArrowRight className="w-3 h-3" />
                     </Link>
                   </h3>
-                  <div className="overflow-x-auto">
-                    <table className="w-full text-sm">
-                      <thead className="bg-gray-50 dark:bg-gray-800 border-b dark:border-gray-700">
-                        <tr>
-                          <th className="text-left py-2 px-3 dark:text-gray-300">Produit</th>
-                          <th className="text-right py-2 px-3 dark:text-gray-300">Quantite</th>
-                          <th className="text-right py-2 px-3 dark:text-gray-300">Revenu</th>
-                        </tr>
-                      </thead>
-                      <tbody className="divide-y divide-gray-100">
-                        {topProducts.slice(0, 5).map((product, i) => (
-                          <tr key={product.product_id} className="hover:bg-gray-50 dark:hover:bg-gray-700/50">
-                            <td className="py-3 px-3 dark:text-white">
-                              <div className="flex items-center gap-2">
-                                <span className="w-6 h-6 rounded-full bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300 flex items-center justify-center text-xs font-bold">{i + 1}</span>
-                                {product.product_name}
-                              </div>
-                            </td>
-                            <td className="text-right py-3 px-3 dark:text-gray-300">{product.total_quantity}</td>
-                            <td className="text-right py-3 px-3 dark:text-gray-300">{formatPrice(product.total_revenue)}</td>
-                          </tr>
-                        ))}
-                        {topProducts.length === 0 && (
-                          <tr><td colSpan={3} className="text-center py-8 text-gray-500 dark:text-gray-400">Aucune donnee</td></tr>
-                        )}
-                      </tbody>
-                    </table>
-                  </div>
+                  <AdminTable
+                    data={topProducts.slice(0, 5)}
+                    columns={topProductsColumns}
+                    keyExtractor={(item) => item.product_id}
+                    emptyIcon={Package}
+                    emptyMessage="Aucune donnee"
+                  />
                 </div>
 
                 <div className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 p-6">
@@ -282,107 +358,53 @@ export function AdminStatisticsPage() {
                       Voir plus <ArrowRight className="w-3 h-3" />
                     </Link>
                   </h3>
-                  <div className="overflow-x-auto">
-                    <table className="w-full text-sm">
-                      <thead className="bg-gray-50 dark:bg-gray-800 border-b dark:border-gray-700">
-                        <tr>
-                          <th className="text-left py-2 px-3 dark:text-gray-300">Produit</th>
-                          <th className="text-left py-2 px-3 dark:text-gray-300">SKU</th>
-                          <th className="text-right py-2 px-3 dark:text-gray-300">Stock</th>
-                          <th className="text-right py-2 px-3 dark:text-gray-300">Prix</th>
-                        </tr>
-                      </thead>
-                      <tbody className="divide-y divide-gray-100">
-                        {lowStock.slice(0, 5).map((product) => (
-                          <tr key={product.id} className="hover:bg-gray-50 dark:hover:bg-gray-700/50">
-                            <td className="py-3 px-3 dark:text-white">{product.name}</td>
-                            <td className="py-3 px-3 dark:text-gray-400 font-mono text-xs">{product.sku}</td>
-                            <td className={`text-right py-3 px-3 font-medium ${product.stock === 0 ? 'text-red-600 dark:text-red-400' : 'text-orange-600 dark:text-orange-400'}`}>
-                              {product.stock}
-                            </td>
-                            <td className="text-right py-3 px-3 dark:text-gray-300">{formatPrice(product.price)}</td>
-                          </tr>
-                        ))}
-                        {lowStock.length === 0 && (
-                          <tr><td colSpan={4} className="text-center py-8 text-gray-500 dark:text-gray-400">Aucun produit en stock bas</td></tr>
-                        )}
-                      </tbody>
-                    </table>
-                  </div>
+                  <AdminTable
+                    data={lowStock.slice(0, 5)}
+                    columns={lowStockColumns}
+                    keyExtractor={(item) => item.id}
+                    emptyIcon={Package}
+                    emptyMessage="Aucun produit en stock bas"
+                  />
                 </div>
               </div>
 
-                  <div className="grid lg:grid-cols-2 gap-6 mb-6">
-                    <div className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 p-6">
-                      <h3 className="text-lg font-bold dark:text-white mb-4 flex items-center gap-2">
+              <div className="grid lg:grid-cols-2 gap-6 mb-6">
+                <div className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 p-6">
+                  <h3 className="text-lg font-bold dark:text-white mb-4 flex items-center gap-2">
                     Impact des coupons
                     <Link to="/admin/statistics/coupons" className="ml-auto text-xs text-primary-600 dark:text-primary-400 hover:underline flex items-center gap-1">
                       Voir plus <ArrowRight className="w-3 h-3" />
                     </Link>
                   </h3>
-                      <div className="grid grid-cols-2 gap-4 mb-4">
-                        <div className="bg-gray-50 dark:bg-gray-700/50 rounded-xl p-4">
-                          <p className="text-sm text-gray-500 dark:text-gray-400">Coupons utilises</p>
-                          <p className="text-2xl font-bold dark:text-white">{couponStats?.total_coupon_usages ?? 0}</p>
-                        </div>
-                      </div>
-                  <div className="overflow-x-auto">
-                    <table className="w-full text-sm">
-                      <thead className="bg-gray-50 dark:bg-gray-800 border-b dark:border-gray-700">
-                        <tr>
-                          <th className="text-left py-2 px-3 dark:text-gray-300">Code</th>
-                          <th className="text-right py-2 px-3 dark:text-gray-300">Type</th>
-                          <th className="text-right py-2 px-3 dark:text-gray-300">Utilisations</th>
-                        </tr>
-                      </thead>
-                      <tbody className="divide-y divide-gray-100">
-                        {couponStats?.coupons_used.slice(0, 2).map((coupon) => (
-                          <tr key={coupon.code} className="hover:bg-gray-50 dark:hover:bg-gray-700/50">
-                            <td className="py-3 px-3 dark:text-white font-mono">{coupon.code}</td>
-                            <td className="text-right py-3 px-3 dark:text-gray-300">{coupon.discount_type === 'percentage' ? `${coupon.discount_value}%` : `${coupon.discount_value} FCFA`}</td>
-                            <td className="text-right py-3 px-3 dark:text-gray-300">{coupon.usage_count}</td>
-                          </tr>
-                        ))}
-                        {(!couponStats || couponStats.coupons_used.length === 0) && (
-                          <tr><td colSpan={3} className="text-center py-8 text-gray-500 dark:text-gray-400">Aucun coupon utilise</td></tr>
-                        )}
-                      </tbody>
-                    </table>
+                  <div className="grid grid-cols-2 gap-4 mb-4">
+                    <div className="bg-gray-50 dark:bg-gray-700/50 rounded-xl p-4">
+                      <p className="text-sm text-gray-500 dark:text-gray-400">Coupons utilises</p>
+                      <p className="text-2xl font-bold dark:text-white">{couponStats?.total_coupon_usages ?? 0}</p>
+                    </div>
                   </div>
+                  <AdminTable
+                    data={couponStats?.coupons_used.slice(0, 2) ?? []}
+                    columns={couponColumns}
+                    keyExtractor={(item) => item.code}
+                    emptyIcon={Package}
+                    emptyMessage="Aucun coupon utilise"
+                  />
                 </div>
 
                 <div className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 p-6">
-                      <h3 className="text-lg font-bold dark:text-white mb-4 flex items-center gap-2">
+                  <h3 className="text-lg font-bold dark:text-white mb-4 flex items-center gap-2">
                     Ventes par categorie
                     <Link to="/admin/statistics/category-sales" className="ml-auto text-xs text-primary-600 dark:text-primary-400 hover:underline flex items-center gap-1">
                       Voir plus <ArrowRight className="w-3 h-3" />
                     </Link>
                   </h3>
-                  <div className="overflow-x-auto">
-                    <table className="w-full text-sm">
-                      <thead className="bg-gray-50 dark:bg-gray-800 border-b dark:border-gray-700">
-                        <tr>
-                          <th className="text-left py-2 px-3 dark:text-gray-300">Categorie</th>
-                          <th className="text-right py-2 px-3 dark:text-gray-300">Commandes</th>
-                          <th className="text-right py-2 px-3 dark:text-gray-300">Quantite</th>
-                          <th className="text-right py-2 px-3 dark:text-gray-300">Revenu</th>
-                        </tr>
-                      </thead>
-                      <tbody className="divide-y divide-gray-100">
-                        {categorySales.slice(0, 5).map((cat) => (
-                          <tr key={cat.category_id} className="hover:bg-gray-50 dark:hover:bg-gray-700/50">
-                            <td className="py-3 px-3 dark:text-white">{cat.category_name}</td>
-                            <td className="text-right py-3 px-3 dark:text-gray-300">{cat.orders_count}</td>
-                            <td className="text-right py-3 px-3 dark:text-gray-300">{cat.total_quantity}</td>
-                            <td className="text-right py-3 px-3 dark:text-gray-300">{formatPrice(cat.total_revenue)}</td>
-                          </tr>
-                        ))}
-                        {categorySales.length === 0 && (
-                          <tr><td colSpan={4} className="text-center py-8 text-gray-500 dark:text-gray-400">Aucune vente</td></tr>
-                        )}
-                      </tbody>
-                    </table>
-                  </div>
+                  <AdminTable
+                    data={categorySales.slice(0, 5)}
+                    columns={categorySalesColumns}
+                    keyExtractor={(item) => item.category_id}
+                    emptyIcon={Package}
+                    emptyMessage="Aucune vente"
+                  />
                 </div>
               </div>
             </>

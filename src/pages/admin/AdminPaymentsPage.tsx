@@ -7,7 +7,7 @@ import { AdminLayout } from '../../components/admin/AdminLayout';
 import { PageHeader } from '../../components/admin/PageHeader';
 import { MobileNotOptimizedBanner } from '../../components/admin/MobileNotOptimizedBanner';
 import { StatusBadge } from '../../components/admin/StatusBadge';
-import { Pagination } from '../../components/Pagination';
+import { AdminTable, type Column } from '../../components/admin/AdminTable';
 import { Search, Loader2 } from 'lucide-react';
 import type { Payment } from '../../types';
 import { formatPrice } from '../../lib/utils';
@@ -16,8 +16,7 @@ import { format } from 'date-fns';
 export function AdminPaymentsPage() {
   const [payments, setPayments] = useState<Payment[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [perPage] = useState(10);
-  const [total, setTotal] = useState(0);
+  const [perPage] = useState(8);
   const [lastPage, setLastPage] = useState(1);
   const [loading, setLoading] = useState(true);
   const [statusFilter, setStatusFilter] = useState('');
@@ -36,7 +35,6 @@ export function AdminPaymentsPage() {
       setPayments(result.data || []);
       setCurrentPage(result.current_page);
       setLastPage(result.last_page);
-      setTotal(result.total);
     } catch (error) {
       logger.error('Failed to load payments:', error);
       setPayments([]);
@@ -55,6 +53,65 @@ export function AdminPaymentsPage() {
       (p.order?.order_number?.toLowerCase().includes(search.toLowerCase()));
     return matchesSearch;
   });
+
+  const columns: Column<Payment>[] = [
+    {
+      key: 'reference',
+      label: 'Reference',
+      render: (p) => (
+        <span className="font-mono text-sm dark:text-white">{p.reference || '—'}</span>
+      ),
+    },
+    {
+      key: 'user',
+      label: 'Client',
+      render: (p) => (
+        <span className="text-sm dark:text-gray-500">{p.user?.profile?.full_name || p.order?.user?.profile?.full_name || '—'}</span>
+      ),
+    },
+    {
+      key: 'order',
+      label: 'Commande',
+      render: (p) => (
+        p.order ? (
+          <Link to={`/admin/customers/${p.order.user_id}`} className="text-sm text-primary-600 dark:text-primary-400 hover:underline">
+            {p.order.order_number}
+          </Link>
+        ) : (
+          <span className="text-sm text-gray-500 dark:text-gray-400">—</span>
+        )
+      ),
+    },
+    {
+      key: 'payment_method',
+      label: 'Methode',
+      render: (p) => <span className="text-sm dark:text-gray-500">{p.payment_method}</span>,
+    },
+    {
+      key: 'amount',
+      label: 'Montant',
+      headerClassName: 'text-right',
+      cellClassName: 'text-right',
+      render: (p) => <span className="text-sm font-medium dark:text-white">{formatPrice(p.amount)}</span>,
+    },
+    {
+      key: 'status',
+      label: 'Statut',
+      render: (p) => (
+        <StatusBadge
+          label={p.status}
+          variant={p.status === 'paid' ? 'success' : p.status === 'failed' || p.status === 'refunded' ? 'danger' : 'warning'}
+        />
+      ),
+    },
+    {
+      key: 'created_at',
+      label: 'Date',
+      render: (p) => (
+        <span className="text-sm text-gray-500 dark:text-gray-500">{format(new Date(p.created_at), 'dd/MM/yyyy HH:mm')}</span>
+      ),
+    },
+  ];
 
   return (
     <AdminLayout>
@@ -101,63 +158,23 @@ export function AdminPaymentsPage() {
         {loading ? (
           <div className="flex justify-center py-12"><Loader2 className="w-8 h-8 animate-spin text-primary-600" /></div>
         ) : (
-          <div className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 overflow-hidden">
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead className="bg-gray-50 dark:bg-gray-800 border-b dark:border-gray-700">
-                  <tr>
-                    <th className="text-left px-6 py-4 text-sm font-medium dark:text-gray-500">Reference</th>
-                    <th className="text-left px-6 py-4 text-sm font-medium dark:text-gray-500">Client</th>
-                    <th className="text-left px-6 py-4 text-sm font-medium dark:text-gray-500">Commande</th>
-                    <th className="text-left px-6 py-4 text-sm font-medium dark:text-gray-500">Methode</th>
-                    <th className="text-left px-6 py-4 text-sm font-medium dark:text-gray-500">Montant</th>
-                    <th className="text-left px-6 py-4 text-sm font-medium dark:text-gray-500">Statut</th>
-                    <th className="text-left px-6 py-4 text-sm font-medium dark:text-gray-500">Date</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
-                  {filtered.length === 0 ? (
-                    <tr><td colSpan={7} className="text-center py-8 text-gray-500 dark:text-gray-400">Aucun paiement</td></tr>
-                  ) : filtered.map((p) => (
-                    <tr key={p.id} className="hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
-                      <td className="px-6 py-4 font-mono text-sm dark:text-white">{p.reference || '—'}</td>
-                      <td className="px-6 py-4 text-sm dark:text-gray-500">{p.user?.profile?.full_name || p.order?.user?.profile?.full_name || '—'}</td>
-                      <td className="px-6 py-4">
-                        {p.order ? (
-                          <Link to={`/admin/customers/${p.order.user_id}`} className="text-sm text-primary-600 dark:text-primary-400 hover:underline">
-                            {p.order.order_number}
-                          </Link>
-                        ) : (
-                          <span className="text-sm text-gray-500 dark:text-gray-400">—</span>
-                        )}
-                      </td>
-                      <td className="px-6 py-4 text-sm dark:text-gray-500">{p.payment_method}</td>
-                      <td className="px-6 py-4 text-sm font-medium dark:text-white">{formatPrice(p.amount)}</td>
-                      <td className="px-6 py-4">
-                        <StatusBadge
-                          label={p.status}
-                          variant={p.status === 'paid' ? 'success' : p.status === 'failed' || p.status === 'refunded' ? 'danger' : 'warning'}
-                        />
-                      </td>
-                      <td className="px-6 py-4 text-sm text-gray-500 dark:text-gray-500">{format(new Date(p.created_at), 'dd/MM/yyyy HH:mm')}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        )}
+          <AdminTable
+            data={filtered}
+            columns={columns}
+            keyExtractor={(p) => p.id}
 
-        <Pagination
-          currentPage={currentPage}
-          lastPage={lastPage}
-          perPage={perPage}
-          total={total}
-          onPageChange={(page) => {
-            setCurrentPage(page);
-            load(page);
-          }}
-        />
+            emptyIcon={Loader2}
+            emptyMessage="Aucun paiement"
+            total={filtered.length}
+            perPage={perPage}
+            currentPage={currentPage}
+            lastPage={lastPage}
+            onPageChange={(page) => {
+              setCurrentPage(page);
+              load(page);
+            }}
+          />
+        )}
       </div>
     </AdminLayout>
   );

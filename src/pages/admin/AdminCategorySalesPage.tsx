@@ -3,7 +3,7 @@ import { fetchAdminCategorySales, type CategorySale } from '../../services/admin
 import { AdminLayout } from '../../components/admin/AdminLayout';
 import { PageHeader } from '../../components/admin/PageHeader';
 import { MobileNotOptimizedBanner } from '../../components/admin/MobileNotOptimizedBanner';
-import { Pagination } from '../../components/Pagination';
+import { AdminTable, type Column } from '../../components/admin/AdminTable';
 import { formatPrice } from '../../lib/utils';
 import { motion } from 'framer-motion';
 import { Package } from 'lucide-react';
@@ -21,6 +21,32 @@ export function AdminCategorySalesPage() {
   const lastPage = Math.ceil(categorySales.length / perPage) || 1;
   const paginated = categorySales.slice((currentPage - 1) * perPage, currentPage * perPage);
 
+  const columns: Column<CategorySale>[] = [
+    {
+      key: 'category_name',
+      label: 'Categorie',
+    },
+    {
+      key: 'orders_count',
+      label: 'Commandes',
+      headerClassName: 'text-right',
+      cellClassName: 'text-right',
+    },
+    {
+      key: 'total_quantity',
+      label: 'Quantite',
+      headerClassName: 'text-right',
+      cellClassName: 'text-right',
+    },
+    {
+      key: 'total_revenue',
+      label: 'Revenu',
+      headerClassName: 'text-right',
+      cellClassName: 'text-right',
+      render: (item) => formatPrice(item.total_revenue),
+    },
+  ];
+
   return (
     <AdminLayout>
       <MobileNotOptimizedBanner />
@@ -32,48 +58,19 @@ export function AdminCategorySalesPage() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 overflow-hidden"
           >
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead className="bg-gray-50 dark:bg-gray-800 border-b dark:border-gray-700">
-                  <tr>
-                    <th className="text-left px-6 py-4 text-sm font-medium dark:text-gray-300">Categorie</th>
-                    <th className="text-right px-6 py-4 text-sm font-medium dark:text-gray-300">Commandes</th>
-                    <th className="text-right px-6 py-4 text-sm font-medium dark:text-gray-300">Quantite</th>
-                    <th className="text-right px-6 py-4 text-sm font-medium dark:text-gray-300">Revenu</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-100">
-                  {paginated.map((cat, i) => (
-                    <motion.tr
-                      key={cat.category_id}
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: i * 0.02 }}
-                      className="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
-                    >
-                      <td className="px-6 py-4 dark:text-white">{cat.category_name}</td>
-                      <td className="text-right px-6 py-4 dark:text-gray-300">{cat.orders_count}</td>
-                      <td className="text-right px-6 py-4 dark:text-gray-300">{cat.total_quantity}</td>
-                      <td className="text-right px-6 py-4 dark:text-gray-300">{formatPrice(cat.total_revenue)}</td>
-                    </motion.tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-            {categorySales.length === 0 && !loading && (
-              <div className="text-center py-12">
-                <Package className="w-12 h-12 dark:text-gray-500 mx-auto mb-4" />
-                <p className="dark:text-gray-500">Aucune vente</p>
-              </div>
-            )}
-            <Pagination
+            <AdminTable
+              data={paginated}
+              columns={columns}
+              keyExtractor={(item) => item.category_id}
+
+              emptyIcon={Package}
+              emptyMessage="Aucune vente"
+              total={categorySales.length}
+              perPage={perPage}
               currentPage={currentPage}
               lastPage={lastPage}
-              perPage={perPage}
-              total={categorySales.length}
-              onPageChange={(page) => { setCurrentPage(page); }}
+              onPageChange={(page) => setCurrentPage(page)}
             />
           </motion.div>
         )}

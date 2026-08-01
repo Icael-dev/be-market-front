@@ -9,7 +9,7 @@ import { AdminLayout } from '../../components/admin/AdminLayout';
 import { PageHeader } from '../../components/admin/PageHeader';
 import { MobileNotOptimizedBanner } from '../../components/admin/MobileNotOptimizedBanner';
 import { StatusBadge } from '../../components/admin/StatusBadge';
-import { Pagination } from '../../components/Pagination';
+import { AdminTable, type Column } from '../../components/admin/AdminTable';
 import { Search, Loader2, RefreshCw } from 'lucide-react';
 import type { SupportTicket } from '../../types';
 import { format } from 'date-fns';
@@ -26,7 +26,7 @@ const STATUS_FILTERS = [
 export function AdminSupportPage() {
   const [tickets, setTickets] = useState<SupportTicket[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [perPage] = useState(10);
+  const [perPage] = useState(8);
   const [total, setTotal] = useState(0);
   const [lastPage, setLastPage] = useState(1);
   const [loading, setLoading] = useState(true);
@@ -66,6 +66,56 @@ export function AdminSupportPage() {
     return matchesSearch;
   });
 
+  const columns: Column<SupportTicket>[] = [
+    {
+      key: 'subject',
+      label: 'Sujet',
+      render: (ticket) => (
+        <Link to={`/admin/support/${ticket.id}`} className="font-medium text-primary-600 dark:text-primary-400 hover:underline">
+          {ticket.subject}
+        </Link>
+      ),
+    },
+    {
+      key: 'email',
+      label: 'Client',
+      render: (ticket) => (
+        <span className="text-sm text-gray-600 dark:text-gray-500">{ticket.user?.email || '—'}</span>
+      ),
+    },
+    {
+      key: 'status',
+      label: 'Statut',
+      render: (ticket) => (
+        <StatusBadge
+          label={getStatusLabel(ticket.status)}
+          variant={ticket.status === 'resolved' || ticket.status === 'closed' ? 'success' : ticket.status === 'open' ? 'warning' : 'info'}
+        />
+      ),
+    },
+    {
+      key: 'priority',
+      label: 'Priorite',
+      render: (ticket) => (
+        <span className="text-sm text-gray-600 dark:text-gray-500 capitalize">{ticket.priority}</span>
+      ),
+    },
+    {
+      key: 'messages',
+      label: 'Messages',
+      render: (ticket) => (
+        <span className="text-sm text-gray-600 dark:text-gray-500">{ticket.messages?.length || 0}</span>
+      ),
+    },
+    {
+      key: 'created_at',
+      label: 'Date',
+      render: (ticket) => (
+        <span className="text-sm text-gray-500 dark:text-gray-500">{format(new Date(ticket.created_at), 'dd/MM/yyyy')}</span>
+      ),
+    },
+  ];
+
   return (
     <AdminLayout>
       <MobileNotOptimizedBanner />
@@ -103,69 +153,19 @@ export function AdminSupportPage() {
         {loading ? (
           <div className="flex justify-center py-12"><Loader2 className="w-8 h-8 animate-spin text-primary-600" /></div>
         ) : (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 overflow-hidden"
-          >
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead className="bg-gray-50 dark:bg-gray-800 border-b dark:border-gray-700">
-                  <tr>
-                    <th className="text-left px-6 py-4 text-sm font-medium dark:text-gray-300">Sujet</th>
-                    <th className="text-left px-6 py-4 text-sm font-medium dark:text-gray-300">Client</th>
-                    <th className="text-left px-6 py-4 text-sm font-medium dark:text-gray-300">Statut</th>
-                    <th className="text-left px-6 py-4 text-sm font-medium dark:text-gray-300">Priorite</th>
-                    <th className="text-left px-6 py-4 text-sm font-medium dark:text-gray-300">Messages</th>
-                    <th className="text-left px-6 py-4 text-sm font-medium dark:text-gray-300">Date</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-100">
-                  {filtered.length === 0 ? (
-                    <tr><td colSpan={6} className="text-center py-8 text-gray-500 dark:text-gray-400">Aucun ticket</td></tr>
-                  ) : filtered.map((t, index) => (
-                    <motion.tr
-                      key={t.id}
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: index * 0.02 }}
-                      className="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
-                    >
-                      <td className="px-6 py-4">
-                        <Link to={`/admin/support/${t.id}`} className="font-medium text-primary-600 dark:text-primary-400 hover:underline">
-                          {t.subject}
-                        </Link>
-                      </td>
-                      <td className="px-6 py-4 text-sm dark:text-gray-500">{t.user?.email || '—'}</td>
-                      <td className="px-6 py-4">
-                        <StatusBadge
-                          label={getStatusLabel(t.status)}
-                          variant={t.status === 'resolved' || t.status === 'closed' ? 'success' : t.status === 'open' ? 'warning' : 'info'}
-                        />
-                      </td>
-                      <td className="px-6 py-4 text-sm dark:text-gray-500 capitalize">{t.priority}</td>
-                      <td className="px-6 py-4 text-sm dark:text-gray-500">{t.messages?.length || 0}</td>
-                      <td className="px-6 py-4 text-sm text-gray-500 dark:text-gray-500">{format(new Date(t.created_at), 'dd/MM/yyyy')}</td>
-                    </motion.tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+          <AdminTable
+            data={filtered}
+            columns={columns}
+            keyExtractor={(t) => t.id}
 
-            {filtered.length === 0 && !loading && (
-              <div className="text-center py-12">
-                <Search className="w-12 h-12 dark:text-gray-500 mx-auto mb-4" />
-                <p className="dark:text-gray-500">Aucun ticket</p>
-              </div>
-            )}
-            <Pagination
-              currentPage={currentPage}
-              lastPage={lastPage}
-              perPage={perPage}
-              total={total}
-              onPageChange={(page) => load(page)}
-            />
-          </motion.div>
+            emptyIcon={Search}
+            emptyMessage="Aucun ticket"
+            total={total}
+            perPage={perPage}
+            currentPage={currentPage}
+            lastPage={lastPage}
+            onPageChange={(page) => load(page)}
+          />
         )}
       </div>
     </AdminLayout>

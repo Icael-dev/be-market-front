@@ -37,7 +37,7 @@ export function ProductsPage() {
   const [view, setView] = useState<'grid' | 'list'>('grid');
 
   const [currentPage, setCurrentPage] = useState(1);
-  const [perPage] = useState(15);
+  const [perPage] = useState(8);
   const [totalPages, setTotalPages] = useState(1);
   const [totalProducts, setTotalProducts] = useState(0);
 
@@ -491,7 +491,7 @@ export function ProductsPage() {
             </div>
 
             {loading ? (
-              <ProductsGridSkeleton count={12} />
+               <ProductsGridSkeleton count={8} />
             ) : products.length === 0 ? (
               <div className="card p-12 text-center">
                 <div className="w-16 h-16 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-4">

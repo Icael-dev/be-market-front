@@ -3,7 +3,7 @@ import { fetchAdminLowStock, type LowStockProduct } from '../../services/admin';
 import { AdminLayout } from '../../components/admin/AdminLayout';
 import { PageHeader } from '../../components/admin/PageHeader';
 import { MobileNotOptimizedBanner } from '../../components/admin/MobileNotOptimizedBanner';
-import { Pagination } from '../../components/Pagination';
+import { AdminTable, type Column } from '../../components/admin/AdminTable';
 import { formatPrice } from '../../lib/utils';
 import { motion } from 'framer-motion';
 import { Package } from 'lucide-react';
@@ -21,6 +21,36 @@ export function AdminLowStockPage() {
   const lastPage = Math.ceil(products.length / perPage) || 1;
   const paginated = products.slice((currentPage - 1) * perPage, currentPage * perPage);
 
+  const columns: Column<LowStockProduct>[] = [
+    {
+      key: 'name',
+      label: 'Produit',
+    },
+    {
+      key: 'sku',
+      label: 'SKU',
+      cellClassName: 'font-mono text-xs',
+    },
+    {
+      key: 'stock',
+      label: 'Stock',
+      headerClassName: 'text-right',
+      cellClassName: 'text-right font-medium',
+      render: (item) => (
+        <span className={item.stock === 0 ? 'text-red-600 dark:text-red-400' : 'text-orange-600 dark:text-orange-400'}>
+          {item.stock}
+        </span>
+      ),
+    },
+    {
+      key: 'price',
+      label: 'Prix',
+      headerClassName: 'text-right',
+      cellClassName: 'text-right',
+      render: (item) => formatPrice(item.price),
+    },
+  ];
+
   return (
     <AdminLayout>
       <MobileNotOptimizedBanner />
@@ -32,50 +62,19 @@ export function AdminLowStockPage() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 overflow-hidden"
           >
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead className="bg-gray-50 dark:bg-gray-800 border-b dark:border-gray-700">
-                  <tr>
-                    <th className="text-left px-6 py-4 text-sm font-medium dark:text-gray-300">Produit</th>
-                    <th className="text-left px-6 py-4 text-sm font-medium dark:text-gray-300">SKU</th>
-                    <th className="text-right px-6 py-4 text-sm font-medium dark:text-gray-300">Stock</th>
-                    <th className="text-right px-6 py-4 text-sm font-medium dark:text-gray-300">Prix</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-100">
-                  {paginated.map((product, i) => (
-                    <motion.tr
-                      key={product.id}
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: i * 0.02 }}
-                      className="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
-                    >
-                      <td className="px-6 py-4 dark:text-white">{product.name}</td>
-                      <td className="px-6 py-4 dark:text-gray-400 font-mono text-xs">{product.sku}</td>
-                      <td className={`text-right px-6 py-4 font-medium ${product.stock === 0 ? 'text-red-600 dark:text-red-400' : 'text-orange-600 dark:text-orange-400'}`}>
-                        {product.stock}
-                      </td>
-                      <td className="text-right px-6 py-4 dark:text-gray-300">{formatPrice(product.price)}</td>
-                    </motion.tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-            {products.length === 0 && !loading && (
-              <div className="text-center py-12">
-                <Package className="w-12 h-12 dark:text-gray-500 mx-auto mb-4" />
-                <p className="dark:text-gray-500">Aucun produit en stock bas</p>
-              </div>
-            )}
-            <Pagination
+            <AdminTable
+              data={paginated}
+              columns={columns}
+              keyExtractor={(item) => item.id}
+
+              emptyIcon={Package}
+              emptyMessage="Aucun produit en stock bas"
+              total={products.length}
+              perPage={perPage}
               currentPage={currentPage}
               lastPage={lastPage}
-              perPage={perPage}
-              total={products.length}
-              onPageChange={(page) => { setCurrentPage(page); }}
+              onPageChange={(page) => setCurrentPage(page)}
             />
           </motion.div>
         )}

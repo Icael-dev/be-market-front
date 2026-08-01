@@ -17,19 +17,18 @@ import { MobileNotOptimizedBanner } from '../../components/admin/MobileNotOptimi
 import { StatusBadge } from '../../components/admin/StatusBadge';
 import { AdminDrawer } from '../../components/admin/AdminDrawer';
 import { ConfirmDialog } from '../../components/admin/ConfirmDialog';
+import { AdminTable, type Column } from '../../components/admin/AdminTable';
 import { format } from 'date-fns';
 import { useEscape } from '../../hooks/useKeyPress';
 import { ImageUpload } from '../../components/admin/ImageUpload';
 import { getImageUrl } from '../../lib/imageUrl';
-import { Pagination } from '../../components/Pagination';
+import { cn } from '../../lib/utils';
 
 export function AdminBlogPage() {
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [perPage] = useState(10);
-  const [total, setTotal] = useState(0);
+  const [perPage] = useState(8);
   const [products, setProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   useEscape(() => setShowForm(false), showForm);
   const [editingPost, setEditingPost] = useState<BlogPost | null>(null);
@@ -149,7 +148,6 @@ export function AdminBlogPage() {
 
   const handleTogglePublished = async (post: BlogPost) => {
     const nextPublished = !post.is_published;
-    // Set published_at the first time an article is published; keep existing otherwise.
     const nextPublishedAt = nextPublished
       ? (post.published_at || new Date().toISOString())
       : post.published_at;
@@ -166,6 +164,92 @@ export function AdminBlogPage() {
       setTogglingId(null);
     }
   };
+
+  const columns: Column<BlogPost>[] = [
+    {
+      key: 'title',
+      label: 'Article',
+      render: (post) => (
+        <div className="flex items-center gap-3">
+          {post.image_url ? (
+            <img
+              src={getImageUrl(post.image_url, 'blog')}
+              alt={post.title}
+              className="w-12 h-12 rounded-lg object-cover"
+              onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
+            />
+          ) : (
+            <div className="w-12 h-12 rounded-lg bg-gray-100 dark:bg-gray-700 flex items-center justify-center">
+              <FileText className="w-5 h-5 dark:text-gray-500" />
+            </div>
+          )}
+          <div>
+            <p className="font-medium dark:text-white">{post.title}</p>
+            <p className="text-sm dark:text-gray-500 truncate max-w-xs">
+              {post.excerpt || post.content.slice(0, 60)}...
+            </p>
+          </div>
+        </div>
+      ),
+    },
+    {
+      key: 'is_published',
+      label: 'Statut',
+      render: (post) => (
+        <StatusBadge
+          label={post.is_published ? 'Publie' : 'Brouillon'}
+          variant={post.is_published ? 'success' : 'warning'}
+        />
+      ),
+    },
+    {
+      key: 'created_at',
+      label: 'Date',
+      render: (post) => (
+        <div className="flex items-center gap-1 text-sm dark:text-gray-500">
+          <Calendar className="w-4 h-4" />
+          {format(new Date(post.created_at), 'dd MMM yyyy')}
+        </div>
+      ),
+    },
+    {
+      key: 'actions',
+      label: 'Actions',
+      render: (post) => (
+        <div className="flex items-center justify-end gap-2">
+          <button
+            onClick={() => handleTogglePublished(post)}
+            disabled={togglingId === post.id}
+            className={cn(
+              'p-3 rounded-lg border transition-colors disabled:opacity-50',
+              post.is_published
+                ? 'bg-green-100 text-green-700 border-green-300 hover:bg-green-200 dark:bg-green-900/40 dark:text-green-300 dark:border-green-700 dark:hover:bg-green-900/60'
+                : 'bg-gray-100 text-gray-600 border-gray-300 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-600'
+            )}
+            title={post.is_published ? 'Repasser en brouillon' : 'Publier'}
+          >
+            {togglingId === post.id ? (
+              <Loader2 className="w-6 h-6 animate-spin" />
+            ) : (
+              <Power className="w-6 h-6" />
+            )}
+          </button>
+          <button
+            onClick={() => handleEdit(post)}
+            className="p-3 bg-gray-100 hover:bg-gray-200 text-gray-700 border border-gray-200 rounded-lg transition-colors dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600 dark:hover:bg-gray-600"
+          >
+            <Edit2 className="w-6 h-6" />
+          </button>
+          <button
+            onClick={() => { setConfirmTargetId(post.id); setConfirmOpen(true); }}
+            className="p-3 bg-red-100 hover:bg-red-200 text-red-700 border border-red-300 rounded-lg transition-colors dark:bg-red-900/40 dark:text-red-300 dark:border-red-700 dark:hover:bg-red-900/60"
+          >
+            <Trash2 className="w-6 h-6" />
+          </button>
+        </div>
+      ),
+    },
+  ];
 
   return (
     <AdminLayout>
@@ -187,101 +271,25 @@ export function AdminBlogPage() {
           </button>
         </PageHeader>
 
-        <div className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full">
-            <thead className="bg-gray-50 border-b dark:border-gray-700">
-              <tr>
-                <th className="text-left px-6 py-4 text-sm font-medium dark:text-gray-500">Article</th>
-                <th className="text-left px-6 py-4 text-sm font-medium dark:text-gray-500">Statut</th>
-                <th className="text-left px-6 py-4 text-sm font-medium dark:text-gray-500">Date</th>
-                <th className="text-right px-6 py-4 text-sm font-medium dark:text-gray-500">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-100">
-              {paginatedPosts.map((post, index) => (
-                <motion.tr
-                  key={post.id}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.02 }}
-                  className="dark:hover:bg-gray-700 hover:bg-gray-100"
-                >
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-3">
-                      {post.image_url ? (
-                        <img
-                          src={getImageUrl(post.image_url, 'blog')}
-                          alt={post.title}
-                          className="w-12 h-12 rounded-lg object-cover"
-                          onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
-                        />
-                      ) : (
-                        <div className="w-12 h-12 rounded-lg bg-gray-100 dark:bg-gray-700 flex items-center justify-center">
-                          <FileText className="w-5 h-5 dark:text-gray-500" />
-                        </div>
-                      )}
-                      <div>
-                        <p className="font-medium dark:text-white">{post.title}</p>
-                        <p className="text-sm dark:text-gray-500 truncate max-w-xs">
-                          {post.excerpt || post.content.slice(0, 60)}...
-                        </p>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <StatusBadge
-                      label={post.is_published ? 'Publie' : 'Brouillon'}
-                      variant={post.is_published ? 'success' : 'warning'}
-                    />
-                  </td>
-                  <td className="px-6 py-4 text-sm dark:text-gray-500">
-                    <div className="flex items-center gap-1">
-                      <Calendar className="w-4 h-4" />
-                      {format(new Date(post.created_at), 'dd MMM yyyy')}
-                    </div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="flex items-center justify-end gap-2">
-                      <button
-                        onClick={() => handleTogglePublished(post)}
-                        disabled={togglingId === post.id}
-                        className={`p-3 rounded-lg border transition-colors disabled:opacity-50 ${post.is_published ? 'bg-green-100 text-green-700 border-green-300 hover:bg-green-200 dark:bg-green-900/40 dark:text-green-300 dark:border-green-700 dark:hover:bg-green-900/60' : 'bg-gray-100 text-gray-600 border-gray-300 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-600'}`}
-                        title={post.is_published ? 'Repasser en brouillon' : 'Publier'}
-                      >
-                        {togglingId === post.id ? (
-                          <Loader2 className="w-6 h-6 animate-spin" />
-                        ) : (
-                          <Power className="w-6 h-6" />
-                        )}
-                      </button>
-                      <button
-                        onClick={() => handleEdit(post)}
-                        className="p-3 bg-gray-100 hover:bg-gray-200 text-gray-700 border border-gray-200 rounded-lg transition-colors dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600 dark:hover:bg-gray-600"
-                      >
-                        <Edit2 className="w-6 h-6" />
-                      </button>
-                      <button
-                        onClick={() => { setConfirmTargetId(post.id); setConfirmOpen(true); }}
-                        className="p-3 bg-red-100 hover:bg-red-200 text-red-700 border border-red-300 rounded-lg transition-colors dark:bg-red-900/40 dark:text-red-300 dark:border-red-700 dark:hover:bg-red-900/60"
-                      >
-                        <Trash2 className="w-6 h-6" />
-                      </button>
-                    </div>
-                  </td>
-                </motion.tr>
-              ))}
-            </tbody>
-          </table>
-          </div>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+        >
+          <AdminTable
+            data={paginatedPosts}
+            columns={columns}
+            keyExtractor={(post) => post.id}
 
-          {posts.length === 0 && !loading && (
-            <div className="text-center py-12">
-              <FileText className="w-12 h-12 text-gray-300 dark:text-gray-500 mx-auto mb-4" />
-              <p className="dark:text-gray-500">Aucun article</p>
-            </div>
-          )}
-        </div>
+            emptyIcon={FileText}
+            emptyMessage="Aucun article"
+            total={posts.length}
+            perPage={perPage}
+            currentPage={currentPage}
+            lastPage={totalPages}
+            onPageChange={(page) => setCurrentPage(page)}
+          />
+        </motion.div>
       </div>
 
       <AdminDrawer
@@ -304,115 +312,108 @@ export function AdminBlogPage() {
             />
           </div>
 
-                <div>
-                  <label className="block text-sm font-medium dark:text-gray-300 mb-2">
-                    Extrait
+          <div>
+            <label className="block text-sm font-medium dark:text-gray-300 mb-2">
+              Extrait
+            </label>
+            <textarea
+              id="blog-excerpt"
+              name="excerpt"
+              value={formData.excerpt}
+              onChange={e => setFormData({ ...formData, excerpt: e.target.value })}
+              rows={2}
+              className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 bg-white dark:bg-gray-800 dark:text-white dark:placeholder-gray-500"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium dark:text-gray-300 mb-2">
+              Contenu *
+            </label>
+            <textarea
+              id="blog-content"
+              name="content"
+              value={formData.content}
+              onChange={e => setFormData({ ...formData, content: e.target.value })}
+              rows={10}
+              className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 bg-white dark:bg-gray-800 dark:text-white dark:placeholder-gray-500"
+            />
+          </div>
+
+          <ImageUpload
+            value={imageUrls}
+            onChange={setImageUrls}
+            folder="blog"
+            single
+            maxFiles={1}
+          />
+
+          <div>
+            <label className="block text-sm font-medium dark:text-gray-300 mb-2">
+              Produits lies
+            </label>
+            <div className="max-h-48 overflow-y-auto border dark:border-gray-700 rounded-xl p-3 space-y-2">
+              {products.length === 0 ? (
+                <p className="text-sm text-gray-500 dark:text-gray-400">Aucun produit disponible</p>
+              ) : (
+                products.map(product => (
+                  <label key={product.id} className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={formData.related_product_ids.includes(product.id)}
+                      onChange={e => {
+                        const ids = e.target.checked
+                          ? [...formData.related_product_ids, product.id]
+                          : formData.related_product_ids.filter(id => id !== product.id);
+                        setFormData({ ...formData, related_product_ids: ids });
+                      }}
+                      className="w-4 h-4 text-primary-600 border-gray-300 dark:border-gray-600 rounded"
+                    />
+                    <span className="text-sm dark:text-gray-300">{product.name}</span>
                   </label>
-                  <textarea
-                    id="blog-excerpt"
-                    name="excerpt"
-                    value={formData.excerpt}
-                    onChange={e => setFormData({ ...formData, excerpt: e.target.value })}
-                    rows={2}
-                    className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 bg-white dark:bg-gray-800 dark:text-white dark:placeholder-gray-500"
-                  />
-                </div>
+                ))
+              )}
+            </div>
+          </div>
 
-                <div>
-                  <label className="block text-sm font-medium dark:text-gray-300 mb-2">
-                    Contenu *
-                  </label>
-                  <textarea
-                    id="blog-content"
-                    name="content"
-                    value={formData.content}
-                    onChange={e => setFormData({ ...formData, content: e.target.value })}
-                    rows={10}
-                    className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 bg-white dark:bg-gray-800 dark:text-white dark:placeholder-gray-500"
-                  />
-                </div>
+          <label className="flex items-center gap-2 cursor-pointer">
+            <input
+              type="checkbox"
+              id="blog-is_published"
+              name="is_published"
+              checked={formData.is_published}
+              onChange={e => setFormData({ ...formData, is_published: e.target.checked })}
+              className="w-4 h-4 text-primary-600 border-gray-300 rounded"
+            />
+            <span className="text-sm dark:text-gray-300">Publier immediatement</span>
+          </label>
 
-                <ImageUpload
-                  value={imageUrls}
-                  onChange={setImageUrls}
-                  folder="blog"
-                  single
-                  maxFiles={1}
-                />
-
-                <div>
-                  <label className="block text-sm font-medium dark:text-gray-300 mb-2">
-                    Produits lies
-                  </label>
-                  <div className="max-h-48 overflow-y-auto border dark:border-gray-700 rounded-xl p-3 space-y-2">
-                    {products.length === 0 ? (
-                      <p className="text-sm text-gray-500 dark:text-gray-400">Aucun produit disponible</p>
-                    ) : (
-                      products.map(product => (
-                        <label key={product.id} className="flex items-center gap-2 cursor-pointer">
-                          <input
-                            type="checkbox"
-                            checked={formData.related_product_ids.includes(product.id)}
-                            onChange={e => {
-                              const ids = e.target.checked
-                                ? [...formData.related_product_ids, product.id]
-                                : formData.related_product_ids.filter(id => id !== product.id);
-                              setFormData({ ...formData, related_product_ids: ids });
-                            }}
-                            className="w-4 h-4 text-primary-600 border-gray-300 dark:border-gray-600 rounded"
-                          />
-                          <span className="text-sm dark:text-gray-300">{product.name}</span>
-                        </label>
-                      ))
-                    )}
-                  </div>
-                </div>
-
-                <label className="flex items-center gap-2 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    id="blog-is_published"
-                    name="is_published"
-                    checked={formData.is_published}
-                    onChange={e => setFormData({ ...formData, is_published: e.target.checked })}
-                    className="w-4 h-4 text-primary-600 border-gray-300 rounded"
-                  />
-                  <span className="text-sm dark:text-gray-300">Publier immediatement</span>
-                </label>
-
-                <div className="flex gap-3 pt-4 border-t dark:border-gray-700">
-                  <button
-                    onClick={handleSave}
-                    disabled={saving || !formData.title || !formData.content}
-                    className="flex items-center gap-2 bg-primary-600 text-white px-6 py-2.5 rounded-xl font-medium hover:bg-primary-700 disabled:opacity-50"
-                  >
-                    <Save className="w-4 h-4" />
-                    {saving ? 'Enregistrement...' : 'Enregistrer'}
-                  </button>
-                  <button
-                    onClick={() => setShowForm(false)}
-                    className="px-6 py-2.5 border dark:border-gray-700 rounded-xl font-medium hover:bg-gray-100 dark:hover:bg-gray-700"
-                  >
-                    Annuler
-                  </button>
-                </div>
-              </div>
-            </AdminDrawer>
-        <ConfirmDialog
-          open={confirmOpen}
-          onClose={() => { setConfirmOpen(false); setConfirmTargetId(null); }}
-          onConfirm={handleConfirmDelete}
-          title="Supprimer cet article ?"
-          message="Cette action est irreversible."
-          variant="danger"
-        />
-        <Pagination
-          currentPage={currentPage}
-          lastPage={totalPages}
-          perPage={perPage}
-          total={total}
-          onPageChange={(page) => setCurrentPage(page)}
-        />
-      </AdminLayout>
+          <div className="flex gap-3 pt-4 border-t dark:border-gray-700">
+            <button
+              onClick={handleSave}
+              disabled={saving || !formData.title || !formData.content}
+              className="flex items-center gap-2 bg-primary-600 text-white px-6 py-2.5 rounded-xl font-medium hover:bg-primary-700 disabled:opacity-50"
+            >
+              <Save className="w-4 h-4" />
+              {saving ? 'Enregistrement...' : 'Enregistrer'}
+            </button>
+            <button
+              onClick={() => setShowForm(false)}
+              className="px-6 py-2.5 border dark:border-gray-700 rounded-xl font-medium hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+            >
+              Annuler
+            </button>
+          </div>
+        </div>
+      </AdminDrawer>
+      <ConfirmDialog
+        open={confirmOpen}
+        onClose={() => { setConfirmOpen(false); setConfirmTargetId(null); }}
+        onConfirm={handleConfirmDelete}
+        title="Supprimer cet article ?"
+        message="Cette action est irreversible."
+        variant="danger"
+      />
+    </AdminLayout>
   );
 }

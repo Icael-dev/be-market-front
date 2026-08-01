@@ -313,12 +313,15 @@ export interface StockNotification {
   product?: Product;
 }
 
+export type SupportTicketStatus = 'open' | 'in_progress' | 'resolved' | 'closed';
+export type SupportTicketPriority = 'low' | 'normal' | 'high' | 'urgent';
+
 export interface SupportTicket {
   id: string;
   user_id: string | null;
   subject: string;
-  status: 'open' | 'in_progress' | 'resolved' | 'closed';
-  priority: 'low' | 'normal' | 'high' | 'urgent';
+  status: SupportTicketStatus;
+  priority: SupportTicketPriority;
   created_at: string;
   updated_at: string;
   messages?: SupportMessage[];

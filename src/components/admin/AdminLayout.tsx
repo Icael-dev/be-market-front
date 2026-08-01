@@ -1,8 +1,6 @@
 import { ReactNode, useState, useEffect, useCallback } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { useCart } from '../../context/CartContext';
-import { useWishlist } from '../../context/WishlistContext';
 import { useTheme } from '../../context/ThemeContext';
 import {
   LayoutDashboard,
@@ -11,7 +9,6 @@ import {
   Users,
   Settings,
   LogOut,
-  Menu,
   X,
   ChevronRight,
   ChevronLeft,
@@ -126,7 +123,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
   const mainMarginClass = sidebarCollapsed ? 'lg:ml-20' : 'lg:ml-72';
 
   return (
-    <div className="min-h-screen page-bg overflow-hidden">
+    <div className="min-h-screen page-bg max-h-[80vh]">
       <div className={cn(
         'fixed inset-y-0 left-0 border-r border-gray-200 dark:border-gray-800 z-50 transform transition-all duration-300 ease-in-out lg:translate-x-0 shadow-xl lg:shadow-none flex flex-col',
         sidebarWidthClass,
@@ -287,7 +284,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
         />
       )}
 
-      <main className={cn(`${mainMarginClass} min-h-screen px-4 sm:px-6 lg:px-8 overflow-y-auto scrollbar-hide`)}>
+      <main className={cn(`${mainMarginClass} min-h-screen px-3 sm:px-4 lg:px-6 overflow-y-auto scrollbar-hide`)}>
         {children}
       </main>
 

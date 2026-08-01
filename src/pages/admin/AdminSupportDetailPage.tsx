@@ -69,8 +69,8 @@ export function AdminSupportDetailPage() {
     if (!id || !message.trim()) return;
     setSending(true);
     try {
-      const newMessage = await sendAdminSupportMessage(id, message.trim());
-      setTicket(prev => prev ? { ...prev, messages: [...(prev.messages || []), newMessage] } : prev);
+      await sendAdminSupportMessage(id, message.trim());
+      await load();
       setMessage('');
     } catch (error) {
       logger.error('Failed to send message:', error);

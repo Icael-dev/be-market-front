@@ -24,7 +24,7 @@ import { Pagination } from '../../components/Pagination';
 export function AdminBannersPage() {
   const [banners, setBanners] = useState<Banner[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [perPage] = useState(10);
+  const [perPage] = useState(8);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);

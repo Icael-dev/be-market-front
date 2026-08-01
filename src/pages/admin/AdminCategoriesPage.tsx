@@ -19,12 +19,12 @@ import { AdminDrawer } from '../../components/admin/AdminDrawer';
 import { ConfirmDialog } from '../../components/admin/ConfirmDialog';
 import { cn } from '../../lib/utils';
 import { useEscape } from '../../hooks/useKeyPress';
-import { Pagination } from '../../components/Pagination';
+import { AdminTable, type Column } from '../../components/admin/AdminTable';
 
 export function AdminCategoriesPage() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [perPage] = useState(10);
+  const [perPage] = useState(8);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
@@ -198,6 +198,110 @@ export function AdminCategoriesPage() {
     }
   };
 
+  const columns: Column<Category>[] = [
+    {
+      key: 'name',
+      label: 'Categorie',
+      render: (category) => (
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-lg bg-gray-100 dark:bg-gray-700 flex items-center justify-center">
+            <svg className="w-5 h-5 text-gray-400 dark:text-gray-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <rect x="3" y="3" width="7" height="7" />
+              <rect x="14" y="3" width="7" height="7" />
+              <rect x="14" y="14" width="7" height="7" />
+              <rect x="3" y="14" width="7" height="7" />
+            </svg>
+          </div>
+          <div>
+            <p className="font-medium text-gray-900 dark:text-white">{category.name}</p>
+            {category.description && (
+              <p className="text-xs text-gray-500 dark:text-gray-400 truncate max-w-xs">{category.description}</p>
+            )}
+          </div>
+        </div>
+      ),
+    },
+    {
+      key: 'slug',
+      label: 'Slug',
+      render: (category) => (
+        <span className="text-sm text-gray-600 dark:text-gray-500 font-mono">{category.slug}</span>
+      ),
+    },
+    {
+      key: 'status',
+      label: 'Statut',
+      render: (category) => (
+        <StatusBadge
+          label={category.deleted_at ? 'Supprime' : category.is_active ? 'Active' : 'Inactive'}
+          variant={
+            category.deleted_at
+              ? 'danger'
+              : category.is_active
+                ? 'success'
+                : 'neutral'
+          }
+        />
+      ),
+    },
+    {
+      key: 'actions',
+      label: 'Actions',
+      render: (category) => (
+        <div className="flex items-center justify-end gap-2">
+          {category.deleted_at ? (
+            <button
+              onClick={() => handleRestore(category.id)}
+              disabled={restoringId === category.id}
+              className="flex items-center gap-1 bg-blue-100 hover:bg-blue-200 text-blue-700 border border-blue-300 rounded-lg px-3 py-2 text-sm font-medium transition-colors dark:bg-blue-900/40 dark:text-blue-300 dark:border-blue-700 dark:hover:bg-blue-900/60 disabled:opacity-50"
+            >
+              {restoringId === category.id ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                <RotateCcw className="w-4 h-4" />
+              )}
+              Restaurer
+            </button>
+          ) : (
+            <>
+              <button
+                onClick={() => handleToggleActive(category)}
+                disabled={togglingId === category.id}
+                className={cn(
+                  'p-2 rounded-lg border transition-colors disabled:opacity-50',
+                  category.is_active
+                    ? 'bg-green-100 text-green-700 border-green-300 hover:bg-green-200 dark:bg-green-900/40 dark:text-green-300 dark:border-green-700 dark:hover:bg-green-900/60'
+                    : 'bg-gray-100 text-gray-600 border-gray-300 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-600'
+                )}
+                title={category.is_active ? 'Désactiver' : 'Activer'}
+              >
+                {togglingId === category.id ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : (
+                  <Power className="w-4 h-4" />
+                )}
+              </button>
+              <button
+                onClick={() => handleEdit(category)}
+                className="p-2 bg-gray-100 hover:bg-gray-200 text-gray-700 border border-gray-200 rounded-lg transition-colors dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600 dark:hover:bg-gray-600"
+                title="Modifier"
+              >
+                <Edit2 className="w-4 h-4" />
+              </button>
+              <button
+                onClick={() => { setConfirmTargetId(category.id); setConfirmOpen(true); }}
+                className="p-2 bg-red-100 hover:bg-red-200 text-red-700 border border-red-300 rounded-lg transition-colors dark:bg-red-900/40 dark:text-red-300 dark:border-red-700 dark:hover:bg-red-900/60"
+                title="Supprimer"
+              >
+                <Trash2 className="w-4 h-4" />
+              </button>
+            </>
+          )}
+        </div>
+      ),
+    },
+  ];
+
   return (
     <AdminLayout>
       <MobileNotOptimizedBanner />
@@ -218,132 +322,20 @@ export function AdminCategoriesPage() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 overflow-hidden"
+          transition={{ delay: 0.1 }}
         >
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-gray-50 dark:bg-gray-800 border-b dark:border-gray-700">
-                <tr>
-                  <th className="text-left px-6 py-4 text-sm font-medium dark:text-gray-300">Categorie</th>
-                  <th className="text-left px-6 py-4 text-sm font-medium dark:text-gray-300">Slug</th>
-                  <th className="text-left px-6 py-4 text-sm font-medium dark:text-gray-300">Statut</th>
-                  <th className="text-right px-6 py-4 text-sm font-medium dark:text-gray-300">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-100">
-                {paginatedCategories.map((category, index) => (
-                  <motion.tr
-                    key={category.id}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: index * 0.02 }}
-                    className="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
-                  >
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-lg bg-gray-100 dark:bg-gray-700 flex items-center justify-center">
-                        <svg className="w-5 h-5 text-gray-400 dark:text-gray-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                          <rect x="3" y="3" width="7" height="7" />
-                          <rect x="14" y="3" width="7" height="7" />
-                          <rect x="14" y="14" width="7" height="7" />
-                          <rect x="3" y="14" width="7" height="7" />
-                        </svg>
-                      </div>
-                      <div>
-                        <p className="font-medium dark:text-white">{category.name}</p>
-                        {category.description && (
-                          <p className="text-xs dark:text-gray-500 truncate max-w-xs">{category.description}</p>
-                        )}
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 text-sm dark:text-gray-500 font-mono">
-                    {category.slug}
-                  </td>
-                  <td className="px-6 py-4">
-                    <StatusBadge
-                      label={category.deleted_at ? 'Supprime' : category.is_active ? 'Active' : 'Inactive'}
-                      variant={
-                        category.deleted_at
-                          ? 'danger'
-                          : category.is_active
-                            ? 'success'
-                            : 'neutral'
-                      }
-                    />
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="flex items-center justify-end gap-2">
-                      {category.deleted_at ? (
-                        <button
-                          onClick={() => handleRestore(category.id)}
-                          disabled={restoringId === category.id}
-                          className="flex items-center gap-1 bg-blue-100 hover:bg-blue-200 text-blue-700 border border-blue-300 rounded-lg px-3 py-2 transition-colors dark:bg-blue-900/40 dark:text-blue-300 dark:border-blue-700 dark:hover:bg-blue-900/60 disabled:opacity-50"
-                        >
-                          {restoringId === category.id ? (
-                            <Loader2 className="w-4 h-4 animate-spin" />
-                          ) : (
-                            <RotateCcw className="w-4 h-4" />
-                          )}
-                          Restaurer
-                        </button>
-                      ) : (
-                        <>
-                          <button
-                            onClick={() => handleToggleActive(category)}
-                            disabled={togglingId === category.id}
-                            className={cn(
-                              'p-3 rounded-lg border transition-colors disabled:opacity-50',
-                              category.is_active
-                                ? 'bg-green-100 text-green-700 border-green-300 hover:bg-green-200 dark:bg-green-900/40 dark:text-green-300 dark:border-green-700 dark:hover:bg-green-900/60'
-                                : 'bg-gray-100 text-gray-600 border-gray-300 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-600'
-                            )}
-                            title={category.is_active ? 'Désactiver' : 'Activer'}
-                          >
-                            {togglingId === category.id ? (
-                              <Loader2 className="w-6 h-6 animate-spin" />
-                            ) : (
-                              <Power className="w-6 h-6" />
-                            )}
-                          </button>
-                          <button
-                            onClick={() => handleEdit(category)}
-                            className="p-3 bg-gray-100 hover:bg-gray-200 text-gray-700 border border-gray-200 rounded-lg transition-colors dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600 dark:hover:bg-gray-600"
-                          >
-                            <Edit2 className="w-6 h-6" />
-                          </button>
-                            <button
-                              onClick={() => { setConfirmTargetId(category.id); setConfirmOpen(true); }}
-                              className="p-3 bg-red-100 hover:bg-red-200 text-red-700 border border-red-300 rounded-lg transition-colors dark:bg-red-900/40 dark:text-red-300 dark:border-red-700 dark:hover:bg-red-900/60"
-                            >
-                              <Trash2 className="w-6 h-6" />
-                            </button>
-                        </>
-                      )}
-                    </div>
-                  </td>
-                </motion.tr>
-              ))}
-            </tbody>
-          </table>
-          </div>
+          <AdminTable
+            data={paginatedCategories}
+            columns={columns}
+            keyExtractor={(category) => category.id}
 
-          {categories.length === 0 && !loading && (
-            <div className="text-center py-12">
-              <svg className="w-12 h-12 text-gray-300 dark:text-gray-500 mx-auto mb-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <rect x="3" y="3" width="7" height="7" />
-                <rect x="14" y="3" width="7" height="7" />
-                <rect x="14" y="14" width="7" height="7" />
-                <rect x="3" y="14" width="7" height="7" />
-              </svg>
-              <p className="dark:text-gray-500">Aucune categorie</p>
-            </div>
-          )}
-          <Pagination
+            emptyIcon={Tag}
+            emptyMessage="Aucune categorie"
+            loading={loading}
+            total={total}
+            perPage={perPage}
             currentPage={currentPage}
             lastPage={totalPages}
-            perPage={perPage}
-            total={total}
             onPageChange={(page) => setCurrentPage(page)}
           />
         </motion.div>

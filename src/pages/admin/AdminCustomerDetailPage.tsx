@@ -12,7 +12,7 @@ import { AdminLayout } from '../../components/admin/AdminLayout';
 import { PageHeader } from '../../components/admin/PageHeader';
 import { MobileNotOptimizedBanner } from '../../components/admin/MobileNotOptimizedBanner';
 import { StatusBadge } from '../../components/admin/StatusBadge';
-import { Pagination } from '../../components/Pagination';
+import { AdminTable, type Column } from '../../components/admin/AdminTable';
 import { Package, Gift, CreditCard, Loader2, ArrowLeft } from 'lucide-react';
 import type { Order, LoyaltyPoints, LoyaltyTransaction, Payment, AdminCustomer } from '../../types';
 import { formatPrice } from '../../lib/utils';
@@ -68,6 +68,78 @@ export function AdminCustomerDetailPage() {
     { key: 'payments', label: 'Paiements', icon: <CreditCard className="w-4 h-4" /> },
   ];
 
+  const orderColumns: Column<Order>[] = [
+    {
+      key: 'order_number',
+      label: 'Commande',
+      render: (order) => (
+        <p className="font-medium dark:text-white">{order.order_number}</p>
+      ),
+    },
+    {
+      key: 'created_at',
+      label: 'Date',
+      render: (order) => (
+        <span className="text-sm dark:text-gray-500">{format(new Date(order.created_at), 'dd/MM/yyyy')}</span>
+      ),
+    },
+    {
+      key: 'status',
+      label: 'Statut',
+      render: (order) => (
+        <StatusBadge label={order.status} variant={order.status === 'delivered' ? 'success' : order.status === 'cancelled' ? 'danger' : order.status === 'pending' ? 'warning' : 'info'} />
+      ),
+    },
+    {
+      key: 'payment_status',
+      label: 'Paiement',
+      render: (order) => (
+        <StatusBadge label={order.payment_status} variant={order.payment_status === 'paid' ? 'success' : order.payment_status === 'failed' || order.payment_status === 'refunded' ? 'danger' : 'warning'} />
+      ),
+    },
+    {
+      key: 'total',
+      label: 'Total',
+      headerClassName: 'text-right',
+      cellClassName: 'text-right',
+      render: (order) => <span className="font-medium dark:text-white">{formatPrice(order.total)}</span>,
+    },
+  ];
+
+  const paymentColumns: Column<Payment>[] = [
+    {
+      key: 'reference',
+      label: 'Reference',
+      render: (p) => <span className="font-mono text-sm dark:text-white">{p.reference || '—'}</span>,
+    },
+    {
+      key: 'payment_method',
+      label: 'Methode',
+      render: (p) => <span className="text-sm dark:text-gray-500">{p.payment_method}</span>,
+    },
+    {
+      key: 'amount',
+      label: 'Montant',
+      headerClassName: 'text-right',
+      cellClassName: 'text-right',
+      render: (p) => <span className="text-sm font-medium dark:text-white">{formatPrice(p.amount)}</span>,
+    },
+    {
+      key: 'status',
+      label: 'Statut',
+      render: (p) => (
+        <span className="inline-flex px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300">
+          {p.status}
+        </span>
+      ),
+    },
+    {
+      key: 'created_at',
+      label: 'Date',
+      render: (p) => <span className="text-sm text-gray-500 dark:text-gray-500">{format(new Date(p.created_at), 'dd/MM/yyyy HH:mm')}</span>,
+    },
+  ];
+
   return (
     <AdminLayout>
       <MobileNotOptimizedBanner />
@@ -111,44 +183,18 @@ export function AdminCustomerDetailPage() {
             </div>
 
             {tab === 'orders' && (
-              <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="card overflow-hidden">
-                <div className="overflow-x-auto">
-                  <table className="w-full">
-                    <thead className="bg-gray-50 dark:bg-gray-800 border-b dark:border-gray-700">
-                      <tr>
-                        <th className="text-left px-6 py-4 text-sm font-medium dark:text-gray-500">Commande</th>
-                        <th className="text-left px-6 py-4 text-sm font-medium dark:text-gray-500">Date</th>
-                        <th className="text-left px-6 py-4 text-sm font-medium dark:text-gray-500">Statut</th>
-                        <th className="text-left px-6 py-4 text-sm font-medium dark:text-gray-500">Paiement</th>
-                        <th className="text-right px-6 py-4 text-sm font-medium dark:text-gray-500">Total</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
-                      {paginatedOrders.length === 0 ? (
-                        <tr><td colSpan={5} className="text-center py-8 text-gray-500 dark:text-gray-400">Aucune commande</td></tr>
-                      ) : paginatedOrders.map((order) => (
-                        <tr key={order.id} className="hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
-                          <td className="px-6 py-4">
-                            <p className="font-medium dark:text-white">{order.order_number}</p>
-                          </td>
-                          <td className="px-6 py-4 text-sm dark:text-gray-500">{format(new Date(order.created_at), 'dd/MM/yyyy')}</td>
-                          <td className="px-6 py-4">
-                          <StatusBadge label={order.status} variant={order.status === 'delivered' ? 'success' : order.status === 'cancelled' ? 'danger' : order.status === 'pending' ? 'warning' : 'info'} />
-                        </td>
-                        <td className="px-6 py-4">
-                          <StatusBadge label={order.payment_status} variant={order.payment_status === 'paid' ? 'success' : order.payment_status === 'failed' || order.payment_status === 'refunded' ? 'danger' : 'warning'} />
-                        </td>
-                          <td className="px-6 py-4 text-right font-medium dark:text-white">{formatPrice(order.total)}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-                <Pagination
+              <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
+                <AdminTable
+                  data={paginatedOrders}
+                  columns={orderColumns}
+                  keyExtractor={(order) => order.id}
+
+                  emptyIcon={Package}
+                  emptyMessage="Aucune commande"
+                  total={orders.length}
+                  perPage={perPage}
                   currentPage={currentPage}
                   lastPage={totalOrderPages}
-                  perPage={perPage}
-                  total={orders.length}
                   onPageChange={setCurrentPage}
                 />
               </motion.div>
@@ -203,42 +249,18 @@ export function AdminCustomerDetailPage() {
             )}
 
             {tab === 'payments' && (
-              <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="card overflow-hidden">
-                <div className="overflow-x-auto">
-                  <table className="w-full">
-                    <thead className="bg-gray-50 dark:bg-gray-800 border-b dark:border-gray-700">
-                      <tr>
-                        <th className="text-left px-6 py-4 text-sm font-medium dark:text-gray-500">Reference</th>
-                        <th className="text-left px-6 py-4 text-sm font-medium dark:text-gray-500">Methode</th>
-                        <th className="text-left px-6 py-4 text-sm font-medium dark:text-gray-500">Montant</th>
-                        <th className="text-left px-6 py-4 text-sm font-medium dark:text-gray-500">Statut</th>
-                        <th className="text-left px-6 py-4 text-sm font-medium dark:text-gray-500">Date</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
-                      {paginatedPayments.length === 0 ? (
-                        <tr><td colSpan={5} className="text-center py-8 text-gray-500 dark:text-gray-400">Aucun paiement</td></tr>
-                      ) : paginatedPayments.map(p => (
-                        <tr key={p.id} className="hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
-                          <td className="px-6 py-4 font-mono text-sm dark:text-white">{p.reference || '—'}</td>
-                          <td className="px-6 py-4 text-sm dark:text-gray-500">{p.payment_method}</td>
-                          <td className="px-6 py-4 text-sm font-medium dark:text-white">{formatPrice(p.amount)}</td>
-                          <td className="px-6 py-4">
-                            <span className="inline-flex px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300">
-                              {p.status}
-                            </span>
-                          </td>
-                          <td className="px-6 py-4 text-sm text-gray-500 dark:text-gray-500">{format(new Date(p.created_at), 'dd/MM/yyyy HH:mm')}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-                <Pagination
+              <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
+                <AdminTable
+                  data={paginatedPayments}
+                  columns={paymentColumns}
+                  keyExtractor={(p) => p.id}
+
+                  emptyIcon={CreditCard}
+                  emptyMessage="Aucun paiement"
+                  total={payments.length}
+                  perPage={perPage}
                   currentPage={currentPage}
                   lastPage={totalPaymentPages}
-                  perPage={perPage}
-                  total={payments.length}
                   onPageChange={setCurrentPage}
                 />
               </motion.div>

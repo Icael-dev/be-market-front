@@ -20,13 +20,12 @@ import { ConfirmDialog } from '../../components/admin/ConfirmDialog';
 import { format } from 'date-fns';
 import { useEscape } from '../../hooks/useKeyPress';
 import { useAuth } from '../../context/AuthContext';
-import { Pagination } from '../../components/Pagination';
 
 export function AdminFlashSalesPage() {
   const { isSuperAdmin } = useAuth();
   const [flashSales, setFlashSales] = useState<FlashSale[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [perPage] = useState(10);
+  const [perPage] = useState(8);
   const [total, setTotal] = useState(0);
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
