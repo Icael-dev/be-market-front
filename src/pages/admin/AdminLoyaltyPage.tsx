@@ -1,7 +1,6 @@
 import { useEffect, useState, useCallback } from 'react';
 import { logger } from '../../lib/logger';
 import { fetchAdminLoyaltyTransactions, fetchAdminLoyaltyPoints } from '../../services/admin';
-import { AdminLayout } from '../../components/admin/AdminLayout';
 import { PageHeader } from '../../components/admin/PageHeader';
 import { MobileNotOptimizedBanner } from '../../components/admin/MobileNotOptimizedBanner';
 import { StatusBadge } from '../../components/admin/StatusBadge';
@@ -97,7 +96,7 @@ export function AdminLoyaltyPage() {
   ];
 
   return (
-    <AdminLayout>
+    <>
       <MobileNotOptimizedBanner />
       <div>
         <PageHeader title="Fidelite" subtitle={`${transactions.length} transactions`} />
@@ -163,6 +162,6 @@ export function AdminLoyaltyPage() {
           </>
         )}
       </div>
-    </AdminLayout>
+    </>
   );
 }

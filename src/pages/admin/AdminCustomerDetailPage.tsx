@@ -8,7 +8,6 @@ import {
   fetchAdminCustomerLoyalty,
   fetchAdminCustomerPayments
 } from '../../services/admin';
-import { AdminLayout } from '../../components/admin/AdminLayout';
 import { PageHeader } from '../../components/admin/PageHeader';
 import { MobileNotOptimizedBanner } from '../../components/admin/MobileNotOptimizedBanner';
 import { StatusBadge } from '../../components/admin/StatusBadge';
@@ -141,7 +140,7 @@ export function AdminCustomerDetailPage() {
   ];
 
   return (
-    <AdminLayout>
+    <>
       <MobileNotOptimizedBanner />
       <div>
         <PageHeader
@@ -268,6 +267,6 @@ export function AdminCustomerDetailPage() {
           </>
         )}
       </div>
-    </AdminLayout>
+    </>
   );
 }

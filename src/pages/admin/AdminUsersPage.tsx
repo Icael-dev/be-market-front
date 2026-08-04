@@ -11,7 +11,6 @@ import {
   type StaffUserInput
 } from '../../services/admin';
 import type { StaffUser, UserRole } from '../../types';
-import { AdminLayout } from '../../components/admin/AdminLayout';
 import { PageHeader } from '../../components/admin/PageHeader';
 import { MobileNotOptimizedBanner } from '../../components/admin/MobileNotOptimizedBanner';
 import { useAuth } from '../../context/AuthContext';
@@ -281,7 +280,7 @@ export function AdminUsersPage() {
     (!!profile?.email && profile.email.toLowerCase() === user.email.toLowerCase());
 
   return (
-    <AdminLayout>
+    <>
       <MobileNotOptimizedBanner />
       <div>
         <PageHeader
@@ -456,6 +455,6 @@ export function AdminUsersPage() {
           variant="danger"
         />
       </AnimatePresence>
-    </AdminLayout>
+    </>
   );
 }

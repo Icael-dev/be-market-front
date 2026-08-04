@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
 import { fetchSupportTickets, createSupportTicket, fetchSupportTicket, createSupportMessage } from '../services/support';
 import type { SupportTicket, SupportMessage } from '../types';
-import { getStatusLabel, getStatusColor } from '../lib/utils';
+import { getStatusLabel, getStatusColor, getPriorityColor, getPriorityLabel } from '../lib/utils';
 import { MessageSquare, Send, Clock, Loader2, Plus, ArrowLeft } from 'lucide-react';
 import { format } from 'date-fns';
 import { Link, useParams } from 'react-router-dom';
@@ -19,6 +19,7 @@ export function SupportPage() {
   useEscape(() => setShowForm(false), showForm);
   const [subject, setSubject] = useState('');
   const [message, setMessage] = useState('');
+  const [priority, setPriority] = useState<'low' | 'normal' | 'high' | 'urgent'>('normal');
   const [errors, setErrors] = useState<{ subject?: string; message?: string }>({});
   const [submitting, setSubmitting] = useState(false);
 
@@ -48,7 +49,7 @@ export function SupportPage() {
     setSubmitting(true);
 
     try {
-      await createSupportTicket({ subject, message });
+       await createSupportTicket({ subject, message, priority });
       await fetchTickets();
       setShowForm(false);
       setSubject('');
@@ -101,18 +102,31 @@ export function SupportPage() {
               error={errors.subject}
               placeholder="Ex: Probleme avec ma commande"
             />
-            <div className="mt-4">
-              <TextareaField
-                name="message"
-                label="Message"
-                required
-                rows={5}
-                value={message}
-                onChange={e => setMessage(e.target.value)}
-                error={errors.message}
-                placeholder="Decrivez votre probleme..."
-              />
-            </div>
+             <div className="mt-4">
+               <TextareaField
+                 name="message"
+                 label="Message"
+                 required
+                 rows={5}
+                 value={message}
+                 onChange={e => setMessage(e.target.value)}
+                 error={errors.message}
+                 placeholder="Decrivez votre probleme..."
+               />
+             </div>
+             <div className="mt-4">
+               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Priorite</label>
+               <select
+                 value={priority}
+                 onChange={e => setPriority(e.target.value as 'low' | 'normal' | 'high' | 'urgent')}
+                 className="w-full px-4 py-2.5 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 bg-white dark:bg-gray-800 dark:text-white"
+               >
+                 <option value="low">Basse</option>
+                 <option value="normal">Normale</option>
+                 <option value="high">Haute</option>
+                 <option value="urgent">Urgente</option>
+               </select>
+             </div>
             <div className="flex gap-3 mt-2">
               <button type="submit" disabled={submitting} className="flex items-center gap-2 btn-primary disabled:opacity-50">
                 {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
@@ -127,16 +141,19 @@ export function SupportPage() {
            {tickets.map((ticket, index) => (
              <motion.div key={ticket.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: index * 0.05 }} className="card p-4">
                <Link to={`/support/${ticket.id}`}>
-                 <div className="flex items-start justify-between gap-4">
-                   <div className="flex-1">
-                     <h3 className="font-medium text-gray-900 dark:text-white">{ticket.subject}</h3>
-                     <p className="text-sm text-gray-500 dark:text-gray-400 mt-1 flex items-center gap-2">
-                      <Clock className="w-4 h-4" />
-                       {format(new Date(ticket.created_at), 'dd MMM yyyy HH:mm')}
-                    </p>
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2">
+                        <h3 className="font-medium text-gray-900 dark:text-white">{ticket.subject}</h3>
+                        <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${getPriorityColor(ticket.priority)}`}>{getPriorityLabel(ticket.priority)}</span>
+                      </div>
+                      <p className="text-sm text-gray-500 dark:text-gray-400 mt-1 flex items-center gap-2">
+                        <Clock className="w-4 h-4" />
+                        {format(new Date(ticket.created_at), 'dd MMM yyyy HH:mm')}
+                      </p>
+                    </div>
+                    <span className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(ticket.status)}`}>{getStatusLabel(ticket.status)}</span>
                   </div>
-                  <span className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(ticket.status)}`}>{getStatusLabel(ticket.status)}</span>
-                </div>
               </Link>
             </motion.div>
           ))}

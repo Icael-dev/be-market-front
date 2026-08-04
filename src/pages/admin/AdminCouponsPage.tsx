@@ -10,7 +10,6 @@ import {
 } from '../../services/admin';
 import type { Coupon } from '../../types';
 import { Plus, Edit2, Trash2, Save, Tag, Percent, DollarSign, Loader2, Power } from 'lucide-react';
-import { AdminLayout } from '../../components/admin/AdminLayout';
 import { PageHeader } from '../../components/admin/PageHeader';
 import { MobileNotOptimizedBanner } from '../../components/admin/MobileNotOptimizedBanner';
 import { AdminDrawer } from '../../components/admin/AdminDrawer';
@@ -200,7 +199,7 @@ export function AdminCouponsPage() {
   ];
 
   return (
-    <AdminLayout>
+    <>
       <MobileNotOptimizedBanner />
       <div>
         <PageHeader
@@ -315,6 +314,6 @@ export function AdminCouponsPage() {
           </div>
         </div>
       </AdminDrawer>
-    </AdminLayout>
+    </>
   );
 }

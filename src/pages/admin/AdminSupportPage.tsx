@@ -5,7 +5,6 @@ import { Link } from 'react-router-dom';
 import {
   fetchAdminSupportTickets
 } from '../../services/admin';
-import { AdminLayout } from '../../components/admin/AdminLayout';
 import { PageHeader } from '../../components/admin/PageHeader';
 import { MobileNotOptimizedBanner } from '../../components/admin/MobileNotOptimizedBanner';
 import { StatusBadge } from '../../components/admin/StatusBadge';
@@ -13,7 +12,7 @@ import { AdminTable, type Column } from '../../components/admin/AdminTable';
 import { Search, Loader2, RefreshCw } from 'lucide-react';
 import type { SupportTicket } from '../../types';
 import { format } from 'date-fns';
-import { getStatusLabel } from '../../lib/utils';
+import { getStatusLabel, getPriorityColor, getPriorityLabel } from '../../lib/utils';
 
 const STATUS_FILTERS = [
   { value: '', label: 'Tous' },
@@ -33,6 +32,8 @@ export function AdminSupportPage() {
   const [statusFilter, setStatusFilter] = useState('');
   const [search, setSearch] = useState('');
 
+  const [priorityFilter, setPriorityFilter] = useState('');
+
   const load = useCallback(async (page = 1) => {
     setLoading(true);
     try {
@@ -40,6 +41,8 @@ export function AdminSupportPage() {
         page,
         per_page: perPage,
         status: statusFilter || undefined,
+        priority: priorityFilter || undefined,
+        search: search || undefined,
       });
       setTickets(result.data || []);
       setCurrentPage(result.current_page);
@@ -49,24 +52,17 @@ export function AdminSupportPage() {
       const message = error instanceof Error ? error.message : 'Erreur inconnue';
       logger.error('Failed to load support tickets:', message, error);
       setTickets([]);
-      alert('Impossible de charger les tickets de support. Verifiez que le backend fonctionne et que les migrations sont a jour.');
+      alert('Impossible de charger les tickets de support. Vérifiez que le backend fonctionne et que les migrations sont à jour.');
     } finally {
       setLoading(false);
     }
-  }, [statusFilter, perPage]);
+  }, [statusFilter, priorityFilter, search, perPage]);
 
   useEffect(() => {
     load(1);
   }, [load]);
 
-  const filtered = (tickets || []).filter(t => {
-    const matchesSearch = !search ||
-      t.subject.toLowerCase().includes(search.toLowerCase()) ||
-      t.user?.email?.toLowerCase().includes(search.toLowerCase());
-    return matchesSearch;
-  });
-
-  const columns: Column<SupportTicket>[] = [
+   const columns: Column<SupportTicket>[] = [
     {
       key: 'subject',
       label: 'Sujet',
@@ -97,7 +93,7 @@ export function AdminSupportPage() {
       key: 'priority',
       label: 'Priorite',
       render: (ticket) => (
-        <span className="text-sm text-gray-600 dark:text-gray-500 capitalize">{ticket.priority}</span>
+        <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${getPriorityColor(ticket.priority)}`}>{getPriorityLabel(ticket.priority)}</span>
       ),
     },
     {
@@ -117,10 +113,10 @@ export function AdminSupportPage() {
   ];
 
   return (
-    <AdminLayout>
+    <>
       <MobileNotOptimizedBanner />
       <div>
-        <PageHeader title="Support" subtitle={`${filtered.length} ticket${filtered.length > 1 ? 's' : ''}`} />
+        <PageHeader title="Support" subtitle={`${tickets.length} ticket${tickets.length > 1 ? 's' : ''}`} />
 
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 p-4 mb-6">
           <div className="flex flex-col sm:flex-row gap-4">
@@ -139,10 +135,21 @@ export function AdminSupportPage() {
               onChange={e => setStatusFilter(e.target.value)}
               className="px-3 py-2.5 border dark:border-gray-700 rounded-xl text-sm bg-white dark:bg-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 cursor-pointer"
             >
-              {STATUS_FILTERS.map(f => (
+             {STATUS_FILTERS.map(f => (
                 <option key={f.value} value={f.value}>{f.label}</option>
-              ))}
-            </select>
+               ))}
+             </select>
+             <select
+               value={priorityFilter}
+               onChange={e => setPriorityFilter(e.target.value)}
+               className="px-3 py-2.5 border dark:border-gray-700 rounded-xl text-sm bg-white dark:bg-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 cursor-pointer"
+             >
+               <option value="">Toutes les priorités</option>
+               <option value="low">Basse</option>
+               <option value="normal">Normale</option>
+               <option value="high">Haute</option>
+               <option value="urgent">Urgente</option>
+             </select>
             <button onClick={() => load()} className="flex items-center gap-2 px-4 py-2.5 border dark:border-gray-700 rounded-xl text-sm font-medium hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
               <RefreshCw className="w-4 h-4" />
               Actualiser
@@ -154,7 +161,7 @@ export function AdminSupportPage() {
           <div className="flex justify-center py-12"><Loader2 className="w-8 h-8 animate-spin text-primary-600" /></div>
         ) : (
           <AdminTable
-            data={filtered}
+            data={tickets}
             columns={columns}
             keyExtractor={(t) => t.id}
 
@@ -168,6 +175,6 @@ export function AdminSupportPage() {
           />
         )}
       </div>
-    </AdminLayout>
+    </>
   );
 }

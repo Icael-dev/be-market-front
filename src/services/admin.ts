@@ -251,10 +251,11 @@ export async function fetchAdminLoyaltyPoints(params?: { page?: number; per_page
 }
 
 // Support
-export async function fetchAdminSupportTickets(params?: { page?: number; per_page?: number; status?: string; priority?: string }): Promise<PaginatedResponse<SupportTicket>> {
+export async function fetchAdminSupportTickets(params?: { page?: number; per_page?: number; status?: string; priority?: string; search?: string }): Promise<PaginatedResponse<SupportTicket>> {
   const search = new URLSearchParams();
   if (params?.status) search.set('status', params.status);
   if (params?.priority) search.set('priority', params.priority);
+  if (params?.search) search.set('search', params.search);
   if (params?.page) search.set('page', String(params.page));
   if (params?.per_page) search.set('per_page', String(params.per_page));
   const qs = search.toString();

@@ -7,13 +7,12 @@ import {
   updateAdminSupportTicket,
   sendAdminSupportMessage
 } from '../../services/admin';
-import { AdminLayout } from '../../components/admin/AdminLayout';
 import { PageHeader } from '../../components/admin/PageHeader';
 import { MobileNotOptimizedBanner } from '../../components/admin/MobileNotOptimizedBanner';
 import { ArrowLeft, Loader2, Send } from 'lucide-react';
 import type { SupportTicket } from '../../types';
 import { format } from 'date-fns';
-import { cn } from '../../lib/utils';
+import { cn, getPriorityColor, getPriorityLabel } from '../../lib/utils';
 
 const STATUS_OPTIONS = [
   { value: 'open', label: 'Ouvert' },
@@ -81,26 +80,26 @@ export function AdminSupportDetailPage() {
 
   if (loading) {
     return (
-      <AdminLayout>
+      <>
         <MobileNotOptimizedBanner />
         <div className="flex justify-center py-12"><Loader2 className="w-8 h-8 animate-spin text-primary-600" /></div>
-      </AdminLayout>
+      </>
     );
   }
 
   if (!ticket) {
     return (
-      <AdminLayout>
+      <>
         <MobileNotOptimizedBanner />
         <div>
           <p className="text-gray-500 dark:text-gray-400">Ticket introuvable</p>
         </div>
-      </AdminLayout>
+      </>
     );
   }
 
   return (
-    <AdminLayout>
+    <>
       <MobileNotOptimizedBanner />
       <div>
         <PageHeader
@@ -179,7 +178,9 @@ export function AdminSupportDetailPage() {
                 </div>
                 <div>
                   <p className="text-gray-500 dark:text-gray-400">Priorite</p>
-                  <p className="font-medium dark:text-white capitalize">{ticket.priority}</p>
+                   <p className="font-medium dark:text-white capitalize">
+                     <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${getPriorityColor(ticket.priority)}`}>{getPriorityLabel(ticket.priority)}</span>
+                   </p>
                 </div>
                 <div>
                   <p className="text-gray-500 dark:text-gray-400">Cree le</p>
@@ -211,6 +212,6 @@ export function AdminSupportDetailPage() {
           </div>
         </div>
       </div>
-    </AdminLayout>
+    </>
   );
 }

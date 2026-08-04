@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { fetchAdminTopProducts, type TopProduct } from '../../services/admin';
-import { AdminLayout } from '../../components/admin/AdminLayout';
 import { PageHeader } from '../../components/admin/PageHeader';
 import { MobileNotOptimizedBanner } from '../../components/admin/MobileNotOptimizedBanner';
 import { AdminTable, type Column } from '../../components/admin/AdminTable';
@@ -42,7 +41,7 @@ export function AdminTopProductsPage() {
   ];
 
   return (
-    <AdminLayout>
+    <>
       <MobileNotOptimizedBanner />
       <div>
         <PageHeader title="Top produits vendus" subtitle="Liste complete des produits les plus vendus" />
@@ -69,6 +68,6 @@ export function AdminTopProductsPage() {
           </motion.div>
         )}
       </div>
-    </AdminLayout>
+    </>
   );
 }

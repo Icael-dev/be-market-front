@@ -10,7 +10,6 @@ import {
 } from '../../services/admin';
 import type { FAQ } from '../../types';
 import { Plus, Edit2, Trash2, Loader2, ChevronDown, ChevronUp } from 'lucide-react';
-import { AdminLayout } from '../../components/admin/AdminLayout';
 import { PageHeader } from '../../components/admin/PageHeader';
 import { MobileNotOptimizedBanner } from '../../components/admin/MobileNotOptimizedBanner';
 import { ConfirmDialog } from '../../components/admin/ConfirmDialog';
@@ -129,7 +128,7 @@ export function AdminFAQPage() {
   };
 
   return (
-    <AdminLayout>
+    <>
       <MobileNotOptimizedBanner />
       <div>
         <PageHeader
@@ -292,6 +291,6 @@ export function AdminFAQPage() {
         total={total}
         onPageChange={(page) => setCurrentPage(page)}
       />
-    </AdminLayout>
+    </>
   );
 }

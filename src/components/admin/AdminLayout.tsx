@@ -1,7 +1,6 @@
-import { ReactNode, useState, useEffect, useCallback } from 'react';
+import { ReactNode, useState, useEffect, useCallback, useRef, useLayoutEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { useTheme } from '../../context/ThemeContext';
 import {
   LayoutDashboard,
   Package,
@@ -26,14 +25,14 @@ import {
   Headphones,
   AlertTriangle,
   Ticket,
-  Sun,
-  Moon,
   MessageSquare,
   HelpCircle,
 } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { WishlistDrawer } from '../WishlistDrawer';
 import { Footer } from '../layout/Footer';
+
+const scrollPositions = new Map<string, number>();
 
 interface AdminLayoutProps {
   children: ReactNode;
@@ -81,7 +80,6 @@ const SIDEBAR_COLLAPSED_W = 'w-20';
 
 export function AdminLayout({ children }: AdminLayoutProps) {
   const { isAdmin, isSuperAdmin, signOut, profile, loading } = useAuth();
-  const { theme, toggleTheme } = useTheme();
   const location = useLocation();
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -93,6 +91,32 @@ export function AdminLayout({ children }: AdminLayoutProps) {
     }
     return false;
   });
+
+  const mainRef = useRef<HTMLDivElement>(null);
+
+  const scrollKey = location.key || location.pathname;
+
+  useLayoutEffect(() => {
+    const mainEl = mainRef.current;
+    if (!mainEl) return;
+    const saved = scrollPositions.get(scrollKey);
+    if (saved !== undefined) {
+      mainEl.scrollTop = saved;
+    }
+  }, [scrollKey]);
+
+  useEffect(() => {
+    const mainEl = mainRef.current;
+    if (!mainEl) return;
+    const handleScroll = () => {
+      scrollPositions.set(scrollKey, mainEl.scrollTop);
+    };
+    mainEl.addEventListener('scroll', handleScroll, { passive: true });
+    return () => {
+      scrollPositions.set(scrollKey, mainEl.scrollTop);
+      mainEl.removeEventListener('scroll', handleScroll);
+    };
+  }, [scrollKey]);
 
   useEffect(() => {
     localStorage.setItem('admin_sidebar_collapsed', String(sidebarCollapsed));
@@ -149,19 +173,12 @@ export function AdminLayout({ children }: AdminLayoutProps) {
                 </div>
               )}
             </Link>
-            <button
-              onClick={toggleTheme}
-              className="p-2.5 ml-3 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
-              title={theme === 'light' ? 'Mode sombre' : 'Mode clair'}
-            >
-              {theme === 'light' ? <Moon className="w-5 h-5" /> : <Sun className="w-5 h-5" />}
-            </button>
-          </div>
-          <div className="flex items-center gap-1">
-            <button
-              onClick={toggleSidebar}
-              className="hidden lg:flex p-3 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
-              title={sidebarCollapsed ? 'Deplier la barre laterale' : 'Replier la barre laterale'}
+         </div>
+            <div className="flex items-center gap-1">
+              <button
+                onClick={toggleSidebar}
+                className="hidden lg:flex p-3 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+                title={sidebarCollapsed ? 'Deplier la barre laterale' : 'Replier la barre laterale'}
             >
               {sidebarCollapsed ? <ChevronRight className="w-5 h-5" /> : <ChevronLeft className="w-5 h-5" />}
             </button>
@@ -290,7 +307,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
         />
       )}
 
-      <main className={cn(`${mainMarginClass} px-6 sm:px-8 lg:px-10 pt-0 pb-5 flex-1 overflow-y-auto scrollbar-hide`)}>
+      <main ref={mainRef} className={cn(`${mainMarginClass} px-6 sm:px-8 lg:px-10 pt-0 pb-5 flex-1 overflow-y-auto scrollbar-hide`)}>
         {children}
       </main>
 

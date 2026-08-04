@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { fetchAdminFailedPayments } from '../../services/admin';
-import { AdminLayout } from '../../components/admin/AdminLayout';
 import { PageHeader } from '../../components/admin/PageHeader';
 import { MobileNotOptimizedBanner } from '../../components/admin/MobileNotOptimizedBanner';
 import { AdminTable, type Column } from '../../components/admin/AdminTable';
@@ -65,7 +64,7 @@ export function AdminFailedPaymentsPage() {
   ];
 
   return (
-    <AdminLayout>
+    <>
       <MobileNotOptimizedBanner />
       <div>
         <PageHeader title="Paiements echoues / bloques" subtitle="Liste complete des paiements en echec" />
@@ -92,6 +91,6 @@ export function AdminFailedPaymentsPage() {
           </motion.div>
         )}
       </div>
-    </AdminLayout>
+    </>
   );
 }

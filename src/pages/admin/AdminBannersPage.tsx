@@ -10,7 +10,6 @@ import {
 } from '../../services/admin';
 import type { Banner } from '../../types';
 import { Plus, Edit2, Trash2, Save, Image as ImageIcon, Loader2, Power } from 'lucide-react';
-import { AdminLayout } from '../../components/admin/AdminLayout';
 import { PageHeader } from '../../components/admin/PageHeader';
 import { MobileNotOptimizedBanner } from '../../components/admin/MobileNotOptimizedBanner';
 import { StatusBadge } from '../../components/admin/StatusBadge';
@@ -153,7 +152,7 @@ export function AdminBannersPage() {
   };
 
   return (
-    <AdminLayout>
+    <>
       <MobileNotOptimizedBanner />
       <div>
         <PageHeader
@@ -385,6 +384,6 @@ export function AdminBannersPage() {
           total={total}
           onPageChange={(page) => setCurrentPage(page)}
         />
-      </AdminLayout>
+      </>
   );
 }

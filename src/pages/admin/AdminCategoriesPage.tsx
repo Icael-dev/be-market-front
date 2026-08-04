@@ -11,7 +11,6 @@ import {
 } from '../../services/admin';
 import type { Category, CategorySpec } from '../../types';
 import { Plus, Edit2, Trash2, X, Save, Loader2, Tag, Power, RotateCcw } from 'lucide-react';
-import { AdminLayout } from '../../components/admin/AdminLayout';
 import { PageHeader } from '../../components/admin/PageHeader';
 import { MobileNotOptimizedBanner } from '../../components/admin/MobileNotOptimizedBanner';
 import { StatusBadge } from '../../components/admin/StatusBadge';
@@ -303,7 +302,7 @@ export function AdminCategoriesPage() {
   ];
 
   return (
-    <AdminLayout>
+    <>
       <MobileNotOptimizedBanner />
       <div>
         <PageHeader
@@ -486,6 +485,6 @@ export function AdminCategoriesPage() {
           message="Cette action est irreversible."
           variant="danger"
         />
-      </AdminLayout>
+      </>
   );
 }

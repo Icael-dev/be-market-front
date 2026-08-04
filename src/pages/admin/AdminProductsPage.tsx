@@ -13,7 +13,6 @@ import {
 import { formatPrice, cn } from '../../lib/utils';
 import { api } from '../../lib/api';
 import { toast } from 'react-hot-toast';
-import { AdminLayout } from '../../components/admin/AdminLayout';
 import { PageHeader } from '../../components/admin/PageHeader';
 import { MobileNotOptimizedBanner } from '../../components/admin/MobileNotOptimizedBanner';
 import { StatusBadge } from '../../components/admin/StatusBadge';
@@ -664,7 +663,7 @@ export function AdminProductsPage() {
   }, [populateForm, setActiveTab, setFormData]);
 
   return (
-    <AdminLayout>
+    <>
       <MobileNotOptimizedBanner />
       <div>
         <PageHeader
@@ -1167,6 +1166,6 @@ export function AdminProductsPage() {
           </>
         )}
       </AnimatePresence>
-    </AdminLayout>
+    </>
   );
 }

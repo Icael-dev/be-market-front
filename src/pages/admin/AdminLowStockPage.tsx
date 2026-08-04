@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { fetchAdminLowStock, type LowStockProduct } from '../../services/admin';
-import { AdminLayout } from '../../components/admin/AdminLayout';
 import { PageHeader } from '../../components/admin/PageHeader';
 import { MobileNotOptimizedBanner } from '../../components/admin/MobileNotOptimizedBanner';
 import { AdminTable, type Column } from '../../components/admin/AdminTable';
@@ -52,7 +51,7 @@ export function AdminLowStockPage() {
   ];
 
   return (
-    <AdminLayout>
+    <>
       <MobileNotOptimizedBanner />
       <div>
         <PageHeader title="Stock bas / rupture" subtitle="Liste complete des produits en stock bas ou rupture" />
@@ -79,6 +78,6 @@ export function AdminLowStockPage() {
           </motion.div>
         )}
       </div>
-    </AdminLayout>
+    </>
   );
 }

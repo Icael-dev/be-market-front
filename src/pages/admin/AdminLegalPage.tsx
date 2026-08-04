@@ -10,7 +10,6 @@ import {
 } from '../../services/admin';
 import type { LegalPage } from '../../types';
 import { Plus, Edit2, Trash2, Loader2, FileText } from 'lucide-react';
-import { AdminLayout } from '../../components/admin/AdminLayout';
 import { PageHeader } from '../../components/admin/PageHeader';
 import { MobileNotOptimizedBanner } from '../../components/admin/MobileNotOptimizedBanner';
 import { ConfirmDialog } from '../../components/admin/ConfirmDialog';
@@ -107,7 +106,7 @@ export function AdminLegalPage() {
   };
 
   return (
-    <AdminLayout>
+    <>
       <MobileNotOptimizedBanner />
       <div>
         <PageHeader
@@ -235,6 +234,6 @@ export function AdminLegalPage() {
           onPageChange={(page) => setCurrentPage(page)}
         />
       </>
-    </AdminLayout>
+    </>
   );
 }

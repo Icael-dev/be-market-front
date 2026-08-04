@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { fetchAdminCategorySales, type CategorySale } from '../../services/admin';
-import { AdminLayout } from '../../components/admin/AdminLayout';
 import { PageHeader } from '../../components/admin/PageHeader';
 import { MobileNotOptimizedBanner } from '../../components/admin/MobileNotOptimizedBanner';
 import { AdminTable, type Column } from '../../components/admin/AdminTable';
@@ -48,7 +47,7 @@ export function AdminCategorySalesPage() {
   ];
 
   return (
-    <AdminLayout>
+    <>
       <MobileNotOptimizedBanner />
       <div>
         <PageHeader title="Ventes par categorie" subtitle="Liste complete des ventes par categorie" />
@@ -75,6 +74,6 @@ export function AdminCategorySalesPage() {
           </motion.div>
         )}
       </div>
-    </AdminLayout>
+    </>
   );
 }

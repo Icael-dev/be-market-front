@@ -3,7 +3,6 @@ import { logger } from '../../lib/logger';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { fetchAdminPayments } from '../../services/admin';
-import { AdminLayout } from '../../components/admin/AdminLayout';
 import { PageHeader } from '../../components/admin/PageHeader';
 import { MobileNotOptimizedBanner } from '../../components/admin/MobileNotOptimizedBanner';
 import { StatusBadge } from '../../components/admin/StatusBadge';
@@ -114,7 +113,7 @@ export function AdminPaymentsPage() {
   ];
 
   return (
-    <AdminLayout>
+    <>
       <MobileNotOptimizedBanner />
       <div>
         <PageHeader title="Paiements" subtitle={`${filtered.length} transaction${filtered.length > 1 ? 's' : ''}`} />
@@ -176,6 +175,6 @@ export function AdminPaymentsPage() {
           />
         )}
       </div>
-    </AdminLayout>
+    </>
   );
 }

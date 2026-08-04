@@ -15,7 +15,6 @@ import {
   fetchAdminFailedPayments,
 } from '../../services/admin';
 import { getStatusLabel, getStatusColor, formatPrice } from '../../lib/utils';
-import { AdminLayout } from '../../components/admin/AdminLayout';
 import { PageHeader } from '../../components/admin/PageHeader';
 import { MobileNotOptimizedBanner } from '../../components/admin/MobileNotOptimizedBanner';
 import {
@@ -168,16 +167,16 @@ export function AdminDashboardPage() {
 
   if (loading) {
     return (
-      <AdminLayout>
+      <>
         <div className=" flex items-center justify-center min-h-[60vh]">
           <div className="animate-spin w-10 h-10 border-2 dark:border-gray-700 border-t-blue-600 rounded-full" />
         </div>
-      </AdminLayout>
+      </>
     );
   }
 
   return (
-    <AdminLayout>
+    <>
       <MobileNotOptimizedBanner />
       <div>
         <PageHeader title="Tableau de bord" subtitle="Vue d'ensemble de votre boutique" />
@@ -385,9 +384,9 @@ export function AdminDashboardPage() {
             <div className="space-y-4">
               {topCustomers.length === 0 ? (
                 <p className="text-center dark:text-gray-500 py-8">Aucune donnée</p>
-              ) : topCustomers.map(customer => (
+              ) : topCustomers.map((customer, index) => (
                 <div
-                  key={customer.email}
+                  key={`${customer.email || 'customer'}-${index}`}
                   className="flex items-center justify-between py-3 border-b dark:border-gray-700 last:border-0"
                 >
                   <div className="min-w-0 flex-1">
@@ -570,6 +569,6 @@ export function AdminDashboardPage() {
           </Link>
         </div>
       </div>
-    </AdminLayout>
+    </>
   );
 }

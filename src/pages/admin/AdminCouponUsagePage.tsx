@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { fetchAdminCouponStats, type CouponStatsResponse } from '../../services/admin';
-import { AdminLayout } from '../../components/admin/AdminLayout';
 import { PageHeader } from '../../components/admin/PageHeader';
 import { MobileNotOptimizedBanner } from '../../components/admin/MobileNotOptimizedBanner';
 import { AdminTable, type Column } from '../../components/admin/AdminTable';
@@ -49,7 +48,7 @@ export function AdminCouponUsagePage() {
   ];
 
   return (
-    <AdminLayout>
+    <>
       <MobileNotOptimizedBanner />
       <div>
         <PageHeader title="Utilisation des coupons" subtitle="Liste complete des coupons et leur utilisation" />
@@ -76,6 +75,6 @@ export function AdminCouponUsagePage() {
           </motion.div>
         )}
       </div>
-    </AdminLayout>
+    </>
   );
 }

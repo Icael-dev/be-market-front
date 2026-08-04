@@ -5,7 +5,6 @@ import { Link } from 'react-router-dom';
 import { fetchAdminCustomers } from '../../services/admin';
 import type { AdminCustomer } from '../../types';
 import { formatPrice } from '../../lib/utils';
-import { AdminLayout } from '../../components/admin/AdminLayout';
 import { PageHeader } from '../../components/admin/PageHeader';
 import { MobileNotOptimizedBanner } from '../../components/admin/MobileNotOptimizedBanner';
 import { AdminTable } from '../../components/admin/AdminTable';
@@ -114,7 +113,7 @@ export function AdminCustomersPage() {
   ];
 
   return (
-    <AdminLayout>
+    <>
       <MobileNotOptimizedBanner />
       <div>
         <PageHeader title="Clients" subtitle={`${customers.length} clients inscrits`} />
@@ -165,6 +164,6 @@ export function AdminCustomersPage() {
           />
         </motion.div>
       </div>
-    </AdminLayout>
+    </>
   );
 }

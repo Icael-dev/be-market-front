@@ -2,7 +2,6 @@ import { useEffect, useState, useCallback } from 'react';
 import { logger } from '../../lib/logger';
 import { motion } from 'framer-motion';
 import { fetchAdminStatistics, fetchAdminTopProducts, fetchAdminLowStock, fetchAdminCouponStats, fetchAdminCategorySales, type TopProduct, type LowStockProduct, type CouponStatsResponse, type CategorySale } from '../../services/admin';
-import { AdminLayout } from '../../components/admin/AdminLayout';
 import { PageHeader } from '../../components/admin/PageHeader';
 import { MobileNotOptimizedBanner } from '../../components/admin/MobileNotOptimizedBanner';
 import { Link } from 'react-router-dom';
@@ -229,7 +228,7 @@ export function AdminStatisticsPage() {
   ];
 
   return (
-    <AdminLayout>
+    <>
       <MobileNotOptimizedBanner />
       <div>
         <PageHeader
@@ -411,6 +410,6 @@ export function AdminStatisticsPage() {
           )
         )}
       </div>
-    </AdminLayout>
+    </>
   );
 }

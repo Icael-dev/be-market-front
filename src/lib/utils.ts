@@ -72,5 +72,25 @@ export function getStatusLabel(status: string): string {
     resolved: 'Résolu',
     closed: 'Fermé'
   };
-  return labels[status] || status;
+   return labels[status] || status;
+}
+
+export function getPriorityColor(priority: string): string {
+  const colors: Record<string, string> = {
+    low: 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300',
+    normal: 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400',
+    high: 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-400',
+    urgent: 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400',
+  };
+  return colors[priority] || 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300';
+}
+
+export function getPriorityLabel(priority: string): string {
+  const labels: Record<string, string> = {
+    low: 'Basse',
+    normal: 'Normale',
+    high: 'Haute',
+    urgent: 'Urgente',
+  };
+  return labels[priority] || 'Normale';
 }

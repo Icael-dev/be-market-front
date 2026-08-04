@@ -11,7 +11,6 @@ import {
 import { fetchProducts } from '../../services/products';
 import type { BlogPost, Product } from '../../types';
 import { Plus, Edit2, Trash2, Save, FileText, Calendar, Loader2, Power } from 'lucide-react';
-import { AdminLayout } from '../../components/admin/AdminLayout';
 import { PageHeader } from '../../components/admin/PageHeader';
 import { MobileNotOptimizedBanner } from '../../components/admin/MobileNotOptimizedBanner';
 import { StatusBadge } from '../../components/admin/StatusBadge';
@@ -254,7 +253,7 @@ export function AdminBlogPage() {
   ];
 
   return (
-    <AdminLayout>
+    <>
       <MobileNotOptimizedBanner />
       <div>
         <PageHeader
@@ -416,6 +415,6 @@ export function AdminBlogPage() {
         message="Cette action est irreversible."
         variant="danger"
       />
-    </AdminLayout>
+    </>
   );
 }

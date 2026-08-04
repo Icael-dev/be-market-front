@@ -7,6 +7,7 @@ import { AuthProvider, useAuth } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
 import { WishlistProvider } from './context/WishlistContext';
 import { Layout } from './components/layout/Layout';
+import { AdminLayout } from './components/admin/AdminLayout';
 import { PageLoading } from './components/LoadingSpinner';
 
 const scrollPositions = new Map<string, number>();
@@ -108,8 +109,8 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
   return <>{children}</>;
 }
 
-function AdminRoute({ children, superAdmin = false }: { children: React.ReactNode; superAdmin?: boolean }) {
-  const { isAdmin, isSuperAdmin, loading } = useAuth();
+function AdminRoute() {
+  const { isAdmin, loading } = useAuth();
 
   if (loading) {
     return (
@@ -123,11 +124,15 @@ function AdminRoute({ children, superAdmin = false }: { children: React.ReactNod
     return <Navigate to="/" replace />;
   }
 
-  if (superAdmin && !isSuperAdmin) {
+  return <AdminLayout><Outlet /></AdminLayout>;
+}
+
+function AdminSuperAdminRoute() {
+  const { isSuperAdmin } = useAuth();
+  if (!isSuperAdmin) {
     return <Navigate to="/admin" replace />;
   }
-
-  return <>{children}</>;
+  return <Outlet />;
 }
 
 function AdminIndexRoute() {
@@ -201,32 +206,36 @@ function AppRoutes() {
               <Route path="*" element={<LazyNotFoundPage />} />
             </Route>
 
-            <Route path="/admin" element={<AdminRoute><AdminIndexRoute /></AdminRoute>} />
-            <Route path="/admin/categories" element={<AdminRoute><LazyAdminCategoriesPage /></AdminRoute>} />
-            <Route path="/admin/products" element={<AdminRoute><LazyAdminProductsPage /></AdminRoute>} />
-            <Route path="/admin/orders" element={<AdminRoute><LazyAdminOrdersPage /></AdminRoute>} />
-            <Route path="/admin/customers" element={<AdminRoute><LazyAdminCustomersPage /></AdminRoute>} />
-            <Route path="/admin/customers/:id" element={<AdminRoute><LazyAdminCustomerDetailPage /></AdminRoute>} />
-            <Route path="/admin/payments" element={<AdminRoute><LazyAdminPaymentsPage /></AdminRoute>} />
-            <Route path="/admin/loyalty" element={<AdminRoute><LazyAdminLoyaltyPage /></AdminRoute>} />
-            <Route path="/admin/support" element={<AdminRoute><LazyAdminSupportPage /></AdminRoute>} />
-            <Route path="/admin/support/:id" element={<AdminRoute><LazyAdminSupportDetailPage /></AdminRoute>} />
-            <Route path="/admin/banners" element={<AdminRoute><LazyAdminBannersPage /></AdminRoute>} />
-            <Route path="/admin/blog" element={<AdminRoute><LazyAdminBlogPage /></AdminRoute>} />
-            <Route path="/admin/testimonials" element={<AdminRoute><LazyAdminTestimonialsPage /></AdminRoute>} />
-            <Route path="/admin/faq" element={<AdminRoute><LazyAdminFAQPage /></AdminRoute>} />
-            <Route path="/admin/legal-pages" element={<AdminRoute superAdmin><LazyAdminLegalPage /></AdminRoute>} />
-            <Route path="/admin/settings" element={<AdminRoute superAdmin><LazyAdminSettingsPage /></AdminRoute>} />
-            <Route path="/admin/users" element={<AdminRoute superAdmin><LazyAdminUsersPage /></AdminRoute>} />
-            <Route path="/admin/statistics" element={<AdminRoute superAdmin><LazyAdminStatisticsPage /></AdminRoute>} />
-            <Route path="/admin/statistics/top-products" element={<AdminRoute><LazyAdminTopProductsPage /></AdminRoute>} />
-            <Route path="/admin/statistics/low-stock" element={<AdminRoute><LazyAdminLowStockPage /></AdminRoute>} />
-            <Route path="/admin/statistics/coupons" element={<AdminRoute><LazyAdminCouponUsagePage /></AdminRoute>} />
-            <Route path="/admin/statistics/category-sales" element={<AdminRoute><LazyAdminCategorySalesPage /></AdminRoute>} />
-            <Route path="/admin/coupons" element={<AdminRoute><LazyAdminCouponsPage /></AdminRoute>} />
-            <Route path="/admin/export" element={<AdminRoute><LazyAdminExportPage /></AdminRoute>} />
-            <Route path="/admin/flash-sales" element={<AdminRoute><LazyAdminFlashSalesPage /></AdminRoute>} />
-            <Route path="/admin/statistics/failed-payments" element={<AdminRoute><LazyAdminFailedPaymentsPage /></AdminRoute>} />
+            <Route element={<AdminRoute />}>
+              <Route path="/admin" element={<AdminIndexRoute />} />
+              <Route path="/admin/categories" element={<LazyAdminCategoriesPage />} />
+              <Route path="/admin/products" element={<LazyAdminProductsPage />} />
+              <Route path="/admin/orders" element={<LazyAdminOrdersPage />} />
+              <Route path="/admin/customers" element={<LazyAdminCustomersPage />} />
+              <Route path="/admin/customers/:id" element={<LazyAdminCustomerDetailPage />} />
+              <Route path="/admin/payments" element={<LazyAdminPaymentsPage />} />
+              <Route path="/admin/loyalty" element={<LazyAdminLoyaltyPage />} />
+              <Route path="/admin/support" element={<LazyAdminSupportPage />} />
+              <Route path="/admin/support/:id" element={<LazyAdminSupportDetailPage />} />
+              <Route path="/admin/banners" element={<LazyAdminBannersPage />} />
+              <Route path="/admin/blog" element={<LazyAdminBlogPage />} />
+              <Route path="/admin/testimonials" element={<LazyAdminTestimonialsPage />} />
+              <Route path="/admin/faq" element={<LazyAdminFAQPage />} />
+              <Route path="/admin/coupons" element={<LazyAdminCouponsPage />} />
+              <Route path="/admin/export" element={<LazyAdminExportPage />} />
+              <Route path="/admin/flash-sales" element={<LazyAdminFlashSalesPage />} />
+              <Route path="/admin/statistics/failed-payments" element={<LazyAdminFailedPaymentsPage />} />
+              <Route path="/admin/statistics/top-products" element={<LazyAdminTopProductsPage />} />
+              <Route path="/admin/statistics/low-stock" element={<LazyAdminLowStockPage />} />
+              <Route path="/admin/statistics/coupons" element={<LazyAdminCouponUsagePage />} />
+              <Route path="/admin/statistics/category-sales" element={<LazyAdminCategorySalesPage />} />
+              <Route element={<AdminSuperAdminRoute />}>
+                <Route path="/admin/legal-pages" element={<LazyAdminLegalPage />} />
+                <Route path="/admin/settings" element={<LazyAdminSettingsPage />} />
+                <Route path="/admin/users" element={<LazyAdminUsersPage />} />
+                <Route path="/admin/statistics" element={<LazyAdminStatisticsPage />} />
+              </Route>
+            </Route>
           </Routes>
         </Suspense>
       </motion.div>

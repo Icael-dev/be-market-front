@@ -4,7 +4,6 @@ import { useEffect, useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { fetchAdminOrders, updateAdminOrder, restoreAdminOrder } from '../../services/admin';
 import { formatPrice, getStatusColor, getStatusLabel } from '../../lib/utils';
-import { AdminLayout } from '../../components/admin/AdminLayout';
 import { PageHeader } from '../../components/admin/PageHeader';
 import { MobileNotOptimizedBanner } from '../../components/admin/MobileNotOptimizedBanner';
 import { AdminTable, type Column } from '../../components/admin/AdminTable';
@@ -204,7 +203,7 @@ export function AdminOrdersPage() {
   ];
 
   return (
-    <AdminLayout>
+    <>
       <MobileNotOptimizedBanner />
       <div>
         <PageHeader title="Commandes" subtitle={`${orders.length} commandes`} />
@@ -393,6 +392,6 @@ export function AdminOrdersPage() {
           </>
         )}
       </AnimatePresence>
-    </AdminLayout>
+    </>
   );
 }

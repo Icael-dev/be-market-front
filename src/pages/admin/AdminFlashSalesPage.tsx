@@ -11,7 +11,6 @@ import {
 } from '../../services/admin';
 import type { FlashSale, Product } from '../../types';
 import { Plus, Edit2, Trash2, Save, Zap, Loader2, Power } from 'lucide-react';
-import { AdminLayout } from '../../components/admin/AdminLayout';
 import { PageHeader } from '../../components/admin/PageHeader';
 import { MobileNotOptimizedBanner } from '../../components/admin/MobileNotOptimizedBanner';
 import { StatusBadge } from '../../components/admin/StatusBadge';
@@ -206,7 +205,7 @@ export function AdminFlashSalesPage() {
   ];
 
   return (
-    <AdminLayout>
+    <>
       <MobileNotOptimizedBanner />
       <div>
         <PageHeader
@@ -340,6 +339,6 @@ export function AdminFlashSalesPage() {
           message="Cette action est irreversible."
           variant="danger"
         />
-      </AdminLayout>
+      </>
   );
 }

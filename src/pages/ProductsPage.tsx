@@ -37,7 +37,7 @@ export function ProductsPage() {
   const [view, setView] = useState<'grid' | 'list'>('grid');
 
   const [currentPage, setCurrentPage] = useState(1);
-  const [perPage] = useState(8);
+  const [perPage] = useState(15);
   const [totalPages, setTotalPages] = useState(1);
   const [totalProducts, setTotalProducts] = useState(0);
 

@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { fetchAdminSettings, updateAdminSettings } from '../../services/admin';
 import { Settings, Save, Loader2 } from 'lucide-react';
-import { AdminLayout } from '../../components/admin/AdminLayout';
 import { PageHeader } from '../../components/admin/PageHeader';
 import { MobileNotOptimizedBanner } from '../../components/admin/MobileNotOptimizedBanner';
 
@@ -91,7 +90,7 @@ export function AdminSettingsPage() {
   ];
 
   return (
-    <AdminLayout>
+    <>
       <MobileNotOptimizedBanner />
       <div>
         <PageHeader
@@ -156,6 +155,6 @@ export function AdminSettingsPage() {
           </div>
         )}
       </div>
-    </AdminLayout>
+    </>
   );
 }

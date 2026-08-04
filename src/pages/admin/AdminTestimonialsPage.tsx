@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { toast } from 'react-hot-toast';
 import { Plus, Edit2, Trash2, Star, Loader2 } from 'lucide-react';
-import { AdminLayout } from '../../components/admin/AdminLayout';
 import { PageHeader } from '../../components/admin/PageHeader';
 import { MobileNotOptimizedBanner } from '../../components/admin/MobileNotOptimizedBanner';
 import { ConfirmDialog } from '../../components/admin/ConfirmDialog';
@@ -76,7 +75,7 @@ export function AdminTestimonialsPage() {
   };
 
   return (
-    <AdminLayout>
+    <>
       <MobileNotOptimizedBanner />
       <div>
         <PageHeader title="Temoignages" subtitle="Gerer les temoignages clients">
@@ -167,6 +166,6 @@ export function AdminTestimonialsPage() {
           />
         </>
       </div>
-    </AdminLayout>
+    </>
   );
 }

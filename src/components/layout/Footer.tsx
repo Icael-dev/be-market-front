@@ -1,11 +1,15 @@
 import { Link } from 'react-router-dom';
+import { cn } from '../../lib/utils';
 import { Mail, Phone, MapPin, Facebook, Instagram, Twitter, Globe } from 'lucide-react';
 
-export function Footer({ compact = false }: { compact?: boolean }) {
+export function Footer({ compact = false, className }: { compact?: boolean; className?: string }) {
   if (compact) {
     return (
-      <footer className="bg-gray-900 text-gray-300 dark:bg-gray-900 dark:text-gray-400 w-full">
-        <div className="w-full px-4 sm:px-6 lg:px-8 py-5">
+      <footer className={cn(
+        "bg-gray-900 text-gray-300 dark:bg-gray-900 dark:text-gray-400 w-full",
+        className
+      )}>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-gray-400 dark:text-gray-500">
             <div className="flex items-center gap-2.5">
               <div className="w-6 h-6 rounded-md brand-gradient flex items-center justify-center">
@@ -40,21 +44,24 @@ export function Footer({ compact = false }: { compact?: boolean }) {
   }
 
   return (
-    <footer className="bg-gray-900 text-gray-300 dark:bg-gray-900 dark:text-gray-400 w-full">
-      <div className="w-full px-4 sm:px-6 lg:px-8 py-14">
+    <footer className={cn(
+      "bg-gray-900 text-gray-300 dark:bg-gray-900 dark:text-gray-400 w-full",
+      className
+    )}>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-8">
-          <div className="text-center sm:text-left">
+          <div className="text-center">
             <Link to="/" className="inline-flex items-center gap-2.5 mb-4">
               <div className="w-10 h-10 rounded-xl brand-gradient flex items-center justify-center">
                 <span className="text-white font-bold text-lg">B</span>
               </div>
               <span className="font-bold text-xl text-white tracking-tightest">BE-Market</span>
             </Link>
-            <p className="text-sm dark:text-gray-500 mb-5 max-w-md mx-auto sm:mx-0 leading-relaxed">
+            <p className="text-sm dark:text-gray-500 mb-5 max-w-md mx-auto leading-relaxed">
               Votre boutique de confiance pour tous vos accessoires electroniques.
               Qualite, prix competitifs et service irreprochable.
             </p>
-            <div className="flex items-center justify-center sm:justify-start gap-3.5">
+            <div className="flex items-center justify-center gap-3.5">
               <a href="https://facebook.com/bemarkettg" target="_blank" rel="noopener noreferrer" aria-label="Facebook" className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center text-gray-400 hover:bg-white/10 hover:text-white transition-all">
                 <Facebook className="w-5 h-5" />
               </a>
@@ -70,7 +77,7 @@ export function Footer({ compact = false }: { compact?: boolean }) {
             </div>
           </div>
 
-          <div className="text-center sm:text-left">
+          <div className="text-center">
             <h3 className="font-semibold text-white mb-4 text-sm uppercase tracking-wider">Service Client</h3>
             <ul className="space-y-2.5">
               <li><Link to="/orders" className="text-sm hover:text-white transition-colors">Suivi de commande</Link></li>
@@ -80,7 +87,7 @@ export function Footer({ compact = false }: { compact?: boolean }) {
             </ul>
           </div>
 
-          <div className="text-center sm:text-left">
+          <div className="text-center">
             <h3 className="font-semibold text-white mb-4 text-sm uppercase tracking-wider">Informations</h3>
             <ul className="space-y-2.5">
               <li><Link to="/legal/cgv" className="text-sm hover:text-white transition-colors">CGV</Link></li>
@@ -90,22 +97,22 @@ export function Footer({ compact = false }: { compact?: boolean }) {
             </ul>
           </div>
 
-          <div className="text-center sm:text-left">
+          <div className="text-center">
             <h3 className="font-semibold text-white mb-4 text-sm uppercase tracking-wider">Contact</h3>
             <ul className="space-y-3">
-              <li className="flex items-center justify-center sm:justify-start gap-3">
+              <li className="flex items-center justify-center gap-3">
                 <MapPin className="w-5 h-5 text-primary-400 flex-shrink-0" />
                 <span className="text-sm">Lome, Togo</span>
               </li>
-              <li className="flex items-center justify-center sm:justify-start gap-3">
+              <li className="flex items-center justify-center gap-3">
                 <Phone className="w-5 h-5 text-primary-400 flex-shrink-0" />
                 <span className="text-sm">+228 90 00 00 00</span>
               </li>
-              <li className="flex items-center justify-center sm:justify-start gap-3">
+              <li className="flex items-center justify-center gap-3">
                 <Mail className="w-5 h-5 text-primary-400 flex-shrink-0" />
                 <span className="text-sm">contact@be-market.tg</span>
               </li>
-              <li className="flex items-center justify-center sm:justify-start gap-3">
+              <li className="flex items-center justify-center gap-3">
                 <Globe className="w-5 h-5 text-primary-400 flex-shrink-0" />
                 <span className="text-sm">Lun-Sam: 8h - 19h</span>
               </li>
