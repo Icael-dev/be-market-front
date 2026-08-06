@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 import { createContext, useCallback, useContext, useEffect, useRef, useState, ReactNode } from 'react';
 import { initializeCsrf } from '../lib/api';
 import { login, logout, register, getCurrentUser, refreshToken as refreshAuthToken } from '../services/auth';

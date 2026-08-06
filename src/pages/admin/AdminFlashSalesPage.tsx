@@ -1,6 +1,6 @@
 import { toast } from 'react-hot-toast';
 import { logger } from '../../lib/logger';
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import {
   createAdminFlashSale,
@@ -26,9 +26,7 @@ export function AdminFlashSalesPage() {
   const [flashSales, setFlashSales] = useState<FlashSale[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [perPage] = useState(10);
-  const [total, setTotal] = useState(0);
   const [products, setProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   useEscape(() => setShowForm(false), showForm);
   const [editingSale, setEditingSale] = useState<FlashSale | null>(null);
@@ -59,11 +57,8 @@ export function AdminFlashSalesPage() {
       setFlashSales(sales);
       setProducts(products);
       setCurrentPage(1);
-      setTotal(sales.length);
     } catch (error) {
       logger.error('Flash sales fetch error:', error);
-    } finally {
-      setLoading(false);
     }
   };
 

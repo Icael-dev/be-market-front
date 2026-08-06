@@ -1,5 +1,5 @@
 {
-  "name": "vite-react-typescript-starter",
+  "name": "be-market-front",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -23,11 +23,11 @@
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-hot-toast": "^2.6.0",
-    "react-router-dom": "^7.17.0",
+    "react-router-dom": "^7.11.0",
     "recharts": "^3.8.1"
   },
   "devDependencies": {
-    "@eslint/config-array": "^1.0.0",
+    "@eslint/config-array": "^0.21.0",
     "@eslint/eslintrc": "^2.1.4",
     "@eslint/js": "^9.9.1",
     "@testing-library/jest-dom": "^7.0.0",

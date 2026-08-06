@@ -13,7 +13,6 @@ export interface RegisterPayload {
 }
 
 export interface AuthResult {
-  token: string;
   user: AuthUser;
   profile: Profile | null;
 }

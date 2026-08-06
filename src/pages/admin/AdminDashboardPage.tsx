@@ -65,10 +65,6 @@ export function AdminDashboardPage() {
     Array<{ id: string; order_number: string; payment_method: string; total: number; status: string }>
   >([]);
 
-  useEffect(() => {
-    fetchDashboardData();
-  }, []);
-
   const fetchDashboardData = useCallback(async () => {
     try {
       const [
@@ -155,6 +151,10 @@ export function AdminDashboardPage() {
       setLoading(false);
     }
   }, []);
+
+  useEffect(() => {
+    fetchDashboardData();
+  }, [fetchDashboardData]);
 
   const colorClasses: Record<string, string> = {
     blue: 'dark:bg-blue-900/30 dark:text-blue-400',
