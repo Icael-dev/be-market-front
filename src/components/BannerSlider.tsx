@@ -25,10 +25,15 @@ export function BannerSlider() {
     }
   }, [banners]);
 
+  useEffect(() => {
+    setCurrentIndex(0);
+  }, [banners.length]);
+
   const loadBanners = async () => {
     try {
       const data = await fetchBannersService();
-      setBanners(data);
+      const banners = Array.isArray(data) ? data.filter((banner) => banner && banner.id && banner.image_url) : [];
+      setBanners(banners);
     } catch (error) {
       logger.error('Failed to load banners:', error);
     } finally {
@@ -59,6 +64,8 @@ export function BannerSlider() {
   if (banners.length === 0) return null;
 
   const banner = banners[currentIndex];
+
+  if (!banner) return null;
 
   return (
     <div
