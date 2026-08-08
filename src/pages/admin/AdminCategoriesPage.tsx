@@ -336,6 +336,19 @@ export function AdminCategoriesPage() {
             currentPage={currentPage}
             lastPage={totalPages}
             onPageChange={(page) => setCurrentPage(page)}
+            onRowClick={(category) => {
+              setEditingCategory(category);
+              setFormData({
+                name: category.name,
+                slug: category.slug,
+                description: category.description || '',
+                is_active: category.is_active,
+                specs: category.specs && category.specs.length > 0
+                  ? category.specs.map(s => ({ key: s.key, placeholder: s.placeholder || '' }))
+                  : [{ key: '', placeholder: '' }]
+              });
+              setShowForm(true);
+            }}
           />
         </motion.div>
       </div>

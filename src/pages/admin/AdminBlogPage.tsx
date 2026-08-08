@@ -284,6 +284,19 @@ export function AdminBlogPage() {
             currentPage={currentPage}
             lastPage={totalPages}
             onPageChange={(page) => setCurrentPage(page)}
+            onRowClick={(post) => {
+              setEditingPost(post);
+              setFormData({
+                title: post.title,
+                content: post.content || '',
+                excerpt: post.excerpt || '',
+                image_url: post.image_url || '',
+                is_published: post.is_published,
+                related_product_ids: post.related_product_ids || []
+              });
+              setImageUrls(post.image_url ? [post.image_url] : []);
+              setShowForm(true);
+            }}
           />
         </motion.div>
       </div>

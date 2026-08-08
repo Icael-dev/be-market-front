@@ -135,7 +135,7 @@ export function AdminTestimonialsPage() {
         ) : (
           <div className="space-y-4">
             {paginatedTestimonials.map((t, i) => (
-              <motion.div key={t.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.03 }} className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 p-6 flex items-start justify-between">
+              <motion.div key={t.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.03 }} className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 p-6 flex items-start justify-between cursor-pointer hover:border-primary-300 dark:hover:border-primary-700 transition-colors" onClick={() => openEdit(t)}>
                 <div>
                   <div className="flex items-center gap-3 mb-2">
                     <h3 className="font-bold dark:text-white">{t.full_name}</h3>
@@ -146,7 +146,7 @@ export function AdminTestimonialsPage() {
                   <p className="text-gray-600 dark:text-gray-400 text-sm">{t.comment}</p>
                   <p className="text-xs text-gray-400 mt-2">{format(new Date(t.created_at), 'dd MMM yyyy')}</p>
                 </div>
-                <div className="flex gap-2 flex-shrink-0">
+                <div className="flex gap-2 flex-shrink-0" onClick={(e) => e.stopPropagation()}>
                   <button onClick={() => openEdit(t)} className="p-2 text-gray-500 hover:text-primary-600"><Edit2 className="w-4 h-4" /></button>
                   <button onClick={() => setDeleteId(t.id)} className="p-2 text-gray-500 hover:text-red-600"><Trash2 className="w-4 h-4" /></button>
                 </div>

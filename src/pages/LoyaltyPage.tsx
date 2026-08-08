@@ -170,16 +170,26 @@ className="card p-6"
               <ul className="space-y-2 text-gray-600 dark:text-gray-300">
                 <li className="flex items-start gap-2">
                   <Star className="w-4 h-4 text-primary-600 mt-0.5" />
-                  Gagnez 1 point pour chaque 1000 FCFA d'achat
+                  Gagnez 1 point pour chaque 2500 FCFA d'achat
                 </li>
                 <li className="flex items-start gap-2">
                   <Gift className="w-4 h-4 text-primary-600 mt-0.5" />
-                  1 point = 50 FCFA de reduction
+                    1 point = 25 FCFA de reduction
                 </li>
                 <li className="flex items-start gap-2">
                   <TrendingUp className="w-4 h-4 text-primary-600 mt-0.5" />
                   Utilisez vos points a tout moment lors du checkout
                 </li>
+                <li className="flex items-start gap-2">
+                  <History className="w-4 h-4 text-primary-600 mt-0.5" />
+                  Vos points sont valables 6 mois
+                </li>
+                {loyalty && loyalty.threshold > 0 && (
+                  <li className="flex items-start gap-2">
+                    <Package className="w-4 h-4 text-primary-600 mt-0.5" />
+                    Depensez au moins {loyalty.threshold.toLocaleString()} FCFA pour utiliser vos points
+                  </li>
+                )}
               </ul>
             </motion.div>
           </>

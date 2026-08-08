@@ -246,7 +246,7 @@ export function AdminProductsPage() {
       key: 'actions',
       label: 'Actions',
       render: (product) => (
-        <div className="flex items-center justify-end gap-2">
+        <div className="flex items-center justify-end gap-2" onClick={(e) => e.stopPropagation()}>
           {product.deleted_at ? (
             <button
               onClick={() => handleRestore(product.id)}
@@ -734,6 +734,9 @@ export function AdminProductsPage() {
             currentPage={currentPage}
             lastPage={totalPages}
             onPageChange={(page) => setCurrentPage(page)}
+            onRowClick={(product) => {
+              window.location.href = `/admin/products/${product.id}`;
+            }}
           />
         </motion.div>
       </div>

@@ -178,7 +178,8 @@ export function AdminBannersPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.05 }}
-              className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 overflow-hidden"
+              className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 overflow-hidden cursor-pointer hover:border-primary-300 dark:hover:border-primary-700 transition-colors"
+              onClick={() => handleEdit(banner)}
             >
                 <div className="relative h-48">
                   <img
@@ -205,7 +206,7 @@ export function AdminBannersPage() {
                 </div>
               </div>
 
-              <div className="p-4 flex justify-between items-center">
+              <div className="p-4 flex justify-between items-center" onClick={(e) => e.stopPropagation()}>
                 <div className="text-sm dark:text-gray-500">
                   {banner.link_url && (
                     <span>Lien: {banner.link_url}</span>

@@ -53,6 +53,14 @@ export async function fetchAdminProducts(): Promise<Product[]> {
   return unwrapList(await api.get<MaybePaginated<Product>>('/api/admin/products'));
 }
 
+export async function fetchAdminProduct(id: string): Promise<Product> {
+  return api.get<Product>(`/api/admin/products/${id}`);
+}
+
+export async function fetchAdminProductOrders(id: string): Promise<Order[]> {
+  return unwrapList(await api.get<MaybePaginated<Order>>(`/api/admin/products/${id}/orders`));
+}
+
 export async function createAdminProduct(product: Partial<Product>): Promise<Product> {
   return api.post<Product>('/api/admin/products', product);
 }
@@ -190,9 +198,10 @@ export async function restoreAdminOrder(id: string): Promise<Order> {
 }
 
 // Customers
-export async function fetchAdminCustomers(params?: { page?: number; per_page?: number; email?: string }): Promise<PaginatedResponse<AdminCustomer>> {
+export async function fetchAdminCustomers(params?: { page?: number; per_page?: number; email?: string; search?: string }): Promise<PaginatedResponse<AdminCustomer>> {
   const search = new URLSearchParams();
   if (params?.email) search.set('email', params.email);
+  if (params?.search) search.set('search', params.search);
   if (params?.page) search.set('page', String(params.page));
   if (params?.per_page) search.set('per_page', String(params.per_page));
   const qs = search.toString();

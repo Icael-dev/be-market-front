@@ -172,6 +172,9 @@ export function AdminSupportPage() {
             currentPage={currentPage}
             lastPage={lastPage}
             onPageChange={(page) => load(page)}
+            onRowClick={(t) => {
+              window.location.href = `/admin/support/${t.id}`;
+            }}
           />
         )}
       </div>

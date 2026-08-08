@@ -234,6 +234,17 @@ export function AdminFlashSalesPage() {
             currentPage={currentPage}
             lastPage={totalPages}
             onPageChange={(page) => setCurrentPage(page)}
+            onRowClick={(sale) => {
+              setEditingSale(sale);
+              setFormData({
+                product_id: sale.product_id,
+                discount_percentage: sale.discount_percentage ?? 20,
+                starts_at: sale.starts_at || '',
+                ends_at: sale.ends_at || '',
+                is_active: sale.is_active
+              });
+              setShowForm(true);
+            }}
             renderActions={(sale) => (
               <div className="flex items-center justify-end gap-2">
                 <button onClick={() => handleToggleActive(sale)} disabled={togglingId === sale.id} className={`p-3 rounded-lg border transition-colors disabled:opacity-50 ${sale.is_active ? 'bg-green-100 text-green-700 border-green-300 hover:bg-green-200 dark:bg-green-900/40 dark:text-green-300 dark:border-green-700 dark:hover:bg-green-900/60' : 'bg-gray-100 text-gray-600 border-gray-300 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-600'}`} title={sale.is_active ? 'Desactiver' : 'Activer'}>

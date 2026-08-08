@@ -85,6 +85,7 @@ const LazyAdminExportPage = lazy(() => import('./pages/admin/AdminExportPage').t
 const LazyAdminFlashSalesPage = lazy(() => import('./pages/admin/AdminFlashSalesPage').then(m => ({ default: m.AdminFlashSalesPage })));
 const LazyAdminUsersPage = lazy(() => import('./pages/admin/AdminUsersPage').then(m => ({ default: m.AdminUsersPage })));
 const LazyAdminCustomerDetailPage = lazy(() => import('./pages/admin/AdminCustomerDetailPage').then(m => ({ default: m.AdminCustomerDetailPage })));
+const LazyAdminProductDetailPage = lazy(() => import('./pages/admin/AdminProductDetailPage').then(m => ({ default: m.AdminProductDetailPage })));
 const LazyAdminPaymentsPage = lazy(() => import('./pages/admin/AdminPaymentsPage').then(m => ({ default: m.AdminPaymentsPage })));
 const LazyAdminLoyaltyPage = lazy(() => import('./pages/admin/AdminLoyaltyPage').then(m => ({ default: m.AdminLoyaltyPage })));
 const LazyAdminSupportPage = lazy(() => import('./pages/admin/AdminSupportPage').then(m => ({ default: m.AdminSupportPage })));
@@ -210,6 +211,7 @@ function AppRoutes() {
               <Route path="/admin" element={<AdminIndexRoute />} />
               <Route path="/admin/categories" element={<LazyAdminCategoriesPage />} />
               <Route path="/admin/products" element={<LazyAdminProductsPage />} />
+              <Route path="/admin/products/:id" element={<LazyAdminProductDetailPage />} />
               <Route path="/admin/orders" element={<LazyAdminOrdersPage />} />
               <Route path="/admin/customers" element={<LazyAdminCustomersPage />} />
               <Route path="/admin/customers/:id" element={<LazyAdminCustomerDetailPage />} />

@@ -172,6 +172,13 @@ export function AdminPaymentsPage() {
               setCurrentPage(page);
               load(page);
             }}
+            onRowClick={(p) => {
+              if (p.order_id) {
+                window.location.href = `/admin/orders?highlight=${p.order_id}`;
+              } else if (p.user_id) {
+                window.location.href = `/admin/customers/${p.user_id}`;
+              }
+            }}
           />
         )}
       </div>

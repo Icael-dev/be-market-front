@@ -229,6 +229,19 @@ export function AdminCouponsPage() {
             currentPage={currentPage}
             lastPage={totalPages}
             onPageChange={(page) => setCurrentPage(page)}
+            onRowClick={(coupon) => {
+              setEditing(coupon);
+              setForm({
+                code: coupon.code,
+                discount_type: coupon.discount_type,
+                discount_value: coupon.discount_value,
+                min_order_amount: coupon.min_order_amount,
+                max_uses: coupon.max_uses,
+                expires_at: coupon.expires_at || '',
+                is_active: coupon.is_active
+              });
+              setShowForm(true);
+            }}
           />
         </motion.div>
       </div>

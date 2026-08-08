@@ -17,20 +17,23 @@ export function AdminCustomersPage() {
   const [total, setTotal] = useState(0);
   const [lastPage, setLastPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState('');
+  const [error, setError] = useState<string | null>(null);
 
   const fetchCustomers = useCallback(async (page = 1) => {
+    setError(null);
     try {
       const result = await fetchAdminCustomers({
         page,
         per_page: perPage,
-        email: searchQuery || undefined
+        search: searchQuery || undefined
       });
       setCustomers(result.data || []);
       setCurrentPage(result.current_page);
       setLastPage(result.last_page);
       setTotal(result.total);
-    } catch (error) {
-      logger.error('Error fetching customers:', error);
+    } catch (err) {
+      logger.error('Error fetching customers:', err);
+      setError(err instanceof Error ? err.message : 'Erreur lors du chargement des clients');
       setCustomers([]);
     }
   }, [searchQuery, perPage]);
@@ -143,6 +146,11 @@ export function AdminCustomersPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
         >
+          {error && (
+            <div className="mb-4 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl text-sm text-red-600 dark:text-red-400">
+              {error}
+            </div>
+          )}
           <AdminTable
             data={customers}
             columns={columns}
