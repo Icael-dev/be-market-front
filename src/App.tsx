@@ -22,10 +22,10 @@ class ErrorBoundary extends Component<{ children: ReactNode }, { error: Error | 
         <div className="min-h-screen flex items-center justify-center p-8">
           <div className="max-w-lg text-center">
             <h1 className="text-2xl font-bold text-gray-900 mb-4">Une erreur est survenue</h1>
-            <pre className="text-sm text-red-600 bg-red-50 p-4 rounded-xl text-left overflow-auto mb-4">
+            <pre className="text-sm text-red-600 bg-red-50 p-4 rounded-lg text-left overflow-auto mb-4">
               {(this.state.error as Error).message}
             </pre>
-            <button onClick={() => window.location.reload()} className="px-6 py-3 bg-primary-600 text-white rounded-xl">
+            <button onClick={() => window.location.reload()} className="px-6 py-3 bg-primary-600 text-white rounded-lg">
               Recharger la page
             </button>
           </div>

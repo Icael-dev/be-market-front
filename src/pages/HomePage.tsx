@@ -206,7 +206,7 @@ useEffect(() => {
         <motion.img
           src={image3}
           alt=""
-          className="absolute left-[5%] top-[22%] w-16 h-16 sm:w-20 sm:h-20 md:w-28 md:h-28 lg:w-36 lg:h-36 xl:w-44 xl:h-44 2xl:w-52 2xl:h-52 object-cover opacity-95 z-20 rounded-3xl"
+          className="absolute left-[5%] top-[22%] w-16 h-16 sm:w-20 sm:h-20 md:w-28 md:h-28 lg:w-36 lg:h-36 xl:w-44 xl:h-44 2xl:w-52 2xl:h-52 object-cover opacity-95 z-20 rounded-lg"
           animate={{ y: [0, -15, 0] }}
           transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
         />
@@ -217,7 +217,7 @@ useEffect(() => {
         <motion.img
           src={image4}
           alt=""
-          className="absolute right-[5%] bottom-[22%] w-20 h-20 sm:w-24 sm:h-24 md:w-36 md:h-36 lg:w-40 lg:h-40 xl:w-48 xl:h-48 object-cover opacity-95 z-20 rounded-3xl"
+          className="absolute right-[5%] bottom-[22%] w-20 h-20 sm:w-24 sm:h-24 md:w-36 md:h-36 lg:w-40 lg:h-40 xl:w-48 xl:h-48 object-cover opacity-95 z-20 rounded-lg"
           animate={{ y: [0, 15, 0] }}
           transition={{ duration: 4.5, repeat: Infinity, ease: 'easeInOut' }}
         />
@@ -266,9 +266,9 @@ useEffect(() => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.1, duration: 0.5 }}
-                className="group relative flex flex-col sm:flex-row items-center sm:items-center gap-3 sm:gap-4 p-3 sm:p-4 rounded-2xl hover:bg-white dark:hover:bg-gray-900 active:bg-white dark:active:bg-gray-900 focus-visible:bg-white dark:focus-visible:bg-gray-900 card-hover transition-all duration-300"
+                className="group relative flex flex-col sm:flex-row items-center sm:items-center gap-3 sm:gap-4 p-3 sm:p-4 rounded-lg hover:bg-white dark:hover:bg-gray-900 active:bg-white dark:active:bg-gray-900 focus-visible:bg-white dark:focus-visible:bg-gray-900 card-hover transition-all duration-300"
               >
-                <div className={`relative w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-gradient-to-br ${feature.color} flex items-center justify-center text-white shadow-lg group-hover:shadow-xl group-hover:scale-110 group-active:scale-110 group-focus-visible:scale-110 transition-all duration-300`}>
+                <div className={`relative w-12 h-12 sm:w-14 sm:h-14 rounded-lg bg-gradient-to-br ${feature.color} flex items-center justify-center text-white shadow-lg group-hover:shadow-xl group-hover:scale-110 group-active:scale-110 group-focus-visible:scale-110 transition-all duration-300`}>
                   <feature.icon className="w-6 h-6 sm:w-7 sm:h-7" />
                 </div>
                 <div className="text-center sm:text-left">
@@ -332,9 +332,9 @@ useEffect(() => {
                       key={`${category.id}-${index}`}
                       to={`/products?category=${category.slug}`}
                       onClick={handleLinkClick}
-                      className="group flex-shrink-0 w-32 sm:w-40 md:w-44 flex flex-col items-center p-3 sm:p-4 md:p-5 bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 hover:border-primary-200 dark:hover:border-primary-800 hover:shadow-premium transition-all duration-300 no-underline"
+                      className="group flex-shrink-0 w-32 sm:w-40 md:w-44 flex flex-col items-center p-3 sm:p-4 md:p-5 bg-white dark:bg-gray-900 rounded-lg border border-gray-100 dark:border-gray-800 hover:border-primary-200 dark:hover:border-primary-800 hover:shadow-premium transition-all duration-300 no-underline"
                     >
-                      <div className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-2xl bg-gradient-to-br from-primary-50 to-cyan-50 dark:from-primary-900/20 dark:to-cyan-900/20 flex items-center justify-center text-primary-600 dark:text-primary-400 mb-2 sm:mb-3 group-hover:scale-110 transition-transform">
+                      <div className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-lg bg-gradient-to-br from-primary-50 to-cyan-50 dark:from-primary-900/20 dark:to-cyan-900/20 flex items-center justify-center text-primary-600 dark:text-primary-400 mb-2 sm:mb-3 group-hover:scale-110 transition-transform">
                         <Icon className="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7" />
                       </div>
                       <h3 className="font-semibold text-gray-900 dark:text-white text-center text-sm">
@@ -457,7 +457,7 @@ useEffect(() => {
                     viewport={{ once: true }}
                     className="flex items-center gap-4"
                   >
-                    <div className="w-10 h-10 rounded-xl bg-white/15 backdrop-blur-sm flex items-center justify-center text-sm font-bold border border-white/20">
+                    <div className="w-10 h-10 rounded-lg bg-white/15 backdrop-blur-sm flex items-center justify-center text-sm font-bold border border-white/20">
                       {item.num}
                     </div>
                     <span className="text-lg font-medium">{item.text}</span>
@@ -473,17 +473,17 @@ useEffect(() => {
               transition={{ duration: 0.7, delay: 0.2 }}
               className="relative"
             >
-              <div className="absolute -inset-4 bg-white/10 rounded-3xl blur-2xl" />
-              <div className="relative bg-white dark:bg-gray-800 rounded-3xl p-8 md:p-10 shadow-2xl">
+              <div className="absolute -inset-4 bg-white/10 rounded-lg blur-2xl" />
+              <div className="relative bg-white dark:bg-gray-800 rounded-lg p-8 md:p-10 shadow-2xl">
                 <div className="text-center mb-8">
-                  <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center mx-auto mb-4 shadow-lg shadow-amber-500/30">
+                  <div className="w-16 h-16 rounded-lg bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center mx-auto mb-4 shadow-lg shadow-amber-500/30">
                     <Zap className="w-8 h-8 text-white" />
                   </div>
                   <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-1">Offre speciale</h3>
                   <p className="text-gray-500 dark:text-gray-400">Reduction exclusive pour les nouveaux clients</p>
                 </div>
 
-                <div className="relative bg-gradient-to-br from-primary-50 to-cyan-50 dark:from-primary-900/20 dark:to-cyan-900/20 rounded-2xl p-8 text-center mb-6 overflow-hidden">
+                <div className="relative bg-gradient-to-br from-primary-50 to-cyan-50 dark:from-primary-900/20 dark:to-cyan-900/20 rounded-lg p-8 text-center mb-6 overflow-hidden">
                   <div className="absolute top-3 right-3 text-xs text-primary-400 font-medium">LIMITEE</div>
                   <div className="text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-primary-600 to-cyan-600 mb-2">
                     -15%
@@ -493,7 +493,7 @@ useEffect(() => {
 
                 <div className="text-center">
                   <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">Utilisez le code promo</p>
-                  <div className="inline-flex items-center gap-2 px-6 py-3 bg-gray-900 dark:bg-white rounded-xl">
+                  <div className="inline-flex items-center gap-2 px-6 py-3 bg-gray-900 dark:bg-white rounded-lg">
                     <span className="font-mono font-bold text-white dark:text-gray-900 text-lg tracking-wider">
                       WELCOME15
                     </span>
@@ -534,7 +534,7 @@ useEffect(() => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1 }}
-                className="relative bg-white dark:bg-gray-900 rounded-3xl border border-gray-100 dark:border-gray-800 p-6 md:p-8 hover:shadow-premium hover:border-primary-100 dark:hover:border-primary-800 transition-all duration-300"
+                className="relative bg-white dark:bg-gray-900 rounded-lg border border-gray-100 dark:border-gray-800 p-6 md:p-8 hover:shadow-premium hover:border-primary-100 dark:hover:border-primary-800 transition-all duration-300"
               >
                 <div className="absolute top-6 right-8 text-6xl text-primary-100 dark:text-primary-900/30 font-serif leading-none">
                   &ldquo;
@@ -579,7 +579,7 @@ useEffect(() => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
           >
-            <div className="w-16 h-16 rounded-2xl brand-gradient flex items-center justify-center mx-auto mb-6 shadow-lg shadow-primary-500/30">
+            <div className="w-16 h-16 rounded-lg brand-gradient flex items-center justify-center mx-auto mb-6 shadow-lg shadow-primary-500/30">
               <Globe className="w-8 h-8 text-white" />
             </div>
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4 tracking-tightest">

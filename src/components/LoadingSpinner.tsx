@@ -31,7 +31,7 @@ export function PageLoading() {
 
 export function ProductCardSkeleton() {
   return (
-    <div className="bg-white dark:bg-gray-900 rounded-2xl overflow-hidden border border-gray-100 dark:border-gray-800">
+    <div className="bg-white dark:bg-gray-900 rounded-lg overflow-hidden border border-gray-100 dark:border-gray-800">
       <div className="aspect-square bg-gradient-to-r from-gray-100 via-gray-50 to-gray-100 dark:from-gray-800 dark:via-gray-700 dark:to-gray-800 shimmer" />
       <div className="p-4 space-y-3">
         <div className="h-3 w-16 bg-gradient-to-r from-gray-100 via-gray-50 to-gray-100 dark:from-gray-800 dark:via-gray-700 dark:to-gray-800 shimmer rounded" />

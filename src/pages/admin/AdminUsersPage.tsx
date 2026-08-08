@@ -289,7 +289,7 @@ export function AdminUsersPage() {
         >
           <button
             onClick={openCreate}
-            className="flex items-center gap-2 bg-primary-600 text-white px-4 py-2.5 rounded-xl font-medium hover:bg-primary-700 transition-colors"
+            className="flex items-center gap-2 bg-primary-600 text-white px-4 py-2.5 rounded-lg font-medium hover:bg-primary-700 transition-colors"
           >
             <Plus className="w-5 h-5" />
             Ajouter un utilisateur
@@ -355,7 +355,7 @@ export function AdminUsersPage() {
                     name="full_name"
                     value={form.full_name}
                     onChange={e => setForm({ ...form, full_name: e.target.value })}
-                    className="w-full px-4 py-3 border dark:border-gray-700 dark:bg-gray-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 dark:text-white dark:placeholder-gray-500"
+                    className="w-full px-4 py-3 border dark:border-gray-700 dark:bg-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 dark:text-white dark:placeholder-gray-500"
                     placeholder="Ex: Awa Diop"
                   />
                   {fieldError('full_name') && <p className="text-xs text-red-500 mt-1">{fieldError('full_name')}</p>}
@@ -369,7 +369,7 @@ export function AdminUsersPage() {
                     name="email"
                     value={form.email}
                     onChange={e => setForm({ ...form, email: e.target.value })}
-                    className="w-full px-4 py-3 border dark:border-gray-700 dark:bg-gray-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 dark:text-white dark:placeholder-gray-500"
+                    className="w-full px-4 py-3 border dark:border-gray-700 dark:bg-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 dark:text-white dark:placeholder-gray-500"
                     placeholder="secretaire@example.com"
                   />
                   {fieldError('email') && <p className="text-xs text-red-500 mt-1">{fieldError('email')}</p>}
@@ -383,7 +383,7 @@ export function AdminUsersPage() {
                     name="phone"
                     value={form.phone}
                     onChange={e => setForm({ ...form, phone: e.target.value })}
-                    className="w-full px-4 py-3 border dark:border-gray-700 dark:bg-gray-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 dark:text-white dark:placeholder-gray-500"
+                    className="w-full px-4 py-3 border dark:border-gray-700 dark:bg-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 dark:text-white dark:placeholder-gray-500"
                     placeholder="+221 ..."
                   />
                 </div>
@@ -398,7 +398,7 @@ export function AdminUsersPage() {
                     name="password"
                     value={form.password}
                     onChange={e => setForm({ ...form, password: e.target.value })}
-                    className="w-full px-4 py-3 border dark:border-gray-700 dark:bg-gray-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 dark:text-white dark:placeholder-gray-500"
+                    className="w-full px-4 py-3 border dark:border-gray-700 dark:bg-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 dark:text-white dark:placeholder-gray-500"
                     placeholder="Minimum 8 caracteres"
                     autoComplete="new-password"
                   />
@@ -412,7 +412,7 @@ export function AdminUsersPage() {
                     name="role"
                     value={form.role}
                     onChange={e => setForm({ ...form, role: e.target.value as UserRole })}
-                    className="w-full px-4 py-3 border dark:border-gray-700 dark:bg-gray-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 dark:text-white dark:placeholder-gray-500"
+                    className="w-full px-4 py-3 border dark:border-gray-700 dark:bg-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 dark:text-white dark:placeholder-gray-500"
                   >
                     {editing?.role === 'client' && (
                       <option value="client">Client (compte boutique)</option>
@@ -430,14 +430,14 @@ export function AdminUsersPage() {
                   <button
                     onClick={handleSave}
                     disabled={saving || !form.full_name || !form.email}
-                    className="flex items-center gap-2 bg-primary-600 text-white px-6 py-2.5 rounded-xl font-medium hover:bg-primary-700 disabled:opacity-50"
+                    className="flex items-center gap-2 bg-primary-600 text-white px-6 py-2.5 rounded-lg font-medium hover:bg-primary-700 disabled:opacity-50"
                   >
                     {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
                     {saving ? 'Enregistrement...' : 'Enregistrer'}
                   </button>
                   <button
                     onClick={() => setShowForm(false)}
-                    className="px-6 py-2.5 border dark:border-gray-700 rounded-xl font-medium hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                    className="px-6 py-2.5 border dark:border-gray-700 rounded-lg font-medium hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
                   >
                     Annuler
                   </button>

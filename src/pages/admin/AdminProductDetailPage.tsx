@@ -148,7 +148,7 @@ export function AdminProductDetailPage() {
         >
           <Link
             to="/admin/products"
-            className="flex items-center gap-2 px-4 py-2.5 border dark:border-gray-700 rounded-xl text-sm font-medium hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+            className="flex items-center gap-2 px-4 py-2.5 border dark:border-gray-700 rounded-lg text-sm font-medium hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
             Retour
@@ -181,7 +181,7 @@ export function AdminProductDetailPage() {
 
         {tab === 'info' && (
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
-            <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 overflow-hidden">
+            <div className="bg-white dark:bg-gray-800 rounded-lg border-2 border-gray-200 dark:border-gray-700 overflow-hidden">
               <div className="p-6 border-b border-gray-200 dark:border-gray-700">
                 <h3 className="font-bold dark:text-white">Informations generales</h3>
               </div>
@@ -250,7 +250,7 @@ export function AdminProductDetailPage() {
             </div>
 
             {product.description && (
-              <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 overflow-hidden">
+              <div className="bg-white dark:bg-gray-800 rounded-lg border-2 border-gray-200 dark:border-gray-700 overflow-hidden">
                 <div className="p-6 border-b border-gray-200 dark:border-gray-700">
                   <h3 className="font-bold dark:text-white">Description</h3>
                 </div>
@@ -261,7 +261,7 @@ export function AdminProductDetailPage() {
             )}
 
             {product.specs && Object.keys(product.specs).length > 0 && (
-              <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 overflow-hidden">
+              <div className="bg-white dark:bg-gray-800 rounded-lg border-2 border-gray-200 dark:border-gray-700 overflow-hidden">
                 <div className="p-6 border-b border-gray-200 dark:border-gray-700">
                   <h3 className="font-bold dark:text-white">Specifications</h3>
                 </div>
@@ -280,7 +280,7 @@ export function AdminProductDetailPage() {
             )}
 
             {product.images && product.images.length > 0 && (
-              <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 overflow-hidden">
+              <div className="bg-white dark:bg-gray-800 rounded-lg border-2 border-gray-200 dark:border-gray-700 overflow-hidden">
                 <div className="p-6 border-b border-gray-200 dark:border-gray-700">
                   <h3 className="font-bold dark:text-white">Images</h3>
                 </div>

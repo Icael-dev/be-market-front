@@ -23,11 +23,11 @@ export function SocialShare({ url, title }: SocialShareProps) {
 
   return (
     <div className="relative">
-      <button onClick={() => setIsOpen(!isOpen)} className="icon-btn border border-gray-200 dark:border-gray-700 hover:border-primary-200 dark:hover:border-primary-800"><Share2 className="w-5 h-5 text-gray-500 dark:text-gray-400" /></button>
+      <button onClick={() => setIsOpen(!isOpen)} className="icon-btn border-2 border-gray-200 dark:border-gray-700 hover:border-primary-200 dark:hover:border-primary-800"><Share2 className="w-5 h-5 text-gray-500 dark:text-gray-400" /></button>
       <AnimatePresence>
         {isOpen && (
           <>
-            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 10 }} className="absolute bottom-full left-0 mb-2 bg-white dark:bg-gray-900 rounded-xl shadow-premium border border-gray-100 dark:border-gray-800 p-3 z-50">
+            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 10 }} className="absolute bottom-full left-0 mb-2 bg-white dark:bg-gray-900 rounded-lg shadow-premium border border-gray-100 dark:border-gray-800 p-3 z-50">
               <div className="flex gap-2">
                 {links.map(l => (<a key={l.name} href={l.url} target="_blank" rel="noopener noreferrer" className={`w-10 h-10 rounded-lg flex items-center justify-center text-white ${l.color}`}><l.icon className="w-5 h-5" /></a>))}
                 <button onClick={copyLink} className={`w-10 h-10 rounded-lg flex items-center justify-center ${copied ? 'bg-green-500 text-white' : 'bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700'}`}><Link2 className="w-5 h-5" /></button>

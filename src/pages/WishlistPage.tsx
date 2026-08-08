@@ -83,7 +83,7 @@ export function WishlistPage() {
             </p>
             <Link
               to="/products"
-              className="inline-flex items-center gap-2 bg-primary-600 text-white px-6 py-3 rounded-xl font-medium hover:bg-primary-700 transition-colors"
+              className="inline-flex items-center gap-2 bg-primary-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-primary-700 transition-colors"
             >
               Decouvrir nos produits
               <ArrowRight className="w-4 h-4" />
@@ -100,7 +100,7 @@ export function WishlistPage() {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, scale: 0.95 }}
                   transition={{ delay: index * 0.03 }}
-                  className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 overflow-hidden group"
+                  className="bg-white dark:bg-gray-800 rounded-lg border dark:border-gray-700 overflow-hidden group"
                 >
                   <Link
                     to={`/product/${item.product?.slug || item.product_id}`}
@@ -143,7 +143,7 @@ export function WishlistPage() {
                       <button
                         onClick={() => handleAddToCart(item.product_id)}
                         disabled={addingToCartId === item.product_id || item.product?.stock === 0}
-                        className="flex-1 flex items-center justify-center gap-2 bg-primary-600 text-white px-4 py-2.5 rounded-xl text-sm font-medium hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                        className="flex-1 flex items-center justify-center gap-2 bg-primary-600 text-white px-4 py-2.5 rounded-lg text-sm font-medium hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                       >
                         {addingToCartId === item.product_id ? (
                           <>
@@ -160,7 +160,7 @@ export function WishlistPage() {
                       <button
                         onClick={() => handleRemove(item.id, item.product_id)}
                         disabled={removingId === item.id}
-                        className="p-2.5 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-xl transition-colors disabled:opacity-50"
+                        className="p-2.5 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg transition-colors disabled:opacity-50"
                         title="Retirer des favoris"
                       >
                         {removingId === item.id ? (

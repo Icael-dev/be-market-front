@@ -210,7 +210,7 @@ export function AdminFlashSalesPage() {
           {isSuperAdmin && (
             <button
               onClick={() => { resetForm(); setShowForm(true); }}
-              className="flex items-center gap-2 bg-orange-500 text-white px-4 py-2.5 rounded-xl font-medium hover:bg-orange-600"
+              className="flex items-center gap-2 bg-orange-500 text-white px-4 py-2.5 rounded-lg font-medium hover:bg-orange-600"
             >
               <Plus className="w-5 h-5" />
               Nouveau Flash Sale
@@ -275,7 +275,7 @@ export function AdminFlashSalesPage() {
               name="product_id"
               value={formData.product_id}
               onChange={e => setFormData({ ...formData, product_id: e.target.value })}
-              className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500/20 bg-white dark:bg-gray-800 dark:text-white dark:placeholder-gray-500"
+              className="w-full px-4 py-3 border dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500/20 bg-white dark:bg-gray-800 dark:text-white dark:placeholder-gray-500"
             >
               <option value="">Selectionnez un produit</option>
               {products.map(p => (
@@ -294,7 +294,7 @@ export function AdminFlashSalesPage() {
                     max="99"
                     value={formData.discount_percentage ?? ''}
                     onChange={e => setFormData({ ...formData, discount_percentage: parseInt(e.target.value) || 0 })}
-                    className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500/20 bg-white dark:bg-gray-800 dark:text-white dark:placeholder-gray-500"
+                    className="w-full px-4 py-3 border dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500/20 bg-white dark:bg-gray-800 dark:text-white dark:placeholder-gray-500"
                   />
                 </div>
 
@@ -307,7 +307,7 @@ export function AdminFlashSalesPage() {
                       name="starts_at"
                       value={formData.starts_at}
                       onChange={e => setFormData({ ...formData, starts_at: e.target.value })}
-                       className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500/20 bg-white dark:bg-gray-800 dark:text-white dark:placeholder-gray-500"
+                       className="w-full px-4 py-3 border dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500/20 bg-white dark:bg-gray-800 dark:text-white dark:placeholder-gray-500"
                      />
                   </div>
                   <div>
@@ -318,7 +318,7 @@ export function AdminFlashSalesPage() {
                       name="ends_at"
                       value={formData.ends_at}
                       onChange={e => setFormData({ ...formData, ends_at: e.target.value })}
-                       className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500/20 bg-white dark:bg-gray-800 dark:text-white dark:placeholder-gray-500"
+                       className="w-full px-4 py-3 border dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500/20 bg-white dark:bg-gray-800 dark:text-white dark:placeholder-gray-500"
                      />
                   </div>
                 </div>
@@ -329,11 +329,11 @@ export function AdminFlashSalesPage() {
                 </label>
 
                 <div className="flex gap-3 pt-4 border-t dark:border-gray-700">
-                  <button onClick={handleSave} disabled={saving || !formData.product_id} className="flex items-center gap-2 bg-orange-500 text-white px-6 py-2.5 rounded-xl font-medium hover:bg-orange-600 disabled:opacity-50">
+                  <button onClick={handleSave} disabled={saving || !formData.product_id} className="flex items-center gap-2 bg-orange-500 text-white px-6 py-2.5 rounded-lg font-medium hover:bg-orange-600 disabled:opacity-50">
                     {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
                     Enregistrer
                   </button>
-                  <button onClick={() => setShowForm(false)} className="px-6 py-2.5 border dark:border-gray-700 rounded-xl font-medium hover:bg-gray-100 dark:hover:bg-gray-700">Annuler</button>
+                  <button onClick={() => setShowForm(false)} className="px-6 py-2.5 border dark:border-gray-700 rounded-lg font-medium hover:bg-gray-100 dark:hover:bg-gray-700">Annuler</button>
                 </div>
               </div>
             </AdminDrawer>

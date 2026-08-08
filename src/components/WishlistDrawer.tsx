@@ -65,7 +65,7 @@ export function WishlistDrawer({ isOpen, onClose }: WishlistDrawerProps) {
                     {items.slice(0, 6).map(item => (
                       <div
                         key={item.id}
-                        className="flex gap-4 p-4 bg-gray-50 dark:bg-gray-800 rounded-xl"
+                        className="flex gap-4 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg"
                       >
                         <Link
                           to={`/product/${item.product?.slug || item.product_id}`}

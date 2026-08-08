@@ -73,7 +73,7 @@ export function RegisterPage() {
         >
           <div className="text-center mb-8">
             <div className="flex items-center justify-center mb-4">
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary-600 to-cyan-500 flex items-center justify-center">
+              <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-primary-600 to-cyan-500 flex items-center justify-center">
                 <span className="text-white font-bold text-xl">B</span>
               </div>
             </div>
@@ -88,7 +88,7 @@ export function RegisterPage() {
               <motion.div
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="p-4 bg-red-50 dark:bg-red-900/50 border border-red-200 dark:border-red-800 rounded-xl text-red-600 dark:text-red-300 text-sm"
+                className="p-4 bg-red-50 dark:bg-red-900/50 border border-red-200 dark:border-red-800 rounded-lg text-red-600 dark:text-red-300 text-sm"
               >
                 {error}
               </motion.div>

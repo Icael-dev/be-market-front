@@ -331,7 +331,7 @@ const handlePlaceOrder = async () => {
                             setUseNewAddress(false);
                           }}
                           className={cn(
-                            'w-full text-left p-4 rounded-xl border-2 transition-all',
+                            'w-full text-left p-4 rounded-lg border-2 transition-all',
                             !useNewAddress && selectedAddressId === address.id
                               ? 'border-primary-600 bg-primary-50 dark:bg-primary-900/30'
                               : 'dark:border-gray-700 dark:hover:border-gray-600'
@@ -364,7 +364,7 @@ const handlePlaceOrder = async () => {
                     <button
                       onClick={() => setUseNewAddress(true)}
                       className={cn(
-                        'w-full text-left p-4 rounded-xl border-2 transition-all',
+                        'w-full text-left p-4 rounded-lg border-2 transition-all',
                         useNewAddress
                           ? 'border-primary-600 bg-primary-50 dark:bg-primary-900/30'
                           : 'dark:border-gray-700 dark:hover:border-gray-600'
@@ -460,14 +460,14 @@ const handlePlaceOrder = async () => {
                         key={method.id}
                         onClick={() => setPaymentMethod(method.id as PaymentMethod)}
                         className={cn(
-                          'w-full flex items-center gap-4 p-4 rounded-xl border-2 transition-all',
+                          'w-full flex items-center gap-4 p-4 rounded-lg border-2 transition-all',
                           paymentMethod === method.id
                             ? 'border-primary-600 dark:bg-primary-900/30'
                             : 'dark:border-gray-700 dark:hover:border-gray-600'
                         )}
                       >
                         <div className={cn(
-                          'w-12 h-12 rounded-xl flex items-center justify-center',
+                          'w-12 h-12 rounded-lg flex items-center justify-center',
                           method.color === 'yellow' && 'bg-yellow-100 text-yellow-700',
                           method.color === 'blue' && 'bg-primary-100 text-primary-700',
                           method.color === 'green' && 'bg-green-100 text-green-700'
@@ -520,7 +520,7 @@ const handlePlaceOrder = async () => {
                       value={notes}
                       onChange={e => setNotes(e.target.value)}
                       rows={3}
-                      className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 bg-white dark:bg-gray-800 dark:text-white dark:placeholder-gray-500"
+                      className="w-full px-4 py-3 border dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 bg-white dark:bg-gray-800 dark:text-white dark:placeholder-gray-500"
                       placeholder="Instructions speciales pour la livraison..."
                     />
                   </div>

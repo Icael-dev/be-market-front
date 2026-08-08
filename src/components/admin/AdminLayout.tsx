@@ -155,21 +155,21 @@ export function AdminLayout({ children }: AdminLayoutProps) {
   return (
     <div className="h-[100vh] flex flex-col page-bg overflow-hidden">
       <div className={cn(
-        'fixed inset-y-0 left-0 border-r border-gray-200 dark:border-gray-800 z-50 transform transition-all duration-300 ease-in-out lg:translate-x-0 shadow-xl lg:shadow-none flex flex-col',
+        'fixed inset-y-0 left-0 z-50 transform transition-all duration-300 ease-in-out lg:translate-x-0 flex flex-col bg-white dark:bg-gray-900',
         sidebarWidthClass,
         sidebarOpen ? 'translate-x-0' : '-translate-x-full'
       )}>
         <div className="h-full flex flex-col">
-        <div className="p-3 border-b border-gray-200 dark:border-gray-800 flex items-center justify-between">
+        <div className="p-3 flex items-center justify-between bg-gradient-to-r from-primary-50/80 to-transparent dark:from-primary-900/20 dark:to-transparent">
           <div className="flex items-center gap-2">
             <Link to="/" className="flex items-center gap-3 group min-w-0">
-              <div className="w-11 h-11 rounded-xl brand-gradient flex items-center justify-center shadow-lg shadow-primary-500/30 group-hover:shadow-primary-500/50 transition-shadow shrink-0">
+              <div className="w-11 h-11 rounded-lg brand-gradient flex items-center justify-center shrink-0 ring-2 ring-primary-100 dark:ring-primary-800">
                 <span className="text-white font-bold text-lg">B</span>
               </div>
               {!sidebarCollapsed && (
                 <div className="min-w-0">
-                  <span className="font-bold dark:text-white text-lg tracking-tight">BE-Market</span>
-                  <p className="text-xs dark:text-gray-500 font-medium">Administration</p>
+                  <span className="font-bold dark:text-white text-lg tracking-tight bg-gradient-to-r from-primary-600 to-cyan-500 bg-clip-text text-transparent">BE-Market</span>
+                  <p className="text-xs dark:text-gray-500 font-medium text-primary-600/80 dark:text-primary-400/80">Administration</p>
                 </div>
               )}
             </Link>
@@ -177,14 +177,14 @@ export function AdminLayout({ children }: AdminLayoutProps) {
             <div className="flex items-center gap-1">
               <button
                 onClick={toggleSidebar}
-                className="hidden lg:flex p-3 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+                className="hidden lg:flex p-3 text-primary-600 dark:text-primary-400 hover:bg-primary-50 dark:hover:bg-primary-900/30 rounded-lg transition-colors"
                 title={sidebarCollapsed ? 'Deplier la barre laterale' : 'Replier la barre laterale'}
             >
               {sidebarCollapsed ? <ChevronRight className="w-5 h-5" /> : <ChevronLeft className="w-5 h-5" />}
             </button>
             <button
               onClick={() => setSidebarOpen(false)}
-              className="lg:hidden p-3 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+              className="lg:hidden p-3 text-primary-600 dark:text-primary-400 hover:bg-primary-50 dark:hover:bg-primary-900/30 rounded-lg transition-colors"
             >
               <X className="w-5 h-5" />
             </button>
@@ -195,7 +195,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
             {visibleSections.map(section => (
               <div key={section} className="mb-6">
                 {!sidebarCollapsed && (
-                  <p className="px-4 mb-2 text-xs font-semibold text-gray-500 dark:text-gray-500 uppercase tracking-wider">
+                  <p className="px-4 mb-2 text-xs font-bold text-blue-600/80 dark:text-blue-400/80 uppercase tracking-wider">
                     {section}
                   </p>
                 )}
@@ -210,24 +210,21 @@ export function AdminLayout({ children }: AdminLayoutProps) {
                           to={item.path}
                           onClick={() => setSidebarOpen(false)}
                           className={cn(
-                            'flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 group relative',
+                            'flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 group relative',
                             isActive
-                              ? 'bg-primary-50 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400 font-semibold shadow-sm shadow-primary-100 dark:shadow-primary-900/20'
-                              : 'text-gray-700 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white'
+                              ? 'bg-blue-100 dark:bg-blue-900 text-blue-900 dark:text-blue-100 font-semibold ring-1 ring-blue-200 dark:ring-blue-700'
+                              : 'text-gray-700 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:text-blue-900 dark:hover:text-blue-300'
                           )}
                         >
-                          {isActive && (
-                            <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-primary-600 rounded-r-full" />
-                          )}
                           <item.icon className={cn(
                             'w-5 h-5 shrink-0 transition-colors',
-                            isActive ? 'text-primary-600 dark:text-primary-400' : 'text-gray-500 dark:text-gray-500 group-hover:text-gray-700 dark:group-hover:text-gray-400'
+                            isActive ? 'text-blue-600 dark:text-blue-400' : 'text-gray-500 dark:text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-400'
                           )} />
                           {!sidebarCollapsed && (
                             <>
                               <span className="text-sm font-medium truncate">{item.label}</span>
                               {isActive && (
-                                <ChevronRight className="w-4 h-4 ml-auto text-primary-600 dark:text-primary-400" />
+                                <ChevronRight className="w-4 h-4 ml-auto text-blue-600 dark:text-blue-400" />
                               )}
                             </>
                           )}
@@ -239,22 +236,22 @@ export function AdminLayout({ children }: AdminLayoutProps) {
               ))}
             </nav>
 
-            <div className="p-3 border-t border-gray-200 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-900/50">
+            <div className="p-3 bg-gradient-to-t from-primary-50/50 to-transparent dark:from-primary-900/10 dark:to-transparent">
               {!sidebarCollapsed ? (
                 <div className="flex items-center gap-3 mb-3 px-2">
-                  <div className="w-10 h-10 rounded-full brand-gradient flex items-center justify-center text-white font-semibold shadow-md">
+                  <div className="w-10 h-10 rounded-full brand-gradient flex items-center justify-center text-white font-semibold ring-2 ring-primary-200 dark:ring-primary-700">
                     {profile?.full_name?.[0] || 'A'}
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="font-semibold text-gray-900 dark:text-white text-sm truncate">
                       {profile?.full_name || 'Admin'}
                     </p>
-                    <p className="text-xs text-gray-500 dark:text-gray-500 truncate">{isSuperAdmin ? 'Administrateur' : 'Staff'}</p>
+                    <p className="text-xs text-primary-600 dark:text-primary-400 font-medium truncate">{isSuperAdmin ? 'Administrateur' : 'Staff'}</p>
                   </div>
                 </div>
               ) : (
                 <div className="flex justify-center mb-3">
-                  <div className="w-10 h-10 rounded-full brand-gradient flex items-center justify-center text-white font-semibold shadow-md">
+                  <div className="w-10 h-10 rounded-full brand-gradient flex items-center justify-center text-white font-semibold ring-2 ring-primary-200 dark:ring-primary-700">
                     {profile?.full_name?.[0] || 'A'}
                   </div>
                 </div>
@@ -264,7 +261,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
                 <div className="space-y-1">
                   <Link
                     to="/"
-                    className="flex items-center gap-3 px-3 py-2 text-sm text-gray-700 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-all"
+                    className="flex items-center gap-3 px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:text-primary-700 dark:hover:text-primary-300 hover:bg-primary-50 dark:hover:bg-primary-900/20 rounded-lg transition-all"
                   >
                     <Home className="w-4 h-4 shrink-0" />
                     Voir le site
@@ -272,7 +269,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
 
                   <button
                     onClick={signOut}
-                    className="flex items-center gap-3 px-3 py-2 text-sm dark:text-red-400 hover:text-red-700 dark:hover:bg-red-900/30 rounded-lg transition-all w-full"
+                    className="flex items-center gap-3 px-3 py-2 text-sm text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-all w-full font-medium"
                   >
                     <LogOut className="w-4 h-4 shrink-0" />
                     Deconnexion
@@ -282,14 +279,14 @@ export function AdminLayout({ children }: AdminLayoutProps) {
                 <div className="flex flex-col items-center gap-1">
                   <Link
                     to="/"
-                    className="flex items-center justify-center p-2 text-sm text-gray-700 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-all"
+                    className="flex items-center justify-center p-2 text-sm text-gray-700 dark:text-gray-300 hover:text-primary-700 dark:hover:text-primary-300 hover:bg-primary-50 dark:hover:bg-primary-900/20 rounded-lg transition-all"
                     title="Voir le site"
                   >
                     <Home className="w-4 h-4" />
                   </Link>
                   <button
                     onClick={signOut}
-                    className="flex items-center justify-center p-2 text-sm dark:text-red-400 hover:text-red-700 dark:hover:bg-red-900/30 rounded-lg transition-all"
+                    className="flex items-center justify-center p-2 text-sm text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-all"
                     title="Deconnexion"
                   >
                     <LogOut className="w-4 h-4" />

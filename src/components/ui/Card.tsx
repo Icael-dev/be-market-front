@@ -13,8 +13,8 @@ export const Card = forwardRef<HTMLDivElement, CardProps>(
     <div
       ref={ref}
       className={cn(
-        'bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-card transition-all duration-300',
-        premium && 'rounded-3xl border-gray-200/70 dark:border-gray-800 shadow-premium',
+        'bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800 shadow-card transition-all duration-300',
+        premium && 'rounded-lg border-gray-200/70 dark:border-gray-800 shadow-premium',
         inset && 'bg-gray-50 dark:bg-gray-800/60 border-gray-100 dark:border-gray-800',
         hover && 'hover:shadow-hover hover:-translate-y-0.5',
         className
@@ -51,7 +51,7 @@ export const IconBox = forwardRef<HTMLDivElement, IconBoxProps>(
   ({ tone = 'primary', size = 'md', className, children, ...props }, ref) => (
     <div
       ref={ref}
-      className={cn('inline-flex items-center justify-center rounded-xl', toneClasses[tone], sizeClasses[size], className)}
+      className={cn('inline-flex items-center justify-center rounded-lg', toneClasses[tone], sizeClasses[size], className)}
       {...props}
     >
       {children}

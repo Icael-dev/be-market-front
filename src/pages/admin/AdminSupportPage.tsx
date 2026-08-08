@@ -118,7 +118,7 @@ export function AdminSupportPage() {
       <div>
         <PageHeader title="Support" subtitle={`${tickets.length} ticket${tickets.length > 1 ? 's' : ''}`} />
 
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 p-4 mb-6">
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="bg-white dark:bg-gray-800 rounded-lg border dark:border-gray-700 p-4 mb-6">
           <div className="flex flex-col sm:flex-row gap-4">
             <div className="flex-1 relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 dark:text-gray-500" />
@@ -127,13 +127,13 @@ export function AdminSupportPage() {
                 placeholder="Rechercher par sujet ou email..."
                 value={search}
                 onChange={e => setSearch(e.target.value)}
-                className="w-full pl-10 pr-4 py-2.5 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 bg-white dark:bg-gray-800 dark:text-white dark:placeholder-gray-500"
+                className="w-full pl-10 pr-4 py-2.5 border dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 bg-white dark:bg-gray-800 dark:text-white dark:placeholder-gray-500"
               />
             </div>
             <select
               value={statusFilter}
               onChange={e => setStatusFilter(e.target.value)}
-              className="px-3 py-2.5 border dark:border-gray-700 rounded-xl text-sm bg-white dark:bg-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 cursor-pointer"
+              className="px-3 py-2.5 border dark:border-gray-700 rounded-lg text-sm bg-white dark:bg-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 cursor-pointer"
             >
              {STATUS_FILTERS.map(f => (
                 <option key={f.value} value={f.value}>{f.label}</option>
@@ -142,7 +142,7 @@ export function AdminSupportPage() {
              <select
                value={priorityFilter}
                onChange={e => setPriorityFilter(e.target.value)}
-               className="px-3 py-2.5 border dark:border-gray-700 rounded-xl text-sm bg-white dark:bg-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 cursor-pointer"
+               className="px-3 py-2.5 border dark:border-gray-700 rounded-lg text-sm bg-white dark:bg-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 cursor-pointer"
              >
                <option value="">Toutes les priorités</option>
                <option value="low">Basse</option>
@@ -150,7 +150,7 @@ export function AdminSupportPage() {
                <option value="high">Haute</option>
                <option value="urgent">Urgente</option>
              </select>
-            <button onClick={() => load()} className="flex items-center gap-2 px-4 py-2.5 border dark:border-gray-700 rounded-xl text-sm font-medium hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+            <button onClick={() => load()} className="flex items-center gap-2 px-4 py-2.5 border dark:border-gray-700 rounded-lg text-sm font-medium hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
               <RefreshCw className="w-4 h-4" />
               Actualiser
             </button>

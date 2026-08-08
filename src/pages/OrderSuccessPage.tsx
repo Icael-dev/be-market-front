@@ -158,7 +158,7 @@ export function OrderSuccessPage() {
             </div>
 
             {order.payment_method !== 'cash_on_delivery' && (
-              <div className="bg-primary-50 dark:bg-primary-900/30 rounded-xl p-4 mb-6">
+              <div className="bg-primary-50 dark:bg-primary-900/30 rounded-lg p-4 mb-6">
                 <p className="text-sm dark:text-primary-300">
                   <strong>Instructions de paiement:</strong> Vous recevrez une notification sur votre telephone pour confirmer le paiement {order.payment_method === 'tmoney' ? 'Tmoney' : 'Flooz'}.
                 </p>

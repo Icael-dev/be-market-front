@@ -102,7 +102,7 @@ export const ProductCard = memo(function ProductCard({ product, index = 0 }: Pro
             >
               <button
                 onClick={handleAddToCart}
-                className="flex-1 flex items-center justify-center gap-2 bg-primary-600 hover:bg-primary-700 text-white py-3 rounded-xl text-sm font-medium transition-colors shadow-lg"
+                className="flex-1 flex items-center justify-center gap-2 bg-primary-600 hover:bg-primary-700 text-white py-3 rounded-lg text-sm font-medium transition-colors shadow-lg"
               >
                 <ShoppingCart className="w-4 h-4" />
                 Ajouter
@@ -111,7 +111,7 @@ export const ProductCard = memo(function ProductCard({ product, index = 0 }: Pro
                 whileTap={{ scale: 0.9 }}
                 onClick={handleToggleWishlist}
                 className={cn(
-                  'p-3 rounded-xl transition-colors shadow-lg',
+                  'p-3 rounded-lg transition-colors shadow-lg',
                   isWishlisted
                     ? 'bg-red-500 text-white'
                     : 'bg-white/90 dark:bg-gray-800/90 text-gray-600 dark:text-gray-300 hover:text-red-500'

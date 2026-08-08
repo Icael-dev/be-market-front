@@ -260,7 +260,7 @@ export function AdminBlogPage() {
               resetForm();
               setShowForm(true);
             }}
-            className="flex items-center gap-2 bg-primary-600 text-white px-4 py-2.5 rounded-xl font-medium hover:bg-primary-700 transition-colors"
+            className="flex items-center gap-2 bg-primary-600 text-white px-4 py-2.5 rounded-lg font-medium hover:bg-primary-700 transition-colors"
           >
             <Plus className="w-5 h-5" />
             Nouvel article
@@ -317,7 +317,7 @@ export function AdminBlogPage() {
               name="title"
               value={formData.title}
               onChange={e => setFormData({ ...formData, title: e.target.value })}
-              className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 bg-white dark:bg-gray-800 dark:text-white dark:placeholder-gray-500"
+              className="w-full px-4 py-3 border dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 bg-white dark:bg-gray-800 dark:text-white dark:placeholder-gray-500"
             />
           </div>
 
@@ -331,7 +331,7 @@ export function AdminBlogPage() {
               value={formData.excerpt}
               onChange={e => setFormData({ ...formData, excerpt: e.target.value })}
               rows={2}
-              className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 bg-white dark:bg-gray-800 dark:text-white dark:placeholder-gray-500"
+              className="w-full px-4 py-3 border dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 bg-white dark:bg-gray-800 dark:text-white dark:placeholder-gray-500"
             />
           </div>
 
@@ -345,7 +345,7 @@ export function AdminBlogPage() {
               value={formData.content}
               onChange={e => setFormData({ ...formData, content: e.target.value })}
               rows={10}
-              className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 bg-white dark:bg-gray-800 dark:text-white dark:placeholder-gray-500"
+              className="w-full px-4 py-3 border dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 bg-white dark:bg-gray-800 dark:text-white dark:placeholder-gray-500"
             />
           </div>
 
@@ -361,7 +361,7 @@ export function AdminBlogPage() {
             <label className="block text-sm font-medium dark:text-gray-300 mb-2">
               Produits lies
             </label>
-            <div className="max-h-48 overflow-y-auto border dark:border-gray-700 rounded-xl p-3 space-y-2">
+            <div className="max-h-48 overflow-y-auto border dark:border-gray-700 rounded-lg p-3 space-y-2">
               {products.length === 0 ? (
                 <p className="text-sm text-gray-500 dark:text-gray-400">Aucun produit disponible</p>
               ) : (
@@ -401,14 +401,14 @@ export function AdminBlogPage() {
             <button
               onClick={handleSave}
               disabled={saving || !formData.title || !formData.content}
-              className="flex items-center gap-2 bg-primary-600 text-white px-6 py-2.5 rounded-xl font-medium hover:bg-primary-700 disabled:opacity-50"
+              className="flex items-center gap-2 bg-primary-600 text-white px-6 py-2.5 rounded-lg font-medium hover:bg-primary-700 disabled:opacity-50"
             >
               <Save className="w-4 h-4" />
               {saving ? 'Enregistrement...' : 'Enregistrer'}
             </button>
             <button
               onClick={() => setShowForm(false)}
-              className="px-6 py-2.5 border dark:border-gray-700 rounded-xl font-medium hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+              className="px-6 py-2.5 border dark:border-gray-700 rounded-lg font-medium hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
             >
               Annuler
             </button>

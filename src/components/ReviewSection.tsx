@@ -140,7 +140,7 @@ export function ReviewSection({ productId }: ReviewSectionProps) {
               <h3 className="font-bold dark:text-white mb-4">Donnez votre avis</h3>
 
               {error && (
-                <div className="mb-4 p-4 bg-red-50 dark:bg-red-900/50 border border-red-200 dark:border-red-800 rounded-xl text-red-600 dark:text-red-300 text-sm">
+                <div className="mb-4 p-4 bg-red-50 dark:bg-red-900/50 border border-red-200 dark:border-red-800 rounded-lg text-red-600 dark:text-red-300 text-sm">
                   {error}
                 </div>
               )}
@@ -206,7 +206,7 @@ export function ReviewSection({ productId }: ReviewSectionProps) {
       </AnimatePresence>
 
       {reviews.length === 0 ? (
-        <div className="text-center py-12 bg-gray-50 dark:bg-gray-900 rounded-2xl">
+        <div className="text-center py-12 bg-gray-50 dark:bg-gray-900 rounded-lg">
           <MessageSquare className="w-12 h-12 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
           <p className="text-gray-500 dark:text-gray-400">Aucun avis pour ce produit</p>
           {user ? (

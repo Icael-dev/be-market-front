@@ -106,7 +106,7 @@ export function AdminSupportDetailPage() {
           title={ticket.subject}
           subtitle={ticket.user?.email || ''}
         >
-          <Link to="/admin/support" className="flex items-center gap-2 px-4 py-2.5 border dark:border-gray-700 rounded-xl text-sm font-medium hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+          <Link to="/admin/support" className="flex items-center gap-2 px-4 py-2.5 border dark:border-gray-700 rounded-lg text-sm font-medium hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
             <ArrowLeft className="w-4 h-4" />
             Retour
           </Link>
@@ -124,7 +124,7 @@ export function AdminSupportDetailPage() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: index * 0.05 }}
                     className={cn(
-                      'flex flex-col gap-1 p-4 rounded-2xl',
+                      'flex flex-col gap-1 p-4 rounded-lg',
                       msg.is_from_admin
                         ? 'bg-primary-50 dark:bg-primary-900/20 ml-8'
                         : 'bg-gray-100 dark:bg-gray-800 mr-8'
@@ -150,12 +150,12 @@ export function AdminSupportDetailPage() {
                   onChange={e => setMessage(e.target.value)}
                   placeholder="Repondre au client..."
                   rows={3}
-                  className="flex-1 px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 dark:bg-gray-800 dark:text-white resize-none"
+                  className="flex-1 px-4 py-3 border dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 dark:bg-gray-800 dark:text-white resize-none"
                 />
                 <button
                   onClick={handleSendMessage}
                   disabled={sending || !message.trim()}
-                  className="self-end px-4 py-3 bg-primary-600 text-white rounded-xl hover:bg-primary-700 disabled:opacity-50 transition-colors flex items-center gap-2"
+                  className="self-end px-4 py-3 bg-primary-600 text-white rounded-lg hover:bg-primary-700 disabled:opacity-50 transition-colors flex items-center gap-2"
                 >
                   {sending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
                   Envoyer

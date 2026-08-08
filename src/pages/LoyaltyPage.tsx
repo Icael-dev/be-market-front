@@ -69,7 +69,7 @@ export function LoyaltyPage() {
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="bg-gradient-to-br from-primary-600 to-cyan-500 rounded-2xl p-6 text-white"
+                className="bg-gradient-to-br from-primary-600 to-cyan-500 rounded-lg p-6 text-white"
               >
                 <div className="flex items-center gap-3 mb-4">
                   <Star className="w-8 h-8" />
@@ -164,7 +164,7 @@ className="card p-6"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4 }}
-              className="mt-8 bg-primary-50 dark:bg-primary-900/20 rounded-2xl p-6"
+              className="mt-8 bg-primary-50 dark:bg-primary-900/20 rounded-lg p-6"
             >
               <h3 className="font-bold text-gray-900 dark:text-white mb-4">Comment ca marche ?</h3>
               <ul className="space-y-2 text-gray-600 dark:text-gray-300">

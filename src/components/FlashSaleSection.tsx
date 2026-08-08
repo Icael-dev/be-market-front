@@ -129,7 +129,7 @@ export function FlashSaleSection() {
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1 }}
                 whileHover={{ y: -5 }}
-                className="relative bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-card hover:shadow-hover transition-all duration-300"
+                className="relative bg-white dark:bg-gray-800 rounded-lg overflow-hidden shadow-card hover:shadow-hover transition-all duration-300"
               >
                 <motion.div
                   animate={{ scale: [1, 1.1, 1] }}
@@ -200,7 +200,7 @@ export function FlashSaleSection() {
         <div className="text-center mt-8">
           <Link
             to="/products?flash_sale=true"
-            className="inline-flex items-center gap-2 bg-red-50 dark:bg-gray-800 text-red-600 dark:text-red-400 px-8 py-3 rounded-xl font-semibold hover:bg-red-100 hover:dark:bg-gray-800 transition-all hover:scale-105 shadow-lg"
+            className="inline-flex items-center gap-2 bg-red-50 dark:bg-gray-800 text-red-600 dark:text-red-400 px-8 py-3 rounded-lg font-semibold hover:bg-red-100 hover:dark:bg-gray-800 transition-all hover:scale-105 shadow-lg"
           >
             Voir toutes les offres
             <Flame className="w-5 h-5" />

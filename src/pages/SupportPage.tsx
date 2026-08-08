@@ -119,7 +119,7 @@ export function SupportPage() {
                <select
                  value={priority}
                  onChange={e => setPriority(e.target.value as 'low' | 'normal' | 'high' | 'urgent')}
-                 className="w-full px-4 py-2.5 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 bg-white dark:bg-gray-800 dark:text-white"
+                 className="w-full px-4 py-2.5 border dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 bg-white dark:bg-gray-800 dark:text-white"
                >
                  <option value="low">Basse</option>
                  <option value="normal">Normale</option>
@@ -233,7 +233,7 @@ if (loading) return <div className="min-h-screen page-bg flex items-center justi
           <div className="p-6 space-y-4 max-h-96 overflow-y-auto">
             {messages.map(msg => (
               <div key={msg.id} className={`flex ${msg.is_from_admin ? 'justify-start' : 'justify-end'}`}>
-                <div className={`max-w-[80%] p-4 rounded-xl ${msg.is_from_admin ? 'bg-gray-100 dark:bg-gray-800' : 'bg-primary-600 text-white'}`}>
+                <div className={`max-w-[80%] p-4 rounded-lg ${msg.is_from_admin ? 'bg-gray-100 dark:bg-gray-800' : 'bg-primary-600 text-white'}`}>
                   <p className="text-sm whitespace-pre-wrap">{msg.message}</p>
                   <p className={`text-xs mt-2 ${msg.is_from_admin ? 'text-gray-500 dark:text-gray-400' : 'text-primary-200'}`}>{format(new Date(msg.created_at), 'HH:mm')}</p>
                 </div>
@@ -242,7 +242,7 @@ if (loading) return <div className="min-h-screen page-bg flex items-center justi
           </div>
           <div className="p-4 border-t border-gray-200 dark:border-gray-800">
             <div className="flex gap-3">
-              <input type="text" id="ticket-reply" name="reply" aria-label="Repondre au ticket" value={newMessage} onChange={e => setNewMessage(e.target.value)} placeholder="Repondre..."               className="flex-1 px-4 py-3 border border-gray-200 dark:border-gray-700 rounded-xl bg-white dark:bg-gray-800 dark:text-white dark:placeholder-gray-500" onKeyPress={e => e.key === 'Enter' && handleSend()} />
+              <input type="text" id="ticket-reply" name="reply" aria-label="Repondre au ticket" value={newMessage} onChange={e => setNewMessage(e.target.value)} placeholder="Repondre..."               className="flex-1 px-4 py-3 border-2 border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 dark:text-white dark:placeholder-gray-500" onKeyPress={e => e.key === 'Enter' && handleSend()} />
               <button onClick={handleSend} disabled={sending || !newMessage} className="p-3 btn-primary disabled:opacity-50"><Send className="w-5 h-5" /></button>
             </div>
             {replyError && (

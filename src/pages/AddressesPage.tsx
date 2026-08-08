@@ -271,7 +271,7 @@ export function AddressesPage() {
                               setEditingId(null);
                               resetForm();
                             }}
-                            className="px-6 py-2.5 border dark:border-gray-700 rounded-xl font-medium hover:bg-gray-50 hover:dark:bg-gray-900 transition-colors"
+                            className="px-6 py-2.5 border dark:border-gray-700 rounded-lg font-medium hover:bg-gray-50 hover:dark:bg-gray-900 transition-colors"
                           >
                             Annuler
                           </button>
@@ -414,7 +414,7 @@ export function AddressesPage() {
                             setShowAddForm(false);
                             resetForm();
                           }}
-                          className="px-6 py-2.5 border dark:border-gray-700 rounded-xl font-medium hover:bg-gray-50 hover:dark:bg-gray-900 transition-colors"
+                          className="px-6 py-2.5 border dark:border-gray-700 rounded-lg font-medium hover:bg-gray-50 hover:dark:bg-gray-900 transition-colors"
                         >
                           Annuler
                         </button>

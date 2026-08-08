@@ -79,26 +79,26 @@ export function AdminTestimonialsPage() {
       <MobileNotOptimizedBanner />
       <div>
         <PageHeader title="Temoignages" subtitle="Gerer les temoignages clients">
-          <button onClick={() => { resetForm(); setShowForm(true); }} className="flex items-center gap-2 bg-primary-600 text-white px-4 py-2 rounded-xl font-medium hover:bg-primary-700">
+          <button onClick={() => { resetForm(); setShowForm(true); }} className="flex items-center gap-2 bg-primary-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-primary-700">
             <Plus className="w-4 h-4" /> Ajouter
           </button>
         </PageHeader>
 
         {showForm && (
-          <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 p-6 mb-6">
+          <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="bg-white dark:bg-gray-800 rounded-lg border dark:border-gray-700 p-6 mb-6">
             <h3 className="text-lg font-bold dark:text-white mb-4">{editing ? 'Modifier' : 'Ajouter'} un temoignage</h3>
             <div className="grid sm:grid-cols-2 gap-4 mb-4">
               <div>
                 <label className="block text-sm font-medium dark:text-gray-300 mb-1">Nom complet *</label>
-                <input value={form.full_name} onChange={e => setForm({ ...form, full_name: e.target.value })} className="w-full px-4 py-2 border dark:border-gray-700 rounded-xl dark:bg-gray-800 dark:text-white" />
+                <input value={form.full_name} onChange={e => setForm({ ...form, full_name: e.target.value })} className="w-full px-4 py-2 border dark:border-gray-700 rounded-lg dark:bg-gray-800 dark:text-white" />
               </div>
               <div>
                 <label className="block text-sm font-medium dark:text-gray-300 mb-1">Role (optionnel)</label>
-                <input value={form.role} onChange={e => setForm({ ...form, role: e.target.value })} className="w-full px-4 py-2 border dark:border-gray-700 rounded-xl dark:bg-gray-800 dark:text-white" />
+                <input value={form.role} onChange={e => setForm({ ...form, role: e.target.value })} className="w-full px-4 py-2 border dark:border-gray-700 rounded-lg dark:bg-gray-800 dark:text-white" />
               </div>
               <div className="sm:col-span-2">
                 <label className="block text-sm font-medium dark:text-gray-300 mb-1">Commentaire *</label>
-                <textarea value={form.comment} onChange={e => setForm({ ...form, comment: e.target.value })} rows={3} className="w-full px-4 py-2 border dark:border-gray-700 rounded-xl dark:bg-gray-800 dark:text-white" />
+                <textarea value={form.comment} onChange={e => setForm({ ...form, comment: e.target.value })} rows={3} className="w-full px-4 py-2 border dark:border-gray-700 rounded-lg dark:bg-gray-800 dark:text-white" />
               </div>
               <div>
                 <label className="block text-sm font-medium dark:text-gray-300 mb-1">Note</label>
@@ -112,7 +112,7 @@ export function AdminTestimonialsPage() {
               </div>
               <div>
                 <label className="block text-sm font-medium dark:text-gray-300 mb-1">Ordre d'affichage</label>
-                <input type="number" value={form.sort_order} onChange={e => setForm({ ...form, sort_order: parseInt(e.target.value) || 0 })} className="w-full px-4 py-2 border dark:border-gray-700 rounded-xl dark:bg-gray-800 dark:text-white" />
+                <input type="number" value={form.sort_order} onChange={e => setForm({ ...form, sort_order: parseInt(e.target.value) || 0 })} className="w-full px-4 py-2 border dark:border-gray-700 rounded-lg dark:bg-gray-800 dark:text-white" />
               </div>
               <div className="flex items-center gap-2">
                 <input type="checkbox" id="testimonial-active" checked={form.is_active} onChange={e => setForm({ ...form, is_active: e.target.checked })} className="w-4 h-4 rounded" />
@@ -123,7 +123,7 @@ export function AdminTestimonialsPage() {
               <button onClick={handleSave} disabled={saving} className="btn-primary">
                 {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Sauvegarder'}
               </button>
-              <button onClick={resetForm} className="px-4 py-2 border dark:border-gray-700 rounded-xl dark:text-gray-300">Annuler</button>
+              <button onClick={resetForm} className="px-4 py-2 border dark:border-gray-700 rounded-lg dark:text-gray-300">Annuler</button>
             </div>
           </motion.div>
         )}
@@ -135,7 +135,7 @@ export function AdminTestimonialsPage() {
         ) : (
           <div className="space-y-4">
             {paginatedTestimonials.map((t, i) => (
-              <motion.div key={t.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.03 }} className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 p-6 flex items-start justify-between cursor-pointer hover:border-primary-300 dark:hover:border-primary-700 transition-colors" onClick={() => openEdit(t)}>
+              <motion.div key={t.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.03 }} className="bg-white dark:bg-gray-800 rounded-lg border dark:border-gray-700 p-6 flex items-start justify-between cursor-pointer hover:border-primary-300 dark:hover:border-primary-700 transition-colors" onClick={() => openEdit(t)}>
                 <div>
                   <div className="flex items-center gap-3 mb-2">
                     <h3 className="font-bold dark:text-white">{t.full_name}</h3>

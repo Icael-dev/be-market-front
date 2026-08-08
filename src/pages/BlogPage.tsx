@@ -204,7 +204,7 @@ export function BlogPostPage() {
           </header>
 
           {post.image_url && !imageError && (
-            <div className="mb-8 rounded-2xl overflow-hidden">
+            <div className="mb-8 rounded-lg overflow-hidden">
               <img
                 src={getImageUrl(post.image_url, 'blog')}
                 alt={post.title}

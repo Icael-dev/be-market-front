@@ -188,11 +188,11 @@ export function AdminDashboardPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.05 }}
-              className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 p-6"
+              className="bg-white dark:bg-gray-800 rounded-lg border dark:border-gray-700 p-6"
             >
               <div className="flex items-center justify-between mb-4">
                 <div
-                  className={`w-12 h-12 rounded-xl ${colorClasses[stat.color]} flex items-center justify-center`}
+                  className={`w-12 h-12 rounded-lg ${colorClasses[stat.color]} flex items-center justify-center`}
                 >
                   <stat.icon className="w-6 h-6" />
                 </div>
@@ -211,9 +211,9 @@ export function AdminDashboardPage() {
           >
             <Link
               to="/admin/orders?status=pending"
-              className="flex items-center gap-3 bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800 rounded-2xl p-4 hover:bg-orange-100 dark:hover:bg-orange-900/30 transition-colors"
+              className="flex items-center gap-3 bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800 rounded-lg p-4 hover:bg-orange-100 dark:hover:bg-orange-900/30 transition-colors"
             >
-              <div className={`w-10 h-10 rounded-xl ${colorClasses.orange} flex items-center justify-center`}>
+              <div className={`w-10 h-10 rounded-lg ${colorClasses.orange} flex items-center justify-center`}>
                 <Clock className="w-5 h-5" />
               </div>
               <div>
@@ -231,7 +231,7 @@ export function AdminDashboardPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 p-6"
+            className="bg-white dark:bg-gray-800 rounded-lg border dark:border-gray-700 p-6"
           >
             <div className="flex items-center justify-between mb-6">
               <h2 className="font-bold dark:text-white flex items-center gap-2">
@@ -275,7 +275,7 @@ export function AdminDashboardPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 p-6"
+            className="bg-white dark:bg-gray-800 rounded-lg border dark:border-gray-700 p-6"
           >
             <h2 className="font-bold dark:text-white mb-4 flex items-center gap-2">
               <BarChart3 className="w-5 h-5 text-blue-500" />
@@ -339,7 +339,7 @@ export function AdminDashboardPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 p-6"
+            className="bg-white dark:bg-gray-800 rounded-lg border dark:border-gray-700 p-6"
           >
             <div className="flex items-center justify-between mb-6">
               <h2 className="font-bold dark:text-white flex items-center gap-2">
@@ -373,7 +373,7 @@ export function AdminDashboardPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 p-6"
+            className="bg-white dark:bg-gray-800 rounded-lg border dark:border-gray-700 p-6"
           >
             <div className="flex items-center justify-between mb-6">
               <h2 className="font-bold dark:text-white flex items-center gap-2">
@@ -410,7 +410,7 @@ export function AdminDashboardPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 p-6"
+            className="bg-white dark:bg-gray-800 rounded-lg border dark:border-gray-700 p-6"
           >
             <h2 className="font-bold dark:text-white mb-4 flex items-center gap-2">
               <TrendingUp className="w-5 h-5 text-green-500" />
@@ -447,7 +447,7 @@ export function AdminDashboardPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 p-6"
+            className="bg-white dark:bg-gray-800 rounded-lg border dark:border-gray-700 p-6"
           >
             <div className="flex items-center justify-between mb-6">
               <h2 className="font-bold dark:text-white flex items-center gap-2">
@@ -490,7 +490,7 @@ export function AdminDashboardPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 p-6 mb-6"
+          className="bg-white dark:bg-gray-800 rounded-lg border dark:border-gray-700 p-6 mb-6"
         >
           <h2 className="font-bold dark:text-white mb-4 flex items-center gap-2">
             <Package className="w-5 h-5 text-orange-500" />
@@ -504,7 +504,7 @@ export function AdminDashboardPage() {
             ) : unsoldProducts.map(product => (
               <div
                 key={product.id}
-                className="flex items-center justify-between py-2 px-3 bg-gray-50 dark:bg-gray-700/50 rounded-xl"
+                className="flex items-center justify-between py-2 px-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg"
               >
                 <p className="font-medium dark:text-white text-sm truncate">{product.name}</p>
                 <span className="text-sm font-medium ml-2 text-orange-600 dark:text-orange-400">
@@ -518,9 +518,9 @@ export function AdminDashboardPage() {
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
           <Link
             to="/admin/products/new"
-            className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 p-4 flex items-center gap-3 hover:border-blue-500 dark:hover:border-blue-500 transition-colors"
+            className="bg-white dark:bg-gray-800 rounded-lg border dark:border-gray-700 p-4 flex items-center gap-3 hover:border-blue-500 dark:hover:border-blue-500 transition-colors"
           >
-            <div className="w-10 h-10 rounded-xl bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 flex items-center justify-center">
+            <div className="w-10 h-10 rounded-lg bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 flex items-center justify-center">
               <Plus className="w-5 h-5" />
             </div>
             <div>
@@ -531,9 +531,9 @@ export function AdminDashboardPage() {
 
           <Link
             to="/admin/coupons/new"
-            className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 p-4 flex items-center gap-3 hover:border-purple-500 dark:hover:border-purple-500 transition-colors"
+            className="bg-white dark:bg-gray-800 rounded-lg border dark:border-gray-700 p-4 flex items-center gap-3 hover:border-purple-500 dark:hover:border-purple-500 transition-colors"
           >
-            <div className="w-10 h-10 rounded-xl bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 flex items-center justify-center">
+            <div className="w-10 h-10 rounded-lg bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 flex items-center justify-center">
               <TagIcon className="w-5 h-5" />
             </div>
             <div>
@@ -544,9 +544,9 @@ export function AdminDashboardPage() {
 
           <Link
             to="/admin/orders"
-            className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 p-4 flex items-center gap-3 hover:border-green-500 dark:hover:border-green-500 transition-colors"
+            className="bg-white dark:bg-gray-800 rounded-lg border dark:border-gray-700 p-4 flex items-center gap-3 hover:border-green-500 dark:hover:border-green-500 transition-colors"
           >
-            <div className="w-10 h-10 rounded-xl bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 flex items-center justify-center">
+            <div className="w-10 h-10 rounded-lg bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 flex items-center justify-center">
               <Package className="w-5 h-5" />
             </div>
             <div>
@@ -557,9 +557,9 @@ export function AdminDashboardPage() {
 
           <Link
             to="/admin/statistics"
-            className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 p-4 flex items-center gap-3 hover:border-cyan-500 dark:hover:border-cyan-500 transition-colors"
+            className="bg-white dark:bg-gray-800 rounded-lg border dark:border-gray-700 p-4 flex items-center gap-3 hover:border-cyan-500 dark:hover:border-cyan-500 transition-colors"
           >
-            <div className="w-10 h-10 rounded-xl bg-cyan-100 dark:bg-cyan-900/30 text-cyan-600 dark:text-cyan-400 flex items-center justify-center">
+            <div className="w-10 h-10 rounded-lg bg-cyan-100 dark:bg-cyan-900/30 text-cyan-600 dark:text-cyan-400 flex items-center justify-center">
               <BarChart3 className="w-5 h-5" />
             </div>
             <div>

@@ -311,7 +311,7 @@ export function AdminCategoriesPage() {
         >
           <button
             onClick={() => { resetForm(); setShowForm(true); }}
-            className="flex items-center gap-2 bg-primary-600 text-white px-4 py-2.5 rounded-xl font-medium hover:bg-primary-700 transition-colors"
+            className="flex items-center gap-2 bg-primary-600 text-white px-4 py-2.5 rounded-lg font-medium hover:bg-primary-700 transition-colors"
           >
             <Plus className="w-5 h-5" />
             Nouvelle categorie
@@ -369,7 +369,7 @@ export function AdminCategoriesPage() {
               name="name"
               value={formData.name}
               onChange={e => handleNameChange(e.target.value)}
-              className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 bg-white dark:bg-gray-800 dark:text-white dark:placeholder-gray-500"
+              className="w-full px-4 py-3 border dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 bg-white dark:bg-gray-800 dark:text-white dark:placeholder-gray-500"
               placeholder="Ex: Telephones"
             />
           </div>
@@ -385,7 +385,7 @@ export function AdminCategoriesPage() {
                     value={formData.slug}
                     onChange={e => setFormData({ ...formData, slug: e.target.value })}
                     disabled
-                     className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl bg-gray-50 dark:bg-gray-700 dark:text-gray-500 cursor-not-allowed font-mono text-sm"
+                     className="w-full px-4 py-3 border dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-700 dark:text-gray-500 cursor-not-allowed font-mono text-sm"
                   />
                   <p className="text-xs dark:text-gray-500 mt-1">Genere automatiquement depuis le nom</p>
                 </div>
@@ -400,7 +400,7 @@ export function AdminCategoriesPage() {
                     value={formData.description}
                     onChange={e => setFormData({ ...formData, description: e.target.value })}
                     rows={3}
-                    className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 bg-white dark:bg-gray-800 dark:text-white dark:placeholder-gray-500"
+                    className="w-full px-4 py-3 border dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 bg-white dark:bg-gray-800 dark:text-white dark:placeholder-gray-500"
                     placeholder="Description de la categorie..."
                   />
                 </div>
@@ -476,14 +476,14 @@ export function AdminCategoriesPage() {
                   <button
                     onClick={handleSave}
                     disabled={saving || !formData.name || !formData.slug}
-                    className="flex items-center gap-2 bg-primary-600 text-white px-6 py-2.5 rounded-xl font-medium hover:bg-primary-700 disabled:opacity-50"
+                    className="flex items-center gap-2 bg-primary-600 text-white px-6 py-2.5 rounded-lg font-medium hover:bg-primary-700 disabled:opacity-50"
                   >
                     {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
                     {saving ? 'Enregistrement...' : 'Enregistrer'}
                   </button>
                   <button
                     onClick={() => setShowForm(false)}
-                    className="px-6 py-2.5 border dark:border-gray-700 rounded-xl font-medium hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                    className="px-6 py-2.5 border dark:border-gray-700 rounded-lg font-medium hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
                   >
                     Annuler
                   </button>

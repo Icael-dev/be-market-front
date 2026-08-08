@@ -40,7 +40,7 @@ export function Carousel({ images, intervalMs = 3000, autoPlay = true }: Carouse
 
   return (
     <div className="relative group">
-      <div className="relative h-48 sm:h-56 md:h-64 overflow-hidden rounded-xl">
+      <div className="relative h-48 sm:h-56 md:h-64 overflow-hidden rounded-lg">
         {images.map((src, i) => (
           <img
             key={i}

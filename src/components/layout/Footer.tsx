@@ -52,7 +52,7 @@ export function Footer({ compact = false, className }: { compact?: boolean; clas
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-8">
           <div className="text-center">
             <Link to="/" className="inline-flex items-center gap-2.5 mb-4">
-              <div className="w-10 h-10 rounded-xl brand-gradient flex items-center justify-center">
+              <div className="w-10 h-10 rounded-lg brand-gradient flex items-center justify-center">
                 <span className="text-white font-bold text-lg">B</span>
               </div>
               <span className="font-bold text-xl text-white tracking-tightest">BE-Market</span>
@@ -62,16 +62,16 @@ export function Footer({ compact = false, className }: { compact?: boolean; clas
               Qualite, prix competitifs et service irreprochable.
             </p>
             <div className="flex items-center justify-center gap-3.5">
-              <a href="https://facebook.com/bemarkettg" target="_blank" rel="noopener noreferrer" aria-label="Facebook" className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center text-gray-400 hover:bg-white/10 hover:text-white transition-all">
+              <a href="https://facebook.com/bemarkettg" target="_blank" rel="noopener noreferrer" aria-label="Facebook" className="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center text-gray-400 hover:bg-white/10 hover:text-white transition-all">
                 <Facebook className="w-5 h-5" />
               </a>
-              <a href="https://instagram.com/bemarkettg" target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center text-gray-400 hover:bg-white/10 hover:text-white transition-all">
+              <a href="https://instagram.com/bemarkettg" target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center text-gray-400 hover:bg-white/10 hover:text-white transition-all">
                 <Instagram className="w-5 h-5" />
               </a>
-              <a href="https://twitter.com/bemarkettg" target="_blank" rel="noopener noreferrer" aria-label="Twitter" className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center text-gray-400 hover:bg-white/10 hover:text-white transition-all">
+              <a href="https://twitter.com/bemarkettg" target="_blank" rel="noopener noreferrer" aria-label="Twitter" className="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center text-gray-400 hover:bg-white/10 hover:text-white transition-all">
                 <Twitter className="w-5 h-5" />
               </a>
-              <a href="https://tiktok.com/@bemarkettg" target="_blank" rel="noopener noreferrer" aria-label="TikTok" className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center text-gray-400 hover:bg-white/10 hover:text-white transition-all">
+              <a href="https://tiktok.com/@bemarkettg" target="_blank" rel="noopener noreferrer" aria-label="TikTok" className="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center text-gray-400 hover:bg-white/10 hover:text-white transition-all">
                 <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.88-2.88 2.89 2.89 0 0 1 2.88-2.88c.28 0 .54.04.79.1v-3.5a6.37 6.37 0 0 0-.79-.05A6.34 6.34 0 0 0 3.15 15.2a6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.34-6.34V8.73a8.16 8.16 0 0 0 4.76 1.52v-3.4a4.85 4.85 0 0 1-1-.16z"/></svg>
               </a>
             </div>

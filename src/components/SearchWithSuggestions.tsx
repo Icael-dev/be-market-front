@@ -117,7 +117,7 @@ export function SearchWithSuggestions() {
       </form>
 
       {showSuggestions && (query || loading) && (
-        <div className="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 rounded-xl shadow-premium z-50 max-h-96 overflow-y-auto">
+        <div className="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 rounded-lg shadow-premium z-50 max-h-96 overflow-y-auto">
           {loading ? (
             <div className="p-4 text-center">
               <div className="animate-spin w-5 h-5 border-2 border-primary-600 border-t-transparent rounded-full mx-auto" />

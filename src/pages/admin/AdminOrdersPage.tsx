@@ -212,7 +212,7 @@ export function AdminOrdersPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 p-4 mb-6"
+          className="bg-white dark:bg-gray-800 rounded-lg border dark:border-gray-700 p-4 mb-6"
         >
           <div className="flex flex-col sm:flex-row gap-4">
             <div className="flex-1 relative">
@@ -224,7 +224,7 @@ export function AdminOrdersPage() {
                 placeholder="Rechercher par numero..."
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-2.5 border border-gray-200 dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400"
+                className="w-full pl-10 pr-4 py-2.5 border-2 border-gray-200 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400"
               />
             </div>
 
@@ -233,7 +233,7 @@ export function AdminOrdersPage() {
               name="order-status-filter"
               value={statusFilter}
               onChange={e => setStatusFilter(e.target.value)}
-              className="px-4 py-2.5 border border-gray-200 dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-white cursor-pointer"
+              className="px-4 py-2.5 border-2 border-gray-200 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-white cursor-pointer"
             >
               <option value="">Tous les statuts</option>
               {statuses.map(status => (
@@ -297,7 +297,7 @@ export function AdminOrdersPage() {
               </div>
 
               <div className="p-6 space-y-6">
-                <div className="flex items-center gap-3 p-4 bg-gray-50 dark:bg-gray-800 rounded-xl">
+                <div className="flex items-center gap-3 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
                   <Calendar className="w-5 h-5 text-gray-400" />
                   <div>
                     <p className="text-sm text-gray-500 dark:text-gray-400">Date</p>
@@ -318,7 +318,7 @@ export function AdminOrdersPage() {
                     <MapPin className="w-4 h-4 text-gray-400" />
                     Adresse de livraison
                   </h3>
-                  <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-4">
+                  <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
                     <p className="font-medium text-gray-900 dark:text-white">{selectedOrder.shipping_address?.full_name}</p>
                     <p className="text-sm text-gray-500 dark:text-gray-400">{selectedOrder.shipping_address?.phone}</p>
                     <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
@@ -335,7 +335,7 @@ export function AdminOrdersPage() {
                     <CreditCard className="w-4 h-4 text-gray-400" />
                     Paiement
                   </h3>
-                  <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-4">
+                  <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
                     <div className="flex justify-between mb-2">
                       <span className="text-gray-500 dark:text-gray-400">Methode</span>
                       <span className="font-medium text-gray-900 dark:text-white">{getStatusLabel(selectedOrder.payment_method || '')}</span>

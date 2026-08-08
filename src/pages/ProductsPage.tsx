@@ -240,7 +240,7 @@ export function ProductsPage() {
                 <div className="flex items-center gap-3">
                    <button
                       onClick={() => setShowFilters(true)}
-                      className="lg:hidden flex items-center gap-2 px-4 py-2 border border-gray-200 dark:border-gray-700 rounded-xl text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+                      className="lg:hidden flex items-center gap-2 px-4 py-2 border-2 border-gray-200 dark:border-gray-700 rounded-lg text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
                     >
                     <SlidersHorizontal className="w-4 h-4" />
                     Filtres
@@ -260,7 +260,7 @@ export function ProductsPage() {
                       aria-label="Trier les produits"
                       value={sortBy}
                       onChange={(e) => updateFilter('sort', e.target.value)}
-                      className="appearance-none pl-4 pr-10 py-2 border border-gray-200 dark:border-gray-700 rounded-xl text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 bg-white dark:bg-gray-800 cursor-pointer"
+                      className="appearance-none pl-4 pr-10 py-2 border-2 border-gray-200 dark:border-gray-700 rounded-lg text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 bg-white dark:bg-gray-800 cursor-pointer"
                     >
                       {sortOptions.map(option => (
                         <option
@@ -303,7 +303,7 @@ export function ProductsPage() {
                           setSearchParams(params);
                         }
                       }}
-                      className="appearance-none pl-4 pr-10 py-2 border border-gray-200 dark:border-gray-700 rounded-xl text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 bg-white dark:bg-gray-800 cursor-pointer"
+                      className="appearance-none pl-4 pr-10 py-2 border-2 border-gray-200 dark:border-gray-700 rounded-lg text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 bg-white dark:bg-gray-800 cursor-pointer"
                     >
                       <option value="">Tous les produits</option>
                       <option value="featured">Vedettes</option>

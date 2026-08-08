@@ -138,7 +138,7 @@ export function ProductDetailPage() {
             animate={{ opacity: 1, x: 0 }}
             className="space-y-4"
           >
-            <div className="relative aspect-square bg-gray-100 dark:bg-gray-800 rounded-3xl overflow-hidden border border-gray-100 dark:border-gray-800">
+            <div className="relative aspect-square bg-gray-100 dark:bg-gray-800 rounded-lg overflow-hidden border border-gray-100 dark:border-gray-800">
               <img
                 src={imageError[selectedImage] ? images[0] : images[selectedImage]}
                 alt={product.name}
@@ -159,7 +159,7 @@ export function ProductDetailPage() {
                     key={index}
                     onClick={() => setSelectedImage(index)}
                     className={cn(
-                      'flex-shrink-0 w-20 h-20 rounded-xl overflow-hidden border-2 transition-all',
+                      'flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden border-2 transition-all',
                       selectedImage === index
                         ? 'border-primary-600 ring-2 ring-primary-600/20'
                         : 'border-gray-200 dark:border-gray-700 hover:border-gray-300'
@@ -246,7 +246,7 @@ export function ProductDetailPage() {
               <div className="flex items-center gap-6">
                 <div className="flex items-center gap-3">
                   <span className="text-gray-600 dark:text-gray-300 font-medium">Quantite:</span>
-                  <div className="flex items-center border border-gray-200 dark:border-gray-700 rounded-xl">
+                  <div className="flex items-center border-2 border-gray-200 dark:border-gray-700 rounded-lg">
                     <button
                       onClick={() => setQuantity(Math.max(1, quantity - 1))}
                       disabled={quantity <= 1}
@@ -290,10 +290,10 @@ export function ProductDetailPage() {
               <button
                 onClick={handleToggleWishlist}
                 className={cn(
-                  'p-3.5 rounded-xl transition-colors',
+                  'p-3.5 rounded-lg transition-colors',
                   isWishlisted
                     ? 'bg-red-500 text-white'
-                    : 'bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800'
+                    : 'bg-white dark:bg-gray-900 border-2 border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800'
                 )}
               >
                 <Heart className={cn('w-5 h-5', isWishlisted && 'fill-current')} />

@@ -25,14 +25,14 @@ export function CompareDrawer({ products, onRemove, onClear }: CompareDrawerProp
         </div>
         <div className="flex gap-4 overflow-x-auto pb-2">
           {products.map(p => (
-            <div key={p.id} className="flex-shrink-0 w-40 relative bg-gray-100 dark:bg-gray-800 rounded-xl p-3">
+            <div key={p.id} className="flex-shrink-0 w-40 relative bg-gray-100 dark:bg-gray-800 rounded-lg p-3">
               <button onClick={() => onRemove(p.id)} className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center"><X className="w-4 h-4" /></button>
                <img src={p.images?.[0] || FALLBACK_IMAGE} alt={p.name} loading="lazy" decoding="async" className="w-full h-24 object-cover rounded-lg mb-2" />
               <p className="text-sm font-medium dark:text-white line-clamp-2">{p.name}</p>
               <p className="text-sm font-bold text-primary-600 mt-1">{formatPrice(p.price)}</p>
             </div>
           ))}
-          {products.length < 3 && <div className="flex-shrink-0 w-40 h-36 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-xl flex items-center justify-center text-gray-500 dark:text-gray-400"><span className="text-sm">Ajouter</span></div>}
+          {products.length < 3 && <div className="flex-shrink-0 w-40 h-36 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg flex items-center justify-center text-gray-500 dark:text-gray-400"><span className="text-sm">Ajouter</span></div>}
         </div>
       </div>
     </motion.div>
@@ -62,7 +62,7 @@ export function ComparePage() {
         <div className="card overflow-hidden">
           <div className="grid grid-cols-4 gap-4 p-6 border-b border-gray-100 dark:border-gray-800">
             <div className="font-bold dark:text-white">Produit</div>
-            {products.map(p => (<div key={p.id}><Link to={`/product/${p.slug}`} className="block bg-gray-100 dark:bg-gray-800 rounded-xl p-4"><img src={p.images?.[0] || FALLBACK_IMAGE} alt={p.name} loading="lazy" decoding="async" className="w-full h-40 object-cover rounded-lg mb-3" /><p className="font-medium dark:text-white">{p.name}</p><p className="text-lg font-bold text-primary-600 mt-2">{formatPrice(p.price)}</p></Link></div>))}
+            {products.map(p => (<div key={p.id}><Link to={`/product/${p.slug}`} className="block bg-gray-100 dark:bg-gray-800 rounded-lg p-4"><img src={p.images?.[0] || FALLBACK_IMAGE} alt={p.name} loading="lazy" decoding="async" className="w-full h-40 object-cover rounded-lg mb-3" /><p className="font-medium dark:text-white">{p.name}</p><p className="text-lg font-bold text-primary-600 mt-2">{formatPrice(p.price)}</p></Link></div>))}
           </div>
           {allKeys.map(key => (
             <div key={key} className="grid grid-cols-4 gap-4 p-6 border-b border-gray-100 dark:border-gray-800">

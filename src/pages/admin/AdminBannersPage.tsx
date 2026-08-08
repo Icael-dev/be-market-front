@@ -164,7 +164,7 @@ export function AdminBannersPage() {
               resetForm();
               setShowForm(true);
             }}
-            className="flex items-center gap-2 bg-primary-600 text-white px-4 py-2.5 rounded-xl font-medium hover:bg-primary-700 transition-colors"
+            className="flex items-center gap-2 bg-primary-600 text-white px-4 py-2.5 rounded-lg font-medium hover:bg-primary-700 transition-colors"
           >
             <Plus className="w-5 h-5" />
             Ajouter une banniere
@@ -178,7 +178,7 @@ export function AdminBannersPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.05 }}
-              className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 overflow-hidden cursor-pointer hover:border-primary-300 dark:hover:border-primary-700 transition-colors"
+              className="bg-white dark:bg-gray-800 rounded-lg border dark:border-gray-700 overflow-hidden cursor-pointer hover:border-primary-300 dark:hover:border-primary-700 transition-colors"
               onClick={() => handleEdit(banner)}
             >
                 <div className="relative h-48">
@@ -243,7 +243,7 @@ export function AdminBannersPage() {
           ))}
 
           {banners.length === 0 && !loading && (
-            <div className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 p-12 text-center">
+            <div className="bg-white dark:bg-gray-800 rounded-lg border dark:border-gray-700 p-12 text-center">
               <ImageIcon className="w-12 h-12 dark:text-gray-500 mx-auto mb-4" />
               <p className="dark:text-gray-500">Aucune banniere</p>
             </div>
@@ -267,7 +267,7 @@ export function AdminBannersPage() {
               name="title"
               value={formData.title}
               onChange={e => setFormData({ ...formData, title: e.target.value })}
-              className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 bg-white dark:bg-gray-800 dark:text-white dark:placeholder-gray-500"
+              className="w-full px-4 py-3 border dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 bg-white dark:bg-gray-800 dark:text-white dark:placeholder-gray-500"
             />
           </div>
 
@@ -281,7 +281,7 @@ export function AdminBannersPage() {
                     name="subtitle"
                     value={formData.subtitle}
                     onChange={e => setFormData({ ...formData, subtitle: e.target.value })}
-                    className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 bg-white dark:bg-gray-800 dark:text-white dark:placeholder-gray-500"
+                    className="w-full px-4 py-3 border dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 bg-white dark:bg-gray-800 dark:text-white dark:placeholder-gray-500"
                   />
                 </div>
 
@@ -308,7 +308,7 @@ export function AdminBannersPage() {
                     name="link_url"
                     value={formData.link_url}
                     onChange={e => setFormData({ ...formData, link_url: e.target.value })}
-                    className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 bg-white dark:bg-gray-800 dark:text-white dark:placeholder-gray-500"
+                    className="w-full px-4 py-3 border dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 bg-white dark:bg-gray-800 dark:text-white dark:placeholder-gray-500"
                   />
                 </div>
 
@@ -322,7 +322,7 @@ export function AdminBannersPage() {
                     name="button_text"
                     value={formData.button_text}
                     onChange={e => setFormData({ ...formData, button_text: e.target.value })}
-                    className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 bg-white dark:bg-gray-800 dark:text-white dark:placeholder-gray-500"
+                    className="w-full px-4 py-3 border dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 bg-white dark:bg-gray-800 dark:text-white dark:placeholder-gray-500"
                   />
                 </div>
 
@@ -336,7 +336,7 @@ export function AdminBannersPage() {
                     name="sort_order"
                     value={formData.sort_order ?? ''}
                     onChange={e => setFormData({ ...formData, sort_order: parseInt(e.target.value) || 0 })}
-                    className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 bg-white dark:bg-gray-800 dark:text-white dark:placeholder-gray-500"
+                    className="w-full px-4 py-3 border dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 bg-white dark:bg-gray-800 dark:text-white dark:placeholder-gray-500"
                   />
                 </div>
 
@@ -356,14 +356,14 @@ export function AdminBannersPage() {
                   <button
                     onClick={handleSave}
                     disabled={saving || !formData.title || !formData.image_url}
-                    className="flex items-center gap-2 bg-primary-600 text-white px-6 py-2.5 rounded-xl font-medium hover:bg-primary-700 disabled:opacity-50"
+                    className="flex items-center gap-2 bg-primary-600 text-white px-6 py-2.5 rounded-lg font-medium hover:bg-primary-700 disabled:opacity-50"
                   >
                     <Save className="w-4 h-4" />
                     {saving ? 'Enregistrement...' : 'Enregistrer'}
                   </button>
                   <button
                     onClick={() => setShowForm(false)}
-                    className="px-6 py-2.5 border dark:border-gray-700 rounded-xl font-medium hover:bg-gray-100 dark:hover:bg-gray-700"
+                    className="px-6 py-2.5 border dark:border-gray-700 rounded-lg font-medium hover:bg-gray-100 dark:hover:bg-gray-700"
                   >
                     Annuler
                   </button>

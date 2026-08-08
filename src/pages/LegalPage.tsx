@@ -38,7 +38,7 @@ export function LegalPage() {
               <h2 className="font-bold text-gray-900 dark:text-white mb-4">Pages legales</h2>
               <div className="space-y-1">
                 {pages.map(page => (
-                  <Link key={page.id} to={`/legal/${page.slug}`} className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm ${current?.slug === page.slug ? 'bg-primary-50 text-primary-600 font-medium' : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800'}`}>
+                  <Link key={page.id} to={`/legal/${page.slug}`} className={`flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm ${current?.slug === page.slug ? 'bg-primary-50 text-primary-600 font-medium' : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800'}`}>
                     {icons[page.slug] || <FileText className="w-5 h-5" />}
                     {labels[page.slug] || page.title}
                   </Link>

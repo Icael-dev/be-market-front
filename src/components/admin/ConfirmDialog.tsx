@@ -68,7 +68,7 @@ export function ConfirmDialog({
             initial={{ opacity: 0, scale: 0.95, y: 10 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 10 }}
-            className="relative w-full max-w-lg bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6"
+            className="relative w-full max-w-lg bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6"
           >
             <div className="flex items-start justify-between gap-4">
               <div>
@@ -89,7 +89,7 @@ export function ConfirmDialog({
                 type="button"
                 onClick={onClose}
                 disabled={loading}
-                className="px-4 py-2 border dark:border-gray-700 rounded-xl text-sm font-medium hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors disabled:opacity-50"
+                className="px-4 py-2 border dark:border-gray-700 rounded-lg text-sm font-medium hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors disabled:opacity-50"
               >
                 {cancelLabel}
               </button>
@@ -97,7 +97,7 @@ export function ConfirmDialog({
                 type="button"
                 onClick={handleConfirm}
                 disabled={loading}
-                className={cn('px-4 py-2 rounded-xl text-sm font-medium transition-colors disabled:opacity-50', variants[variant])}
+                className={cn('px-4 py-2 rounded-lg text-sm font-medium transition-colors disabled:opacity-50', variants[variant])}
               >
                 {loading ? 'En cours...' : confirmLabel}
               </button>

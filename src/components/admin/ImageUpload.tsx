@@ -206,7 +206,7 @@ export function ImageUpload({
           type="button"
           onClick={() => fileInputRef.current?.click()}
           disabled={uploading || cameraOpen || (single ? displayValue.length > 0 : displayValue.length >= maxFiles)}
-          className="flex-1 flex items-center justify-center gap-2 px-4 py-3 border-2 border-dashed dark:border-gray-700 rounded-xl hover:border-primary-500 dark:hover:border-primary-400 hover:bg-primary-50 dark:hover:bg-primary-900/10 transition-colors disabled:opacity-50"
+          className="flex-1 flex items-center justify-center gap-2 px-4 py-3 border-2 border-dashed dark:border-gray-700 rounded-lg hover:border-primary-500 dark:hover:border-primary-400 hover:bg-primary-50 dark:hover:bg-primary-900/10 transition-colors disabled:opacity-50"
         >
           {uploading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Upload className="w-5 h-5" />}
           <span className="text-sm font-medium">
@@ -217,7 +217,7 @@ export function ImageUpload({
           type="button"
           onClick={cameraOpen ? stopCamera : startCamera}
           disabled={uploading || value.length >= maxFiles}
-          className="flex-1 flex items-center justify-center gap-2 px-4 py-3 border-2 border-dashed dark:border-gray-700 rounded-xl hover:border-primary-500 dark:hover:border-primary-400 hover:bg-primary-50 dark:hover:bg-primary-900/10 transition-colors disabled:opacity-50"
+          className="flex-1 flex items-center justify-center gap-2 px-4 py-3 border-2 border-dashed dark:border-gray-700 rounded-lg hover:border-primary-500 dark:hover:border-primary-400 hover:bg-primary-50 dark:hover:bg-primary-900/10 transition-colors disabled:opacity-50"
         >
           <Camera className="w-5 h-5" />
           <span className="text-sm font-medium">
@@ -227,13 +227,13 @@ export function ImageUpload({
       </div>
 
       {cameraError && (
-        <div className="p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl">
+        <div className="p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
           <p className="text-sm text-red-600 dark:text-red-400">{cameraError}</p>
         </div>
       )}
 
       {cameraOpen && (
-        <div className="relative bg-black rounded-xl overflow-hidden">
+        <div className="relative bg-black rounded-lg overflow-hidden">
           <video
             ref={videoRef}
             playsInline

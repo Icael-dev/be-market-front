@@ -241,7 +241,7 @@ export function AdminStatisticsPage() {
               name="stats-days"
               value={days}
               onChange={e => setDays(e.target.value as '7' | '30' | '90')}
-              className="px-4 py-2 border dark:border-gray-700 rounded-xl bg-white dark:bg-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 cursor-pointer"
+              className="px-4 py-2 border dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 cursor-pointer"
             >
               <option value="7">7 jours</option>
               <option value="30">30 jours</option>
@@ -249,7 +249,7 @@ export function AdminStatisticsPage() {
             </select>
             <button
               onClick={exportData}
-              className="flex items-center gap-2 px-4 py-2 bg-gray-900 text-white rounded-xl hover:bg-gray-800"
+              className="flex items-center gap-2 px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800"
             >
               <Download className="w-4 h-4" /> Exporter
             </button>
@@ -270,11 +270,11 @@ export function AdminStatisticsPage() {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: i * 0.05 }}
-                    className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 p-6"
+                    className="bg-white dark:bg-gray-800 rounded-lg border dark:border-gray-700 p-6"
                   >
                     <div className="flex items-center justify-between mb-4">
                       <div
-                        className={`w-12 h-12 rounded-xl bg-gradient-to-br ${c.gradient} flex items-center justify-center`}
+                        className={`w-12 h-12 rounded-lg bg-gradient-to-br ${c.gradient} flex items-center justify-center`}
                       >
                         <c.icon className="w-6 h-6 text-white" />
                       </div>
@@ -298,7 +298,7 @@ export function AdminStatisticsPage() {
               </div>
 
               <div className="grid lg:grid-cols-2 gap-6 mb-6">
-                <div className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 p-6">
+                <div className="bg-white dark:bg-gray-800 rounded-lg border dark:border-gray-700 p-6">
                   <h3 className="text-lg font-bold dark:text-white mb-4">Revenus quotidiens</h3>
                   <ChartBox height={320}>
                     {({ width }) => (
@@ -315,7 +315,7 @@ export function AdminStatisticsPage() {
                   </ChartBox>
                 </div>
 
-                <div className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 p-6">
+                <div className="bg-white dark:bg-gray-800 rounded-lg border dark:border-gray-700 p-6">
                   <h3 className="text-lg font-bold dark:text-white mb-4">Commandes par jour</h3>
                   <ChartBox height={320}>
                     {({ width }) => (
@@ -334,7 +334,7 @@ export function AdminStatisticsPage() {
               </div>
 
               <div className="grid lg:grid-cols-2 gap-6 mb-6">
-                <div className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 p-6">
+                <div className="bg-white dark:bg-gray-800 rounded-lg border dark:border-gray-700 p-6">
                   <h3 className="text-lg font-bold dark:text-white mb-4 flex items-center gap-2">
                     Top 5 produits vendus
                     <Link to="/admin/statistics/top-products" className="ml-auto text-xs text-primary-600 dark:text-primary-400 hover:underline flex items-center gap-1">
@@ -350,7 +350,7 @@ export function AdminStatisticsPage() {
                   />
                 </div>
 
-                <div className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 p-6">
+                <div className="bg-white dark:bg-gray-800 rounded-lg border dark:border-gray-700 p-6">
                   <h3 className="text-lg font-bold dark:text-white mb-4 flex items-center gap-2">
                     Stock bas / rupture
                     <Link to="/admin/statistics/low-stock" className="ml-auto text-xs text-primary-600 dark:text-primary-400 hover:underline flex items-center gap-1">
@@ -368,7 +368,7 @@ export function AdminStatisticsPage() {
               </div>
 
               <div className="grid lg:grid-cols-2 gap-6 mb-6">
-                <div className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 p-6">
+                <div className="bg-white dark:bg-gray-800 rounded-lg border dark:border-gray-700 p-6">
                   <h3 className="text-lg font-bold dark:text-white mb-4 flex items-center gap-2">
                     Impact des coupons
                     <Link to="/admin/statistics/coupons" className="ml-auto text-xs text-primary-600 dark:text-primary-400 hover:underline flex items-center gap-1">
@@ -376,7 +376,7 @@ export function AdminStatisticsPage() {
                     </Link>
                   </h3>
                   <div className="grid grid-cols-2 gap-4 mb-4">
-                    <div className="bg-gray-50 dark:bg-gray-700/50 rounded-xl p-4">
+                    <div className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4">
                       <p className="text-sm text-gray-500 dark:text-gray-400">Coupons utilises</p>
                       <p className="text-2xl font-bold dark:text-white">{couponStats?.total_coupon_usages ?? 0}</p>
                     </div>
@@ -390,7 +390,7 @@ export function AdminStatisticsPage() {
                   />
                 </div>
 
-                <div className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 p-6">
+                <div className="bg-white dark:bg-gray-800 rounded-lg border dark:border-gray-700 p-6">
                   <h3 className="text-lg font-bold dark:text-white mb-4 flex items-center gap-2">
                     Ventes par categorie
                     <Link to="/admin/statistics/category-sales" className="ml-auto text-xs text-primary-600 dark:text-primary-400 hover:underline flex items-center gap-1">

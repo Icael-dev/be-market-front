@@ -137,7 +137,7 @@ export function ProfilePage() {
           {isEditing ? (
             <div className="space-y-4">
               {error && (
-                <div className="p-4 bg-red-50 dark:bg-red-900/50 border border-red-200 dark:border-red-800 rounded-xl text-red-700 dark:text-red-300 text-sm">
+                <div className="p-4 bg-red-50 dark:bg-red-900/50 border border-red-200 dark:border-red-800 rounded-lg text-red-700 dark:text-red-300 text-sm">
                   {error}
                 </div>
               )}
@@ -179,7 +179,7 @@ export function ProfilePage() {
                 </button>
                 <button
                   onClick={() => setIsEditing(false)}
-                  className="px-6 py-2.5 border dark:border-gray-700 rounded-xl font-medium hover:bg-gray-50 hover:dark:bg-gray-900 transition-colors"
+                  className="px-6 py-2.5 border dark:border-gray-700 rounded-lg font-medium hover:bg-gray-50 hover:dark:bg-gray-900 transition-colors"
                 >
                   Annuler
                 </button>
@@ -188,7 +188,7 @@ export function ProfilePage() {
           ) : (
             <div className="grid sm:grid-cols-2 gap-6">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-gray-500 dark:text-gray-500">
+                <div className="w-10 h-10 rounded-lg bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-gray-500 dark:text-gray-500">
                   <User className="w-5 h-5" />
                 </div>
                 <div>
@@ -200,7 +200,7 @@ export function ProfilePage() {
               </div>
 
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-gray-500 dark:text-gray-500">
+                <div className="w-10 h-10 rounded-lg bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-gray-500 dark:text-gray-500">
                   <Mail className="w-5 h-5" />
                 </div>
                 <div>
@@ -210,7 +210,7 @@ export function ProfilePage() {
               </div>
 
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-gray-500 dark:text-gray-500">
+                <div className="w-10 h-10 rounded-lg bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-gray-500 dark:text-gray-500">
                   <Phone className="w-5 h-5" />
                 </div>
                 <div>
@@ -222,7 +222,7 @@ export function ProfilePage() {
               </div>
 
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-gray-500 dark:text-gray-500">
+                <div className="w-10 h-10 rounded-lg bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-gray-500 dark:text-gray-500">
                   <Calendar className="w-5 h-5" />
                 </div>
                 <div>
@@ -248,7 +248,7 @@ export function ProfilePage() {
               to="/orders"
               className="card p-6 hover:shadow-premium transition-all"
             >
-              <div className="w-12 h-12 rounded-xl bg-primary-50 dark:bg-primary-900/30 flex items-center justify-center dark:text-primary-400 mb-4">
+              <div className="w-12 h-12 rounded-lg bg-primary-50 dark:bg-primary-900/30 flex items-center justify-center dark:text-primary-400 mb-4">
                 <Package className="w-6 h-6" />
               </div>
               <h3 className="font-semibold dark:text-white">Mes commandes</h3>
@@ -261,7 +261,7 @@ export function ProfilePage() {
               to="/addresses"
               className="card p-6 hover:shadow-premium transition-all"
             >
-              <div className="w-12 h-12 rounded-xl bg-green-50 dark:bg-green-900/30 flex items-center justify-center dark:text-green-400 mb-4">
+              <div className="w-12 h-12 rounded-lg bg-green-50 dark:bg-green-900/30 flex items-center justify-center dark:text-green-400 mb-4">
                 <MapPin className="w-6 h-6" />
               </div>
               <h3 className="font-semibold dark:text-white">Adresses</h3>
@@ -274,7 +274,7 @@ export function ProfilePage() {
               to="/products"
               className="card p-6 hover:shadow-premium transition-all"
             >
-              <div className="w-12 h-12 rounded-xl bg-orange-50 dark:bg-orange-900/20 flex items-center justify-center dark:text-orange-400 mb-4">
+              <div className="w-12 h-12 rounded-lg bg-orange-50 dark:bg-orange-900/20 flex items-center justify-center dark:text-orange-400 mb-4">
                 <ShoppingBag className="w-6 h-6" />
               </div>
               <h3 className="font-semibold dark:text-white">Acheter</h3>
@@ -287,7 +287,7 @@ export function ProfilePage() {
               to="/loyalty"
               className="card p-6 hover:shadow-premium transition-all"
             >
-              <div className="w-12 h-12 rounded-xl bg-gold-50 dark:bg-gold-900/20 flex items-center justify-center dark:text-gold-400 mb-4">
+              <div className="w-12 h-12 rounded-lg bg-gold-50 dark:bg-gold-900/20 flex items-center justify-center dark:text-gold-400 mb-4">
                 <Gift className="w-6 h-6" />
               </div>
               <h3 className="font-semibold dark:text-white">Mes points</h3>
@@ -300,7 +300,7 @@ export function ProfilePage() {
               to="/payments"
               className="card p-6 hover:shadow-premium transition-all"
             >
-              <div className="w-12 h-12 rounded-xl bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center dark:text-blue-400 mb-4">
+              <div className="w-12 h-12 rounded-lg bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center dark:text-blue-400 mb-4">
                 <CreditCard className="w-6 h-6" />
               </div>
               <h3 className="font-semibold dark:text-white">Mes paiements</h3>
@@ -333,7 +333,7 @@ export function ProfilePage() {
                 <Link
                   key={order.id}
                   to={`/orders/${order.id}`}
-                  className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-900 rounded-xl hover:bg-gray-100 hover:dark:bg-gray-800 transition-colors"
+                  className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-900 rounded-lg hover:bg-gray-100 hover:dark:bg-gray-800 transition-colors"
                 >
                   <div className="flex items-center gap-4">
                     <div className="w-10 h-10 rounded-full bg-primary-100 flex items-center justify-center dark:text-primary-400">

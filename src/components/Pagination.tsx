@@ -49,7 +49,7 @@ export function Pagination({ currentPage, lastPage, perPage, total, onPageChange
         <button
           onClick={() => onPageChange(currentPage - 1)}
           disabled={currentPage === 1}
-          className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-sm font-medium border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 hover:border-gray-300 dark:hover:border-gray-600 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200"
+          className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-lg text-sm font-medium border-2 border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 hover:border-gray-300 dark:hover:border-gray-600 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200"
         >
           <ChevronLeft className="w-4 h-4" />
           <span className="hidden sm:inline">Precedent</span>
@@ -63,7 +63,7 @@ export function Pagination({ currentPage, lastPage, perPage, total, onPageChange
                 onClick={() => onPageChange(page)}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className={`w-10 h-10 rounded-xl text-sm font-semibold transition-all duration-200 ${
+                className={`w-10 h-10 rounded-lg text-sm font-semibold transition-all duration-200 ${
                   page === currentPage
                     ? 'bg-primary-600 text-white shadow-lg shadow-primary-600/25'
                     : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white'
@@ -80,7 +80,7 @@ export function Pagination({ currentPage, lastPage, perPage, total, onPageChange
         <button
           onClick={() => onPageChange(currentPage + 1)}
           disabled={currentPage === lastPage}
-          className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-sm font-medium border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 hover:border-gray-300 dark:hover:border-gray-600 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200"
+          className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-lg text-sm font-medium border-2 border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 hover:border-gray-300 dark:hover:border-gray-600 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200"
         >
           <span className="hidden sm:inline">Suivant</span>
           <ChevronRight className="w-4 h-4" />

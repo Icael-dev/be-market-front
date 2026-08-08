@@ -68,7 +68,7 @@ export function Header() {
           <div className="flex items-center justify-between h-20">
             <div className="flex items-center gap-6 lg:gap-8">
               <Link to="/" className="flex items-center gap-3 group">
-                <div className="w-10 h-10 rounded-xl brand-gradient flex items-center justify-center shadow-md shadow-primary-600/30 group-hover:shadow-primary-600/50 transition-shadow">
+                <div className="w-10 h-10 rounded-lg brand-gradient flex items-center justify-center shadow-md shadow-primary-600/30 group-hover:shadow-primary-600/50 transition-shadow">
                   <span className="text-white font-bold text-lg">B</span>
                 </div>
                 <span className="font-bold text-xl text-gray-900 dark:text-white hidden sm:block tracking-tightest">
@@ -170,7 +170,7 @@ export function Header() {
                     aria-label="Menu du compte"
                     aria-haspopup="menu"
                     aria-expanded={isUserMenuOpen}
-                    className="flex items-center gap-2 p-1.5 rounded-xl transition-all duration-200 hover:bg-gray-100 dark:hover:bg-gray-800"
+                    className="flex items-center gap-2 p-1.5 rounded-lg transition-all duration-200 hover:bg-gray-100 dark:hover:bg-gray-800"
                   >
                     <div className="w-8 h-8 rounded-full brand-gradient flex items-center justify-center text-white text-sm font-semibold shadow-sm">
                       {profile?.full_name?.[0] || user.email?.[0] || 'U'}
@@ -187,7 +187,7 @@ export function Header() {
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: 8, scale: 0.96 }}
                         transition={{ duration: 0.15 }}
-                        className="absolute right-0 mt-2 w-60 bg-white dark:bg-gray-900 rounded-2xl shadow-premium border border-gray-100 dark:border-gray-800 py-2 z-50 overflow-hidden"
+                        className="absolute right-0 mt-2 w-60 bg-white dark:bg-gray-900 rounded-lg shadow-premium border border-gray-100 dark:border-gray-800 py-2 z-50 overflow-hidden"
                       >
                         <div className="px-4 py-3 border-b border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-800/50">
                           <p className="font-semibold text-gray-900 dark:text-white text-sm truncate">
@@ -211,40 +211,40 @@ export function Header() {
 
                         <div className="p-2">
                           {isAdmin && (
-                            <Link to="/admin" role="menuitem" onClick={() => setIsUserMenuOpen(false)} className="flex items-center gap-3 px-3 py-2.5 text-sm text-gray-700 dark:text-gray-200 hover:bg-primary-50 dark:hover:bg-primary-900/20 hover:text-primary-600 rounded-xl transition-colors">
+                            <Link to="/admin" role="menuitem" onClick={() => setIsUserMenuOpen(false)} className="flex items-center gap-3 px-3 py-2.5 text-sm text-gray-700 dark:text-gray-200 hover:bg-primary-50 dark:hover:bg-primary-900/20 hover:text-primary-600 rounded-lg transition-colors">
                               <LayoutDashboard className="w-4 h-4 text-primary-600" />
                               Admin Dashboard
                             </Link>
                           )}
 
-                          <Link to="/loyalty" role="menuitem" onClick={() => setIsUserMenuOpen(false)} className="flex items-center gap-3 px-3 py-2.5 text-sm text-gray-700 dark:text-gray-200 hover:bg-gold-50 dark:hover:bg-gold-900/20 hover:text-gold-600 rounded-xl transition-colors">
+                          <Link to="/loyalty" role="menuitem" onClick={() => setIsUserMenuOpen(false)} className="flex items-center gap-3 px-3 py-2.5 text-sm text-gray-700 dark:text-gray-200 hover:bg-gold-50 dark:hover:bg-gold-900/20 hover:text-gold-600 rounded-lg transition-colors">
                             <Gift className="w-4 h-4 text-gold-500" />
                             Mes Points
                           </Link>
 
-                          <Link to="/profile" role="menuitem" onClick={() => setIsUserMenuOpen(false)} className="flex items-center gap-3 px-3 py-2.5 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl transition-colors">
+                          <Link to="/profile" role="menuitem" onClick={() => setIsUserMenuOpen(false)} className="flex items-center gap-3 px-3 py-2.5 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors">
                             <User className="w-4 h-4" />
                             Mon Profil
                           </Link>
 
-                          <Link to="/orders" role="menuitem" onClick={() => setIsUserMenuOpen(false)} className="flex items-center gap-3 px-3 py-2.5 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl transition-colors">
+                          <Link to="/orders" role="menuitem" onClick={() => setIsUserMenuOpen(false)} className="flex items-center gap-3 px-3 py-2.5 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors">
                             <Package className="w-4 h-4" />
                             Mes Commandes
                           </Link>
 
-                          <Link to="/payments" role="menuitem" onClick={() => setIsUserMenuOpen(false)} className="flex items-center gap-3 px-3 py-2.5 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl transition-colors">
+                          <Link to="/payments" role="menuitem" onClick={() => setIsUserMenuOpen(false)} className="flex items-center gap-3 px-3 py-2.5 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors">
                             <CreditCard className="w-4 h-4" />
                             Mes Paiements
                           </Link>
 
-                          <Link to="/support" role="menuitem" onClick={() => setIsUserMenuOpen(false)} className="flex items-center gap-3 px-3 py-2.5 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl transition-colors">
+                          <Link to="/support" role="menuitem" onClick={() => setIsUserMenuOpen(false)} className="flex items-center gap-3 px-3 py-2.5 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors">
                             <LifeBuoy className="w-4 h-4" />
                             Support
                           </Link>
                         </div>
 
                         <div className="border-t border-gray-100 dark:border-gray-800 p-2">
-                          <button role="menuitem" onClick={() => { setIsUserMenuOpen(false); signOut(); }} className="flex items-center gap-3 px-3 py-2.5 text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-xl transition-colors w-full">
+                          <button role="menuitem" onClick={() => { setIsUserMenuOpen(false); signOut(); }} className="flex items-center gap-3 px-3 py-2.5 text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors w-full">
                             <LogOut className="w-4 h-4" />
                             Deconnexion
                           </button>
@@ -256,7 +256,7 @@ export function Header() {
               ) : (
                 <Link
                   to="/login"
-                  className="hidden sm:flex items-center gap-2 bg-primary-600 text-white px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-primary-700 shadow-md shadow-primary-600/20 hover:shadow-primary-600/40 transition-all"
+                  className="hidden sm:flex items-center gap-2 bg-primary-600 text-white px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-primary-700 shadow-md shadow-primary-600/20 hover:shadow-primary-600/40 transition-all"
                 >
                   <User className="w-4 h-4" />
                   Connexion
@@ -269,7 +269,7 @@ export function Header() {
                 aria-expanded={isMenuOpen}
                 aria-controls="mobile-menu"
                 className={cn(
-                  'lg:hidden p-2.5 rounded-xl transition-all duration-200',
+                  'lg:hidden p-2.5 rounded-lg transition-all duration-200',
                   isMenuOpen
                     ? 'bg-primary-50 text-primary-600'
                     : 'icon-btn'
@@ -316,7 +316,7 @@ export function Header() {
                           to={link.path}
                           onClick={() => setIsMenuOpen(false)}
                           className={cn(
-                            'px-4 py-3 rounded-xl text-sm font-medium transition-all',
+                            'px-4 py-3 rounded-lg text-sm font-medium transition-all',
                             isActive
                               ? 'bg-primary-50 dark:bg-primary-900/20 text-primary-600'
                               : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800'
@@ -371,32 +371,32 @@ export function Header() {
 
                       <nav className="flex flex-col gap-1 px-3" aria-label="Menu du compte">
                         {isAdmin && (
-                          <Link to="/admin" onClick={() => setIsMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-primary-50 dark:hover:bg-primary-900/20 hover:text-primary-600 transition-colors">
+                          <Link to="/admin" onClick={() => setIsMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-primary-50 dark:hover:bg-primary-900/20 hover:text-primary-600 transition-colors">
                             <LayoutDashboard className="w-4 h-4 text-primary-600" />
                             Admin Dashboard
                           </Link>
                         )}
-                        <Link to="/loyalty" onClick={() => setIsMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gold-50 dark:hover:bg-gold-900/20 hover:text-gold-600 transition-colors">
+                        <Link to="/loyalty" onClick={() => setIsMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gold-50 dark:hover:bg-gold-900/20 hover:text-gold-600 transition-colors">
                           <Gift className="w-4 h-4 text-gold-500" />
                           Mes Points
                         </Link>
-                        <Link to="/profile" onClick={() => setIsMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+                        <Link to="/profile" onClick={() => setIsMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
                           <User className="w-4 h-4" />
                           Mon Profil
                         </Link>
-                        <Link to="/orders" onClick={() => setIsMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+                        <Link to="/orders" onClick={() => setIsMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
                           <Package className="w-4 h-4" />
                           Mes Commandes
                         </Link>
-                        <Link to="/payments" onClick={() => setIsMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+                        <Link to="/payments" onClick={() => setIsMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
                           <CreditCard className="w-4 h-4" />
                           Mes Paiements
                         </Link>
-                        <Link to="/support" onClick={() => setIsMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+                        <Link to="/support" onClick={() => setIsMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
                           <LifeBuoy className="w-4 h-4" />
                           Support
                         </Link>
-                        <button onClick={() => { setIsMenuOpen(false); signOut(); }} className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors w-full text-left">
+                        <button onClick={() => { setIsMenuOpen(false); signOut(); }} className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors w-full text-left">
                           <LogOut className="w-4 h-4" />
                           Deconnexion
                         </button>

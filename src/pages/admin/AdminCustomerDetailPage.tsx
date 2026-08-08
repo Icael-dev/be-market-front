@@ -149,7 +149,7 @@ export function AdminCustomerDetailPage() {
         >
           <Link
             to="/admin/customers"
-            className="flex items-center gap-2 px-4 py-2.5 border dark:border-gray-700 rounded-xl text-sm font-medium hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+            className="flex items-center gap-2 px-4 py-2.5 border dark:border-gray-700 rounded-lg text-sm font-medium hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
             Retour

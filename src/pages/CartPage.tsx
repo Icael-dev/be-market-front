@@ -118,7 +118,7 @@ export function CartPage() {
                       <div className="flex gap-4 md:gap-6">
                         <Link
                           to={`/product/${item.product?.slug || '#'}`}
-                          className="w-24 h-24 md:w-32 md:h-32 flex-shrink-0 bg-gray-200 dark:bg-gray-800 rounded-xl overflow-hidden"
+                          className="w-24 h-24 md:w-32 md:h-32 flex-shrink-0 bg-gray-200 dark:bg-gray-800 rounded-lg overflow-hidden"
                         >
                           <img
                             src={item.product?.images?.[0] || FALLBACK_IMAGE}
@@ -206,7 +206,7 @@ export function CartPage() {
                   </h2>
 
                   {freeShippingRemaining > 0 && (
-                    <div className="mb-6 p-4 bg-primary-50 dark:bg-primary-900/20 rounded-xl">
+                    <div className="mb-6 p-4 bg-primary-50 dark:bg-primary-900/20 rounded-lg">
                       <p className="text-sm text-primary-700 dark:text-primary-300">
                         Plus que <strong>{freeShippingRemaining}</strong> FCFA pour la livraison gratuite !
                       </p>

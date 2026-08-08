@@ -207,7 +207,7 @@ export function AdminCouponsPage() {
           subtitle={`${coupons.length} code${coupons.length > 1 ? 's' : ''}`}
         >
           {isSuperAdmin && (
-            <button onClick={() => { reset(); setShowForm(true); }} className="flex items-center gap-2 bg-primary-600 text-white px-4 py-2.5 rounded-xl font-medium hover:bg-primary-700"><Plus className="w-5 h-5" /> Nouveau</button>
+            <button onClick={() => { reset(); setShowForm(true); }} className="flex items-center gap-2 bg-primary-600 text-white px-4 py-2.5 rounded-lg font-medium hover:bg-primary-700"><Plus className="w-5 h-5" /> Nouveau</button>
           )}
         </PageHeader>
 
@@ -261,7 +261,7 @@ export function AdminCouponsPage() {
               value={form.code}
               onChange={e => setForm({ ...form, code: e.target.value.toUpperCase() })}
               placeholder="SUMMER2024"
-              className="w-full px-4 py-3 border border-gray-200 dark:border-gray-700 rounded-xl font-mono bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400"
+              className="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-700 rounded-lg font-mono bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400"
             />
           </div>
 
@@ -271,7 +271,7 @@ export function AdminCouponsPage() {
               <button
                 type="button"
                 onClick={() => setForm({ ...form, discount_type: 'percentage' })}
-                className={`flex-1 p-3 rounded-xl border ${form.discount_type === 'percentage' ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400' : 'border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400'}`}
+                className={`flex-1 p-3 rounded-lg border ${form.discount_type === 'percentage' ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400' : 'border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400'}`}
               >
                 <Percent className="w-4 h-4 inline mr-2" />
                 Pourcentage
@@ -279,7 +279,7 @@ export function AdminCouponsPage() {
               <button
                 type="button"
                 onClick={() => setForm({ ...form, discount_type: 'fixed' })}
-                className={`flex-1 p-3 rounded-xl border ${form.discount_type === 'fixed' ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400' : 'border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400'}`}
+                className={`flex-1 p-3 rounded-lg border ${form.discount_type === 'fixed' ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400' : 'border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400'}`}
               >
                 <DollarSign className="w-4 h-4 inline mr-2" />
                 Montant
@@ -297,31 +297,31 @@ export function AdminCouponsPage() {
               name="discount_value"
               value={form.discount_value ?? ''}
               onChange={e => setForm({ ...form, discount_value: parseFloat(e.target.value) || 0 })}
-              className="w-full px-4 py-3 border border-gray-200 dark:border-gray-700 rounded-xl bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400"
+              className="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400"
             />
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Montant minimum (FCFA)</label>
-            <input type="number" id="coupon-min-order-amount" name="min_order_amount" value={form.min_order_amount ?? ''} onChange={e => setForm({ ...form, min_order_amount: e.target.value ? parseFloat(e.target.value) : null })} className="w-full px-4 py-3 border border-gray-200 dark:border-gray-700 rounded-xl bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400" />
+            <input type="number" id="coupon-min-order-amount" name="min_order_amount" value={form.min_order_amount ?? ''} onChange={e => setForm({ ...form, min_order_amount: e.target.value ? parseFloat(e.target.value) : null })} className="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400" />
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Utilisations max</label>
-            <input type="number" id="coupon-max-uses" name="max_uses" value={form.max_uses ?? ''} onChange={e => setForm({ ...form, max_uses: e.target.value ? parseInt(e.target.value) : null })} className="w-full px-4 py-3 border border-gray-200 dark:border-gray-700 rounded-xl bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400" />
+            <input type="number" id="coupon-max-uses" name="max_uses" value={form.max_uses ?? ''} onChange={e => setForm({ ...form, max_uses: e.target.value ? parseInt(e.target.value) : null })} className="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400" />
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Expiration</label>
-            <input type="date" id="coupon-expires-at" name="expires_at" value={form.expires_at} onChange={e => setForm({ ...form, expires_at: e.target.value })} className="w-full px-4 py-3 border border-gray-200 dark:border-gray-700 rounded-xl bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400" />
+            <input type="date" id="coupon-expires-at" name="expires_at" value={form.expires_at} onChange={e => setForm({ ...form, expires_at: e.target.value })} className="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400" />
           </div>
           <label className="flex items-center gap-2">
             <input type="checkbox" id="coupon-is-active" name="is_active" checked={form.is_active} onChange={e => setForm({ ...form, is_active: e.target.checked })} className="w-4 h-4 rounded border-gray-300 dark:border-gray-600" />
             <span className="text-sm text-gray-500 dark:text-gray-400">Actif</span>
           </label>
           <div className="flex gap-3 pt-4 border-t dark:border-gray-700">
-            <button onClick={handleSave} disabled={saving || !form.code} className="flex items-center gap-2 bg-primary-600 text-white px-6 py-2.5 rounded-xl font-medium hover:bg-primary-700 disabled:opacity-50">
+            <button onClick={handleSave} disabled={saving || !form.code} className="flex items-center gap-2 bg-primary-600 text-white px-6 py-2.5 rounded-lg font-medium hover:bg-primary-700 disabled:opacity-50">
               {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
               Enregistrer
             </button>
-            <button onClick={() => setShowForm(false)} className="px-6 py-2.5 border border-gray-200 dark:border-gray-700 rounded-xl font-medium hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+            <button onClick={() => setShowForm(false)} className="px-6 py-2.5 border-2 border-gray-200 dark:border-gray-700 rounded-lg font-medium hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
               Annuler
             </button>
           </div>

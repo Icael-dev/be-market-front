@@ -100,7 +100,7 @@ export function AdminSettingsPage() {
           <button
             onClick={handleSave}
             disabled={saving}
-            className="flex items-center gap-2 bg-primary-600 text-white px-6 py-2.5 rounded-xl font-medium hover:bg-primary-700 disabled:opacity-50"
+            className="flex items-center gap-2 bg-primary-600 text-white px-6 py-2.5 rounded-lg font-medium hover:bg-primary-700 disabled:opacity-50"
           >
             {saving ? (
               <Loader2 className="w-4 h-4 animate-spin" />
@@ -126,7 +126,7 @@ export function AdminSettingsPage() {
                 key={group.group}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 p-6"
+                className="bg-white dark:bg-gray-800 rounded-lg border dark:border-gray-700 p-6"
               >
                 <h2 className="text-lg font-bold dark:text-white mb-4 flex items-center gap-2">
                   <Settings className="w-5 h-5 dark:text-gray-500" />
@@ -145,7 +145,7 @@ export function AdminSettingsPage() {
                          type={item.type}
                          value={settings[item.key] || ''}
                          onChange={e => handleChange(item.key, e.target.value)}
-                         className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 bg-white dark:bg-gray-800 dark:text-white dark:placeholder-gray-500"
+                         className="w-full px-4 py-3 border dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 bg-white dark:bg-gray-800 dark:text-white dark:placeholder-gray-500"
                        />
                     </div>
                   ))}

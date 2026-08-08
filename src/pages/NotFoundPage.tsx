@@ -14,7 +14,7 @@ export function NotFoundPage() {
           initial={{ scale: 0.8, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ delay: 0.1, type: 'spring', stiffness: 200 }}
-          className="brand-gradient w-24 h-24 rounded-3xl flex items-center justify-center mx-auto mb-8 shadow-premium"
+          className="brand-gradient w-24 h-24 rounded-lg flex items-center justify-center mx-auto mb-8 shadow-premium"
         >
           <span className="text-white font-bold text-5xl">404</span>
         </motion.div>

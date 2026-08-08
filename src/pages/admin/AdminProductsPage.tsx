@@ -675,7 +675,7 @@ export function AdminProductsPage() {
               resetForm();
               setShowForm(true);
             }}
-            className="flex items-center gap-2 bg-primary-600 text-white px-4 py-2.5 rounded-xl font-medium hover:bg-primary-700 transition-colors"
+            className="flex items-center gap-2 bg-primary-600 text-white px-4 py-2.5 rounded-lg font-medium hover:bg-primary-700 transition-colors"
           >
             <Plus className="w-5 h-5" />
             Ajouter un produit
@@ -686,7 +686,7 @@ export function AdminProductsPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 p-4 mb-6"
+          className="bg-white dark:bg-gray-800 rounded-lg border dark:border-gray-700 p-4 mb-6"
         >
           <div className="flex flex-col sm:flex-row gap-4">
             <div className="flex-1 relative">
@@ -698,7 +698,7 @@ export function AdminProductsPage() {
                 placeholder="Rechercher un produit..."
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-2.5 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 bg-white dark:bg-gray-800 dark:text-white dark:placeholder-gray-500"
+                className="w-full pl-10 pr-4 py-2.5 border dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 bg-white dark:bg-gray-800 dark:text-white dark:placeholder-gray-500"
               />
             </div>
 
@@ -707,7 +707,7 @@ export function AdminProductsPage() {
               name="category_filter"
               value={selectedCategory}
               onChange={e => setSelectedCategory(e.target.value)}
-              className="px-4 py-2.5 border dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 bg-white dark:bg-gray-800 dark:text-white cursor-pointer"
+              className="px-4 py-2.5 border dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 bg-white dark:bg-gray-800 dark:text-white cursor-pointer"
             >
               <option value="">Toutes les categories</option>
               {categories.map(cat => (
@@ -782,22 +782,22 @@ export function AdminProductsPage() {
                     <motion.div key="general" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="space-y-4">
                       <div>
                         <label className="block text-sm font-medium dark:text-gray-500 mb-2">Nom du produit <span className="text-red-500">*</span></label>
-                        <input type="text" id="product-name" name="name" value={formData.name} onChange={e => setFormData({ ...formData, name: e.target.value })} className={cn('w-full px-3 py-2.5 sm:px-4 sm:py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 dark:bg-gray-800 dark:text-white', fieldError('name') ? 'border-red-500' : 'dark:border-gray-700')} />
+                        <input type="text" id="product-name" name="name" value={formData.name} onChange={e => setFormData({ ...formData, name: e.target.value })} className={cn('w-full px-3 py-2.5 sm:px-4 sm:py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 dark:bg-gray-800 dark:text-white', fieldError('name') ? 'border-red-500' : 'dark:border-gray-700')} />
                         {fieldError('name') && <p className="text-red-500 text-xs mt-1 flex items-center gap-1"><AlertCircle className="w-3 h-3" /> {fieldError('name')}</p>}
                       </div>
 
                       <div>
                         <label className="block text-sm font-medium dark:text-gray-500 mb-2">SKU (reference)</label>
-                        <input type="text" id="product-sku" name="sku" value={formData.sku} onChange={e => setFormData({ ...formData, sku: e.target.value })} placeholder="Ex: SAM-S24-128" className="w-full px-3 py-2.5 sm:px-4 sm:py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 dark:bg-gray-800 dark:border-gray-700 dark:text-white dark:placeholder-gray-500" />
+                        <input type="text" id="product-sku" name="sku" value={formData.sku} onChange={e => setFormData({ ...formData, sku: e.target.value })} placeholder="Ex: SAM-S24-128" className="w-full px-3 py-2.5 sm:px-4 sm:py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 dark:bg-gray-800 dark:border-gray-700 dark:text-white dark:placeholder-gray-500" />
                       </div>
                       <div>
                         <label className="block text-sm font-medium dark:text-gray-500 mb-2">Description</label>
-                        <textarea id="product-description" name="description" value={formData.description} onChange={e => setFormData({ ...formData, description: e.target.value })} rows={4} className={cn('w-full px-3 py-2.5 sm:px-4 sm:py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 dark:bg-gray-800 dark:text-white dark:placeholder-gray-500', fieldError('description') ? 'border-red-500' : 'dark:border-gray-700')} />
+                        <textarea id="product-description" name="description" value={formData.description} onChange={e => setFormData({ ...formData, description: e.target.value })} rows={4} className={cn('w-full px-3 py-2.5 sm:px-4 sm:py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 dark:bg-gray-800 dark:text-white dark:placeholder-gray-500', fieldError('description') ? 'border-red-500' : 'dark:border-gray-700')} />
                       </div>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
                           <label className="block text-sm font-medium dark:text-gray-500 mb-2">Categorie</label>
-                          <select id="product-category" name="category_id" value={formData.category_id} onChange={e => setFormData({ ...formData, category_id: e.target.value })} className={cn('w-full px-3 py-2.5 sm:px-4 sm:py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 dark:bg-gray-800 dark:text-white', fieldError('category_id') ? 'border-red-500' : 'dark:border-gray-700')}>
+                          <select id="product-category" name="category_id" value={formData.category_id} onChange={e => setFormData({ ...formData, category_id: e.target.value })} className={cn('w-full px-3 py-2.5 sm:px-4 sm:py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 dark:bg-gray-800 dark:text-white', fieldError('category_id') ? 'border-red-500' : 'dark:border-gray-700')}>
                             <option value="">Selectionner</option>
                             {categories.map(cat => <option key={cat.id} value={cat.id}>{cat.name}</option>)}
                           </select>
@@ -806,17 +806,17 @@ export function AdminProductsPage() {
                       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                         <div>
                           <label className="block text-sm font-medium dark:text-gray-500 mb-2">Prix (FCFA) <span className="text-red-500">*</span></label>
-                          <input type="number" id="product-price" name="price" value={formData.price} onChange={e => setFormData({ ...formData, price: e.target.value })} className={cn('w-full px-3 py-2.5 sm:px-4 sm:py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 dark:bg-gray-800 dark:text-white', fieldError('price') ? 'border-red-500' : 'dark:border-gray-700')} />
+                          <input type="number" id="product-price" name="price" value={formData.price} onChange={e => setFormData({ ...formData, price: e.target.value })} className={cn('w-full px-3 py-2.5 sm:px-4 sm:py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 dark:bg-gray-800 dark:text-white', fieldError('price') ? 'border-red-500' : 'dark:border-gray-700')} />
                           {fieldError('price') && <p className="text-red-500 text-xs mt-1 flex items-center gap-1"><AlertCircle className="w-3 h-3" /> {fieldError('price')}</p>}
                         </div>
                         <div>
                           <label className="block text-sm font-medium dark:text-gray-500 mb-2">Prix compare (FCFA)</label>
-                          <input type="number" id="product-compare-price" name="compare_price" value={formData.compare_price} onChange={e => setFormData({ ...formData, compare_price: e.target.value })} className={cn('w-full px-3 py-2.5 sm:px-4 sm:py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 dark:bg-gray-800 dark:text-white', fieldError('compare_price') ? 'border-red-500' : 'dark:border-gray-700')} />
+                          <input type="number" id="product-compare-price" name="compare_price" value={formData.compare_price} onChange={e => setFormData({ ...formData, compare_price: e.target.value })} className={cn('w-full px-3 py-2.5 sm:px-4 sm:py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 dark:bg-gray-800 dark:text-white', fieldError('compare_price') ? 'border-red-500' : 'dark:border-gray-700')} />
                           {fieldError('compare_price') && <p className="text-red-500 text-xs mt-1 flex items-center gap-1"><AlertCircle className="w-3 h-3" /> {fieldError('compare_price')}</p>}
                         </div>
                         <div>
                           <label className="block text-sm font-medium dark:text-gray-500 mb-2">Stock <span className="text-red-500">*</span></label>
-                          <input type="number" id="product-stock" name="stock" value={formData.stock} onChange={e => setFormData({ ...formData, stock: e.target.value })} className={cn('w-full px-3 py-2.5 sm:px-4 sm:py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 dark:bg-gray-800 dark:text-white', fieldError('stock') ? 'border-red-500' : 'dark:border-gray-700')} />
+                          <input type="number" id="product-stock" name="stock" value={formData.stock} onChange={e => setFormData({ ...formData, stock: e.target.value })} className={cn('w-full px-3 py-2.5 sm:px-4 sm:py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 dark:bg-gray-800 dark:text-white', fieldError('stock') ? 'border-red-500' : 'dark:border-gray-700')} />
                           {fieldError('stock') && <p className="text-red-500 text-xs mt-1 flex items-center gap-1"><AlertCircle className="w-3 h-3" /> {fieldError('stock')}</p>}
                         </div>
                       </div>
@@ -832,7 +832,7 @@ export function AdminProductsPage() {
                       </div>
                       <div>
                         <label className="block text-sm font-medium dark:text-gray-500 mb-2">Condition</label>
-                        <select id="product-condition" name="condition" value={formData.condition} onChange={e => setFormData({ ...formData, condition: e.target.value })} className="w-full px-3 py-2.5 sm:px-4 sm:py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 dark:bg-gray-800 dark:border-gray-700 dark:text-white">
+                        <select id="product-condition" name="condition" value={formData.condition} onChange={e => setFormData({ ...formData, condition: e.target.value })} className="w-full px-3 py-2.5 sm:px-4 sm:py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 dark:bg-gray-800 dark:border-gray-700 dark:text-white">
                           <option value="new">Neuf</option>
                           <option value="used">Occasion</option>
                           <option value="refurbished">Reconditionne</option>
@@ -846,11 +846,11 @@ export function AdminProductsPage() {
                       <div>
                         <label className="block text-sm font-medium dark:text-gray-500 mb-2">Images du produit ({formData.images.length})</label>
                         <div className="flex gap-3">
-                          <button type="button" onClick={() => fileInputRef.current?.click()} disabled={uploadingImage || cameraOpen} className="flex-1 flex items-center justify-center gap-2 px-4 py-6 border-2 border-dashed dark:border-gray-700 rounded-xl hover:border-primary-500 dark:hover:border-primary-400 hover:bg-primary-50 dark:hover:bg-primary-900/10 transition-colors disabled:opacity-50">
+                          <button type="button" onClick={() => fileInputRef.current?.click()} disabled={uploadingImage || cameraOpen} className="flex-1 flex items-center justify-center gap-2 px-4 py-6 border-2 border-dashed dark:border-gray-700 rounded-lg hover:border-primary-500 dark:hover:border-primary-400 hover:bg-primary-50 dark:hover:bg-primary-900/10 transition-colors disabled:opacity-50">
                             {uploadingImage ? <Loader2 className="w-5 h-5 animate-spin" /> : <Upload className="w-5 h-5" />}
                             <span className="text-sm font-medium">{uploadingImage ? 'Upload en cours...' : 'Cliquer pour uploader'}</span>
                           </button>
-                          <button type="button" onClick={cameraOpen ? stopCamera : startCamera} disabled={uploadingImage} className="flex-1 flex items-center justify-center gap-2 px-4 py-6 border-2 border-dashed dark:border-gray-700 rounded-xl hover:border-primary-500 dark:hover:border-primary-400 hover:bg-primary-50 dark:hover:bg-primary-900/10 transition-colors disabled:opacity-50">
+                          <button type="button" onClick={cameraOpen ? stopCamera : startCamera} disabled={uploadingImage} className="flex-1 flex items-center justify-center gap-2 px-4 py-6 border-2 border-dashed dark:border-gray-700 rounded-lg hover:border-primary-500 dark:hover:border-primary-400 hover:bg-primary-50 dark:hover:bg-primary-900/10 transition-colors disabled:opacity-50">
                             <Camera className="w-5 h-5" />
                             <span className="text-sm font-medium">{cameraOpen ? 'Fermer la camera' : 'Prendre une photo'}</span>
                           </button>
@@ -859,7 +859,7 @@ export function AdminProductsPage() {
 
                         {cameraOpen && (
                           <div className="mt-3 space-y-3">
-                            <div className="relative rounded-xl overflow-hidden bg-black aspect-video flex items-center justify-center">
+                            <div className="relative rounded-lg overflow-hidden bg-black aspect-video flex items-center justify-center">
                               <video ref={videoRef} playsInline className="w-full h-full object-contain" />
                             </div>
                             {cameraError && (
@@ -868,11 +868,11 @@ export function AdminProductsPage() {
                                 {cameraError}
                               </p>
                             )}
-                            <button type="button" onClick={capturePhoto} disabled={uploadingImage} className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-primary-600 text-white rounded-xl font-medium hover:bg-primary-700 transition-colors disabled:opacity-50">
+                            <button type="button" onClick={capturePhoto} disabled={uploadingImage} className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-primary-600 text-white rounded-lg font-medium hover:bg-primary-700 transition-colors disabled:opacity-50">
                               {uploadingImage ? <Loader2 className="w-5 h-5 animate-spin" /> : <Square className="w-5 h-5" />}
                               <span className="text-sm font-medium">{uploadingImage ? 'Envoi en cours...' : 'Capturer'}</span>
                             </button>
-                            <button type="button" onClick={stopCamera} className="w-full flex items-center justify-center gap-2 px-4 py-3 border dark:border-gray-700 rounded-xl font-medium hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                            <button type="button" onClick={stopCamera} className="w-full flex items-center justify-center gap-2 px-4 py-3 border dark:border-gray-700 rounded-lg font-medium hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
                               Terminer ({formData.images.length} photo{formData.images.length > 1 ? 's' : ''})
                             </button>
                           </div>
@@ -970,24 +970,24 @@ export function AdminProductsPage() {
                         <div className="space-y-4">
                           <div>
                             <label className="block text-sm font-medium dark:text-gray-500 mb-2">Poids (kg)</label>
-                            <input type="number" id="product-weight" name="weight" step="0.01" value={formData.weight} onChange={e => setFormData({ ...formData, weight: e.target.value })} placeholder="0.00" className={cn('w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 dark:bg-gray-800 dark:text-white', fieldError('weight') ? 'border-red-500' : 'dark:border-gray-700')} />
+                            <input type="number" id="product-weight" name="weight" step="0.01" value={formData.weight} onChange={e => setFormData({ ...formData, weight: e.target.value })} placeholder="0.00" className={cn('w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 dark:bg-gray-800 dark:text-white', fieldError('weight') ? 'border-red-500' : 'dark:border-gray-700')} />
                             {fieldError('weight') && <p className="text-red-500 text-xs mt-1 flex items-center gap-1"><AlertCircle className="w-3 h-3" /> {fieldError('weight')}</p>}
                           </div>
                           <div>
                             <label className="block text-sm font-medium dark:text-gray-500 mb-2">Dimensions (cm)</label>
                             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                               {(['length', 'width', 'height'] as const).map((dim) => (
-                                <input key={dim} id={`product-dimension-${dim}`} name={`dimension_${dim}`} type="number" step="0.1" value={formData.dimensions[dim]} onChange={e => handleDimensionChange(dim, e.target.value)} placeholder={dim === 'length' ? 'Longueur' : dim === 'width' ? 'Largeur' : 'Hauteur'} className="px-3 py-2 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 dark:bg-gray-800 dark:border-gray-700 dark:text-white dark:placeholder-gray-500" />
+                                <input key={dim} id={`product-dimension-${dim}`} name={`dimension_${dim}`} type="number" step="0.1" value={formData.dimensions[dim]} onChange={e => handleDimensionChange(dim, e.target.value)} placeholder={dim === 'length' ? 'Longueur' : dim === 'width' ? 'Largeur' : 'Hauteur'} className="px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 dark:bg-gray-800 dark:border-gray-700 dark:text-white dark:placeholder-gray-500" />
                               ))}
                             </div>
                           </div>
                           <div>
                             <label className="block text-sm font-medium dark:text-gray-500 mb-2">Prix coûtant (FCFA)</label>
-                            <input type="number" id="product-cost-price" name="cost_price" value={formData.cost_price} onChange={e => setFormData({ ...formData, cost_price: e.target.value })} className="w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 dark:bg-gray-800 dark:border-gray-700 dark:text-white" />
+                            <input type="number" id="product-cost-price" name="cost_price" value={formData.cost_price} onChange={e => setFormData({ ...formData, cost_price: e.target.value })} className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 dark:bg-gray-800 dark:border-gray-700 dark:text-white" />
                           </div>
                           <div>
                             <label className="block text-sm font-medium dark:text-gray-500 mb-2">Alerte stock minimum</label>
-                            <input type="number" id="product-min-stock-alert" name="min_stock_alert" value={formData.min_stock_alert} onChange={e => setFormData({ ...formData, min_stock_alert: e.target.value })} placeholder="Ex: 5" className="w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 dark:bg-gray-800 dark:border-gray-700 dark:text-white" />
+                            <input type="number" id="product-min-stock-alert" name="min_stock_alert" value={formData.min_stock_alert} onChange={e => setFormData({ ...formData, min_stock_alert: e.target.value })} placeholder="Ex: 5" className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 dark:bg-gray-800 dark:border-gray-700 dark:text-white" />
                           </div>
                         </div>
                       </div>
@@ -997,15 +997,15 @@ export function AdminProductsPage() {
                         <div className="space-y-4">
                           <div>
                             <label className="block text-sm font-medium dark:text-gray-500 mb-2">Meta titre</label>
-                            <input type="text" id="product-meta-title" name="meta_title" value={formData.meta_title} onChange={e => setFormData({ ...formData, meta_title: e.target.value })} placeholder="Titre pour les moteurs de recherche" className="w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 dark:bg-gray-800 dark:border-gray-700 dark:text-white" />
+                            <input type="text" id="product-meta-title" name="meta_title" value={formData.meta_title} onChange={e => setFormData({ ...formData, meta_title: e.target.value })} placeholder="Titre pour les moteurs de recherche" className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 dark:bg-gray-800 dark:border-gray-700 dark:text-white" />
                           </div>
                           <div>
                             <label className="block text-sm font-medium dark:text-gray-500 mb-2">Meta description</label>
-                            <textarea id="product-meta-description" name="meta_description" value={formData.meta_description} onChange={e => setFormData({ ...formData, meta_description: e.target.value })} rows={3} placeholder="Description pour les moteurs de recherche" className="w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 dark:bg-gray-800 dark:border-gray-700 dark:text-white" />
+                            <textarea id="product-meta-description" name="meta_description" value={formData.meta_description} onChange={e => setFormData({ ...formData, meta_description: e.target.value })} rows={3} placeholder="Description pour les moteurs de recherche" className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 dark:bg-gray-800 dark:border-gray-700 dark:text-white" />
                           </div>
                           <div>
                             <label className="block text-sm font-medium dark:text-gray-500 mb-2">Meta keywords</label>
-                            <input type="text" id="product-meta-keywords" name="meta_keywords" value={formData.meta_keywords} onChange={e => setFormData({ ...formData, meta_keywords: e.target.value })} placeholder="Mot-cles separes par des virgules" className="w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 dark:bg-gray-800 dark:border-gray-700 dark:text-white" />
+                            <input type="text" id="product-meta-keywords" name="meta_keywords" value={formData.meta_keywords} onChange={e => setFormData({ ...formData, meta_keywords: e.target.value })} placeholder="Mot-cles separes par des virgules" className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 dark:bg-gray-800 dark:border-gray-700 dark:text-white" />
                           </div>
                         </div>
                       </div>
@@ -1052,7 +1052,7 @@ export function AdminProductsPage() {
                 </AnimatePresence>
 
                 {Object.keys(errors).length > 0 && (
-                  <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-4">
+                  <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
                     <p className="text-red-700 dark:text-red-400 text-sm font-medium mb-2">Veuillez corriger les erreurs suivantes :</p>
                     <ul className="list-disc list-inside text-red-600 dark:text-red-400 text-xs space-y-1">
                       {Object.entries(errors).map(([field, msgs]) => (msgs.map((msg, i) => <li key={`${field}-${i}`}>{msg}</li>)))}
@@ -1061,11 +1061,11 @@ export function AdminProductsPage() {
                 )}
 
                 <div className="flex gap-3 pt-4 border-t dark:border-gray-700">
-                  <button onClick={handleSave} disabled={saving || !isFormValid} className="flex items-center gap-2 bg-primary-600 text-white px-6 py-2.5 rounded-xl font-medium hover:bg-primary-700 transition-colors disabled:opacity-50">
+                  <button onClick={handleSave} disabled={saving || !isFormValid} className="flex items-center gap-2 bg-primary-600 text-white px-6 py-2.5 rounded-lg font-medium hover:bg-primary-700 transition-colors disabled:opacity-50">
                     {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
                     {saving ? 'Enregistrement...' : 'Enregistrer'}
                   </button>
-                  <button onClick={handleCancel} className="px-6 py-2.5 border dark:border-gray-700 rounded-xl font-medium hover:bg-gray-100 hover:dark:bg-gray-700 transition-colors">Annuler</button>
+                  <button onClick={handleCancel} className="px-6 py-2.5 border dark:border-gray-700 rounded-lg font-medium hover:bg-gray-100 hover:dark:bg-gray-700 transition-colors">Annuler</button>
                 </div>
               </div>
             </motion.div>
@@ -1087,7 +1087,7 @@ export function AdminProductsPage() {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white dark:bg-gray-800 rounded-2xl shadow-xl z-[70] p-6 w-full max-w-lg"
+              className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white dark:bg-gray-800 rounded-lg shadow-xl z-[70] p-6 w-full max-w-lg"
             >
               <h3 className="text-lg font-bold dark:text-white mb-2">
                 Supprimer le produit ?
@@ -1098,14 +1098,14 @@ export function AdminProductsPage() {
               <div className="flex gap-3 justify-end">
                 <button
                   onClick={() => setConfirmDeleteId(null)}
-                  className="px-4 py-2 border dark:border-gray-700 rounded-xl text-sm font-medium hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                  className="px-4 py-2 border dark:border-gray-700 rounded-lg text-sm font-medium hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
                 >
                   Annuler
                 </button>
                 <button
                   onClick={confirmDelete}
                   disabled={deletingId !== null}
-                  className="px-4 py-2 bg-red-600 text-white rounded-xl text-sm font-medium hover:bg-red-700 transition-colors disabled:opacity-50 flex items-center gap-2"
+                  className="px-4 py-2 bg-red-600 text-white rounded-lg text-sm font-medium hover:bg-red-700 transition-colors disabled:opacity-50 flex items-center gap-2"
                 >
                   {deletingId && (
                     <Loader2 className="w-4 h-4 animate-spin" />
@@ -1132,7 +1132,7 @@ export function AdminProductsPage() {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white dark:bg-gray-800 rounded-2xl shadow-xl z-[70] p-6 w-full max-w-lg"
+              className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white dark:bg-gray-800 rounded-lg shadow-xl z-[70] p-6 w-full max-w-lg"
             >
               <h3 className="text-lg font-bold dark:text-white mb-2">
                 Ajouter du stock
@@ -1145,21 +1145,21 @@ export function AdminProductsPage() {
                 min="1"
                 value={stockQuantity}
                 onChange={e => setStockQuantity(e.target.value)}
-                className="w-full px-4 py-3 border dark:border-gray-700 rounded-xl mb-4 dark:bg-gray-800 dark:text-white"
+                className="w-full px-4 py-3 border dark:border-gray-700 rounded-lg mb-4 dark:bg-gray-800 dark:text-white"
                 placeholder="Quantite a ajouter"
                 autoFocus
               />
               <div className="flex gap-3 justify-end">
                 <button
                   onClick={() => setStockModalOpen(false)}
-                  className="px-4 py-2 border dark:border-gray-700 rounded-xl text-sm font-medium hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                  className="px-4 py-2 border dark:border-gray-700 rounded-lg text-sm font-medium hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
                 >
                   Annuler
                 </button>
                 <button
                   onClick={handleAddStock}
                   disabled={stockLoading || !stockQuantity || parseInt(stockQuantity) <= 0}
-                  className="px-4 py-2 bg-blue-600 text-white rounded-xl text-sm font-medium hover:bg-blue-700 transition-colors disabled:opacity-50 flex items-center gap-2"
+                  className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors disabled:opacity-50 flex items-center gap-2"
                 >
                   {stockLoading && <Loader2 className="w-4 h-4 animate-spin" />}
                   Ajouter
