@@ -1,19 +1,24 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { logger } from '../lib/logger';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
-import type { Order } from '../types';
+import { useCart } from '../context/CartContext';
+import type { Order, Product } from '../types';
 import { formatPrice, getStatusColor, getStatusLabel } from '../lib/utils';
-import { Package, ChevronRight, Search, Filter, ShoppingBag, ArrowLeft } from 'lucide-react';
+import { Package, ChevronRight, Search, Filter, ShoppingBag, ArrowLeft, XCircle, Download } from 'lucide-react';
 import { PageLoading } from '../components/LoadingSpinner';
 import { cn } from '../lib/utils';
-import { fetchOrders as fetchOrdersService, fetchOrderById } from '../services/orders';
+import { fetchOrders as fetchOrdersService, fetchOrderById, cancelOrder } from '../services/orders';
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
 
 export function OrdersPage() {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('');
 
@@ -23,12 +28,25 @@ export function OrdersPage() {
     try {
       const data = await fetchOrdersService();
       setOrders(data);
-    } catch (error) {
-      logger.error('Error fetching orders:', error);
+    } catch (err) {
+      logger.error('Error fetching orders:', err);
+      setError('Impossible de charger les commandes. Veuillez réessayer.');
     } finally {
       setLoading(false);
     }
   }, [user]);
+
+  const handleCancelOrder = async (orderId: string) => {
+    if (!confirm('Etes-vous sûr de vouloir annuler cette commande ?')) return;
+
+    try {
+      const updated = await cancelOrder(orderId);
+      setOrders(prev => prev.map(o => o.id === orderId ? updated : o));
+    } catch (err) {
+      logger.error('Error cancelling order:', err);
+      alert('Impossible d\'annuler la commande. Veuillez réessayer.');
+    }
+  };
 
   useEffect(() => {
     fetchOrders();
@@ -43,6 +61,19 @@ export function OrdersPage() {
   const statuses = ['pending', 'confirmed', 'processing', 'shipped', 'delivered', 'cancelled'];
 
   if (loading) return <PageLoading />;
+
+  if (error) {
+    return (
+      <div className="min-h-screen page-bg flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-lg font-medium text-gray-900 dark:text-white mb-4">{error}</p>
+          <button onClick={fetchOrders} className="btn-primary">
+            Reessayer
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen page-bg">
@@ -145,9 +176,9 @@ export function OrdersPage() {
                     exit={{ opacity: 0, x: -100 }}
                     transition={{ delay: index * 0.05 }}
                   >
-                    <Link
-                      to={`/orders/${order.id}`}
-                      className="block card p-6 hover:shadow-premium transition-all"
+                    <div
+                      onClick={() => navigate(`/orders/${order.id}`)}
+                      className="block card p-6 hover:shadow-premium transition-all cursor-pointer"
                     >
                     <div className="flex items-center justify-between mb-4">
                       <div className="flex items-center gap-3">
@@ -179,13 +210,29 @@ export function OrdersPage() {
                         </span>
                       </div>
 
-                      <p className="font-bold dark:text-white">
-                        {formatPrice(order.total)}
-                      </p>
+                      <div className="flex items-center gap-3">
+                        <p className="font-bold dark:text-white">
+                          {formatPrice(order.total)}
+                        </p>
+
+                        {['pending', 'confirmed', 'processing'].includes(order.status) && (
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleCancelOrder(order.id);
+                            }}
+                            className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
+                            title="Annuler la commande"
+                          >
+                            <XCircle className="w-4 h-4" />
+                            Annuler
+                          </button>
+                        )}
+                      </div>
                     </div>
-                  </Link>
-                  </motion.div>
-                ))}
+                  </div>
+                </motion.div>
+              ))}
               </AnimatePresence>
             </div>
           )}
@@ -198,6 +245,8 @@ export function OrdersPage() {
 export function OrderDetailPage() {
   const { id } = useParams();
   const { user } = useAuth();
+  const navigate = useNavigate();
+  const { addItem } = useCart();
   const [order, setOrder] = useState<Order | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -216,6 +265,49 @@ export function OrderDetailPage() {
   useEffect(() => {
     fetchOrder();
   }, [fetchOrder]);
+
+  const handleCancelOrder = async () => {
+    if (!order || !confirm('Etes-vous sûr de vouloir annuler cette commande ?')) return;
+
+    try {
+      const updated = await cancelOrder(order.id);
+      setOrder(updated);
+    } catch (err) {
+      logger.error('Error cancelling order:', err);
+      alert('Impossible d\'annuler la commande. Veuillez réessayer.');
+    }
+  };
+
+  const invoiceRef = useRef<HTMLDivElement>(null);
+
+  const handleDownloadInvoice = async () => {
+    if (!invoiceRef.current || !order) return;
+    try {
+      const canvas = await html2canvas(invoiceRef.current, { scale: 2, useCORS: true });
+      const imgData = canvas.toDataURL('image/png');
+      const pdf = new jsPDF('p', 'mm', 'a4');
+      const imgWidth = 210;
+      const pageHeight = 295;
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+      let heightLeft = imgHeight;
+      let position = 0;
+
+      pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+      heightLeft -= pageHeight;
+
+      while (heightLeft > 0) {
+        position = heightLeft - imgHeight;
+        pdf.addPage();
+        pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+        heightLeft -= pageHeight;
+      }
+
+      pdf.save(`facture-${order.order_number}.pdf`);
+    } catch (err) {
+      logger.error('Invoice PDF generation error:', err);
+      alert('Impossible de generer la facture. Veuillez reessayer.');
+    }
+  };
 
   if (loading) return <PageLoading />;
 
@@ -253,6 +345,13 @@ export function OrderDetailPage() {
             >
               <ArrowLeft className="w-5 h-5 dark:text-gray-500" />
             </Link>
+            <button
+              onClick={handleDownloadInvoice}
+              className="flex items-center gap-2 px-4 py-2 bg-primary-50 dark:bg-primary-900/20 text-primary-600 dark:text-primary-400 border border-primary-200 dark:border-primary-800 rounded-lg hover:bg-primary-100 dark:hover:bg-primary-900/30 transition-colors"
+            >
+              <Download className="w-5 h-5" />
+              Telecharger la facture
+            </button>
             <div>
               <h1 className="text-3xl font-bold dark:text-white">{order.order_number}</h1>
               <p className="dark:text-gray-500">
@@ -310,6 +409,42 @@ export function OrderDetailPage() {
             </div>
           </motion.div>
         )}
+
+        {order.status !== 'cancelled' && ['pending', 'confirmed', 'processing'].includes(order.status) && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mb-6"
+          >
+            <button
+              onClick={handleCancelOrder}
+              className="flex items-center gap-2 px-4 py-2.5 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 border border-red-200 dark:border-red-800 rounded-lg hover:bg-red-100 dark:hover:bg-red-900/30 transition-colors"
+            >
+              <XCircle className="w-5 h-5" />
+              Annuler la commande
+            </button>
+          </motion.div>
+        )}
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-6"
+        >
+          <button
+            onClick={async () => {
+              if (!order.items?.length) return;
+              for (const item of order.items) {
+                await addItem({ ...item, id: item.product_id } as unknown as Product, item.quantity);
+              }
+              navigate('/cart');
+            }}
+            className="flex items-center gap-2 px-4 py-2.5 bg-primary-50 dark:bg-primary-900/20 text-primary-600 dark:text-primary-400 border border-primary-200 dark:border-primary-800 rounded-lg hover:bg-primary-100 dark:hover:bg-primary-900/30 transition-colors"
+          >
+            <ShoppingBag className="w-5 h-5" />
+            Recommander
+          </button>
+        </motion.div>
 
         <div className="grid md:grid-cols-2 gap-6">
           <motion.div
@@ -455,6 +590,62 @@ export function OrderDetailPage() {
           </div>
         </div>
       </div>
-    </div>
-  );
-}
+
+      <div ref={invoiceRef} className="fixed left-[-9999px] top-0 bg-white p-8" style={{ width: '210mm' }}>
+        <div className="text-center mb-8">
+          <h1 className="text-2xl font-bold">Be Market</h1>
+          <p className="text-gray-600">Votre boutique en ligne de confiance</p>
+        </div>
+        <div className="mb-8">
+          <h2 className="text-xl font-bold mb-4">Facture</h2>
+          <div className="grid grid-cols-2 gap-4 mb-4">
+            <div>
+              <p className="font-medium">Commande:</p>
+              <p>{order.order_number}</p>
+            </div>
+            <div>
+              <p className="font-medium">Date:</p>
+              <p>{new Date(order.created_at).toLocaleDateString('fr-FR')}</p>
+            </div>
+          </div>
+        </div>
+        <div className="mb-8">
+          <h3 className="font-bold mb-2">Articles</h3>
+          <table className="w-full border-collapse border border-gray-300">
+            <thead>
+              <tr className="bg-gray-100">
+                <th className="border border-gray-300 p-2 text-left">Produit</th>
+                <th className="border border-gray-300 p-2 text-right">Quantite</th>
+                <th className="border border-gray-300 p-2 text-right">Prix</th>
+                <th className="border border-gray-300 p-2 text-right">Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              {order.items?.map(item => (
+                <tr key={item.id}>
+                  <td className="border border-gray-300 p-2">{item.product_name}</td>
+                  <td className="border border-gray-300 p-2 text-right">{item.quantity}</td>
+                  <td className="border border-gray-300 p-2 text-right">{formatPrice(item.price)}</td>
+                  <td className="border border-gray-300 p-2 text-right">{formatPrice(item.total)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <div className="mb-8">
+          <h3 className="font-bold mb-2">Totaux</h3>
+          <div className="space-y-1">
+            <div className="flex justify-between"><span>Sous-total</span><span>{formatPrice(order.subtotal)}</span></div>
+            {order.discount > 0 && <div className="flex justify-between"><span>Remise</span><span>-{formatPrice(order.discount)}</span></div>}
+            <div className="flex justify-between"><span>Livraison</span><span>{order.shipping_fee === 0 ? 'Gratuite' : formatPrice(order.shipping_fee)}</span></div>
+            <div className="flex justify-between"><span>Taxe</span><span>{formatPrice(order.tax)}</span></div>
+            <div className="flex justify-between font-bold text-lg border-t pt-2"><span>Total</span><span>{formatPrice(order.total)}</span></div>
+          </div>
+        </div>
+         <div className="text-sm text-gray-600">
+           <p>Merci pour votre commande!</p>
+         </div>
+       </div>
+     </div>
+   );
+ }

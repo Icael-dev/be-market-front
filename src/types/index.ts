@@ -432,3 +432,12 @@ export interface FilterOptions {
   page?: number;
   per_page?: number;
 }
+
+export interface SuggestionProduct {
+  id: string;
+  name: string;
+  slug: string;
+  sku: string | null;
+  price: number;
+  images: string[];
+}

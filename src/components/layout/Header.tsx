@@ -1,12 +1,11 @@
 import { useState, useRef } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   LayoutDashboard,
   Package,
   ShoppingCart,
   User,
-  Search,
   LogOut,
   Menu,
   X,
@@ -25,6 +24,7 @@ import { useWishlist } from '../../context/WishlistContext';
 import { useTheme } from '../../context/ThemeContext';
 import { cn } from '../../lib/utils';
 import { WishlistDrawer } from '../WishlistDrawer';
+import { SearchWithSuggestions } from '../SearchWithSuggestions';
 import { useEscape } from '../../hooks/useKeyPress';
 
 export function Header() {
@@ -35,7 +35,6 @@ export function Header() {
   const location = useLocation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
   const [showWishlist, setShowWishlist] = useState(false);
   const userMenuRef = useRef<HTMLDivElement>(null);
 
@@ -48,15 +47,6 @@ export function Header() {
     { path: '/products', label: 'Produits' },
     { path: '/blog', label: 'Blog' }
   ];
-
-  const navigate = useNavigate();
-
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (searchQuery.trim()) {
-      navigate(`/products?search=${encodeURIComponent(searchQuery.trim())}`);
-    }
-  };
 
   return (
     <>
@@ -105,21 +95,7 @@ export function Header() {
             </div>
 
             <div className="hidden sm:flex flex-1 max-w-md mx-6">
-              <form onSubmit={handleSearch} className="w-full">
-                <div className="relative group">
-                  <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 dark:text-gray-500 group-focus-within:text-primary-500 transition-colors" />
-                  <input
-                    type="text"
-                    id="header-search-desktop"
-                    name="search"
-                    aria-label="Rechercher des produits"
-                    placeholder="Rechercher des produits..."
-                    value={searchQuery}
-                    onChange={e => setSearchQuery(e.target.value)}
-                    className="input-premium pl-10"
-                  />
-                </div>
-              </form>
+              <SearchWithSuggestions />
             </div>
 
             <div className="flex items-center gap-1">
@@ -291,21 +267,9 @@ export function Header() {
                 className="lg:hidden border-t border-gray-100 dark:border-gray-800 overflow-hidden"
               >
                 <div className="py-4">
-                  <form onSubmit={handleSearch} className="px-4 mb-4">
-                    <div className="relative">
-                      <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 dark:text-gray-500" />
-                      <input
-                        type="text"
-                        id="header-search-mobile"
-                        name="search"
-                        aria-label="Rechercher"
-                        placeholder="Rechercher..."
-                        value={searchQuery}
-                        onChange={e => setSearchQuery(e.target.value)}
-                        className="input-premium pl-10"
-                      />
-                    </div>
-                  </form>
+                  <div className="px-4 mb-4">
+                    <SearchWithSuggestions />
+                  </div>
                   <nav className="flex flex-col gap-1 px-3">
                     {navLinks.map(link => {
                       const isActive = location.pathname === link.path ||

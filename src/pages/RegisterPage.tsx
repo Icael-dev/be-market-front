@@ -155,9 +155,9 @@ export function RegisterPage() {
               />
               <span className="text-sm text-gray-600 dark:text-gray-300">
                 J'accepte les{' '}
-                <a href="/legal/terms" className="text-primary-600 hover:underline">conditions d'utilisation</a>
+                <Link to="/legal/terms" className="text-primary-600 hover:underline">conditions d'utilisation</Link>
                 {' '}et la{' '}
-                <a href="/legal/privacy" className="text-primary-600 hover:underline">politique de confidentialite</a>
+                <Link to="/legal/privacy" className="text-primary-600 hover:underline">politique de confidentialite</Link>
               </span>
             </div>
 

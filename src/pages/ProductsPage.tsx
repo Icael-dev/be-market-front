@@ -7,6 +7,7 @@ import type { Product, Category, FilterOptions } from '../types';
 import { ProductCard } from '../components/ProductCard';
 import { ProductsGridSkeleton } from '../components/LoadingSpinner';
 import { Pagination } from '../components/Pagination';
+import { PageTitle } from '../hooks/usePageTitle';
 import {
   SlidersHorizontal,
   X,
@@ -155,7 +156,9 @@ export function ProductsPage() {
     : null;
 
   return (
-    <div className="min-h-screen page-bg">
+    <>
+      <PageTitle title={selectedCategoryName || 'Tous les produits'} description={`${totalProducts} produits trouves`} />
+      <div className="min-h-screen page-bg">
       <div className="page-header">
         <div className="page-header-inner">
           <motion.div
@@ -606,7 +609,8 @@ export function ProductsPage() {
           total={totalProducts}
           onPageChange={(page) => setCurrentPage(page)}
         />
-      </div>
-    </div>
+       </div>
+     </div>
+    </>
   );
 }

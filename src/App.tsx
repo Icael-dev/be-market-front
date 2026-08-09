@@ -3,6 +3,7 @@ import { logger } from './lib/logger';
 import { Component, ErrorInfo, ReactNode, useEffect, lazy, Suspense } from 'react';
 import { Toaster } from 'react-hot-toast';
 import { motion, AnimatePresence } from 'framer-motion';
+import { HelmetProvider } from 'react-helmet-async';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
 import { WishlistProvider } from './context/WishlistContext';
@@ -59,6 +60,7 @@ const LazyBlogPostPage = lazy(() => import('./pages/BlogPage').then(m => ({ defa
 const LazyLoyaltyPage = lazy(() => import('./pages/LoyaltyPage').then(m => ({ default: m.LoyaltyPage })));
 const LazyPaymentsPage = lazy(() => import('./pages/PaymentsPage').then(m => ({ default: m.PaymentsPage })));
 const LazyWishlistPage = lazy(() => import('./pages/WishlistPage').then(m => ({ default: m.WishlistPage })));
+const LazySearchPage = lazy(() => import('./pages/SearchPage').then(m => ({ default: m.SearchPage })));
 const LazyNotFoundPage = lazy(() => import('./pages/NotFoundPage').then(m => ({ default: m.NotFoundPage })));
 const LazyForgotPasswordPage = lazy(() => import('./pages/ForgotPasswordPage').then(m => ({ default: m.ForgotPasswordPage })));
 const LazyResetPasswordPage = lazy(() => import('./pages/ResetPasswordPage').then(m => ({ default: m.ResetPasswordPage })));
@@ -184,6 +186,7 @@ function AppRoutes() {
               <Route path="/reset-password/:token" element={<LazyResetPasswordPage />} />
               <Route path="/" element={<LazyHomePage />} />
               <Route path="/products" element={<LazyProductsPage />} />
+              <Route path="/search" element={<LazySearchPage />} />
               <Route path="/categories" element={<LazyCategoriesPage />} />
               <Route path="/product/:slug" element={<LazyProductDetailPage />} />
               <Route path="/cart" element={<LazyCartPage />} />
@@ -247,41 +250,43 @@ function AppRoutes() {
 
 function App() {
   return (
-    <BrowserRouter>
-      <AuthProvider>
-        <CartProvider>
-          <WishlistProvider>
-            <Toaster
-              position="top-right"
-              toastOptions={{
-                duration: 3000,
-                style: {
-                  background: '#1f2937',
-                  color: '#fff',
-                  borderRadius: '12px',
-                  padding: '12px 16px'
-                },
-                success: {
-                  iconTheme: {
-                    primary: '#10b981',
-                    secondary: '#fff'
+    <HelmetProvider>
+      <BrowserRouter>
+        <AuthProvider>
+          <CartProvider>
+            <WishlistProvider>
+              <Toaster
+                position="top-right"
+                toastOptions={{
+                  duration: 3000,
+                  style: {
+                    background: '#1f2937',
+                    color: '#fff',
+                    borderRadius: '12px',
+                    padding: '12px 16px'
+                  },
+                  success: {
+                    iconTheme: {
+                      primary: '#10b981',
+                      secondary: '#fff'
+                    }
+                  },
+                  error: {
+                    iconTheme: {
+                      primary: '#ef4444',
+                      secondary: '#fff'
+                    }
                   }
-                },
-                error: {
-                  iconTheme: {
-                    primary: '#ef4444',
-                    secondary: '#fff'
-                  }
-                }
-              }}
-            />
-            <ErrorBoundary>
-              <AppRoutes />
-            </ErrorBoundary>
-          </WishlistProvider>
-        </CartProvider>
-      </AuthProvider>
-    </BrowserRouter>
+                }}
+              />
+              <ErrorBoundary>
+                <AppRoutes />
+              </ErrorBoundary>
+            </WishlistProvider>
+          </CartProvider>
+        </AuthProvider>
+      </BrowserRouter>
+    </HelmetProvider>
   );
 }
 

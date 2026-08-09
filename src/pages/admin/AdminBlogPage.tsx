@@ -49,7 +49,7 @@ export function AdminBlogPage() {
 
   useEffect(() => {
     fetchPosts();
-    fetchProducts({}).then(setProducts).catch(console.error);
+    fetchProducts({}).then(setProducts).catch(error => logger.error('Error fetching products:', error));
   }, []);
 
   const fetchPosts = async () => {

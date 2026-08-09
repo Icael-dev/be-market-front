@@ -4,17 +4,9 @@ import { useNavigate } from 'react-router-dom';
 import { Search, X, Package } from 'lucide-react';
 import { formatPrice } from '../lib/utils';
 import { getImageUrl } from '../lib/imageUrl';
-import { api } from '../lib/api';
 import { useEscape } from '../hooks/useKeyPress';
-
-interface SuggestionProduct {
-  id: string;
-  name: string;
-  slug: string;
-  sku: string | null;
-  price: number;
-  images: string[];
-}
+import { fetchProductSuggestions } from '../services/products';
+import type { SuggestionProduct } from '../types';
 
 export function SearchWithSuggestions() {
   const [query, setQuery] = useState('');
@@ -35,7 +27,7 @@ export function SearchWithSuggestions() {
 
     setLoading(true);
     try {
-      const data = await api.get<SuggestionProduct[]>(`/api/products/suggestions?q=${encodeURIComponent(searchQuery)}&limit=8`);
+      const data = await fetchProductSuggestions(searchQuery, 8);
       setSuggestions(data ?? []);
     } catch (error) {
       logger.error('Search suggestions error:', error);
@@ -74,7 +66,7 @@ export function SearchWithSuggestions() {
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (query.trim()) {
-      navigate(`/products?search=${encodeURIComponent(query.trim())}`);
+      navigate(`/search?q=${encodeURIComponent(query.trim())}`);
       setShowSuggestions(false);
     }
   };

@@ -1,5 +1,5 @@
 import { api } from '../lib/api';
-import type { Product, Category, FilterOptions, PaginatedResponse } from '../types';
+import type { Product, Category, FilterOptions, PaginatedResponse, SuggestionProduct } from '../types';
 
 export async function fetchCategories(): Promise<Category[]> {
   return api.get<Category[]>('/api/categories');
@@ -112,4 +112,9 @@ export async function fetchPriceBounds(category?: string, search?: string, brand
   if (search) params.set('search', search);
   if (brand) params.set('brand', brand);
   return api.get<{ min: number; max: number }>(`/api/products/price-bounds${params.toString() ? `?${params.toString()}` : ''}`);
+}
+
+export async function fetchProductSuggestions(query: string, limit = 8): Promise<SuggestionProduct[]> {
+  const params = new URLSearchParams({ q: query, limit: String(limit) });
+  return api.get<SuggestionProduct[]>(`/api/products/suggestions?${params.toString()}`);
 }

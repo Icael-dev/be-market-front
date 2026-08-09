@@ -139,9 +139,9 @@ export function LoginPage() {
                 />
                 <span className="text-sm text-gray-600 dark:text-gray-400">Se souvenir de moi</span>
               </label>
-              <a href="/forgot-password" className="text-sm text-primary-600 hover:underline">
+              <Link to="/forgot-password" className="text-sm text-primary-600 hover:underline">
                 Mot de passe oublie ?
-              </a>
+              </Link>
             </div>
 
             <button

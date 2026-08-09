@@ -3,13 +3,15 @@ import { logger } from '../lib/logger';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { fetchProductBySlug, fetchRelatedProducts } from '../services/products';
-import type { Product } from '../types';
+import { fetchReviews } from '../services/content';
+import type { Product, Review } from '../types';
 import { useCart } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
 import { ProductCard } from '../components/ProductCard';
 import { ReviewSection } from '../components/ReviewSection';
 import { PageLoading } from '../components/LoadingSpinner';
 import { StockNotificationButton } from '../pages/StockNotificationPage';
+import { PageTitle } from '../hooks/usePageTitle';
 import {
   ShoppingCart,
   Heart,
@@ -30,6 +32,8 @@ export function ProductDetailPage() {
   const { toggleItem, isInWishlist } = useWishlist();
   const [product, setProduct] = useState<Product | null>(null);
   const [relatedProducts, setRelatedProducts] = useState<Product[]>([]);
+  const [reviews, setReviews] = useState<Review[]>([]);
+  const [averageRating, setAverageRating] = useState(0);
   const [loading, setLoading] = useState(true);
   const [quantity, setQuantity] = useState(1);
   const [selectedImage, setSelectedImage] = useState(0);
@@ -49,6 +53,13 @@ export function ProductDetailPage() {
         if (data.category_id) {
           const related = await fetchRelatedProducts(data.category_id, data.id, 4);
           setRelatedProducts(related);
+        }
+
+        const productReviews = await fetchReviews(data.id);
+        setReviews(productReviews);
+        if (productReviews.length > 0) {
+          const avg = productReviews.reduce((sum, r) => sum + r.rating, 0) / productReviews.length;
+          setAverageRating(Math.round(avg * 10) / 10);
         }
       } catch (error) {
         logger.error('Error fetching product:', error);
@@ -81,7 +92,16 @@ export function ProductDetailPage() {
   };
 
   if (loading) return <PageLoading />;
-  if (!product) return null;
+  if (!product) {
+    return (
+      <div className="min-h-screen page-bg flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-lg font-medium text-gray-900 dark:text-white mb-2">Produit introuvable</p>
+          <Link to="/products" className="text-primary-600 hover:underline">Voir tous les produits</Link>
+        </div>
+      </div>
+    );
+  }
 
   const images = product.images?.length > 0 ? product.images : [
     FALLBACK_IMAGE
@@ -101,7 +121,9 @@ export function ProductDetailPage() {
   ];
 
   return (
-    <div className="min-h-screen page-bg">
+    <>
+      {product && <PageTitle title={product.name} description={product.short_description || product.description || undefined} />}
+      <div className="min-h-screen page-bg">
       <div className="page-header">
         <div className="page-header-inner">
           <nav className="flex items-center gap-2 text-sm">
@@ -203,10 +225,13 @@ export function ProductDetailPage() {
                     key={i}
                     className={cn(
                       'w-5 h-5',
-                      i < 4 ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300 dark:text-gray-600'
+                      i < Math.round(averageRating) ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300 dark:text-gray-600'
                     )}
                   />
                 ))}
+                <span className="text-sm text-gray-500 dark:text-gray-400 ml-1">
+                  {averageRating > 0 ? `${averageRating} (${reviews.length} avis)` : ''}
+                </span>
               </div>
               <a href="#reviews" className="text-primary-600 dark:text-primary-400 text-sm hover:underline">
                 Voir les avis
@@ -372,7 +397,8 @@ export function ProductDetailPage() {
             </div>
           </motion.div>
         )}
-      </div>
-    </div>
+       </div>
+     </div>
+    </>
   );
 }

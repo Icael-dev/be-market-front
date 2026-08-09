@@ -9,6 +9,7 @@ import { fetchCategories, fetchFeaturedProducts } from '../services/products';
 import { ProductsGridSkeleton } from '../components/LoadingSpinner';
 import { BannerSlider } from '../components/BannerSlider';
 import { FlashSaleSection } from '../components/FlashSaleSection';
+import { PageTitle } from '../hooks/usePageTitle';
 
 import {
   Smartphone,
@@ -47,6 +48,8 @@ export function HomePage() {
     const [loading, setLoading] = useState(true);
     const [newsletterEmail, setNewsletterEmail] = useState('');
     const [newsletterLoading, setNewsletterLoading] = useState(false);
+    const [newsletterError, setNewsletterError] = useState<string | null>(null);
+    const [newsletterSuccess, setNewsletterSuccess] = useState<string | null>(null);
    const trackRef = useRef<HTMLDivElement>(null);
   const rafRef = useRef<number>(0);
   const posRef = useRef(0);
@@ -186,7 +189,9 @@ useEffect(() => {
   ];
 
   return (
-    <div className="min-h-screen">
+    <>
+      <PageTitle title="Accueil" description="Bienvenue sur Be Market, votre boutique en ligne de confiance" />
+      <div className="min-h-screen">
       {/* Hero Banner with background image */}
       <section className="relative pt-4 md:pt-6 lg:pt-8 pb-10 md:pb-14 lg:pb-20 min-h-[30rem] sm:min-h-[38rem] md:min-h-[46rem] lg:min-h-[54rem] overflow-hidden">
         <div
@@ -588,7 +593,7 @@ useEffect(() => {
             <p className="text-gray-500 dark:text-gray-400 mb-8 max-w-lg mx-auto">
               Recevez nos offres exclusives et les dernieres nouveautes directement dans votre boite mail
             </p>
-             <form onSubmit={async (e) => { e.preventDefault(); if (!newsletterEmail.trim()) return; setNewsletterLoading(true); try { await subscribeNewsletter(newsletterEmail.trim()); setNewsletterEmail(''); } catch (err) { logger.error(err); } finally { setNewsletterLoading(false); } }} className="flex flex-col sm:flex-row gap-3 max-w-lg mx-auto">
+             <form onSubmit={async (e) => { e.preventDefault(); if (!newsletterEmail.trim()) return; setNewsletterLoading(true); setNewsletterError(null); setNewsletterSuccess(null); try { await subscribeNewsletter(newsletterEmail.trim()); setNewsletterEmail(''); setNewsletterSuccess('Inscription reussie !'); } catch (err) { setNewsletterError(err instanceof Error ? err.message : 'Erreur lors de l\'inscription'); } finally { setNewsletterLoading(false); } }} className="flex flex-col sm:flex-row gap-3 max-w-lg mx-auto">
                <input
                  type="email"
                  value={newsletterEmail}
@@ -603,10 +608,17 @@ useEffect(() => {
                >
                  {newsletterLoading ? '...' : "S'inscrire"}
                </button>
-             </form>
-          </motion.div>
+              </form>
+              {newsletterError && (
+                <p className="mt-3 text-sm text-red-600 dark:text-red-400">{newsletterError}</p>
+              )}
+              {newsletterSuccess && (
+                <p className="mt-3 text-sm text-green-600 dark:text-green-400">{newsletterSuccess}</p>
+              )}
+           </motion.div>
         </div>
-      </section>
-    </div>
+       </section>
+     </div>
+    </>
   );
 }

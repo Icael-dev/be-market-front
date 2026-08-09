@@ -70,6 +70,7 @@ export function CheckoutPage() {
   const [couponValidation, setCouponValidation] = useState<CouponValidation | null>(null);
   const [couponLoading, setCouponLoading] = useState(false);
   const [settings, setSettings] = useState<Settings | null>(null);
+  const [phoneError, setPhoneError] = useState<string | null>(null);
 
   const handleApplyCoupon = useCallback(async () => {
     if (!couponCode.trim() || !total) return;
@@ -109,6 +110,21 @@ export function CheckoutPage() {
   });
 
   const [useNewAddress, setUseNewAddress] = useState(true);
+
+  const validatePhone = (): boolean => {
+    if (paymentMethod === 'cash_on_delivery') return true;
+    if (!phoneNumber.trim()) {
+      setPhoneError('Le numéro de téléphone est requis pour ce mode de paiement');
+      return false;
+    }
+    const cleaned = phoneNumber.replace(/\s+/g, '');
+    if (!/^\+?228\d{8}$/.test(cleaned) && !/^\d{8}$/.test(cleaned)) {
+      setPhoneError('Format invalide. Ex: +228 90 00 00 00 ou 90000000');
+      return false;
+    }
+    setPhoneError(null);
+    return true;
+  };
 
   const shippingFee = total > (settings?.free_shipping_threshold ?? 50000) ? 0 : (settings?.shipping_fee ?? 2500);
   const couponDiscount = couponValidation?.valid ? (couponValidation.discount_amount || 0) : 0;
@@ -506,6 +522,7 @@ const handlePlaceOrder = async () => {
                         value={phoneNumber}
                         onChange={e => setPhoneNumber(e.target.value)}
                         placeholder="+228 XX XX XX XX"
+                        error={phoneError || undefined}
                       />
                     </motion.div>
                   )}
@@ -534,7 +551,11 @@ const handlePlaceOrder = async () => {
                       Retour
                     </button>
                     <button
-                      onClick={() => setStep('confirm')}
+                      onClick={() => {
+                        if (validatePhone()) {
+                          setStep('confirm');
+                        }
+                      }}
                       className="flex items-center gap-2 btn-primary"
                     >
                       Continuer

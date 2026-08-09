@@ -13,6 +13,7 @@ export function LoyaltyPage() {
   const [loyalty, setLoyalty] = useState<LoyaltyPoints | null>(null);
   const [transactions, setTransactions] = useState<LoyaltyTransaction[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (user) fetchLoyalty();
@@ -27,8 +28,9 @@ export function LoyaltyPage() {
 
       setLoyalty(loyaltyData);
       setTransactions(transactionsData);
-    } catch (error) {
-      logger.error('Failed to load loyalty data:', error);
+    } catch (err) {
+      logger.error('Failed to load loyalty data:', err);
+      setError('Impossible de charger les donnees de fidelite.');
     } finally {
       setLoading(false);
     }
@@ -62,6 +64,11 @@ export function LoyaltyPage() {
         {loading ? (
           <div className="flex justify-center py-12">
             <Loader2 className="w-8 h-8 animate-spin text-primary-600" />
+          </div>
+        ) : error ? (
+          <div className="text-center py-12">
+            <p className="text-lg font-medium text-gray-900 dark:text-white mb-4">{error}</p>
+            <button onClick={fetchLoyalty} className="btn-primary">Reessayer</button>
           </div>
         ) : (
           <>

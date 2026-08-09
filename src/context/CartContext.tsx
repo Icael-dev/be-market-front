@@ -3,7 +3,7 @@ import { createContext, useContext, useEffect, useState, useCallback, ReactNode 
 import { logger } from '../lib/logger';
 import { useAuth } from './AuthContext';
 import type { Product, CartItem } from '../types';
-import { fetchCart, addCartItem, updateCartItem, deleteCartItem, clearCart as clearCartService } from '../services/cart';
+import { fetchCart, addCartItem, updateCartItem, deleteCartItem, clearCart as clearCartService, mergeCart } from '../services/cart';
 
 interface CartContextType {
   items: CartItem[];
@@ -32,8 +32,22 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const loadCart = useCallback(async () => {
     try {
       if (user) {
-        const cartItems = await fetchCart();
-        setItems(cartItems);
+        const localCart = localStorage.getItem('be_market_cart_items');
+        const localItems = localCart ? JSON.parse(localCart) : [];
+
+        if (localItems.length > 0) {
+          const mergedItems = await mergeCart(
+            localItems.map((item: { product_id: string; quantity: number }) => ({
+              product_id: item.product_id,
+              quantity: item.quantity
+            }))
+          );
+          setItems(mergedItems);
+          localStorage.removeItem('be_market_cart_items');
+        } else {
+          const cartItems = await fetchCart();
+          setItems(cartItems);
+        }
       } else {
         const stored = localStorage.getItem('be_market_cart_items');
         setItems(stored ? JSON.parse(stored) : []);

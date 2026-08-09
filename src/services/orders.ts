@@ -23,3 +23,7 @@ export async function placeOrder(payload: {
 }): Promise<Order> {
   return api.post<Order>('/api/checkout', payload);
 }
+
+export async function cancelOrder(id: string): Promise<Order> {
+  return api.post<Order>(`/api/orders/${id}/cancel`);
+}
