@@ -1,8 +1,8 @@
-import { api } from '../lib/api';
-import type { Order } from '../types';
+import { api } from "../lib/api";
+import type { Order } from "../types";
 
 export async function fetchOrders(): Promise<Order[]> {
-  return api.get<Order[]>('/api/orders');
+  return api.get<Order[]>("/api/orders");
 }
 
 export async function fetchRecentOrders(limit = 3): Promise<Order[]> {
@@ -21,7 +21,7 @@ export async function placeOrder(payload: {
   coupon_code?: string;
   loyalty_points_to_redeem?: number;
 }): Promise<Order> {
-  return api.post<Order>('/api/checkout', payload);
+  return api.post<Order>("/api/checkout", payload);
 }
 
 export async function cancelOrder(id: string): Promise<Order> {

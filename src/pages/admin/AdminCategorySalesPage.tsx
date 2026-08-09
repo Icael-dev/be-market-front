@@ -1,11 +1,11 @@
-import { useEffect, useState } from 'react';
-import { fetchAdminCategorySales, type CategorySale } from '../../services/admin';
-import { PageHeader } from '../../components/admin/PageHeader';
-import { MobileNotOptimizedBanner } from '../../components/admin/MobileNotOptimizedBanner';
-import { AdminTable, type Column } from '../../components/admin/AdminTable';
-import { formatPrice } from '../../lib/utils';
-import { motion } from 'framer-motion';
-import { Package } from 'lucide-react';
+import { useEffect, useState } from "react";
+import { fetchAdminCategorySales, type CategorySale } from "../../services/admin";
+import { PageHeader } from "../../components/admin/PageHeader";
+import { MobileNotOptimizedBanner } from "../../components/admin/MobileNotOptimizedBanner";
+import { AdminTable, type Column } from "../../components/admin/AdminTable";
+import { formatPrice } from "../../lib/utils";
+import { motion } from "framer-motion";
+import { Package } from "lucide-react";
 
 export function AdminCategorySalesPage() {
   const [categorySales, setCategorySales] = useState<CategorySale[]>([]);
@@ -14,7 +14,12 @@ export function AdminCategorySalesPage() {
   const perPage = 10;
 
   useEffect(() => {
-    fetchAdminCategorySales(30).then(data => { setCategorySales(data); setLoading(false); }).catch(() => setLoading(false));
+    fetchAdminCategorySales(30)
+      .then((data) => {
+        setCategorySales(data);
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
   }, []);
 
   const lastPage = Math.ceil(categorySales.length / perPage) || 1;
@@ -22,26 +27,26 @@ export function AdminCategorySalesPage() {
 
   const columns: Column<CategorySale>[] = [
     {
-      key: 'category_name',
-      label: 'Categorie',
+      key: "category_name",
+      label: "Categorie",
     },
     {
-      key: 'orders_count',
-      label: 'Commandes',
-      headerClassName: 'text-right',
-      cellClassName: 'text-right',
+      key: "orders_count",
+      label: "Commandes",
+      headerClassName: "text-right",
+      cellClassName: "text-right",
     },
     {
-      key: 'total_quantity',
-      label: 'Quantite',
-      headerClassName: 'text-right',
-      cellClassName: 'text-right',
+      key: "total_quantity",
+      label: "Quantite",
+      headerClassName: "text-right",
+      cellClassName: "text-right",
     },
     {
-      key: 'total_revenue',
-      label: 'Revenu',
-      headerClassName: 'text-right',
-      cellClassName: 'text-right',
+      key: "total_revenue",
+      label: "Revenu",
+      headerClassName: "text-right",
+      cellClassName: "text-right",
       render: (item) => formatPrice(item.total_revenue),
     },
   ];
@@ -50,14 +55,16 @@ export function AdminCategorySalesPage() {
     <>
       <MobileNotOptimizedBanner />
       <div>
-        <PageHeader title="Ventes par categorie" subtitle="Liste complete des ventes par categorie" />
+        <PageHeader
+          title="Ventes par categorie"
+          subtitle="Liste complete des ventes par categorie"
+        />
         {loading ? (
-          <div className="flex justify-center py-20"><div className="animate-spin w-8 h-8 border-2 dark:border-gray-700 border-t-primary-600 rounded-full" /></div>
+          <div className="flex justify-center py-20">
+            <div className="h-8 w-8 animate-spin rounded-full border-2 border-t-primary-600 dark:border-gray-700" />
+          </div>
         ) : (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-          >
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
             <AdminTable
               data={paginated}
               columns={columns}

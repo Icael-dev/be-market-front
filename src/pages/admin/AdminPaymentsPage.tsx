@@ -1,16 +1,16 @@
-import { useEffect, useState, useCallback } from 'react';
-import { logger } from '../../lib/logger';
-import { motion } from 'framer-motion';
-import { Link } from 'react-router-dom';
-import { fetchAdminPayments } from '../../services/admin';
-import { PageHeader } from '../../components/admin/PageHeader';
-import { MobileNotOptimizedBanner } from '../../components/admin/MobileNotOptimizedBanner';
-import { StatusBadge } from '../../components/admin/StatusBadge';
-import { AdminTable, type Column } from '../../components/admin/AdminTable';
-import { Search, Loader2 } from 'lucide-react';
-import type { Payment } from '../../types';
-import { formatPrice } from '../../lib/utils';
-import { format } from 'date-fns';
+import { useEffect, useState, useCallback } from "react";
+import { logger } from "../../lib/logger";
+import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
+import { fetchAdminPayments } from "../../services/admin";
+import { PageHeader } from "../../components/admin/PageHeader";
+import { MobileNotOptimizedBanner } from "../../components/admin/MobileNotOptimizedBanner";
+import { StatusBadge } from "../../components/admin/StatusBadge";
+import { AdminTable, type Column } from "../../components/admin/AdminTable";
+import { Search, Loader2 } from "lucide-react";
+import type { Payment } from "../../types";
+import { formatPrice } from "../../lib/utils";
+import { format } from "date-fns";
 
 export function AdminPaymentsPage() {
   const [payments, setPayments] = useState<Payment[]>([]);
@@ -18,96 +18,114 @@ export function AdminPaymentsPage() {
   const [perPage] = useState(10);
   const [lastPage, setLastPage] = useState(1);
   const [loading, setLoading] = useState(true);
-  const [statusFilter, setStatusFilter] = useState('');
-  const [methodFilter, setMethodFilter] = useState('');
-  const [search, setSearch] = useState('');
+  const [statusFilter, setStatusFilter] = useState("");
+  const [methodFilter, setMethodFilter] = useState("");
+  const [search, setSearch] = useState("");
 
-  const load = useCallback(async (page = 1) => {
-    setLoading(true);
-    try {
-      const result = await fetchAdminPayments({
-        page,
-        per_page: perPage,
-        status: statusFilter || undefined,
-        payment_method: methodFilter || undefined,
-      });
-      setPayments(result.data || []);
-      setCurrentPage(result.current_page);
-      setLastPage(result.last_page);
-    } catch (error) {
-      logger.error('Failed to load payments:', error);
-      setPayments([]);
-    } finally {
-      setLoading(false);
-    }
-  }, [statusFilter, methodFilter, perPage]);
+  const load = useCallback(
+    async (page = 1) => {
+      setLoading(true);
+      try {
+        const result = await fetchAdminPayments({
+          page,
+          per_page: perPage,
+          status: statusFilter || undefined,
+          payment_method: methodFilter || undefined,
+        });
+        setPayments(result.data || []);
+        setCurrentPage(result.current_page);
+        setLastPage(result.last_page);
+      } catch (error) {
+        logger.error("Failed to load payments:", error);
+        setPayments([]);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [statusFilter, methodFilter, perPage]
+  );
 
   useEffect(() => {
     load(1);
   }, [load]);
 
-  const filtered = payments.filter(p => {
-    const matchesSearch = !search ||
-      (p.reference?.toLowerCase().includes(search.toLowerCase())) ||
-      (p.order?.order_number?.toLowerCase().includes(search.toLowerCase()));
+  const filtered = payments.filter((p) => {
+    const matchesSearch =
+      !search ||
+      p.reference?.toLowerCase().includes(search.toLowerCase()) ||
+      p.order?.order_number?.toLowerCase().includes(search.toLowerCase());
     return matchesSearch;
   });
 
   const columns: Column<Payment>[] = [
     {
-      key: 'reference',
-      label: 'Reference',
+      key: "reference",
+      label: "Reference",
       render: (p) => (
-        <span className="font-mono text-sm dark:text-white">{p.reference || '—'}</span>
+        <span className="font-mono text-sm dark:text-white">{p.reference || "—"}</span>
       ),
     },
     {
-      key: 'user',
-      label: 'Client',
+      key: "user",
+      label: "Client",
       render: (p) => (
-        <span className="text-sm dark:text-gray-500">{p.user?.profile?.full_name || p.order?.user?.profile?.full_name || '—'}</span>
+        <span className="text-sm dark:text-gray-500">
+          {p.user?.profile?.full_name || p.order?.user?.profile?.full_name || "—"}
+        </span>
       ),
     },
     {
-      key: 'order',
-      label: 'Commande',
-      render: (p) => (
+      key: "order",
+      label: "Commande",
+      render: (p) =>
         p.order ? (
-          <Link to={`/admin/customers/${p.order.user_id}`} className="text-sm text-primary-600 dark:text-primary-400 hover:underline">
+          <Link
+            to={`/admin/customers/${p.order.user_id}`}
+            className="text-sm text-primary-600 hover:underline dark:text-primary-400"
+          >
             {p.order.order_number}
           </Link>
         ) : (
           <span className="text-sm text-gray-500 dark:text-gray-400">—</span>
-        )
-      ),
+        ),
     },
     {
-      key: 'payment_method',
-      label: 'Methode',
+      key: "payment_method",
+      label: "Methode",
       render: (p) => <span className="text-sm dark:text-gray-500">{p.payment_method}</span>,
     },
     {
-      key: 'amount',
-      label: 'Montant',
-      headerClassName: 'text-right',
-      cellClassName: 'text-right',
-      render: (p) => <span className="text-sm font-medium dark:text-white">{formatPrice(p.amount)}</span>,
+      key: "amount",
+      label: "Montant",
+      headerClassName: "text-right",
+      cellClassName: "text-right",
+      render: (p) => (
+        <span className="text-sm font-medium dark:text-white">{formatPrice(p.amount)}</span>
+      ),
     },
     {
-      key: 'status',
-      label: 'Statut',
+      key: "status",
+      label: "Statut",
       render: (p) => (
         <StatusBadge
           label={p.status}
-          variant={p.status === 'paid' ? 'success' : p.status === 'failed' || p.status === 'refunded' ? 'danger' : 'warning'}
+          variant={
+            p.status === "paid"
+              ? "success"
+              : p.status === "failed" || p.status === "refunded"
+                ? "danger"
+                : "warning"
+          }
         />
       ),
     },
     {
-      key: 'created_at',
-      label: 'Date',
+      key: "created_at",
+      label: "Date",
       render: (p) => (
-        <span className="text-sm text-gray-500 dark:text-gray-500">{format(new Date(p.created_at), 'dd/MM/yyyy HH:mm')}</span>
+        <span className="text-sm text-gray-500 dark:text-gray-500">
+          {format(new Date(p.created_at), "dd/MM/yyyy HH:mm")}
+        </span>
       ),
     },
   ];
@@ -116,24 +134,31 @@ export function AdminPaymentsPage() {
     <>
       <MobileNotOptimizedBanner />
       <div>
-        <PageHeader title="Paiements" subtitle={`${filtered.length} transaction${filtered.length > 1 ? 's' : ''}`} />
+        <PageHeader
+          title="Paiements"
+          subtitle={`${filtered.length} transaction${filtered.length > 1 ? "s" : ""}`}
+        />
 
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="bg-white dark:bg-gray-800 rounded-lg border dark:border-gray-700 p-4 mb-6">
-          <div className="flex flex-col sm:flex-row gap-4">
-            <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 dark:text-gray-500" />
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-6 rounded-lg border bg-white p-4 dark:border-gray-700 dark:bg-gray-800"
+        >
+          <div className="flex flex-col gap-4 sm:flex-row">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 dark:text-gray-500" />
               <input
                 type="text"
                 placeholder="Rechercher par reference ou commande..."
                 value={search}
-                onChange={e => setSearch(e.target.value)}
-                className="w-full pl-10 pr-4 py-2.5 border dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 bg-white dark:bg-gray-800 dark:text-white dark:placeholder-gray-500"
+                onChange={(e) => setSearch(e.target.value)}
+                className="w-full rounded-lg border bg-white py-2.5 pl-10 pr-4 focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/20 dark:border-gray-700 dark:bg-gray-800 dark:text-white dark:placeholder-gray-500"
               />
             </div>
             <select
               value={statusFilter}
-              onChange={e => setStatusFilter(e.target.value)}
-              className="px-3 py-2.5 border dark:border-gray-700 rounded-lg text-sm bg-white dark:bg-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 cursor-pointer"
+              onChange={(e) => setStatusFilter(e.target.value)}
+              className="cursor-pointer rounded-lg border bg-white px-3 py-2.5 text-sm focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/20 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
             >
               <option value="">Tous les statuts</option>
               <option value="paid">Paye</option>
@@ -143,8 +168,8 @@ export function AdminPaymentsPage() {
             </select>
             <select
               value={methodFilter}
-              onChange={e => setMethodFilter(e.target.value)}
-              className="px-3 py-2.5 border dark:border-gray-700 rounded-lg text-sm bg-white dark:bg-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 cursor-pointer"
+              onChange={(e) => setMethodFilter(e.target.value)}
+              className="cursor-pointer rounded-lg border bg-white px-3 py-2.5 text-sm focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/20 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
             >
               <option value="">Toutes les methodes</option>
               <option value="tmoney">Tmoney</option>
@@ -155,7 +180,9 @@ export function AdminPaymentsPage() {
         </motion.div>
 
         {loading ? (
-          <div className="flex justify-center py-12"><Loader2 className="w-8 h-8 animate-spin text-primary-600" /></div>
+          <div className="flex justify-center py-12">
+            <Loader2 className="h-8 w-8 animate-spin text-primary-600" />
+          </div>
         ) : (
           <AdminTable
             data={filtered}

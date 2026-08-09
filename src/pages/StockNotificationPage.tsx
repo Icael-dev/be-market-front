@@ -1,11 +1,11 @@
-import { useState } from 'react';
-import { Bell, Check } from 'lucide-react';
-import { motion } from 'framer-motion';
-import { useAuth } from '../context/AuthContext';
-import type { Product } from '../types';
-import { createStockNotification } from '../services/content';
-import { InputField } from '../components/ui/FormField';
-import { useEscape, useEnter } from '../hooks/useKeyPress';
+import { useState } from "react";
+import { Bell, Check } from "lucide-react";
+import { motion } from "framer-motion";
+import { useAuth } from "../context/AuthContext";
+import type { Product } from "../types";
+import { createStockNotification } from "../services/content";
+import { InputField } from "../components/ui/FormField";
+import { useEscape, useEnter } from "../hooks/useKeyPress";
 
 interface StockNotificationProps {
   product: Product;
@@ -13,14 +13,16 @@ interface StockNotificationProps {
 
 export function StockNotificationButton({ product }: StockNotificationProps) {
   const { user } = useAuth();
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEscape(() => setShowForm(false), showForm);
-  useEnter(() => { if (showForm) handleSubscribe(); }, showForm);
+  useEnter(() => {
+    if (showForm) handleSubscribe();
+  }, showForm);
 
   const handleSubscribe = async () => {
     if (!user && !email) return;
@@ -28,7 +30,7 @@ export function StockNotificationButton({ product }: StockNotificationProps) {
     if (!user) {
       const valid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
       if (!valid) {
-        setError('Veuillez saisir une adresse email valide');
+        setError("Veuillez saisir une adresse email valide");
         return;
       }
     }
@@ -36,10 +38,10 @@ export function StockNotificationButton({ product }: StockNotificationProps) {
     setLoading(true);
 
     try {
-      await createStockNotification(product.id, email || user?.email || '');
+      await createStockNotification(product.id, email || user?.email || "");
       setSuccess(true);
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Une erreur est survenue';
+      const message = err instanceof Error ? err.message : "Une erreur est survenue";
       setError(message);
     } finally {
       setLoading(false);
@@ -51,9 +53,9 @@ export function StockNotificationButton({ product }: StockNotificationProps) {
       <motion.div
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="flex items-center gap-2 text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-900/50 px-4 py-2 rounded-lg"
+        className="flex items-center gap-2 rounded-lg bg-green-50 px-4 py-2 text-green-600 dark:bg-green-900/50 dark:text-green-400"
       >
-        <Check className="w-5 h-5" />
+        <Check className="h-5 w-5" />
         <span className="text-sm font-medium">Vous serez prevenu(e)</span>
       </motion.div>
     );
@@ -65,16 +67,16 @@ export function StockNotificationButton({ product }: StockNotificationProps) {
     <div className="space-y-3">
       <button
         onClick={() => setShowForm(!showForm)}
-        className="flex items-center gap-2 text-primary-600 font-medium hover:text-primary-700"
+        className="flex items-center gap-2 font-medium text-primary-600 hover:text-primary-700"
       >
-        <Bell className="w-5 h-5" />
+        <Bell className="h-5 w-5" />
         Me prevenir quand disponible
       </button>
 
       {showForm && (
         <motion.div
           initial={{ opacity: 0, height: 0 }}
-          animate={{ opacity: 1, height: 'auto' }}
+          animate={{ opacity: 1, height: "auto" }}
           className="space-y-2"
         >
           {!user && (
@@ -82,20 +84,18 @@ export function StockNotificationButton({ product }: StockNotificationProps) {
               name="stock_notify_email"
               type="email"
               value={email}
-              onChange={e => setEmail(e.target.value)}
+              onChange={(e) => setEmail(e.target.value)}
               error={error || undefined}
               placeholder="Votre email"
             />
           )}
-          {user && error && (
-            <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
-          )}
+          {user && error && <p className="text-sm text-red-600 dark:text-red-400">{error}</p>}
           <button
             onClick={handleSubscribe}
             disabled={loading || (!user && !email)}
             className="btn-primary-sm disabled:opacity-50"
           >
-            {loading ? '...' : 'S\'inscrire'}
+            {loading ? "..." : "S'inscrire"}
           </button>
         </motion.div>
       )}

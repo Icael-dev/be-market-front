@@ -1,7 +1,7 @@
-import { ReactNode } from 'react';
-import { Header } from './Header';
-import { Footer } from './Footer';
-import { useLocation } from 'react-router-dom';
+import { ReactNode } from "react";
+import { Header } from "./Header";
+import { Footer } from "./Footer";
+import { useLocation } from "react-router-dom";
 
 interface LayoutProps {
   children: ReactNode;
@@ -12,15 +12,16 @@ interface LayoutProps {
 
 export function Layout({ children, hideHeader, hideFooter }: LayoutProps) {
   const location = useLocation();
-  const isHomepage = location.pathname === '/';
+  const isHomepage = location.pathname === "/";
+  const isAuthPage = ["/login", "/register", "/forgot-password", "/reset-password"].some(
+    (path) => location.pathname === path || location.pathname.startsWith(path + "/")
+  );
 
   return (
-    <div className="min-h-screen flex flex-col page-bg">
-      {!hideHeader && <Header />}
-      <main className="flex-1">
-        {children}
-      </main>
-      {!hideFooter && <Footer compact={!isHomepage} />}
+    <div className="page-bg flex min-h-screen flex-col">
+      {!hideHeader && !isAuthPage && <Header />}
+      <main className="flex-1">{children}</main>
+      {!hideFooter && !isAuthPage && <Footer compact={!isHomepage} />}
     </div>
   );
 }

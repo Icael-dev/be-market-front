@@ -1,8 +1,14 @@
-import { api } from '../lib/api';
-import type { Product, Category, FilterOptions, PaginatedResponse, SuggestionProduct } from '../types';
+import { api } from "../lib/api";
+import type {
+  Product,
+  Category,
+  FilterOptions,
+  PaginatedResponse,
+  SuggestionProduct,
+} from "../types";
 
 export async function fetchCategories(): Promise<Category[]> {
-  return api.get<Category[]>('/api/categories');
+  return api.get<Category[]>("/api/categories");
 }
 
 export async function fetchFeaturedProducts(limit = 8): Promise<Product[]> {
@@ -13,38 +19,40 @@ export async function fetchProducts(filters: FilterOptions = {}): Promise<Produc
   const params = new URLSearchParams();
 
   if (filters.category) {
-    params.set('category', filters.category);
+    params.set("category", filters.category);
   }
   if (filters.search) {
-    params.set('search', filters.search);
+    params.set("search", filters.search);
   }
   if (filters.brand) {
-    params.set('brand', filters.brand);
+    params.set("brand", filters.brand);
   }
   if (filters.minPrice !== undefined) {
-    params.set('min_price', String(filters.minPrice));
+    params.set("min_price", String(filters.minPrice));
   }
   if (filters.maxPrice !== undefined) {
-    params.set('max_price', String(filters.maxPrice));
+    params.set("max_price", String(filters.maxPrice));
   }
   if (filters.sort) {
-    params.set('sort', filters.sort);
+    params.set("sort", filters.sort);
   }
   if (filters.flash_sale) {
-    params.set('flash_sale', 'true');
+    params.set("flash_sale", "true");
   }
   if (filters.condition) {
-    params.set('condition', filters.condition);
+    params.set("condition", filters.condition);
   }
   if (filters.in_stock) {
-    params.set('in_stock', 'true');
+    params.set("in_stock", "true");
   }
   if (filters.on_sale) {
-    params.set('on_sale', 'true');
+    params.set("on_sale", "true");
   }
 
   const query = params.toString();
-  const response = await api.get<Product[] | PaginatedResponse<Product>>(`/api/products${query ? `?${query}` : ''}`);
+  const response = await api.get<Product[] | PaginatedResponse<Product>>(
+    `/api/products${query ? `?${query}` : ""}`
+  );
 
   if (Array.isArray(response)) {
     return response;
@@ -53,68 +61,87 @@ export async function fetchProducts(filters: FilterOptions = {}): Promise<Produc
   return response.data;
 }
 
-export async function fetchProductsPaginated(filters: FilterOptions = {}): Promise<PaginatedResponse<Product>> {
+export async function fetchProductsPaginated(
+  filters: FilterOptions = {}
+): Promise<PaginatedResponse<Product>> {
   const params = new URLSearchParams();
 
   if (filters.category) {
-    params.set('category', filters.category);
+    params.set("category", filters.category);
   }
   if (filters.search) {
-    params.set('search', filters.search);
+    params.set("search", filters.search);
   }
   if (filters.brand) {
-    params.set('brand', filters.brand);
+    params.set("brand", filters.brand);
   }
   if (filters.minPrice !== undefined) {
-    params.set('min_price', String(filters.minPrice));
+    params.set("min_price", String(filters.minPrice));
   }
   if (filters.maxPrice !== undefined) {
-    params.set('max_price', String(filters.maxPrice));
+    params.set("max_price", String(filters.maxPrice));
   }
   if (filters.sort) {
-    params.set('sort', filters.sort);
+    params.set("sort", filters.sort);
   }
   if (filters.flash_sale) {
-    params.set('flash_sale', 'true');
+    params.set("flash_sale", "true");
   }
   if (filters.condition) {
-    params.set('condition', filters.condition);
+    params.set("condition", filters.condition);
   }
   if (filters.in_stock) {
-    params.set('in_stock', 'true');
+    params.set("in_stock", "true");
   }
   if (filters.on_sale) {
-    params.set('on_sale', 'true');
+    params.set("on_sale", "true");
   }
   if (filters.page) {
-    params.set('page', String(filters.page));
+    params.set("page", String(filters.page));
   }
   if (filters.per_page) {
-    params.set('per_page', String(filters.per_page));
+    params.set("per_page", String(filters.per_page));
   }
 
   const query = params.toString();
-  return api.get<PaginatedResponse<Product>>(`/api/products${query ? `?${query}` : ''}`);
+  return api.get<PaginatedResponse<Product>>(`/api/products${query ? `?${query}` : ""}`);
 }
 
 export async function fetchProductBySlug(slug: string): Promise<Product> {
   return api.get<Product>(`/api/products/${encodeURIComponent(slug)}`);
 }
 
-export async function fetchRelatedProducts(categoryId: string, excludeId: string, limit = 4): Promise<Product[]> {
-  const params = new URLSearchParams({ category_id: categoryId, exclude_id: excludeId, limit: String(limit) });
+export async function fetchRelatedProducts(
+  categoryId: string,
+  excludeId: string,
+  limit = 4
+): Promise<Product[]> {
+  const params = new URLSearchParams({
+    category_id: categoryId,
+    exclude_id: excludeId,
+    limit: String(limit),
+  });
   return api.get<Product[]>(`/api/products?${params.toString()}`);
 }
 
-export async function fetchPriceBounds(category?: string, search?: string, brand?: string): Promise<{ min: number; max: number }> {
+export async function fetchPriceBounds(
+  category?: string,
+  search?: string,
+  brand?: string
+): Promise<{ min: number; max: number }> {
   const params = new URLSearchParams();
-  if (category) params.set('category', category);
-  if (search) params.set('search', search);
-  if (brand) params.set('brand', brand);
-  return api.get<{ min: number; max: number }>(`/api/products/price-bounds${params.toString() ? `?${params.toString()}` : ''}`);
+  if (category) params.set("category", category);
+  if (search) params.set("search", search);
+  if (brand) params.set("brand", brand);
+  return api.get<{ min: number; max: number }>(
+    `/api/products/price-bounds${params.toString() ? `?${params.toString()}` : ""}`
+  );
 }
 
-export async function fetchProductSuggestions(query: string, limit = 8): Promise<SuggestionProduct[]> {
+export async function fetchProductSuggestions(
+  query: string,
+  limit = 8
+): Promise<SuggestionProduct[]> {
   const params = new URLSearchParams({ q: query, limit: String(limit) });
   return api.get<SuggestionProduct[]>(`/api/products/suggestions?${params.toString()}`);
 }

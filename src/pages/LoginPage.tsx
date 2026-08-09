@@ -1,16 +1,16 @@
-import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { Mail, Lock, Eye, EyeOff, ArrowRight } from 'lucide-react';
-import { useAuth } from '../context/AuthContext';
-import { LoadingSpinner } from '../components/LoadingSpinner';
-import { InputField } from '../components/ui/FormField';
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
+import { Mail, Lock, Eye, EyeOff, ArrowRight } from "lucide-react";
+import { useAuth } from "../context/AuthContext";
+import { LoadingSpinner } from "../components/LoadingSpinner";
+import { InputField } from "../components/ui/FormField";
 
 export function LoginPage() {
   const navigate = useNavigate();
   const { signIn } = useAuth();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -23,30 +23,30 @@ export function LoginPage() {
     const { error: signInError } = await signIn(email, password);
 
     if (signInError) {
-      setError('Email ou mot de passe incorrect');
+      setError("Email ou mot de passe incorrect");
       setLoading(false);
     } else {
-      navigate('/');
+      navigate("/");
     }
   };
 
   return (
-    <div className="min-h-screen flex">
-      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-primary-600 via-primary-700 to-cyan-600 relative overflow-hidden">
+    <div className="flex min-h-screen">
+      <div className="relative hidden overflow-hidden bg-gradient-to-br from-primary-600 via-primary-700 to-cyan-600 lg:flex lg:w-1/2">
         <div className="absolute inset-0">
-          <div className="absolute top-20 left-20 w-72 h-72 bg-white/10 rounded-full blur-3xl" />
-          <div className="absolute bottom-20 right-20 w-96 h-96 bg-cyan-400/20 rounded-full blur-3xl" />
+          <div className="absolute left-20 top-20 h-72 w-72 rounded-full bg-white/10 blur-3xl" />
+          <div className="absolute bottom-20 right-20 h-96 w-96 rounded-full bg-cyan-400/20 blur-3xl" />
         </div>
 
-        <div className="relative z-10 flex flex-col justify-center items-center text-white p-12">
+        <div className="relative z-10 flex flex-col items-center justify-center p-12 text-white">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
             className="max-w-md text-center"
           >
-            <h1 className="text-4xl font-bold mb-4">Bienvenue sur BE-Market</h1>
-            <p className="text-primary-100 text-lg">
+            <h1 className="mb-4 text-4xl font-bold">Bienvenue sur BE-Market</h1>
+            <p className="text-lg text-primary-100">
               Votre destination pour les meilleurs accessoires electroniques au Togo.
             </p>
           </motion.div>
@@ -59,31 +59,31 @@ export function LoginPage() {
           >
             <div>
               <div className="text-4xl font-bold">500+</div>
-              <div className="text-primary-200 text-sm">Produits</div>
+              <div className="text-sm text-primary-200">Produits</div>
             </div>
             <div>
               <div className="text-4xl font-bold">10K+</div>
-              <div className="text-primary-200 text-sm">Clients</div>
+              <div className="text-sm text-primary-200">Clients</div>
             </div>
           </motion.div>
         </div>
       </div>
 
-      <div className="flex-1 flex items-center justify-center p-6">
+      <div className="flex flex-1 items-center justify-center p-6">
         <motion.div
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
           className="w-full max-w-md"
         >
-          <div className="lg:hidden flex items-center justify-center mb-8">
-            <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-primary-600 to-cyan-500 flex items-center justify-center">
-              <span className="text-white font-bold text-xl">B</span>
+          <div className="mb-8 flex items-center justify-center lg:hidden">
+            <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-gradient-to-br from-primary-600 to-cyan-500">
+              <span className="text-xl font-bold text-white">B</span>
             </div>
           </div>
 
-          <div className="text-center mb-8">
+          <div className="mb-8 text-center">
             <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Connexion</h2>
-            <p className="text-gray-500 dark:text-gray-400 mt-2">
+            <p className="mt-2 text-gray-500 dark:text-gray-400">
               Entrez vos identifiants pour acceder a votre compte
             </p>
           </div>
@@ -93,7 +93,7 @@ export function LoginPage() {
               <motion.div
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="p-4 bg-red-50 dark:bg-red-900/50 border border-red-200 dark:border-red-800 rounded-lg text-red-600 dark:text-red-300 text-sm"
+                className="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-600 dark:border-red-800 dark:bg-red-900/50 dark:text-red-300"
               >
                 {error}
               </motion.div>
@@ -102,7 +102,7 @@ export function LoginPage() {
             <InputField
               label="Email"
               type="email"
-              icon={<Mail className="w-5 h-5" />}
+              icon={<Mail className="h-5 w-5" />}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="vous@exemple.com"
@@ -112,8 +112,8 @@ export function LoginPage() {
             <div className="relative">
               <InputField
                 label="Mot de passe"
-                type={showPassword ? 'text' : 'password'}
-                icon={<Lock className="w-5 h-5" />}
+                type={showPassword ? "text" : "password"}
+                icon={<Lock className="h-5 w-5" />}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Mot de passe"
@@ -123,19 +123,19 @@ export function LoginPage() {
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-4 top-[3.4rem] -translate-y-1/2 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300"
+                className="absolute right-4 top-[3.4rem] -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300"
               >
-                {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
               </button>
             </div>
 
             <div className="flex items-center justify-between">
-              <label className="flex items-center gap-2 cursor-pointer">
+              <label className="flex cursor-pointer items-center gap-2">
                 <input
                   type="checkbox"
                   id="remember-me"
                   name="remember"
-                  className="w-4 h-4 text-primary-600 border-gray-300 dark:border-gray-600 rounded focus:ring-primary-500"
+                  className="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500 dark:border-gray-600"
                 />
                 <span className="text-sm text-gray-600 dark:text-gray-400">Se souvenir de moi</span>
               </label>
@@ -144,25 +144,21 @@ export function LoginPage() {
               </Link>
             </div>
 
-            <button
-              type="submit"
-              disabled={loading}
-              className="btn-primary w-full"
-            >
+            <button type="submit" disabled={loading} className="btn-primary w-full">
               {loading ? (
                 <LoadingSpinner size="sm" />
               ) : (
                 <>
                   Connexion
-                  <ArrowRight className="w-4 h-4" />
+                  <ArrowRight className="h-4 w-4" />
                 </>
               )}
             </button>
           </form>
 
-          <p className="text-center mt-8 text-gray-600 dark:text-gray-300">
-            Pas encore de compte ?{' '}
-            <Link to="/register" className="text-primary-600 font-medium hover:underline">
+          <p className="mt-8 text-center text-gray-600 dark:text-gray-300">
+            Pas encore de compte ?{" "}
+            <Link to="/register" className="font-medium text-primary-600 hover:underline">
               Creer un compte
             </Link>
           </p>

@@ -57,7 +57,7 @@ export interface Product {
   reviews_count?: number;
 }
 
-export type UserRole = 'admin' | 'staff' | 'client';
+export type UserRole = "admin" | "staff" | "client";
 
 export interface Profile {
   id: string;
@@ -284,7 +284,7 @@ export interface Settings {
 export interface Coupon {
   id: string;
   code: string;
-  discount_type: 'percentage' | 'fixed';
+  discount_type: "percentage" | "fixed";
   discount_value: number | null;
   min_order_amount: number | null;
   max_uses: number | null;
@@ -313,8 +313,8 @@ export interface StockNotification {
   product?: Product;
 }
 
-export type SupportTicketStatus = 'open' | 'in_progress' | 'resolved' | 'closed';
-export type SupportTicketPriority = 'low' | 'normal' | 'high' | 'urgent';
+export type SupportTicketStatus = "open" | "in_progress" | "resolved" | "closed";
+export type SupportTicketPriority = "low" | "normal" | "high" | "urgent";
 
 export interface SupportTicket {
   id: string;
@@ -391,7 +391,7 @@ export interface LoyaltyTransaction {
   id: string;
   user_id: string;
   order_id?: string | null;
-  type: 'earned' | 'redeemed' | 'expired';
+  type: "earned" | "redeemed" | "expired";
   points: number;
   description: string | null;
   reference?: string | null;
@@ -414,9 +414,10 @@ export interface ShippingAddress {
   country: string;
 }
 
-export type OrderStatus = 'pending' | 'confirmed' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
-export type PaymentStatus = 'pending' | 'processing' | 'paid' | 'failed' | 'refunded';
-export type PaymentMethod = 'tmoney' | 'flooz' | 'cash_on_delivery';
+export type OrderStatus =
+  "pending" | "confirmed" | "processing" | "shipped" | "delivered" | "cancelled";
+export type PaymentStatus = "pending" | "processing" | "paid" | "failed" | "refunded";
+export type PaymentMethod = "tmoney" | "flooz" | "cash_on_delivery";
 
 export interface FilterOptions {
   category?: string;
@@ -428,7 +429,7 @@ export interface FilterOptions {
   condition?: string;
   in_stock?: boolean;
   on_sale?: boolean;
-  sort?: 'price_asc' | 'price_desc' | 'newest' | 'name_asc' | 'name_desc';
+  sort?: "price_asc" | "price_desc" | "newest" | "name_asc" | "name_desc";
   page?: number;
   per_page?: number;
 }

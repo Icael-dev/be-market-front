@@ -1,11 +1,25 @@
 /* eslint-disable react-refresh/only-export-components */
-import { createContext, useCallback, useContext, useEffect, useRef, useState, ReactNode } from 'react';
-import { initializeCsrf } from '../lib/api';
-import { login, logout, register, getCurrentUser, refreshToken as refreshAuthToken } from '../services/auth';
-import type { AuthUser, Profile, UserRole } from '../types';
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+  ReactNode,
+} from "react";
+import { initializeCsrf } from "../lib/api";
+import {
+  login,
+  logout,
+  register,
+  getCurrentUser,
+  refreshToken as refreshAuthToken,
+} from "../services/auth";
+import type { AuthUser, Profile, UserRole } from "../types";
 
 const TOKEN_REFRESH_INTERVAL = 6 * 24 * 60 * 60 * 1000;
-const TOKEN_REFRESH_KEY = 'be_market_token_refresh_timestamp';
+const TOKEN_REFRESH_KEY = "be_market_token_refresh_timestamp";
 
 interface AuthContextType {
   user: AuthUser | null;
@@ -52,7 +66,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const setupTokenRefresh = useCallback(() => {
     clearRefreshInterval();
 
-    const getLastRefresh = () => parseInt(localStorage.getItem(TOKEN_REFRESH_KEY) || '0', 10);
+    const getLastRefresh = () => parseInt(localStorage.getItem(TOKEN_REFRESH_KEY) || "0", 10);
 
     const doRefresh = () => {
       refreshAuthToken().then(() => {
@@ -68,18 +82,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       doRefresh();
     }
 
-    intervalRef.current = setInterval(() => {
-      const currentLastRefresh = getLastRefresh();
-      const currentElapsed = Date.now() - currentLastRefresh;
-      if (currentElapsed >= TOKEN_REFRESH_INTERVAL) {
-        doRefresh();
-      }
-    }, 60 * 60 * 1000);
+    intervalRef.current = setInterval(
+      () => {
+        const currentLastRefresh = getLastRefresh();
+        const currentElapsed = Date.now() - currentLastRefresh;
+        if (currentElapsed >= TOKEN_REFRESH_INTERVAL) {
+          doRefresh();
+        }
+      },
+      60 * 60 * 1000
+    );
   }, [clearRefreshInterval]);
 
-   useEffect(() => {
-     initializeCsrf().then(fetchUser);
-   }, []);
+  useEffect(() => {
+    initializeCsrf().then(fetchUser);
+  }, []);
 
   useEffect(() => {
     if (user) {
@@ -108,7 +125,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return { error: null };
     } catch (err: unknown) {
       const e = err as ServiceError;
-      return { error: e?.error ? new Error(e.error) : new Error('Erreur de connexion') };
+      return { error: e?.error ? new Error(e.error) : new Error("Erreur de connexion") };
     }
   };
 
@@ -120,7 +137,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return { error: null };
     } catch (err: unknown) {
       const e = err as ServiceError;
-      return { error: e?.error ? new Error(e.error) : new Error('Erreur d\'inscription') };
+      return { error: e?.error ? new Error(e.error) : new Error("Erreur d'inscription") };
     }
   };
 
@@ -141,9 +158,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // Source de verite unique : le champ `role` du backend. `is_admin` n'est
   // utilise qu'en repli legacy quand `role` est absent, pour ne pas creer
   // d'etat incoherent entre role / isAdmin / isSuperAdmin.
-  const role: UserRole = profile?.role ?? (profile?.is_admin ? 'admin' : 'client');
-  const isSuperAdmin = role === 'admin';
-  const isStaff = role === 'staff';
+  const role: UserRole = profile?.role ?? (profile?.is_admin ? "admin" : "client");
+  const isSuperAdmin = role === "admin";
+  const isStaff = role === "staff";
   const isAdmin = isSuperAdmin || isStaff;
 
   return (
@@ -159,7 +176,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         signIn,
         signUp,
         signOut,
-        refreshProfile: fetchUser
+        refreshProfile: fetchUser,
       }}
     >
       {children}
@@ -170,7 +187,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 export function useAuth() {
   const context = useContext(AuthContext);
   if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
 }

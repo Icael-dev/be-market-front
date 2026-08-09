@@ -1,14 +1,24 @@
-import { useEffect, useState, useCallback } from 'react';
-import { logger } from '../lib/logger';
-import { Link, useParams } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { fetchLegalPages } from '../services/content';
-import type { LegalPage as LP } from '../types';
-import { FileText, Scale, Shield, RotateCcw } from 'lucide-react';
-import { format } from 'date-fns';
+import { useEffect, useState, useCallback } from "react";
+import { logger } from "../lib/logger";
+import { Link, useParams } from "react-router-dom";
+import { motion } from "framer-motion";
+import { fetchLegalPages } from "../services/content";
+import type { LegalPage as LP } from "../types";
+import { FileText, Scale, Shield, RotateCcw } from "lucide-react";
+import { format } from "date-fns";
 
-const icons: Record<string, React.ReactNode> = { cgv: <Scale className="w-5 h-5" />, returns: <RotateCcw className="w-5 h-5" />, privacy: <Shield className="w-5 h-5" />, terms: <FileText className="w-5 h-5" /> };
-const labels: Record<string, string> = { cgv: 'Conditions Generales de Vente', returns: 'Politique de Retour', privacy: 'Confidentialite', terms: 'Mentions Legales' };
+const icons: Record<string, React.ReactNode> = {
+  cgv: <Scale className="h-5 w-5" />,
+  returns: <RotateCcw className="h-5 w-5" />,
+  privacy: <Shield className="h-5 w-5" />,
+  terms: <FileText className="h-5 w-5" />,
+};
+const labels: Record<string, string> = {
+  cgv: "Conditions Generales de Vente",
+  returns: "Politique de Retour",
+  privacy: "Confidentialite",
+  terms: "Mentions Legales",
+};
 
 export function LegalPage() {
   const { slug } = useParams();
@@ -23,23 +33,29 @@ export function LegalPage() {
         if (data.length > 0 && !slug) setCurrent(data[0]);
       }
     } catch (error) {
-      logger.error('Failed to load legal pages:', error);
+      logger.error("Failed to load legal pages:", error);
     }
   }, [slug]);
 
-  useEffect(() => { fetchPages(); }, [fetchPages]);
+  useEffect(() => {
+    fetchPages();
+  }, [fetchPages]);
 
   return (
-    <div className="min-h-screen page-bg py-12">
-      <div className="max-w-6xl mx-auto px-4">
-        <div className="flex flex-col lg:flex-row gap-8">
-          <nav className="lg:w-64 shrink-0">
+    <div className="page-bg min-h-screen py-12">
+      <div className="mx-auto max-w-6xl px-4">
+        <div className="flex flex-col gap-8 lg:flex-row">
+          <nav className="shrink-0 lg:w-64">
             <div className="card p-4">
-              <h2 className="font-bold text-gray-900 dark:text-white mb-4">Pages legales</h2>
+              <h2 className="mb-4 font-bold text-gray-900 dark:text-white">Pages legales</h2>
               <div className="space-y-1">
-                {pages.map(page => (
-                  <Link key={page.id} to={`/legal/${page.slug}`} className={`flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm ${current?.slug === page.slug ? 'bg-primary-50 text-primary-600 font-medium' : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800'}`}>
-                    {icons[page.slug] || <FileText className="w-5 h-5" />}
+                {pages.map((page) => (
+                  <Link
+                    key={page.id}
+                    to={`/legal/${page.slug}`}
+                    className={`flex items-center gap-3 rounded-lg px-4 py-2.5 text-sm ${current?.slug === page.slug ? "bg-primary-50 font-medium text-primary-600" : "text-gray-600 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-800"}`}
+                  >
+                    {icons[page.slug] || <FileText className="h-5 w-5" />}
                     {labels[page.slug] || page.title}
                   </Link>
                 ))}
@@ -48,12 +64,28 @@ export function LegalPage() {
           </nav>
           <div className="flex-1">
             {current ? (
-              <motion.div key={current.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="card p-8">
-                <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">{current.title}</h1>
-                <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">Derniere mise a jour: {format(new Date(current.updated_at), 'dd MMMM yyyy')}</p>
-                <p className="whitespace-pre-wrap text-gray-600 dark:text-gray-300 leading-relaxed">{current.content}</p>
+              <motion.div
+                key={current.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="card p-8"
+              >
+                <h1 className="mb-2 text-2xl font-bold text-gray-900 dark:text-white">
+                  {current.title}
+                </h1>
+                <p className="mb-6 text-sm text-gray-500 dark:text-gray-400">
+                  Derniere mise a jour: {format(new Date(current.updated_at), "dd MMMM yyyy")}
+                </p>
+                <p className="whitespace-pre-wrap leading-relaxed text-gray-600 dark:text-gray-300">
+                  {current.content}
+                </p>
               </motion.div>
-            ) : <div className="card p-12 text-center"><FileText className="w-12 h-12 text-gray-300 dark:text-gray-600 mx-auto mb-4" /><p className="text-gray-500 dark:text-gray-400">Page non trouvee</p></div>}
+            ) : (
+              <div className="card p-12 text-center">
+                <FileText className="mx-auto mb-4 h-12 w-12 text-gray-300 dark:text-gray-600" />
+                <p className="text-gray-500 dark:text-gray-400">Page non trouvee</p>
+              </div>
+            )}
           </div>
         </div>
       </div>

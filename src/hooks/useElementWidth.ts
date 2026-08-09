@@ -1,4 +1,4 @@
-import { useRef, useState, useLayoutEffect, type RefObject } from 'react';
+import { useRef, useState, useLayoutEffect, type RefObject } from "react";
 
 export function useElementWidth<T extends HTMLElement = HTMLDivElement>(): {
   ref: RefObject<T>;

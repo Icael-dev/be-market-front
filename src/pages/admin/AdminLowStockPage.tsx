@@ -1,11 +1,11 @@
-import { useEffect, useState } from 'react';
-import { fetchAdminLowStock, type LowStockProduct } from '../../services/admin';
-import { PageHeader } from '../../components/admin/PageHeader';
-import { MobileNotOptimizedBanner } from '../../components/admin/MobileNotOptimizedBanner';
-import { AdminTable, type Column } from '../../components/admin/AdminTable';
-import { formatPrice } from '../../lib/utils';
-import { motion } from 'framer-motion';
-import { Package } from 'lucide-react';
+import { useEffect, useState } from "react";
+import { fetchAdminLowStock, type LowStockProduct } from "../../services/admin";
+import { PageHeader } from "../../components/admin/PageHeader";
+import { MobileNotOptimizedBanner } from "../../components/admin/MobileNotOptimizedBanner";
+import { AdminTable, type Column } from "../../components/admin/AdminTable";
+import { formatPrice } from "../../lib/utils";
+import { motion } from "framer-motion";
+import { Package } from "lucide-react";
 
 export function AdminLowStockPage() {
   const [products, setProducts] = useState<LowStockProduct[]>([]);
@@ -14,7 +14,12 @@ export function AdminLowStockPage() {
   const perPage = 10;
 
   useEffect(() => {
-    fetchAdminLowStock(999).then(data => { setProducts(data); setLoading(false); }).catch(() => setLoading(false));
+    fetchAdminLowStock(999)
+      .then((data) => {
+        setProducts(data);
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
   }, []);
 
   const lastPage = Math.ceil(products.length / perPage) || 1;
@@ -22,30 +27,36 @@ export function AdminLowStockPage() {
 
   const columns: Column<LowStockProduct>[] = [
     {
-      key: 'name',
-      label: 'Produit',
+      key: "name",
+      label: "Produit",
     },
     {
-      key: 'sku',
-      label: 'SKU',
-      cellClassName: 'font-mono text-xs',
+      key: "sku",
+      label: "SKU",
+      cellClassName: "font-mono text-xs",
     },
     {
-      key: 'stock',
-      label: 'Stock',
-      headerClassName: 'text-right',
-      cellClassName: 'text-right font-medium',
+      key: "stock",
+      label: "Stock",
+      headerClassName: "text-right",
+      cellClassName: "text-right font-medium",
       render: (item) => (
-        <span className={item.stock === 0 ? 'text-red-600 dark:text-red-400' : 'text-orange-600 dark:text-orange-400'}>
+        <span
+          className={
+            item.stock === 0
+              ? "text-red-600 dark:text-red-400"
+              : "text-orange-600 dark:text-orange-400"
+          }
+        >
           {item.stock}
         </span>
       ),
     },
     {
-      key: 'price',
-      label: 'Prix',
-      headerClassName: 'text-right',
-      cellClassName: 'text-right',
+      key: "price",
+      label: "Prix",
+      headerClassName: "text-right",
+      cellClassName: "text-right",
       render: (item) => formatPrice(item.price),
     },
   ];
@@ -54,14 +65,16 @@ export function AdminLowStockPage() {
     <>
       <MobileNotOptimizedBanner />
       <div>
-        <PageHeader title="Stock bas / rupture" subtitle="Liste complete des produits en stock bas ou rupture" />
+        <PageHeader
+          title="Stock bas / rupture"
+          subtitle="Liste complete des produits en stock bas ou rupture"
+        />
         {loading ? (
-          <div className="flex justify-center py-20"><div className="animate-spin w-8 h-8 border-2 dark:border-gray-700 border-t-primary-600 rounded-full" /></div>
+          <div className="flex justify-center py-20">
+            <div className="h-8 w-8 animate-spin rounded-full border-2 border-t-primary-600 dark:border-gray-700" />
+          </div>
         ) : (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-          >
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
             <AdminTable
               data={paginated}
               columns={columns}

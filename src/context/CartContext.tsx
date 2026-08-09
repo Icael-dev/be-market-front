@@ -1,9 +1,16 @@
 /* eslint-disable react-refresh/only-export-components */
-import { createContext, useContext, useEffect, useState, useCallback, ReactNode } from 'react';
-import { logger } from '../lib/logger';
-import { useAuth } from './AuthContext';
-import type { Product, CartItem } from '../types';
-import { fetchCart, addCartItem, updateCartItem, deleteCartItem, clearCart as clearCartService, mergeCart } from '../services/cart';
+import { createContext, useContext, useEffect, useState, useCallback, ReactNode } from "react";
+import { logger } from "../lib/logger";
+import { useAuth } from "./AuthContext";
+import type { Product, CartItem } from "../types";
+import {
+  fetchCart,
+  addCartItem,
+  updateCartItem,
+  deleteCartItem,
+  clearCart as clearCartService,
+  mergeCart,
+} from "../services/cart";
 
 interface CartContextType {
   items: CartItem[];
@@ -32,28 +39,28 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const loadCart = useCallback(async () => {
     try {
       if (user) {
-        const localCart = localStorage.getItem('be_market_cart_items');
+        const localCart = localStorage.getItem("be_market_cart_items");
         const localItems = localCart ? JSON.parse(localCart) : [];
 
         if (localItems.length > 0) {
           const mergedItems = await mergeCart(
             localItems.map((item: { product_id: string; quantity: number }) => ({
               product_id: item.product_id,
-              quantity: item.quantity
+              quantity: item.quantity,
             }))
           );
           setItems(mergedItems);
-          localStorage.removeItem('be_market_cart_items');
+          localStorage.removeItem("be_market_cart_items");
         } else {
           const cartItems = await fetchCart();
           setItems(cartItems);
         }
       } else {
-        const stored = localStorage.getItem('be_market_cart_items');
+        const stored = localStorage.getItem("be_market_cart_items");
         setItems(stored ? JSON.parse(stored) : []);
       }
     } catch (error) {
-      logger.error('Error fetching cart:', error);
+      logger.error("Error fetching cart:", error);
       setItems([]);
     } finally {
       setLoading(false);
@@ -67,13 +74,13 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (!user) {
-      localStorage.setItem('be_market_cart_items', JSON.stringify(items));
+      localStorage.setItem("be_market_cart_items", JSON.stringify(items));
     }
   }, [items, user]);
 
   const addItem = async (product: Product, quantity = 1) => {
     if (user) {
-      const existing = items.find(i => i.product_id === product.id);
+      const existing = items.find((i) => i.product_id === product.id);
       if (existing) {
         await updateQuantity(product.id, existing.quantity + quantity);
         return;
@@ -81,15 +88,15 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
       try {
         const newItem = await addCartItem(product.id, quantity);
-        setItems(prev => [...prev, { ...newItem, product } as CartItem]);
+        setItems((prev) => [...prev, { ...newItem, product } as CartItem]);
       } catch (error) {
-        logger.error('Error adding cart item:', error);
+        logger.error("Error adding cart item:", error);
       }
     } else {
-      setItems(prev => {
-        const existing = prev.find(i => i.product_id === product.id);
+      setItems((prev) => {
+        const existing = prev.find((i) => i.product_id === product.id);
         if (existing) {
-          return prev.map(i =>
+          return prev.map((i) =>
             i.product_id === product.id ? { ...i, quantity: i.quantity + quantity } : i
           );
         }
@@ -97,11 +104,11 @@ export function CartProvider({ children }: { children: ReactNode }) {
           ...prev,
           {
             id: crypto.randomUUID(),
-            cart_id: '',
+            cart_id: "",
             product_id: product.id,
             quantity,
-            product
-          }
+            product,
+          },
         ];
       });
     }
@@ -109,12 +116,12 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   const removeItem = async (productId: string) => {
     if (user) {
-      const item = items.find(i => i.product_id === productId);
+      const item = items.find((i) => i.product_id === productId);
       if (item) {
         await deleteCartItem(item.id);
       }
     }
-    setItems(prev => prev.filter(i => i.product_id !== productId));
+    setItems((prev) => prev.filter((i) => i.product_id !== productId));
   };
 
   const updateQuantity = async (productId: string, quantity: number) => {
@@ -124,19 +131,17 @@ export function CartProvider({ children }: { children: ReactNode }) {
     }
 
     if (user) {
-      const item = items.find(i => i.product_id === productId);
+      const item = items.find((i) => i.product_id === productId);
       if (item) {
         try {
           await updateCartItem(item.id, quantity);
         } catch (error) {
-          logger.error('Error updating cart item:', error);
+          logger.error("Error updating cart item:", error);
         }
       }
     }
 
-    setItems(prev =>
-      prev.map(i => (i.product_id === productId ? { ...i, quantity } : i))
-    );
+    setItems((prev) => prev.map((i) => (i.product_id === productId ? { ...i, quantity } : i)));
   };
 
   const clearCart = async () => {
@@ -144,11 +149,11 @@ export function CartProvider({ children }: { children: ReactNode }) {
       try {
         await clearCartService();
       } catch (error) {
-        logger.error('Error clearing cart:', error);
+        logger.error("Error clearing cart:", error);
       }
     }
     setItems([]);
-    localStorage.removeItem('be_market_cart_items');
+    localStorage.removeItem("be_market_cart_items");
   };
 
   return (
@@ -161,7 +166,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
         addItem,
         removeItem,
         updateQuantity,
-        clearCart
+        clearCart,
       }}
     >
       {children}
@@ -172,7 +177,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
 export function useCart() {
   const context = useContext(CartContext);
   if (!context) {
-    throw new Error('useCart must be used within a CartProvider');
+    throw new Error("useCart must be used within a CartProvider");
   }
   return context;
 }

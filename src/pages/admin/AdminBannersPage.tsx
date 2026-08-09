@@ -1,24 +1,24 @@
-import { toast } from 'react-hot-toast';
-import { logger } from '../../lib/logger';
-import { useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
+import { toast } from "react-hot-toast";
+import { logger } from "../../lib/logger";
+import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 import {
   fetchAdminBanners,
   createAdminBanner,
   updateAdminBanner,
-  deleteAdminBanner
-} from '../../services/admin';
-import type { Banner } from '../../types';
-import { Plus, Edit2, Trash2, Save, Image as ImageIcon, Loader2, Power } from 'lucide-react';
-import { PageHeader } from '../../components/admin/PageHeader';
-import { MobileNotOptimizedBanner } from '../../components/admin/MobileNotOptimizedBanner';
-import { StatusBadge } from '../../components/admin/StatusBadge';
-import { AdminDrawer } from '../../components/admin/AdminDrawer';
-import { ConfirmDialog } from '../../components/admin/ConfirmDialog';
-import { useEscape } from '../../hooks/useKeyPress';
-import { ImageUpload } from '../../components/admin/ImageUpload';
-import { getImageUrl } from '../../lib/imageUrl';
-import { Pagination } from '../../components/Pagination';
+  deleteAdminBanner,
+} from "../../services/admin";
+import type { Banner } from "../../types";
+import { Plus, Edit2, Trash2, Save, Image as ImageIcon, Loader2, Power } from "lucide-react";
+import { PageHeader } from "../../components/admin/PageHeader";
+import { MobileNotOptimizedBanner } from "../../components/admin/MobileNotOptimizedBanner";
+import { StatusBadge } from "../../components/admin/StatusBadge";
+import { AdminDrawer } from "../../components/admin/AdminDrawer";
+import { ConfirmDialog } from "../../components/admin/ConfirmDialog";
+import { useEscape } from "../../hooks/useKeyPress";
+import { ImageUpload } from "../../components/admin/ImageUpload";
+import { getImageUrl } from "../../lib/imageUrl";
+import { Pagination } from "../../components/Pagination";
 
 export function AdminBannersPage() {
   const [banners, setBanners] = useState<Banner[]>([]);
@@ -35,13 +35,13 @@ export function AdminBannersPage() {
   const [confirmTargetId, setConfirmTargetId] = useState<string | null>(null);
 
   const [formData, setFormData] = useState({
-    title: '',
-    subtitle: '',
-    image_url: '',
-    link_url: '',
-    button_text: '',
+    title: "",
+    subtitle: "",
+    image_url: "",
+    link_url: "",
+    button_text: "",
     is_active: true,
-    sort_order: 0
+    sort_order: 0,
   });
   const [imageUrls, setImageUrls] = useState<string[]>([]);
 
@@ -56,7 +56,7 @@ export function AdminBannersPage() {
       setCurrentPage(1);
       setTotal(data.length);
     } catch (error) {
-      logger.error('Error fetching banners:', error);
+      logger.error("Error fetching banners:", error);
     } finally {
       setLoading(false);
     }
@@ -67,13 +67,13 @@ export function AdminBannersPage() {
 
   const resetForm = () => {
     setFormData({
-      title: '',
-      subtitle: '',
-      image_url: '',
-      link_url: '',
-      button_text: '',
+      title: "",
+      subtitle: "",
+      image_url: "",
+      link_url: "",
+      button_text: "",
       is_active: true,
-      sort_order: 0
+      sort_order: 0,
     });
     setImageUrls([]);
     setEditingBanner(null);
@@ -83,12 +83,12 @@ export function AdminBannersPage() {
     setEditingBanner(banner);
     setFormData({
       title: banner.title,
-      subtitle: banner.subtitle || '',
+      subtitle: banner.subtitle || "",
       image_url: banner.image_url,
-      link_url: banner.link_url || '',
-      button_text: banner.button_text || '',
+      link_url: banner.link_url || "",
+      button_text: banner.button_text || "",
       is_active: banner.is_active,
-      sort_order: banner.sort_order != null ? banner.sort_order : 0
+      sort_order: banner.sort_order != null ? banner.sort_order : 0,
     });
     setImageUrls(banner.image_url ? [banner.image_url] : []);
     setShowForm(true);
@@ -100,7 +100,7 @@ export function AdminBannersPage() {
     try {
       const data: Record<string, unknown> = {
         ...formData,
-        image_url: imageUrls[0] || ''
+        image_url: imageUrls[0] || "",
       };
       if (formData.sort_order != null && formData.sort_order !== undefined) {
         data.sort_order = Number(formData.sort_order);
@@ -115,8 +115,8 @@ export function AdminBannersPage() {
       setShowForm(false);
       resetForm();
     } catch (error) {
-      logger.error('Error saving banner:', error);
-      toast.error('Erreur lors de l\'enregistrement');
+      logger.error("Error saving banner:", error);
+      toast.error("Erreur lors de l'enregistrement");
     } finally {
       setSaving(false);
     }
@@ -126,10 +126,10 @@ export function AdminBannersPage() {
     if (!confirmTargetId) return;
     try {
       await deleteAdminBanner(confirmTargetId);
-      setBanners(prev => prev.filter(b => b.id !== confirmTargetId));
+      setBanners((prev) => prev.filter((b) => b.id !== confirmTargetId));
     } catch (error) {
-      logger.error('Error deleting banner:', error);
-      toast.error('Erreur lors de la suppression');
+      logger.error("Error deleting banner:", error);
+      toast.error("Erreur lors de la suppression");
     } finally {
       setConfirmOpen(false);
       setConfirmTargetId(null);
@@ -139,13 +139,17 @@ export function AdminBannersPage() {
   const handleToggleActive = async (banner: Banner) => {
     const nextActive = !banner.is_active;
     setTogglingId(banner.id);
-    setBanners(prev => prev.map(b => (b.id === banner.id ? { ...b, is_active: nextActive } : b)));
+    setBanners((prev) =>
+      prev.map((b) => (b.id === banner.id ? { ...b, is_active: nextActive } : b))
+    );
     try {
       await updateAdminBanner(banner.id, { is_active: nextActive });
     } catch (error) {
-      logger.error('Error toggling banner status:', error);
-      setBanners(prev => prev.map(b => (b.id === banner.id ? { ...b, is_active: banner.is_active } : b)));
-      toast.error('Erreur lors du changement de statut');
+      logger.error("Error toggling banner status:", error);
+      setBanners((prev) =>
+        prev.map((b) => (b.id === banner.id ? { ...b, is_active: banner.is_active } : b))
+      );
+      toast.error("Erreur lors du changement de statut");
     } finally {
       setTogglingId(null);
     }
@@ -157,16 +161,16 @@ export function AdminBannersPage() {
       <div>
         <PageHeader
           title="Bannieres"
-          subtitle={`${banners.length} banniere${banners.length > 1 ? 's' : ''}`}
+          subtitle={`${banners.length} banniere${banners.length > 1 ? "s" : ""}`}
         >
           <button
             onClick={() => {
               resetForm();
               setShowForm(true);
             }}
-            className="flex items-center gap-2 bg-primary-600 text-white px-4 py-2.5 rounded-lg font-medium hover:bg-primary-700 transition-colors"
+            className="flex items-center gap-2 rounded-lg bg-primary-600 px-4 py-2.5 font-medium text-white transition-colors hover:bg-primary-700"
           >
-            <Plus className="w-5 h-5" />
+            <Plus className="h-5 w-5" />
             Ajouter une banniere
           </button>
         </PageHeader>
@@ -178,64 +182,70 @@ export function AdminBannersPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.05 }}
-              className="bg-white dark:bg-gray-800 rounded-lg border dark:border-gray-700 overflow-hidden cursor-pointer hover:border-primary-300 dark:hover:border-primary-700 transition-colors"
+              className="cursor-pointer overflow-hidden rounded-lg border bg-white transition-colors hover:border-primary-300 dark:border-gray-700 dark:bg-gray-800 dark:hover:border-primary-700"
               onClick={() => handleEdit(banner)}
             >
-                <div className="relative h-48">
-                  <img
-                    src={getImageUrl(banner.image_url)}
-                    alt={banner.title}
-                    className="w-full h-full object-cover"
-                    onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
-                  />
+              <div className="relative h-48">
+                <img
+                  src={getImageUrl(banner.image_url)}
+                  alt={banner.title}
+                  className="h-full w-full object-cover"
+                  onError={(e) => {
+                    (e.currentTarget as HTMLImageElement).style.display = "none";
+                  }}
+                />
                 <div className="absolute inset-0 bg-gradient-to-r from-black/60 to-transparent" />
                 <div className="absolute inset-0 flex items-center px-8">
                   <div className="text-white">
                     <h3 className="text-2xl font-bold">{banner.title}</h3>
                     {banner.subtitle && (
-                      <p className="text-gray-200 dark:text-gray-300 mt-1">{banner.subtitle}</p>
+                      <p className="mt-1 text-gray-200 dark:text-gray-300">{banner.subtitle}</p>
                     )}
                   </div>
                 </div>
 
-                <div className="absolute top-4 right-4 flex items-center gap-2">
+                <div className="absolute right-4 top-4 flex items-center gap-2">
                   <StatusBadge
-                    label={banner.is_active ? 'Active' : 'Inactive'}
-                    variant={banner.is_active ? 'success' : 'neutral'}
+                    label={banner.is_active ? "Active" : "Inactive"}
+                    variant={banner.is_active ? "success" : "neutral"}
                   />
                 </div>
               </div>
 
-              <div className="p-4 flex justify-between items-center" onClick={(e) => e.stopPropagation()}>
+              <div
+                className="flex items-center justify-between p-4"
+                onClick={(e) => e.stopPropagation()}
+              >
                 <div className="text-sm dark:text-gray-500">
-                  {banner.link_url && (
-                    <span>Lien: {banner.link_url}</span>
-                  )}
+                  {banner.link_url && <span>Lien: {banner.link_url}</span>}
                 </div>
                 <div className="flex gap-2">
                   <button
                     onClick={() => handleToggleActive(banner)}
                     disabled={togglingId === banner.id}
-                    className={`p-3 rounded-lg border transition-colors disabled:opacity-50 ${banner.is_active ? 'bg-green-100 text-green-700 border-green-300 hover:bg-green-200 dark:bg-green-900/40 dark:text-green-300 dark:border-green-700 dark:hover:bg-green-900/60' : 'bg-gray-100 text-gray-600 border-gray-300 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-600'}`}
-                    title={banner.is_active ? 'Désactiver' : 'Activer'}
+                    className={`rounded-lg border p-3 transition-colors disabled:opacity-50 ${banner.is_active ? "border-green-300 bg-green-100 text-green-700 hover:bg-green-200 dark:border-green-700 dark:bg-green-900/40 dark:text-green-300 dark:hover:bg-green-900/60" : "border-gray-300 bg-gray-100 text-gray-600 hover:bg-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"}`}
+                    title={banner.is_active ? "Désactiver" : "Activer"}
                   >
                     {togglingId === banner.id ? (
-                      <Loader2 className="w-6 h-6 animate-spin" />
+                      <Loader2 className="h-6 w-6 animate-spin" />
                     ) : (
-                      <Power className="w-6 h-6" />
+                      <Power className="h-6 w-6" />
                     )}
                   </button>
                   <button
                     onClick={() => handleEdit(banner)}
-                    className="p-3 bg-gray-100 hover:bg-gray-200 text-gray-700 border border-gray-200 rounded-lg transition-colors dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600 dark:hover:bg-gray-600"
+                    className="rounded-lg border border-gray-200 bg-gray-100 p-3 text-gray-700 transition-colors hover:bg-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600"
                   >
-                    <Edit2 className="w-6 h-6" />
+                    <Edit2 className="h-6 w-6" />
                   </button>
                   <button
-                    onClick={() => { setConfirmTargetId(banner.id); setConfirmOpen(true); }}
-                    className="p-3 bg-red-100 hover:bg-red-200 text-red-700 border border-red-300 rounded-lg transition-colors dark:bg-red-900/40 dark:text-red-300 dark:border-red-700 dark:hover:bg-red-900/60"
+                    onClick={() => {
+                      setConfirmTargetId(banner.id);
+                      setConfirmOpen(true);
+                    }}
+                    className="rounded-lg border border-red-300 bg-red-100 p-3 text-red-700 transition-colors hover:bg-red-200 dark:border-red-700 dark:bg-red-900/40 dark:text-red-300 dark:hover:bg-red-900/60"
                   >
-                    <Trash2 className="w-6 h-6" />
+                    <Trash2 className="h-6 w-6" />
                   </button>
                 </div>
               </div>
@@ -243,8 +253,8 @@ export function AdminBannersPage() {
           ))}
 
           {banners.length === 0 && !loading && (
-            <div className="bg-white dark:bg-gray-800 rounded-lg border dark:border-gray-700 p-12 text-center">
-              <ImageIcon className="w-12 h-12 dark:text-gray-500 mx-auto mb-4" />
+            <div className="rounded-lg border bg-white p-12 text-center dark:border-gray-700 dark:bg-gray-800">
+              <ImageIcon className="mx-auto mb-4 h-12 w-12 dark:text-gray-500" />
               <p className="dark:text-gray-500">Aucune banniere</p>
             </div>
           )}
@@ -254,137 +264,134 @@ export function AdminBannersPage() {
       <AdminDrawer
         isOpen={showForm}
         onClose={() => setShowForm(false)}
-        title={editingBanner ? 'Modifier la banniere' : 'Nouvelle banniere'}
+        title={editingBanner ? "Modifier la banniere" : "Nouvelle banniere"}
       >
         <div className="space-y-6">
           <div>
-            <label className="block text-sm font-medium dark:text-gray-500 mb-2">
-              Titre *
-            </label>
+            <label className="mb-2 block text-sm font-medium dark:text-gray-500">Titre *</label>
             <input
               type="text"
               id="banner-title"
               name="title"
               value={formData.title}
-              onChange={e => setFormData({ ...formData, title: e.target.value })}
-              className="w-full px-4 py-3 border dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 bg-white dark:bg-gray-800 dark:text-white dark:placeholder-gray-500"
+              onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+              className="w-full rounded-lg border bg-white px-4 py-3 focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/20 dark:border-gray-700 dark:bg-gray-800 dark:text-white dark:placeholder-gray-500"
             />
           </div>
 
-                <div>
-                  <label className="block text-sm font-medium dark:text-gray-500 mb-2">
-                    Sous-titre
-                  </label>
-                  <input
-                    type="text"
-                    id="banner-subtitle"
-                    name="subtitle"
-                    value={formData.subtitle}
-                    onChange={e => setFormData({ ...formData, subtitle: e.target.value })}
-                    className="w-full px-4 py-3 border dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 bg-white dark:bg-gray-800 dark:text-white dark:placeholder-gray-500"
-                  />
-                </div>
+          <div>
+            <label className="mb-2 block text-sm font-medium dark:text-gray-500">Sous-titre</label>
+            <input
+              type="text"
+              id="banner-subtitle"
+              name="subtitle"
+              value={formData.subtitle}
+              onChange={(e) => setFormData({ ...formData, subtitle: e.target.value })}
+              className="w-full rounded-lg border bg-white px-4 py-3 focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/20 dark:border-gray-700 dark:bg-gray-800 dark:text-white dark:placeholder-gray-500"
+            />
+          </div>
 
-                <div>
-                  <label className="block text-sm font-medium dark:text-gray-500 mb-2">
-                    Image *
-                  </label>
-                  <ImageUpload
-                    value={imageUrls}
-                    onChange={setImageUrls}
-                    folder="banners"
-                    single
-                    maxFiles={1}
-                  />
-                </div>
+          <div>
+            <label className="mb-2 block text-sm font-medium dark:text-gray-500">Image *</label>
+            <ImageUpload
+              value={imageUrls}
+              onChange={setImageUrls}
+              folder="banners"
+              single
+              maxFiles={1}
+            />
+          </div>
 
-                <div>
-                  <label className="block text-sm font-medium dark:text-gray-500 mb-2">
-                    Lien du bouton
-                  </label>
-                  <input
-                    type="text"
-                    id="banner-link-url"
-                    name="link_url"
-                    value={formData.link_url}
-                    onChange={e => setFormData({ ...formData, link_url: e.target.value })}
-                    className="w-full px-4 py-3 border dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 bg-white dark:bg-gray-800 dark:text-white dark:placeholder-gray-500"
-                  />
-                </div>
+          <div>
+            <label className="mb-2 block text-sm font-medium dark:text-gray-500">
+              Lien du bouton
+            </label>
+            <input
+              type="text"
+              id="banner-link-url"
+              name="link_url"
+              value={formData.link_url}
+              onChange={(e) => setFormData({ ...formData, link_url: e.target.value })}
+              className="w-full rounded-lg border bg-white px-4 py-3 focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/20 dark:border-gray-700 dark:bg-gray-800 dark:text-white dark:placeholder-gray-500"
+            />
+          </div>
 
-                <div>
-                  <label className="block text-sm font-medium dark:text-gray-500 mb-2">
-                    Texte du bouton
-                  </label>
-                  <input
-                    type="text"
-                    id="banner-button-text"
-                    name="button_text"
-                    value={formData.button_text}
-                    onChange={e => setFormData({ ...formData, button_text: e.target.value })}
-                    className="w-full px-4 py-3 border dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 bg-white dark:bg-gray-800 dark:text-white dark:placeholder-gray-500"
-                  />
-                </div>
+          <div>
+            <label className="mb-2 block text-sm font-medium dark:text-gray-500">
+              Texte du bouton
+            </label>
+            <input
+              type="text"
+              id="banner-button-text"
+              name="button_text"
+              value={formData.button_text}
+              onChange={(e) => setFormData({ ...formData, button_text: e.target.value })}
+              className="w-full rounded-lg border bg-white px-4 py-3 focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/20 dark:border-gray-700 dark:bg-gray-800 dark:text-white dark:placeholder-gray-500"
+            />
+          </div>
 
-                <div>
-                  <label className="block text-sm font-medium dark:text-gray-500 mb-2">
-                    Ordre
-                  </label>
-                  <input
-                    type="number"
-                    id="banner-sort-order"
-                    name="sort_order"
-                    value={formData.sort_order ?? ''}
-                    onChange={e => setFormData({ ...formData, sort_order: parseInt(e.target.value) || 0 })}
-                    className="w-full px-4 py-3 border dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 bg-white dark:bg-gray-800 dark:text-white dark:placeholder-gray-500"
-                  />
-                </div>
+          <div>
+            <label className="mb-2 block text-sm font-medium dark:text-gray-500">Ordre</label>
+            <input
+              type="number"
+              id="banner-sort-order"
+              name="sort_order"
+              value={formData.sort_order ?? ""}
+              onChange={(e) =>
+                setFormData({ ...formData, sort_order: parseInt(e.target.value) || 0 })
+              }
+              className="w-full rounded-lg border bg-white px-4 py-3 focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/20 dark:border-gray-700 dark:bg-gray-800 dark:text-white dark:placeholder-gray-500"
+            />
+          </div>
 
-                <label className="flex items-center gap-2 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    id="banner-is-active"
-                    name="is_active"
-                    checked={formData.is_active}
-                    onChange={e => setFormData({ ...formData, is_active: e.target.checked })}
-                    className="w-4 h-4 text-primary-600 border-gray-300 rounded"
-                  />
-                  <span className="text-sm dark:text-gray-500">Banniere active</span>
-                </label>
+          <label className="flex cursor-pointer items-center gap-2">
+            <input
+              type="checkbox"
+              id="banner-is-active"
+              name="is_active"
+              checked={formData.is_active}
+              onChange={(e) => setFormData({ ...formData, is_active: e.target.checked })}
+              className="h-4 w-4 rounded border-gray-300 text-primary-600"
+            />
+            <span className="text-sm dark:text-gray-500">Banniere active</span>
+          </label>
 
-                <div className="flex gap-3 pt-4 border-t dark:border-gray-700">
-                  <button
-                    onClick={handleSave}
-                    disabled={saving || !formData.title || !formData.image_url}
-                    className="flex items-center gap-2 bg-primary-600 text-white px-6 py-2.5 rounded-lg font-medium hover:bg-primary-700 disabled:opacity-50"
-                  >
-                    <Save className="w-4 h-4" />
-                    {saving ? 'Enregistrement...' : 'Enregistrer'}
-                  </button>
-                  <button
-                    onClick={() => setShowForm(false)}
-                    className="px-6 py-2.5 border dark:border-gray-700 rounded-lg font-medium hover:bg-gray-100 dark:hover:bg-gray-700"
-                  >
-                    Annuler
-                  </button>
-                </div>
-              </div>
-            </AdminDrawer>
-        <ConfirmDialog
-          open={confirmOpen}
-          onClose={() => { setConfirmOpen(false); setConfirmTargetId(null); }}
-          onConfirm={handleConfirmDelete}
-          title="Supprimer cette banniere ?"
-          message="Cette action est irreversible."
-          variant="danger"
-        />
-        <Pagination
-          currentPage={currentPage}
-          lastPage={totalPages}
-          perPage={perPage}
-          total={total}
-          onPageChange={(page) => setCurrentPage(page)}
-        />
-      </>
+          <div className="flex gap-3 border-t pt-4 dark:border-gray-700">
+            <button
+              onClick={handleSave}
+              disabled={saving || !formData.title || !formData.image_url}
+              className="flex items-center gap-2 rounded-lg bg-primary-600 px-6 py-2.5 font-medium text-white hover:bg-primary-700 disabled:opacity-50"
+            >
+              <Save className="h-4 w-4" />
+              {saving ? "Enregistrement..." : "Enregistrer"}
+            </button>
+            <button
+              onClick={() => setShowForm(false)}
+              className="rounded-lg border px-6 py-2.5 font-medium hover:bg-gray-100 dark:border-gray-700 dark:hover:bg-gray-700"
+            >
+              Annuler
+            </button>
+          </div>
+        </div>
+      </AdminDrawer>
+      <ConfirmDialog
+        open={confirmOpen}
+        onClose={() => {
+          setConfirmOpen(false);
+          setConfirmTargetId(null);
+        }}
+        onConfirm={handleConfirmDelete}
+        title="Supprimer cette banniere ?"
+        message="Cette action est irreversible."
+        variant="danger"
+      />
+      <Pagination
+        currentPage={currentPage}
+        lastPage={totalPages}
+        perPage={perPage}
+        total={total}
+        onPageChange={(page) => setCurrentPage(page)}
+      />
+    </>
   );
 }

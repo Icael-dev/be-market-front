@@ -20,6 +20,10 @@ export default tseslint.config(
     rules: {
       ...reactHooks.configs.recommended.rules,
       'react-refresh/only-export-components': 'warn',
+      'react-hooks/immutability': 'off',
+      'react-hooks/set-state-in-effect': 'off',
+      'react-hooks/refs': 'off',
+      'react-hooks/preserve-manual-memoization': 'off',
     },
   }
 );

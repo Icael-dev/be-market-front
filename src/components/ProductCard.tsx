@@ -1,12 +1,12 @@
-import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { ShoppingCart, Heart, Star, Sparkles, Zap } from 'lucide-react';
-import type { Product } from '../types';
-import { formatPrice, cn, FALLBACK_IMAGE } from '../lib/utils';
-import { useCart } from '../context/CartContext';
-import { useWishlist } from '../context/WishlistContext';
-import { Card } from './ui/Card';
-import { memo, useState } from 'react';
+import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
+import { ShoppingCart, Heart, Star, Sparkles, Zap } from "lucide-react";
+import type { Product } from "../types";
+import { formatPrice, cn, FALLBACK_IMAGE } from "../lib/utils";
+import { useCart } from "../context/CartContext";
+import { useWishlist } from "../context/WishlistContext";
+import { Card } from "./ui/Card";
+import { memo, useState } from "react";
 
 interface ProductCardProps {
   product: Product;
@@ -40,9 +40,7 @@ export const ProductCard = memo(function ProductCard({ product, index = 0 }: Pro
     toggleItem(product.id, product);
   };
 
-  const imageUrl = !imageError && product.images?.[0]
-    ? product.images[0]
-    : FALLBACK_IMAGE;
+  const imageUrl = !imageError && product.images?.[0] ? product.images[0] : FALLBACK_IMAGE;
 
   return (
     <motion.div
@@ -58,7 +56,10 @@ export const ProductCard = memo(function ProductCard({ product, index = 0 }: Pro
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
-        <Card hover className="relative overflow-hidden shadow-sm hover:shadow-2xl duration-500 border-gray-100 dark:border-gray-700 h-full flex flex-col">
+        <Card
+          hover
+          className="relative flex h-full flex-col overflow-hidden border-gray-100 shadow-sm duration-500 hover:shadow-2xl dark:border-gray-700"
+        >
           <div className="relative aspect-square overflow-hidden bg-gray-100 dark:bg-gray-800">
             <motion.img
               src={imageUrl}
@@ -66,7 +67,7 @@ export const ProductCard = memo(function ProductCard({ product, index = 0 }: Pro
               loading="lazy"
               decoding="async"
               onError={() => setImageError(true)}
-              className="w-full h-full object-cover"
+              className="h-full w-full object-cover"
               animate={{ scale: isHovered ? 1.1 : 1 }}
               transition={{ duration: 0.5 }}
             />
@@ -74,22 +75,22 @@ export const ProductCard = memo(function ProductCard({ product, index = 0 }: Pro
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: isHovered ? 1 : 0 }}
-              className="absolute inset-0 bg-gradient-to-t from-black/50 dark:from-black/70 via-transparent to-transparent"
+              className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent dark:from-black/70"
             />
 
             {displayDiscount > 0 && (
               <motion.div
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
-                className={`absolute top-3 left-3 text-white text-xs font-bold px-3 py-1.5 rounded-full flex items-center gap-1 shadow-lg ${flashDiscount > 0 ? 'bg-gradient-to-r from-purple-500 to-pink-500' : 'bg-gradient-to-r from-red-500 to-orange-500'}`}
+                className={`absolute left-3 top-3 flex items-center gap-1 rounded-full px-3 py-1.5 text-xs font-bold text-white shadow-lg ${flashDiscount > 0 ? "bg-gradient-to-r from-purple-500 to-pink-500" : "bg-gradient-to-r from-red-500 to-orange-500"}`}
               >
-                {flashDiscount > 0 ? <Zap className="w-3 h-3" /> : <Sparkles className="w-3 h-3" />}
+                {flashDiscount > 0 ? <Zap className="h-3 w-3" /> : <Sparkles className="h-3 w-3" />}
                 -{displayDiscount}%
               </motion.div>
             )}
 
             {product.is_featured && (
-              <div className="absolute top-3 right-3 bg-primary-600 dark:bg-primary-500 text-white text-xs font-medium px-3 py-1.5 rounded-full shadow-lg">
+              <div className="absolute right-3 top-3 rounded-full bg-primary-600 px-3 py-1.5 text-xs font-medium text-white shadow-lg dark:bg-primary-500">
                 Vedette
               </div>
             )}
@@ -102,52 +103,54 @@ export const ProductCard = memo(function ProductCard({ product, index = 0 }: Pro
             >
               <button
                 onClick={handleAddToCart}
-                className="flex-1 flex items-center justify-center gap-2 bg-primary-600 hover:bg-primary-700 text-white py-3 rounded-lg text-sm font-medium transition-colors shadow-lg"
+                className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-primary-600 py-3 text-sm font-medium text-white shadow-lg transition-colors hover:bg-primary-700"
               >
-                <ShoppingCart className="w-4 h-4" />
+                <ShoppingCart className="h-4 w-4" />
                 Ajouter
               </button>
               <motion.button
                 whileTap={{ scale: 0.9 }}
                 onClick={handleToggleWishlist}
                 className={cn(
-                  'p-3 rounded-lg transition-colors shadow-lg',
+                  "rounded-lg p-3 shadow-lg transition-colors",
                   isWishlisted
-                    ? 'bg-red-500 text-white'
-                    : 'bg-white/90 dark:bg-gray-800/90 text-gray-600 dark:text-gray-300 hover:text-red-500'
+                    ? "bg-red-500 text-white"
+                    : "bg-white/90 text-gray-600 hover:text-red-500 dark:bg-gray-800/90 dark:text-gray-300"
                 )}
               >
-                <Heart className={cn('w-5 h-5', isWishlisted && 'fill-current')} />
+                <Heart className={cn("h-5 w-5", isWishlisted && "fill-current")} />
               </motion.button>
             </motion.div>
           </div>
 
-          <div className="p-4 flex-1 flex flex-col">
+          <div className="flex flex-1 flex-col p-4">
             {product.specs?.brand && (
-              <p className="text-xs text-primary-600 dark:text-primary-400 font-medium mb-1">
+              <p className="mb-1 text-xs font-medium text-primary-600 dark:text-primary-400">
                 {product.specs.brand}
               </p>
             )}
-            <h3 className="font-semibold text-gray-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors line-clamp-2 flex-1">
+            <h3 className="line-clamp-2 flex-1 font-semibold text-gray-900 transition-colors group-hover:text-primary-600 dark:text-white dark:group-hover:text-primary-400">
               {product.name}
             </h3>
 
-            <div className="flex items-center gap-1 mt-2">
+            <div className="mt-2 flex items-center gap-1">
               {[...Array(5)].map((_, i) => (
                 <Star
                   key={i}
                   className={cn(
-                    'w-3.5 h-3.5',
-                    i < 4 ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300 dark:text-gray-600'
+                    "h-3.5 w-3.5",
+                    i < 4 ? "fill-yellow-400 text-yellow-400" : "text-gray-300 dark:text-gray-600"
                   )}
                 />
               ))}
-              <span className="text-xs text-gray-500 dark:text-gray-400 ml-1">({product.reviews_count ?? 0})</span>
+              <span className="ml-1 text-xs text-gray-500 dark:text-gray-400">
+                ({product.reviews_count ?? 0})
+              </span>
             </div>
 
-            <div className="flex flex-col items-start mt-3 pt-3 border-t border-gray-100 dark:border-gray-700">
+            <div className="mt-3 flex flex-col items-start border-t border-gray-100 pt-3 dark:border-gray-700">
               {product.compare_price && (
-                <span className="text-sm text-gray-400 dark:text-gray-500 line-through mb-1">
+                <span className="mb-1 text-sm text-gray-400 line-through dark:text-gray-500">
                   {formatPrice(product.compare_price)}
                 </span>
               )}
@@ -155,13 +158,13 @@ export const ProductCard = memo(function ProductCard({ product, index = 0 }: Pro
                 {formatPrice(product.price)}
               </span>
             </div>
-            <div className="flex items-center justify-end mt-2">
+            <div className="mt-2 flex items-center justify-end">
               {product.stock > 0 ? (
-                <span className="text-xs text-green-600 dark:text-green-400 font-medium bg-green-100 dark:bg-green-900/30 px-2 py-1 rounded-full">
+                <span className="rounded-full bg-green-100 px-2 py-1 text-xs font-medium text-green-600 dark:bg-green-900/30 dark:text-green-400">
                   En stock
                 </span>
               ) : (
-                <span className="text-xs text-red-500 dark:text-red-400 font-medium bg-red-100 dark:bg-red-900/30 px-2 py-1 rounded-full">
+                <span className="rounded-full bg-red-100 px-2 py-1 text-xs font-medium text-red-500 dark:bg-red-900/30 dark:text-red-400">
                   Rupture
                 </span>
               )}

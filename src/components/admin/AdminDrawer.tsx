@@ -1,7 +1,7 @@
-import { ReactNode } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { X } from 'lucide-react';
-import { useEscape } from '../../hooks/useKeyPress';
+import { ReactNode } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { X } from "lucide-react";
+import { useEscape } from "../../hooks/useKeyPress";
 
 interface AdminDrawerProps {
   isOpen: boolean;
@@ -11,7 +11,13 @@ interface AdminDrawerProps {
   maxWidth?: string;
 }
 
-export function AdminDrawer({ isOpen, onClose, title, children, maxWidth = 'max-w-xl' }: AdminDrawerProps) {
+export function AdminDrawer({
+  isOpen,
+  onClose,
+  title,
+  children,
+  maxWidth = "max-w-xl",
+}: AdminDrawerProps) {
   useEscape(onClose, isOpen);
 
   return (
@@ -23,27 +29,25 @@ export function AdminDrawer({ isOpen, onClose, title, children, maxWidth = 'max-
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 bg-black/50 z-50"
+            className="fixed inset-0 z-50 bg-black/50"
           />
           <motion.div
-            initial={{ opacity: 0, x: '100%' }}
+            initial={{ opacity: 0, x: "100%" }}
             animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: '100%' }}
-            transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-            className={`fixed right-0 top-0 bottom-0 w-full ${maxWidth} bg-white dark:bg-gray-800 z-50 overflow-y-auto`}
+            exit={{ opacity: 0, x: "100%" }}
+            transition={{ type: "spring", damping: 25, stiffness: 200 }}
+            className={`fixed bottom-0 right-0 top-0 w-full ${maxWidth} z-50 overflow-y-auto bg-white dark:bg-gray-800`}
           >
-            <div className="p-6 border-b dark:border-gray-700 flex items-center justify-between sticky top-0 bg-white dark:bg-gray-800 z-10">
+            <div className="sticky top-0 z-10 flex items-center justify-between border-b bg-white p-6 dark:border-gray-700 dark:bg-gray-800">
               <h2 className="text-xl font-bold dark:text-white">{title}</h2>
               <button
                 onClick={onClose}
-                className="p-2 hover:bg-gray-100 hover:dark:bg-gray-700 rounded-lg transition-colors"
+                className="rounded-lg p-2 transition-colors hover:bg-gray-100 hover:dark:bg-gray-700"
               >
-                <X className="w-5 h-5" />
+                <X className="h-5 w-5" />
               </button>
             </div>
-            <div className="p-6">
-              {children}
-            </div>
+            <div className="p-6">{children}</div>
           </motion.div>
         </>
       )}

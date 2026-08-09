@@ -1,5 +1,5 @@
-import { useEffect } from 'react';
-import { Helmet } from 'react-helmet-async';
+import { useEffect } from "react";
+import { Helmet } from "react-helmet-async";
 
 interface PageTitleProps {
   title: string;
@@ -7,7 +7,7 @@ interface PageTitleProps {
 }
 
 export function PageTitle({ title, description }: PageTitleProps) {
-  const siteName = 'Be Market';
+  const siteName = "Be Market";
   const fullTitle = title ? `${title} | ${siteName}` : siteName;
 
   useEffect(() => {

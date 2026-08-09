@@ -1,15 +1,15 @@
-import { useState, useRef, useEffect, useCallback } from 'react';
-import { logger } from '../lib/logger';
-import { useNavigate } from 'react-router-dom';
-import { Search, X, Package } from 'lucide-react';
-import { formatPrice } from '../lib/utils';
-import { getImageUrl } from '../lib/imageUrl';
-import { useEscape } from '../hooks/useKeyPress';
-import { fetchProductSuggestions } from '../services/products';
-import type { SuggestionProduct } from '../types';
+import { useState, useRef, useEffect, useCallback } from "react";
+import { logger } from "../lib/logger";
+import { useNavigate } from "react-router-dom";
+import { Search, X, Package } from "lucide-react";
+import { formatPrice } from "../lib/utils";
+import { getImageUrl } from "../lib/imageUrl";
+import { useEscape } from "../hooks/useKeyPress";
+import { fetchProductSuggestions } from "../services/products";
+import type { SuggestionProduct } from "../types";
 
 export function SearchWithSuggestions() {
-  const [query, setQuery] = useState('');
+  const [query, setQuery] = useState("");
   const [suggestions, setSuggestions] = useState<SuggestionProduct[]>([]);
   const [loading, setLoading] = useState(false);
   const [showSuggestions, setShowSuggestions] = useState(false);
@@ -30,7 +30,7 @@ export function SearchWithSuggestions() {
       const data = await fetchProductSuggestions(searchQuery, 8);
       setSuggestions(data ?? []);
     } catch (error) {
-      logger.error('Search suggestions error:', error);
+      logger.error("Search suggestions error:", error);
     } finally {
       setLoading(false);
     }
@@ -59,8 +59,8 @@ export function SearchWithSuggestions() {
       }
     };
 
-    document.addEventListener('click', handleClickOutside);
-    return () => document.removeEventListener('click', handleClickOutside);
+    document.addEventListener("click", handleClickOutside);
+    return () => document.removeEventListener("click", handleClickOutside);
   }, []);
 
   const handleSearch = (e: React.FormEvent) => {
@@ -73,12 +73,12 @@ export function SearchWithSuggestions() {
 
   const handleSelectSuggestion = (slug: string) => {
     navigate(`/product/${slug}`);
-    setQuery('');
+    setQuery("");
     setShowSuggestions(false);
   };
 
   const clearSearch = () => {
-    setQuery('');
+    setQuery("");
     setSuggestions([]);
   };
 
@@ -96,23 +96,23 @@ export function SearchWithSuggestions() {
           placeholder="Rechercher un produit..."
           className="input-premium pl-10 pr-10"
         />
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 dark:text-gray-500" />
+        <Search className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400 dark:text-gray-500" />
         {query && (
           <button
             type="button"
             onClick={clearSearch}
             className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300"
           >
-            <X className="w-4 h-4" />
+            <X className="h-4 w-4" />
           </button>
         )}
       </form>
 
       {showSuggestions && (query || loading) && (
-        <div className="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 rounded-lg shadow-premium z-50 max-h-96 overflow-y-auto">
+        <div className="absolute left-0 right-0 top-full z-50 mt-2 max-h-96 overflow-y-auto rounded-lg border border-gray-100 bg-white shadow-premium dark:border-gray-800 dark:bg-gray-900">
           {loading ? (
             <div className="p-4 text-center">
-              <div className="animate-spin w-5 h-5 border-2 border-primary-600 border-t-transparent rounded-full mx-auto" />
+              <div className="mx-auto h-5 w-5 animate-spin rounded-full border-2 border-primary-600 border-t-transparent" />
             </div>
           ) : suggestions.length > 0 ? (
             <div className="py-2">
@@ -121,21 +121,21 @@ export function SearchWithSuggestions() {
                   key={product.id}
                   type="button"
                   onClick={() => handleSelectSuggestion(product.slug)}
-                  className="w-full px-4 py-3 flex items-center gap-3 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                  className="flex w-full items-center gap-3 px-4 py-3 transition-colors hover:bg-gray-50 dark:hover:bg-gray-700"
                 >
-                  <div className="w-12 h-12 rounded-lg bg-gray-100 dark:bg-gray-800 overflow-hidden flex-shrink-0">
+                  <div className="h-12 w-12 flex-shrink-0 overflow-hidden rounded-lg bg-gray-100 dark:bg-gray-800">
                     {product.images?.[0] ? (
                       <img
                         src={getImageUrl(product.images[0])}
                         alt={product.name}
-                        className="w-full h-full object-cover"
+                        className="h-full w-full object-cover"
                       />
                     ) : (
-                      <Package className="w-6 h-6 text-gray-400 dark:text-gray-500 mx-auto mt-3" />
+                      <Package className="mx-auto mt-3 h-6 w-6 text-gray-400 dark:text-gray-500" />
                     )}
                   </div>
                   <div className="flex-1 text-left">
-                    <p className="font-medium text-gray-900 dark:text-white line-clamp-1">
+                    <p className="line-clamp-1 font-medium text-gray-900 dark:text-white">
                       {product.name}
                     </p>
                     <div className="flex items-center gap-2 text-xs">
@@ -152,7 +152,7 @@ export function SearchWithSuggestions() {
             </div>
           ) : query ? (
             <div className="p-4 text-center">
-              <Package className="w-8 h-8 text-gray-300 dark:text-gray-600 mx-auto mb-2" />
+              <Package className="mx-auto mb-2 h-8 w-8 text-gray-300 dark:text-gray-600" />
               <p className="text-gray-500 dark:text-gray-400">Aucun résultat trouve</p>
             </div>
           ) : null}
