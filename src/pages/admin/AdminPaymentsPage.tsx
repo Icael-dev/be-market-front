@@ -1,7 +1,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { logger } from "../../lib/logger";
 import { motion } from "framer-motion";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { fetchAdminPayments } from "../../services/admin";
 import { PageHeader } from "../../components/admin/PageHeader";
 import { MobileNotOptimizedBanner } from "../../components/admin/MobileNotOptimizedBanner";
@@ -13,6 +13,7 @@ import { formatPrice } from "../../lib/utils";
 import { format } from "date-fns";
 
 export function AdminPaymentsPage() {
+  const navigate = useNavigate();
   const [payments, setPayments] = useState<Payment[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [perPage] = useState(10);
@@ -201,9 +202,9 @@ export function AdminPaymentsPage() {
             }}
             onRowClick={(p) => {
               if (p.order_id) {
-                window.location.href = `/admin/orders?highlight=${p.order_id}`;
+                navigate(`/admin/orders?highlight=${p.order_id}`);
               } else if (p.user_id) {
-                window.location.href = `/admin/customers/${p.user_id}`;
+                navigate(`/admin/customers/${p.user_id}`);
               }
             }}
           />

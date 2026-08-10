@@ -11,7 +11,7 @@ export function SocialShare({ url, title }: SocialShareProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [copied, setCopied] = useState(false);
 
-  const fullUrl = `https://be-market.tg${url}`;
+  const fullUrl = `${window.location.origin}${url}`;
 
   const links = [
     {

@@ -7,6 +7,25 @@ import type {
   SuggestionProduct,
 } from "../types";
 
+function buildProductFilters(filters: FilterOptions = {}): URLSearchParams {
+  const params = new URLSearchParams();
+
+  if (filters.category) params.set("category", filters.category);
+  if (filters.search) params.set("search", filters.search);
+  if (filters.brand) params.set("brand", filters.brand);
+  if (filters.minPrice !== undefined) params.set("min_price", String(filters.minPrice));
+  if (filters.maxPrice !== undefined) params.set("max_price", String(filters.maxPrice));
+  if (filters.sort) params.set("sort", filters.sort);
+  if (filters.flash_sale) params.set("flash_sale", "true");
+  if (filters.condition) params.set("condition", filters.condition);
+  if (filters.in_stock) params.set("in_stock", "true");
+  if (filters.on_sale) params.set("on_sale", "true");
+  if (filters.page) params.set("page", String(filters.page));
+  if (filters.per_page) params.set("per_page", String(filters.per_page));
+
+  return params;
+}
+
 export async function fetchCategories(): Promise<Category[]> {
   return api.get<Category[]>("/api/categories");
 }
@@ -16,39 +35,7 @@ export async function fetchFeaturedProducts(limit = 8): Promise<Product[]> {
 }
 
 export async function fetchProducts(filters: FilterOptions = {}): Promise<Product[]> {
-  const params = new URLSearchParams();
-
-  if (filters.category) {
-    params.set("category", filters.category);
-  }
-  if (filters.search) {
-    params.set("search", filters.search);
-  }
-  if (filters.brand) {
-    params.set("brand", filters.brand);
-  }
-  if (filters.minPrice !== undefined) {
-    params.set("min_price", String(filters.minPrice));
-  }
-  if (filters.maxPrice !== undefined) {
-    params.set("max_price", String(filters.maxPrice));
-  }
-  if (filters.sort) {
-    params.set("sort", filters.sort);
-  }
-  if (filters.flash_sale) {
-    params.set("flash_sale", "true");
-  }
-  if (filters.condition) {
-    params.set("condition", filters.condition);
-  }
-  if (filters.in_stock) {
-    params.set("in_stock", "true");
-  }
-  if (filters.on_sale) {
-    params.set("on_sale", "true");
-  }
-
+  const params = buildProductFilters(filters);
   const query = params.toString();
   const response = await api.get<Product[] | PaginatedResponse<Product>>(
     `/api/products${query ? `?${query}` : ""}`
@@ -64,45 +51,7 @@ export async function fetchProducts(filters: FilterOptions = {}): Promise<Produc
 export async function fetchProductsPaginated(
   filters: FilterOptions = {}
 ): Promise<PaginatedResponse<Product>> {
-  const params = new URLSearchParams();
-
-  if (filters.category) {
-    params.set("category", filters.category);
-  }
-  if (filters.search) {
-    params.set("search", filters.search);
-  }
-  if (filters.brand) {
-    params.set("brand", filters.brand);
-  }
-  if (filters.minPrice !== undefined) {
-    params.set("min_price", String(filters.minPrice));
-  }
-  if (filters.maxPrice !== undefined) {
-    params.set("max_price", String(filters.maxPrice));
-  }
-  if (filters.sort) {
-    params.set("sort", filters.sort);
-  }
-  if (filters.flash_sale) {
-    params.set("flash_sale", "true");
-  }
-  if (filters.condition) {
-    params.set("condition", filters.condition);
-  }
-  if (filters.in_stock) {
-    params.set("in_stock", "true");
-  }
-  if (filters.on_sale) {
-    params.set("on_sale", "true");
-  }
-  if (filters.page) {
-    params.set("page", String(filters.page));
-  }
-  if (filters.per_page) {
-    params.set("per_page", String(filters.per_page));
-  }
-
+  const params = buildProductFilters(filters);
   const query = params.toString();
   return api.get<PaginatedResponse<Product>>(`/api/products${query ? `?${query}` : ""}`);
 }

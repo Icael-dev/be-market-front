@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { logger } from "../../lib/logger";
 import { Camera, Upload, X, Loader2 } from "lucide-react";
+import { api } from "../../lib/api";
 import { getImageUrl } from "../../lib/imageUrl";
 
 interface ImageUploadProps {
@@ -34,21 +35,7 @@ export function ImageUpload({
       fd.append("image", file);
       fd.append("folder", folder);
 
-      const res = await fetch("/api/admin/upload-image", {
-        method: "POST",
-        body: fd,
-        headers: {
-          Accept: "application/json",
-        },
-        credentials: "include",
-      });
-
-      if (!res.ok) {
-        const err = await res.json().catch(() => ({}));
-        throw new Error(err.errors?.image?.[0] || err.error || `Upload failed (${res.status})`);
-      }
-
-      const data = await res.json();
+      const data = await api.post<{ url: string }>("/api/admin/upload-image", fd);
       return data.url;
     },
     [folder]

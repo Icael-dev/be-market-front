@@ -8,7 +8,7 @@ import {
   useNavigationType,
 } from "react-router-dom";
 import { logger } from "./lib/logger";
-import { Component, ErrorInfo, ReactNode, useEffect, lazy, Suspense } from "react";
+import { Component, ErrorInfo, ReactNode, lazy, Suspense } from "react";
 import { Toaster } from "react-hot-toast";
 import { motion, AnimatePresence } from "framer-motion";
 import { HelmetProvider } from "react-helmet-async";
@@ -18,6 +18,7 @@ import { WishlistProvider } from "./context/WishlistContext";
 import { Layout } from "./components/layout/Layout";
 import { AdminLayout } from "./components/admin/AdminLayout";
 import { PageLoading } from "./components/LoadingSpinner";
+import { useNavigate } from "react-router-dom";
 
 const scrollPositions = new Map<string, number>();
 const MAX_SCROLL_POSITIONS = 50;
@@ -30,7 +31,20 @@ function saveScrollPosition(key: string, position: number) {
   }
 }
 
-class ErrorBoundary extends Component<{ children: ReactNode }, { error: Error | null }> {
+function ErrorBoundary({ children }: { children: ReactNode }) {
+  const navigate = useNavigate();
+
+  const handleError = () => {
+    navigate("/", { replace: true });
+  };
+
+  return <ErrorBoundaryInner onReset={handleError}>{children}</ErrorBoundaryInner>;
+}
+
+class ErrorBoundaryInner extends Component<
+  { children: ReactNode; onReset: () => void },
+  { error: Error | null }
+> {
   state = { error: null };
   static getDerivedStateFromError(error: Error) {
     return { error };
@@ -48,10 +62,10 @@ class ErrorBoundary extends Component<{ children: ReactNode }, { error: Error | 
               {(this.state.error as Error).message}
             </pre>
             <button
-              onClick={() => window.location.reload()}
+              onClick={this.props.onReset}
               className="rounded-lg bg-primary-600 px-6 py-3 text-white"
             >
-              Recharger la page
+              Revenir a l'accueil
             </button>
           </div>
         </div>

@@ -41,6 +41,7 @@ import {
   Power,
   RotateCcw,
 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 function TabButton({
   icon,
@@ -85,6 +86,7 @@ function TabButton({
 }
 
 export function AdminProductsPage() {
+  const navigate = useNavigate();
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -781,7 +783,7 @@ export function AdminProductsPage() {
             lastPage={totalPages}
             onPageChange={(page) => setCurrentPage(page)}
             onRowClick={(product) => {
-              window.location.href = `/admin/products/${product.id}`;
+              navigate(`/admin/products/${product.id}`);
             }}
           />
         </motion.div>

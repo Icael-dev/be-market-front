@@ -1,4 +1,4 @@
-import { api, API_BASE_URL } from "../lib/api";
+import { api } from "../lib/api";
 import type {
   Product,
   Category,
@@ -533,18 +533,5 @@ export async function deleteAdminTestimonial(id: string): Promise<void> {
 
 // Export
 export async function fetchAdminExport(type: string): Promise<Blob> {
-  const response = await fetch(
-    `${API_BASE_URL}/api/admin/export?type=${encodeURIComponent(type)}`,
-    {
-      method: "GET",
-      headers: { Accept: "text/csv" },
-      credentials: "include",
-    }
-  );
-
-  if (!response.ok) {
-    throw new Error("Export failed");
-  }
-
-  return response.blob();
+  return api.getBlob(`/api/admin/export?type=${encodeURIComponent(type)}`);
 }

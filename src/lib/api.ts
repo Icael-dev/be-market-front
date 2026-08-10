@@ -66,6 +66,24 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
   return parseResponse<T>(response);
 }
 
+async function requestBlob(path: string, options: RequestInit = {}): Promise<Blob> {
+  const url = path.startsWith("http") ? path : `${API_BASE_URL}${path}`;
+  const headers = buildHeaders(options.headers);
+
+  const response = await fetch(url, {
+    ...options,
+    headers,
+    credentials: "include",
+  });
+
+  if (!response.ok) {
+    const error = (await response.json().catch(() => null))?.error || response.statusText;
+    throw { status: response.status, error };
+  }
+
+  return response.blob();
+}
+
 export const api = {
   get: <T>(path: string) => request<T>(path, { method: "GET" }),
   post: <T>(path: string, body?: unknown) =>
@@ -81,4 +99,5 @@ export const api = {
         body !== undefined ? (body instanceof FormData ? body : JSON.stringify(body)) : undefined,
     }),
   delete: <T>(path: string) => request<T>(path, { method: "DELETE" }),
+  getBlob: (path: string) => requestBlob(path, { method: "GET" }),
 };

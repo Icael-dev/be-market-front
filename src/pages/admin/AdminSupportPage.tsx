@@ -1,7 +1,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { logger } from "../../lib/logger";
 import { motion } from "framer-motion";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { fetchAdminSupportTickets } from "../../services/admin";
 import { PageHeader } from "../../components/admin/PageHeader";
 import { MobileNotOptimizedBanner } from "../../components/admin/MobileNotOptimizedBanner";
@@ -21,6 +21,7 @@ const STATUS_FILTERS = [
 ];
 
 export function AdminSupportPage() {
+  const navigate = useNavigate();
   const [tickets, setTickets] = useState<SupportTicket[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [perPage] = useState(10);
@@ -209,7 +210,7 @@ export function AdminSupportPage() {
             lastPage={lastPage}
             onPageChange={(page) => load(page)}
             onRowClick={(t) => {
-              window.location.href = `/admin/support/${t.id}`;
+              navigate(`/admin/support/${t.id}`);
             }}
           />
         )}

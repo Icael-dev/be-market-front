@@ -1,7 +1,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { logger } from "../../lib/logger";
 import { motion } from "framer-motion";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { fetchAdminCustomers } from "../../services/admin";
 import type { AdminCustomer } from "../../types";
 import { formatPrice } from "../../lib/utils";
@@ -11,6 +11,7 @@ import { AdminTable } from "../../components/admin/AdminTable";
 import { Search, Users, Mail, Phone, ShoppingBag } from "lucide-react";
 
 export function AdminCustomersPage() {
+  const navigate = useNavigate();
   const [customers, setCustomers] = useState<AdminCustomer[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [perPage] = useState(10);
@@ -172,7 +173,7 @@ export function AdminCustomersPage() {
               fetchCustomers(page);
             }}
             onRowClick={(customer) => {
-              window.location.href = `/admin/customers/${customer.user_id}`;
+              navigate(`/admin/customers/${customer.user_id}`);
             }}
           />
         </motion.div>
