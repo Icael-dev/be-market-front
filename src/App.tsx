@@ -8,7 +8,7 @@ import {
   useNavigationType,
 } from "react-router-dom";
 import { logger } from "./lib/logger";
-import { Component, ErrorInfo, ReactNode, lazy, Suspense } from "react";
+import { Component, ErrorInfo, ReactNode, useEffect, lazy, Suspense } from "react";
 import { Toaster } from "react-hot-toast";
 import { motion, AnimatePresence } from "framer-motion";
 import { HelmetProvider } from "react-helmet-async";
