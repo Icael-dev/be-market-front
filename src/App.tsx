@@ -27,7 +27,9 @@ function saveScrollPosition(key: string, position: number) {
   scrollPositions.set(key, position);
   if (scrollPositions.size > MAX_SCROLL_POSITIONS) {
     const firstKey = scrollPositions.keys().next().value;
-    scrollPositions.delete(firstKey);
+    if (firstKey !== undefined) {
+      scrollPositions.delete(firstKey);
+    }
   }
 }
 
@@ -105,7 +107,7 @@ const LazyOrdersPage = lazy(() =>
   import("./pages/OrdersPage").then((m) => ({ default: m.OrdersPage }))
 );
 const LazyOrderDetailPage = lazy(() =>
-  import("./pages/OrdersPage").then((m) => ({ default: m.OrderDetailPage }))
+  import("./pages/OrderDetailPage").then((m) => ({ default: m.OrderDetailPage }))
 );
 const LazyAddressesPage = lazy(() =>
   import("./pages/AddressesPage").then((m) => ({ default: m.AddressesPage }))

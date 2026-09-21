@@ -5,8 +5,8 @@ export async function initiatePayment(
   orderId: string,
   paymentMethod: string,
   phoneNumber?: string
-): Promise<Payment> {
-  return api.post<Payment>("/api/payment/initiate", {
+): Promise<Payment & { redirect_url?: string | null }> {
+  return api.post<Payment & { redirect_url?: string | null }>("/api/payment/initiate", {
     order_id: orderId,
     payment_method: paymentMethod,
     phone_number: phoneNumber,
@@ -23,7 +23,7 @@ export async function paymentCallback(
   providerData?: Record<string, unknown>
 ): Promise<Payment> {
   return api.post<Payment>("/api/payment/callback", {
-    reference,
+    external_id: reference,
     status,
     provider_data: providerData,
   });

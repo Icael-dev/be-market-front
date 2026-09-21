@@ -12,7 +12,7 @@ import { LoadingSpinner } from "../components/LoadingSpinner";
 import { InputField } from "../components/ui/FormField";
 import { fetchAddresses, createAddress } from "../services/address";
 import { placeOrder } from "../services/orders";
-import { initiatePayment, verifyPayment } from "../services/payments";
+import { initiatePayment } from "../services/payments";
 import { fetchLoyaltyPoints, fetchSettings, validateCoupon } from "../services/content";
 import { useEnter } from "../hooks/useKeyPress";
 import type { LoyaltyPoints, Settings, CouponValidation } from "../types";
@@ -236,19 +236,21 @@ export function CheckoutPage() {
       if (paymentMethod !== "cash_on_delivery") {
         try {
           const payment = await initiatePayment(order.id, paymentMethod, shippingAddress.phone);
+          if (payment.status === "pending" && payment.redirect_url) {
+            window.location.href = payment.redirect_url;
+            return;
+          }
           if (payment.status !== "paid") {
-            const verified = await verifyPayment(payment.id);
-            if (verified.status !== "paid") {
-              throw new Error(
-                "Le paiement n'a pas ete confirme. Vous pourrez payer depuis vos commandes."
-              );
-            }
+            toast(
+              "Paiement en attente de confirmation. Vous pourrez le suivre dans vos commandes."
+            );
           }
         } catch (paymentError) {
-          logger.error("Payment initiation error:", paymentError);
-          throw new Error(
-            "La commande a ete creee mais le paiement n'a pas pu etre initie. Vous pourrez payer depuis vos commandes."
-          );
+            logger.error("Payment initiation error:", paymentError);
+            const message = (paymentError as Record<string, unknown>)?.error as string | undefined;
+            toast.error(
+                message || "La commande a ete creee mais le paiement n'a pas pu etre initie. Vous pourrez le relancer depuis vos commandes."
+            );
         }
       }
 

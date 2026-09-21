@@ -173,6 +173,7 @@ export interface Payment {
   phone_number: string | null;
   provider_response: Record<string, unknown> | null;
   paid_at: string | null;
+  redirect_url?: string | null;
   created_at: string;
   order?: Order;
   user?: {
