@@ -173,8 +173,9 @@ export function AdminPaymentsPage() {
               className="cursor-pointer rounded-lg border bg-white px-3 py-2.5 text-sm focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/20 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
             >
               <option value="">Toutes les methodes</option>
-              <option value="tmoney">Tmoney</option>
+              <option value="tmoney">Mixx by Yas</option>
               <option value="flooz">Flooz</option>
+              <option value="card">Carte bancaire</option>
               <option value="cash_on_delivery">Paiement a la livraison</option>
             </select>
           </div>

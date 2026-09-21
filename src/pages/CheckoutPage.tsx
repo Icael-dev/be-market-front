@@ -18,13 +18,13 @@ import { useEnter } from "../hooks/useKeyPress";
 import type { LoyaltyPoints, Settings, CouponValidation } from "../types";
 
 type Step = "shipping" | "payment" | "confirm";
-type PaymentMethod = "tmoney" | "flooz" | "cash_on_delivery";
+type PaymentMethod = "tmoney" | "flooz" | "card" | "cash_on_delivery";
 
 const paymentMethods = [
-  {
+    {
     id: "tmoney",
-    name: "Tmoney",
-    description: "Payez avec votre compte Tmoney",
+    name: "Mixx by Yas",
+    description: "Payez avec votre compte Mixx by Yas",
     icon: Smartphone,
     color: "yellow",
   },
@@ -34,6 +34,13 @@ const paymentMethods = [
     description: "Payez avec votre compte Flooz",
     icon: CreditCard,
     color: "blue",
+  },
+  {
+    id: "card",
+    name: "Carte bancaire",
+    description: "Payez avec Visa ou Mastercard",
+    icon: CreditCard,
+    color: "purple",
   },
   {
     id: "cash_on_delivery",
@@ -537,7 +544,7 @@ export function CheckoutPage() {
                     >
                       <InputField
                         name="checkout_payment_phone"
-                        label={`Numero de telephone ${paymentMethod === "tmoney" ? "Tmoney" : "Flooz"}`}
+                        label={`Numero de telephone ${paymentMethod === "tmoney" ? "Mixx by Yas" : paymentMethod === "flooz" ? "Flooz" : "FedaPay"}`}
                         type="tel"
                         autoComplete="tel"
                         value={phoneNumber}

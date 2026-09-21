@@ -8,6 +8,7 @@ export default {
         sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
       },
       colors: {
+        white: '#fafafa',
         primary: {
           50: '#eff6ff',
           100: '#dbeafe',

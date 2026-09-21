@@ -201,7 +201,7 @@ export function ProductsPage() {
             <div className="hidden w-64 flex-shrink-0 lg:block">
               <div className="card sticky top-20 p-6">
                 <h3 className="mb-4 font-semibold dark:text-white">Categories</h3>
-                <ul className="max-h-[36rem] space-y-2 overflow-y-auto">
+                <ul className="max-h-[36rem] space-y-2 overflow-y-auto scrollbar-hide">
                   <li>
                     <button
                       onClick={() => updateFilter("category", null)}
@@ -574,7 +574,7 @@ export function ProductsPage() {
                 animate={{ x: 0 }}
                 exit={{ x: "-100%" }}
                 transition={{ type: "spring", damping: 25, stiffness: 300 }}
-                className="absolute bottom-0 left-0 top-0 z-50 w-80 overflow-y-auto bg-white dark:bg-gray-900 lg:hidden"
+                className="absolute bottom-0 left-0 top-0 z-50 w-80 overflow-y-auto scrollbar-hide bg-white dark:bg-gray-900 lg:hidden"
                 onClick={(e) => e.stopPropagation()}
               >
                 <div className="p-6">

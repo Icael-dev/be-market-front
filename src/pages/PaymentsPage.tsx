@@ -18,8 +18,9 @@ import { formatPrice, getStatusColor, getStatusLabel, cn } from "../lib/utils";
 import { format } from "date-fns";
 
 const PAYMENT_METHOD_LABELS: Record<string, string> = {
-  tmoney: "Tmoney",
+  tmoney: "Mixx by Yas",
   flooz: "Flooz",
+  card: "Carte bancaire",
   cash_on_delivery: "Paiement a la livraison",
 };
 

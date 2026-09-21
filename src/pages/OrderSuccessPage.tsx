@@ -156,9 +156,11 @@ export function OrderSuccessPage() {
             {order.payment_method !== "cash_on_delivery" && (
               <div className="mb-6 rounded-lg bg-primary-50 p-4 dark:bg-primary-900/30">
                 <p className="text-sm dark:text-primary-300">
-                  <strong>Instructions de paiement:</strong> Vous recevrez une notification sur
-                  votre telephone pour confirmer le paiement{" "}
-                  {order.payment_method === "tmoney" ? "Tmoney" : "Flooz"}.
+                  {order.payment_method === "card" ? (
+                    <span><strong>Instructions de paiement:</strong> Vous serez redirigé vers la page de paiement sécurisée FedaPay pour confirmer avec votre carte Visa ou Mastercard.</span>
+                  ) : (
+                    <span><strong>Instructions de paiement:</strong> Vous recevrez une notification sur votre telephone pour confirmer le paiement {order.payment_method === "tmoney" ? "Mixx by Yas" : "Flooz"}.</span>
+                  )}
                 </p>
               </div>
             )}

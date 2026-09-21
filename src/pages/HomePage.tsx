@@ -171,7 +171,7 @@ export function HomePage() {
     {
       icon: Shield,
       title: "Paiement Securise",
-      description: "Tmoney, Flooz et livraison",
+      description: "Mixx by Yas, Flooz et livraison",
       color: "from-green-500 to-emerald-500",
     },
     {

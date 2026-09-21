@@ -418,7 +418,7 @@ export interface ShippingAddress {
 export type OrderStatus =
   "pending" | "confirmed" | "processing" | "shipped" | "delivered" | "cancelled";
 export type PaymentStatus = "pending" | "processing" | "paid" | "failed" | "refunded";
-export type PaymentMethod = "tmoney" | "flooz" | "cash_on_delivery";
+export type PaymentMethod = "tmoney" | "flooz" | "card" | "cash_on_delivery";
 
 export interface FilterOptions {
   category?: string;

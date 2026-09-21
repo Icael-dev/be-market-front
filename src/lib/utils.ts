@@ -68,7 +68,7 @@ export function getStatusLabel(status: string): string {
     failed: "Échoué",
     refunded: "Remboursé",
     cash_on_delivery: "Paiement à la livraison",
-    tmoney: "Tmoney",
+    tmoney: "Mixx by Yas",
     flooz: "Flooz",
     open: "Ouvert",
     in_progress: "En cours",
