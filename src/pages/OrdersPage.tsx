@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { PageLoading } from "../components/LoadingSpinner";
 import { fetchOrders as fetchOrdersService, cancelOrder } from "../services/orders";
+import type { Order } from "../types";
 
 export function OrdersPage() {
   const { user } = useAuth();
