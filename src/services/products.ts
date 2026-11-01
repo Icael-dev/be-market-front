@@ -2,11 +2,13 @@ import { api } from '../lib/api';
 import type { Product, Category, FilterOptions } from '../types';
 
 export async function fetchCategories(): Promise<Category[]> {
-  return api.get<Category[]>('/api/categories');
+  const res = await api.get<any>('/api/categories');
+  return Array.isArray(res) ? res : (res?.data ?? []);
 }
 
 export async function fetchFeaturedProducts(limit = 8): Promise<Product[]> {
-  return api.get<Product[]>(`/api/products?featured=true&limit=${limit}`);
+  const res = await api.get<any>(`/api/products?featured=true&limit=${limit}`);
+  return Array.isArray(res) ? res : (res?.data ?? []);
 }
 
 export async function fetchProducts(filters: FilterOptions = {}): Promise<Product[]> {
@@ -32,7 +34,8 @@ export async function fetchProducts(filters: FilterOptions = {}): Promise<Produc
   }
 
   const query = params.toString();
-  return api.get<Product[]>(`/api/products${query ? `?${query}` : ''}`);
+  const res = await api.get<any>(`/api/products${query ? `?${query}` : ''}`);
+  return Array.isArray(res) ? res : (res?.data ?? []);
 }
 
 export async function fetchProductBySlug(slug: string): Promise<Product> {
@@ -41,7 +44,8 @@ export async function fetchProductBySlug(slug: string): Promise<Product> {
 
 export async function fetchRelatedProducts(categoryId: string, excludeId: string, limit = 4): Promise<Product[]> {
   const params = new URLSearchParams({ category_id: categoryId, exclude_id: excludeId, limit: String(limit) });
-  return api.get<Product[]>(`/api/products?${params.toString()}`);
+  const res = await api.get<any>(`/api/products?${params.toString()}`);
+  return Array.isArray(res) ? res : (res?.data ?? []);
 }
 
 export async function fetchPriceBounds(category?: string, search?: string, brand?: string): Promise<{ min: number; max: number }> {

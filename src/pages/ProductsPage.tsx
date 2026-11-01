@@ -11,7 +11,8 @@ import {
   X,
   ChevronDown,
   Grid3X3,
-  LayoutList
+  LayoutList,
+  Search
 } from 'lucide-react';
 import { cn, formatPrice } from '../lib/utils';
 

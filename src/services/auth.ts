@@ -20,13 +20,13 @@ export interface AuthResult {
 
 export async function login(payload: LoginPayload): Promise<AuthResult> {
   const result = await api.post<AuthResult>('/api/auth/login', payload);
-  setAuthToken(result.token);
+  if (result.token) setAuthToken(result.token);
   return result;
 }
 
 export async function register(payload: RegisterPayload): Promise<AuthResult> {
   const result = await api.post<AuthResult>('/api/auth/register', payload);
-  setAuthToken(result.token);
+  if (result.token) setAuthToken(result.token);
   return result;
 }
 
